@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       "
+	default-autowire="byName">
+
+	<context:component-scan base-package="com.hd123.sardine.wms.service">
+		<context:include-filter type="regex"
+			expression="(.*ServiceImpl)|(.*ValidateHandler)" />
+	</context:component-scan>
+
+	<context:component-scan base-package="com.hd123.sardine.wms.common">
+		<context:include-filter type="regex"
+			expression="(.*Validator)|(.*ValidateHandler)" />
+	</context:component-scan>
+</beans>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+           http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/jdbc    http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       ">
+
+	<context:property-placeholder location="classpath:jdbc.properties" />
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.driverUrl}" />
+		<property name="username" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<!-- define the SqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:mybatisConfig-sardine-wms.xml" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="typeAliasesPackage" value="com.hd123.sardine" />
+		<property name="mapperLocations" value="classpath*:com/hd123/sardine/wms/dao/**/*Mapper.xml" />
+	</bean>
+
+	<!-- ======================================================================== -->
+	<!-- TransactionManager定义。 -->
+	<!-- ======================================================================== -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 支持 @AspectJ 标记 -->
+	<aop:aspectj-autoproxy />
+
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="add*" propagation="REQUIRED" rollback-for="java.lang.Exception"
+				no-rollback-for="java.lang.RuntimeException" />
+			<tx:method name="save*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="insert*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="create*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="del*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="remove*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="update*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="modify*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="receive*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="audit*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="generate*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="distribute*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="effective*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="upload*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="*" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+
+<!-- 	<aop:config>
+		<aop:pointcut id="interceptorPointCuts"
+			expression="execution(* com.hd123.sardine.wms.service..*.*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="interceptorPointCuts" />
+	</aop:config> -->
+</beans>

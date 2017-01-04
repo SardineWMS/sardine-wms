@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd"[]>
+<configuration>
+	<!-- <plugins> <plugin interceptor="com.hd123.sardine.wms.common.query.PagingInterceptor"></plugin> 
+		</plugins> -->
+
+	<properties>
+		<property name="dialect" value="oracle" />
+	</properties>
+
+	<plugins>
+		<plugin interceptor="com.hd123.sardine.wms.common.query.PageInterceptor"></plugin>
+	</plugins>
+</configuration>
