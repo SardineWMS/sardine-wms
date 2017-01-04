@@ -13,6 +13,7 @@
 		<module>sardine-wms-api</module>
 		<module>sardine-wms-web</module>
 		<module>sardine-wms-common</module>
+		<module>sardine-ui</module>
 	</modules>
 
 	<properties>
