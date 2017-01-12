@@ -55,6 +55,20 @@ public class AuthenticationController extends BaseController {
         return resp;
     }
 
+    @RequestMapping(value = "/loginOut", method = RequestMethod.GET)
+    public @ResponseBody RespObject loginOut(
+            @RequestParam(value = "token", required = true) String token) {
+        RespObject resp = new RespObject();
+        try {
+            resetToken(token);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ErrorRespObject("退出登录失败", e.getMessage());
+        }
+        return resp;
+    }
+
     @RequestMapping(value = "/update_passwd", method = RequestMethod.PUT)
     public @ResponseBody RespObject updatePasswd(
             @RequestParam(value = "token", required = true) String token,
