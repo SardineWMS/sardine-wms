@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd123.sardine.wms.dao.basicInfo.supplier.impl.SupplierDaoImpl">
+	<resultMap id="BaseResultMap" type="Supplier">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR"/>
+		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="createdtime" property="createInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="createdID" property="createInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="createdcode" property="createInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="createdName" property="createInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="lastModifytime" property="lastModifyInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="lastModifyid" property="lastModifyInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="lastModifycode" property="lastModifyInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<delete id="remove" parameterType="map">
+		delete from
+		sardine_supplier
+		where
+		uuid
+		= #{uuid,jdbcType=VARCHAR}
+		and version =
+		#{version,jdbcType=LONGVARCHAR}
+	</delete>
+
+	<select id="get" parameterType="String" resultMap="BaseResultMap">
+		select u.*
+		from sardine_supplier s
+		where s.uuid = #{uuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getByCode" parameterType="String" resultMap="BaseResultMap">
+		select
+		s.*
+		from sardine_supplier s
+		where s.code = #{code,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insert" parameterType="User">
+		insert into
+		sardine_supplier (
+		uuid,
+		code,
+		name,
+		version,
+		phone,
+		address,
+		CREATEDTIME,
+		CREATEDID,
+		CREATEDCODE,
+		CREATEDNAME,
+		LASTMODIFYTIME,
+		LASTMODIFYID,
+		LASTMODIFYCODE,
+		LASTMODIFYNAME,
+		state,
+		companyUuid,
+		remark
+		)
+		values (
+		#{uuid,jdbcType=VARCHAR},
+		#{code,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{version,jdbcType=LONGVARCHAR},
+		#{phone,jdbcType=VARCHAR},
+		#{address,jdbcType=VARCHAR},
+		#{createInfo.time,jdbcType=TIMESTAMP},
+		#{createInfo.operator.id,jdbcType=VARCHAR},
+		#{createInfo.operator.code,jdbcType=VARCHAR},
+		#{createInfo.operator.fullName,jdbcType=VARCHAR},
+		#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+		#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+		#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		#{state,jdbcType=VARCHAR},
+		#{companyUuid,jdbcType=VARCHAR}
+		#{remark,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<update id="update" parameterType="User">
+		update sardine_supplier
+		<set>
+			code =
+			#{code,jdbcType=VARCHAR},
+			name =
+			#{name,jdbcType=VARCHAR},
+			phone =
+			#{phone,jdbcType=VARCHAR},
+			address =
+			#{address,jdbcType=CHAR},
+			state =
+			#{state,jdbcType=CHAR},
+			version =
+			#{version,jdbcType=LONGVARCHAR} +
+			1,
+			remark =
+			#{remark,jdbcType=CHAR},
+			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
+				LASTMODIFYTIME =
+				#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				LASTMODIFYID =
+				#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				LASTMODIFYCODE =
+				#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				LASTMODIFYNAME =
+				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where uuid = #{uuid,jdbcType=VARCHAR}
+		and version =
+		#{version,jdbcType=LONGVARCHAR}
+	</update>
+
+	<select id="queryByPage" parameterType="PageQueryDefinition"
+		resultMap="BaseResultMap">
+		select s.*
+		from sardine_supplier s
+		where 1=1
+		<if test="code != null">
+			and s.code like CONCAT(CONCAT('%', #{code}),
+			'%')
+		</if>
+		<if test="name != null">
+			and s.name like CONCAT(CONCAT('%', #{name}),
+			'%')
+		</if>
+		<if test="state != null">
+			and s.state = #{state,jdbcType=VARCHAR}
+		</if>
+		<if test="sortField != null and sortField == 'code'">
+			order by t.code ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'name'">
+			order by t.name ${orderDir}
+		</if>
+	</select>
+</mapper>
