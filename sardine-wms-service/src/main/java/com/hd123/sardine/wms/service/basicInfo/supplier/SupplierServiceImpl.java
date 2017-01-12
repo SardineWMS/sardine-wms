@@ -31,7 +31,7 @@ import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.common.validator.ValidateHandler;
 import com.hd123.sardine.wms.common.validator.ValidateResult;
 import com.hd123.sardine.wms.dao.basicInfo.supplier.SupplierDao;
-import com.hd123.sardine.wms.service.basicInfo.BaseWMSService;
+import com.hd123.sardine.wms.service.ia.BaseWMSService;
 
 /**
  * 供应商服务实现

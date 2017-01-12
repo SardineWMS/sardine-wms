@@ -20,7 +20,7 @@ import com.hd123.sardine.wms.api.ia.user.UserService;
 import com.hd123.sardine.wms.api.ia.user.UserState;
 import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.entity.OperateInfo;
-import com.hd123.sardine.wms.common.exception.IAException;
+import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
@@ -30,7 +30,7 @@ import com.hd123.sardine.wms.common.validator.ValidateResult;
 import com.hd123.sardine.wms.common.validator.routines.NullValidator;
 import com.hd123.sardine.wms.common.validator.routines.VersionValidator;
 import com.hd123.sardine.wms.dao.ia.user.UserDao;
-import com.hd123.sardine.wms.service.ia.BaseIAService;
+import com.hd123.sardine.wms.service.ia.BaseWMSService;
 import com.hd123.sardine.wms.service.ia.user.validator.UserInsertValidateHandler;
 import com.hd123.sardine.wms.service.ia.user.validator.UserRemoveValidateHandler;
 import com.hd123.sardine.wms.service.ia.user.validator.UserUpdateValidateHandler;
@@ -41,7 +41,7 @@ import com.hd123.sardine.wms.service.ia.user.validator.UserUpdateValidateHandler
  * @author zhangsai
  *
  */
-public class UserServiceImpl extends BaseIAService implements UserService {
+public class UserServiceImpl extends BaseWMSService implements UserService {
 
     @Autowired
     private UserDao userDao;
@@ -86,7 +86,7 @@ public class UserServiceImpl extends BaseIAService implements UserService {
 
     @Override
     public String insert(User user, OperateContext operCtx)
-            throws IllegalArgumentException, IAException {
+            throws IllegalArgumentException, WMSException {
         User existsUser = userDao.getByCode(user == null ? null : user.getCode());
         User operatorUser = userDao.get((operCtx == null || operCtx.getOperator() == null) ? null
                 : operCtx.getOperator().getId());
@@ -112,7 +112,7 @@ public class UserServiceImpl extends BaseIAService implements UserService {
 
     @Override
     public void update(User user, OperateContext operCtx)
-            throws IllegalArgumentException, IAException {
+            throws IllegalArgumentException, WMSException {
         User updateUser = userDao.get(user == null ? null : user.getUuid());
         User existsUser = userDao.getByCode(user == null ? null : user.getCode());
         ValidateResult updateResult = userUpdateValidateHandler
@@ -131,7 +131,7 @@ public class UserServiceImpl extends BaseIAService implements UserService {
 
     @Override
     public void remove(String uuid, long version, OperateContext operCtx)
-            throws IllegalArgumentException, IAException {
+            throws IllegalArgumentException, WMSException {
         User deleteUser = userDao.get(uuid);
         ValidateResult removeResult = userRemoveValidateHandler
                 .putAttribute(UserRemoveValidateHandler.KEY_OPERATOR_USER, deleteUser)
@@ -145,7 +145,7 @@ public class UserServiceImpl extends BaseIAService implements UserService {
 
     @Override
     public void online(String uuid, long version, OperateContext operCtx)
-            throws IllegalArgumentException, IAException {
+            throws IllegalArgumentException, WMSException {
         User onlineUser = userDao.get(uuid);
         ValidateResult removeResult = userRemoveValidateHandler
                 .putAttribute(UserRemoveValidateHandler.KEY_OPERATOR_USER, onlineUser)
@@ -164,7 +164,7 @@ public class UserServiceImpl extends BaseIAService implements UserService {
 
     @Override
     public void offline(String uuid, long version, OperateContext operCtx)
-            throws IllegalArgumentException, IAException {
+            throws IllegalArgumentException, WMSException {
         User offlineUser = userDao.get(uuid);
         ValidateResult removeResult = userRemoveValidateHandler
                 .putAttribute(UserRemoveValidateHandler.KEY_OPERATOR_USER, offlineUser)

@@ -18,13 +18,13 @@ import com.hd123.sardine.wms.api.ia.user.UserState;
 import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.entity.OperateInfo;
 import com.hd123.sardine.wms.common.entity.Operator;
-import com.hd123.sardine.wms.common.exception.IAException;
+import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.utils.FlowCodeGenerator;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.common.validator.ValidateHandler;
 import com.hd123.sardine.wms.common.validator.ValidateResult;
 import com.hd123.sardine.wms.dao.ia.user.UserDao;
-import com.hd123.sardine.wms.service.ia.BaseIAService;
+import com.hd123.sardine.wms.service.ia.BaseWMSService;
 import com.hd123.sardine.wms.service.ia.login.validator.RegisterValidateHandler;
 import com.hd123.sardine.wms.service.ia.login.validator.UpdatePasswdValidateHandler;
 
@@ -34,7 +34,7 @@ import com.hd123.sardine.wms.service.ia.login.validator.UpdatePasswdValidateHand
  * @author zhangsai
  *
  */
-public class LoginServiceImpl extends BaseIAService implements LoginService {
+public class LoginServiceImpl extends BaseWMSService implements LoginService {
 
     @Autowired
     private UserDao userDao;
@@ -52,7 +52,7 @@ public class LoginServiceImpl extends BaseIAService implements LoginService {
     private ValidateHandler<User> registerValidateHandler;
 
     @Override
-    public UserInfo register(User user) throws IllegalArgumentException, IAException {
+    public UserInfo register(User user) throws IllegalArgumentException, WMSException {
         User existsUser = userDao.getByCode(user != null ? user.getCode() : null);
         ValidateResult result = registerValidateHandler
                 .putAttribute(RegisterValidateHandler.KEY_CODEEXISTS_USER, existsUser)
@@ -73,7 +73,7 @@ public class LoginServiceImpl extends BaseIAService implements LoginService {
 
     @Override
     public UserInfo updatePasswd(String userUuid, String oldPasswd, String newPasswd,
-            OperateContext operCtx) throws IllegalArgumentException, IAException {
+            OperateContext operCtx) throws IllegalArgumentException, WMSException {
         User user = userDao.get(userUuid);
         ValidateResult result = updatePasswdValidateHandler
                 .putAttribute(UpdatePasswdValidateHandler.KEY_UPDATEPASSWD_USER, user)
@@ -89,16 +89,16 @@ public class LoginServiceImpl extends BaseIAService implements LoginService {
 
     @Override
     public UserInfo login(String userCode, String passwd)
-            throws IllegalArgumentException, IAException {
+            throws IllegalArgumentException, WMSException {
         ValidateResult result = loginValidateHandler.validate(userCode);
         checkValidateResult(result);
 
         User user = userDao.login(userCode, passwd);
         if (user == null)
-            throw new IAException("登录失败，用户名或密码错误。");
+            throw new WMSException("登录失败，用户名或密码错误。");
 
         if (user.getUserState().equals(UserState.online) == false)
-            throw new IAException("登录失败，当前用户未被启用。");
+            throw new WMSException("登录失败，当前用户未被启用。");
 
         return user.fetchUserInfo();
     }

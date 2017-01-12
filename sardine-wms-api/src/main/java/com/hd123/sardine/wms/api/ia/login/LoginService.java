@@ -12,7 +12,7 @@ package com.hd123.sardine.wms.api.ia.login;
 import com.hd123.sardine.wms.api.ia.user.User;
 import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.exception.EntityNotFoundException;
-import com.hd123.sardine.wms.common.exception.IAException;
+import com.hd123.sardine.wms.common.exception.WMSException;
 
 /**
  * 登录服务
@@ -38,10 +38,10 @@ public interface LoginService {
      * @return 用户信息
      * @throws IllegalArgumentException
      *             登录名为空时抛出
-     * @throws IAException
+     * @throws WMSException
      *             登录验证失败时抛出
      */
-    UserInfo login(String userCode, String passwd) throws IllegalArgumentException, IAException;
+    UserInfo login(String userCode, String passwd) throws IllegalArgumentException, WMSException;
 
     /**
      * 注册新用户
@@ -53,10 +53,10 @@ public interface LoginService {
      * @return 用户信息
      * @throws IllegalArgumentException
      *             参数为空时抛出
-     * @throws IAException
+     * @throws WMSException
      *             用户名重复时抛出异常
      */
-    UserInfo register(User user) throws IllegalArgumentException, IAException;
+    UserInfo register(User user) throws IllegalArgumentException, WMSException;
 
     /**
      * 修改密码
@@ -74,10 +74,10 @@ public interface LoginService {
      *             参数为空
      * @throws EntityNotFoundException
      *             用户不存在
-     * @throws IAException
+     * @throws WMSException
      *             用户不存在、原密码不符合
      */
     UserInfo updatePasswd(String userUuid, String oldPasswd, String newPasswd,
             OperateContext operCtx)
-            throws IllegalArgumentException, EntityNotFoundException, IAException;
+            throws IllegalArgumentException, EntityNotFoundException, WMSException;
 }
