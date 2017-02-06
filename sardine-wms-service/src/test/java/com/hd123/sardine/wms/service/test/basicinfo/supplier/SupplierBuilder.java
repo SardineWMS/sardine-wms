@@ -5,7 +5,7 @@
  * See generator home page at: http://code.google.com/p/fluent-builders-generator-eclipse-plugin/
  */
 
-package com.hd123.sardine.wms.service.test.basicInfo.supplier;
+package com.hd123.sardine.wms.service.test.basicinfo.supplier;
 
 import java.util.Date;
 

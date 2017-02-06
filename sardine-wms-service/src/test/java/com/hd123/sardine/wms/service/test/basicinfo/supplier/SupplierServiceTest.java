@@ -7,7 +7,7 @@
  * 修改历史：
  * 2017年1月12日 - fanqingqing - 创建。
  */
-package com.hd123.sardine.wms.service.test.basicInfo.supplier;
+package com.hd123.sardine.wms.service.test.basicinfo.supplier;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

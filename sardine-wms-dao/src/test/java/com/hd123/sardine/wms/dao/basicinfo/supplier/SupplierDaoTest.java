@@ -7,7 +7,7 @@
  * 修改历史：
  * 2017年1月12日 - fanqingqing - 创建。
  */
-package com.hd123.sardine.wms.dao.basicInfo.supplier;
+package com.hd123.sardine.wms.dao.basicinfo.supplier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -21,6 +21,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.dao.AbstractDataAccessTests;
+import com.hd123.sardine.wms.dao.basicInfo.supplier.SupplierDao;
 
 /**
  * @author fanqingqing
