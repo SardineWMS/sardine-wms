@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.hd123.sardine.wms.dao.basicInfo.customer.impl.CustomerDaoImpl">
+	<resultMap id="BaseResultMap" type="Customer">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="customerType" property="type" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="createdTime" property="createInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="createdId" property="createInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="createdCode" property="createInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="createdName" property="createInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyTime" property="lastModifyInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="lastModifyId" property="lastModifyInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyCode" property="lastModifyInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyName" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<insert id="insert" parameterType="Customer">
+		insert into sardine_customer (
+		uuid,
+		code,
+		name,
+		customerType,
+		phone,
+		state,
+		companyUuid,
+		remark,
+		createdTime,
+		createdId,
+		createdCode,
+		createdName,
+		lastModifyTime,
+		lastModifyId,
+		lastModifyCode,
+		lastModifyName,
+		version,
+		address
+		) values(
+		#{uuid,jdbcType=VARCHAR},
+		#{code,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{type,jdbcType=VARCHAR},
+		#{phone,jdbcType=VARCHAR},
+		#{state,jdbcType=VARCHAR},
+		#{companyUuid,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR},
+		#{createInfo.time,jdbcType=TIMESTAMP},
+		#{createInfo.operator.id,jdbcType=VARCHAR},
+		#{createInfo.operator.code,jdbcType=VARCHAR},
+		#{createInfo.operator.fullName,jdbcType=VARCHAR},
+		#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+		#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+		#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		#{version,jdbcType=LONGVARCHAR},
+		#{address,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<select id="get" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select * from sardine_customer t
+		where t.uuid=#{uuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getByCode" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select * from sardine_customer t
+		where
+		t.code=#{code,jdbcType=VARCHAR}
+	</select>
+
+	<select id="queryByPage" parameterType="PageQueryDefinition"
+		resultMap="BaseResultMap">
+		select t.*
+		from sardine_customer t
+		where 1=1
+		<if test="code != null">
+			and t.code like CONCAT(CONCAT('%', #{code}),
+			'%')
+		</if>
+		<if test="name != null">
+			and t.name like CONCAT(CONCAT('%', #{name}),
+			'%')
+		</if>
+		<if test="state != null">
+			and t.state = #{state,jdbcType=VARCHAR}
+		</if>
+		<if test="sortField != null and sortField == 'code'">
+			order by t.code ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'name'">
+			order by t.name ${orderDir}
+		</if>
+	</select>
+
+	<update id="updateState" parameterType="Customer">
+		update sardine_customer
+		<set>
+			state=#{state,jdbcType=VARCHAR},
+			version =
+			#{version,jdbcType=LONGVARCHAR} +
+			1,
+			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
+				LASTMODIFYTIME =
+				#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				LASTMODIFYID =
+				#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				LASTMODIFYCODE =
+				#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				LASTMODIFYNAME =
+				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where uuid = #{uuid,jdbcType=VARCHAR}
+		and version =
+		#{version,jdbcType=LONGVARCHAR}
+	</update>
+
+	<update id="update" parameterType="Customer">
+		update sardine_customer
+		<set>
+			code =
+			#{code,jdbcType=VARCHAR},
+			name =
+			#{name,jdbcType=VARCHAR},
+			customerType =
+			#{type,jdbcType=VARCHAR},
+			phone =
+			#{phone,jdbcType=VARCHAR},
+			address =
+			#{address,jdbcType=CHAR},
+			companyUuid =
+			#{companyUuid,jdbcType=VARCHAR},
+			remark =
+			#{remark,jdbcType=VARCHAR},
+			version =
+			#{version,jdbcType=LONGVARCHAR} +
+			1,
+			state=
+			#{state,jdbcType=VARCHAR},
+			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
+				LASTMODIFYTIME =
+				#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				LASTMODIFYID =
+				#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				LASTMODIFYCODE =
+				#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				LASTMODIFYNAME =
+				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where uuid = #{uuid,jdbcType=VARCHAR}
+		and version =
+		#{version,jdbcType=LONGVARCHAR}
+	</update>
+</mapper>
