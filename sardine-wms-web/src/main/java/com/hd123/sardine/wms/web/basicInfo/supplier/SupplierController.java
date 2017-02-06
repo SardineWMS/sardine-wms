@@ -69,7 +69,7 @@ public class SupplierController extends BaseController {
 
     @RequestMapping(value = "/querybypage", method = RequestMethod.GET)
     public @ResponseBody RespObject query(
-            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
             @RequestParam(value = "sort", required = false) String sort,
             @RequestParam(value = "order", required = false,
@@ -103,6 +103,7 @@ public class SupplierController extends BaseController {
     public @ResponseBody RespObject saveNew(@RequestBody Supplier supplier) {
         RespObject resp = new RespObject();
         try {
+            supplier.setCompanyUuid(getLoginCompany(supplier.getToken()).getUuid());
             String supplierUuid = supplierService.saveNew(supplier,
                     getOperateContext(supplier.getToken()));
             resp.setObj(supplierUuid);
@@ -127,9 +128,9 @@ public class SupplierController extends BaseController {
 
     @RequestMapping(value = "/remove", method = RequestMethod.DELETE)
     public @ResponseBody RespObject remove(
-            @RequestParam(value = "uuid", required = true) String uuid,
-            @RequestParam(value = "token", required = true) String token,
-            @RequestParam(value = "version", required = true) long version) {
+            @RequestParam(value = "uuid", required = false) String uuid,
+            @RequestParam(value = "token", required = false) String token,
+            @RequestParam(value = "version", required = false) long version) {
         RespObject resp = new RespObject();
         try {
             supplierService.remove(uuid, version, getOperateContext(token));

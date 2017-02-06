@@ -40,7 +40,7 @@
 	</delete>
 
 	<select id="get" parameterType="String" resultMap="BaseResultMap">
-		select u.*
+		select s.*
 		from sardine_supplier s
 		where s.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
@@ -89,7 +89,7 @@
 		#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
 		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
 		#{state,jdbcType=VARCHAR},
-		#{companyUuid,jdbcType=VARCHAR}
+		#{companyUuid,jdbcType=VARCHAR},
 		#{remark,jdbcType=VARCHAR}
 		)
 	</insert>
