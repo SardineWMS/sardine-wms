@@ -61,6 +61,9 @@ public class BaseServiceTest {
         CLASSES.add("com.hd123.sardine.wms.common.validator.routines.VersionValidator");
         CLASSES.add("com.hd123.sardine.wms.common.validator.OperateContextValidateHandler");
         CLASSES.add("com.hd123.sardine.wms.common.validator.GenericValidateHandler");
+        CLASSES.add("com.hd123.sardine.wms.common.validator.routines.NumberValidator");
+        CLASSES.add("com.hd123.sardine.wms.common.validator.routines.NonnegativeNumberValidator");
+        CLASSES.add("com.hd123.sardine.wms.common.validator.routines.RatioValidator");
 
         for (String className : CLASSES) {
             try {
