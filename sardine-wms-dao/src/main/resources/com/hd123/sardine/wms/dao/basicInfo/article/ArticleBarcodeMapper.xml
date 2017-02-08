@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd123.sardine.wms.dao.basicInfo.article.impl.ArticleBarcodeDaoImpl">
+	<resultMap id="BaseResultMap" type="ArticleBarcode">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="articleUuid" property="articleUuid" jdbcType="VARCHAR" />
+		<result column="barcode" property="barcode" jdbcType="VARCHAR" />
+		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="get" parameterType="String" resultMap="BaseResultMap">
+		select u.*
+		from sardine_article_barcode u
+		where u.uuid = #{uuid,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insert" parameterType="ArticleBarcode">
+		insert into
+		sardine_article_barcode (
+		uuid,
+		articleUuid,
+		barcode,
+		qpcStr
+		)
+		values (
+		#{uuid,jdbcType=VARCHAR},
+		#{articleUuid,jdbcType=VARCHAR},
+		#{barcode,jdbcType=VARCHAR},
+		#{qpcStr,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<select id="queryByList" parameterType="String"
+		resultMap="BaseResultMap">
+		select u.*
+		from sardine_article_barcode u
+		where u.articleUuid = #{articleUuid,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="removeone" parameterType="String">
+	    delete from sardine_article_barcode t where t.uuid = #{uuid,jdbcType=VARCHAR}
+	</delete>
+</mapper>

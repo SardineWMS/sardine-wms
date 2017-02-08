@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd123.sardine.wms.dao.basicInfo.article.impl.ArticleDaoImpl">
+	<resultMap id="BaseResultMap" type="Article">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="spec" property="spec" jdbcType="VARCHAR" />
+		<result column="categoryuuid" property="category.uuid" jdbcType="VARCHAR" />
+		<result column="categorycode" property="category.code" jdbcType="VARCHAR" />
+		<result column="categoryname" property="category.name" jdbcType="VARCHAR" />
+		<result column="firstInFirstOut" property="firstInFirstOut" jdbcType="CHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="expDays" property="expDays" jdbcType="INTEGER" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="createdtime" property="createInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="createdID" property="createInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="createdcode" property="createInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="createdName" property="createInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="lastModifytime" property="lastModifyInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="lastModifyid" property="lastModifyInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="lastModifycode" property="lastModifyInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<select id="get" parameterType="String" resultMap="BaseResultMap">
+		select u.*
+		from sardine_article u
+		where u.uuid = #{uuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
+		select
+		u.*
+		from sardine_article u
+		where u.code = #{code,jdbcType=VARCHAR}
+		and u.companyuuid = #{companyUuid, jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getByBarcode" parameterType="map" resultMap="BaseResultMap">
+		select
+		u.*
+		from sardine_article u
+		where u.companyuuid = #{companyUuid, jdbcType=VARCHAR}
+		and exists (select 1 from sardine_article_barcode b where u.uuid = b.articleuuid 
+		and b.barcode = #{barcode,jdbcType=VARCHAR})
+	</select>
+
+	<insert id="insert" parameterType="Article">
+		insert into
+		sardine_article (
+		uuid,
+		code,
+		name,
+		spec,
+		state,
+		expdays,
+		categoryuuid,
+		categorycode,
+		categoryname,
+		firstInFirstOut,
+		version,
+		CREATEDTIME,
+		CREATEDID,
+		CREATEDCODE,
+		CREATEDNAME,
+		LASTMODIFYTIME,
+		LASTMODIFYID,
+		LASTMODIFYCODE,
+		LASTMODIFYNAME,
+		companyUuid
+		)
+		values (
+		#{uuid,jdbcType=VARCHAR},
+		#{code,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{spec,jdbcType=VARCHAR},
+		#{state,jdbcType=VARCHAR},
+		#{expdays,jdbcType=INTEGER},
+		#{category.uuid,jdbcType=VARCHAR},
+		#{category.code,jdbcType=VARCHAR},
+		#{category.name,jdbcType=VARCHAR},
+		#{firstInFirstOut,jdbcType=CHAR},
+		#{version,jdbcType=LONGVARCHAR},
+		#{createInfo.time,jdbcType=TIMESTAMP},
+		#{createInfo.operator.id,jdbcType=VARCHAR},
+		#{createInfo.operator.code,jdbcType=VARCHAR},
+		#{createInfo.operator.fullName,jdbcType=VARCHAR},
+		#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+		#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+		#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		#{companyUuid,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<update id="update" parameterType="Article">
+		update sardine_article
+		<set>
+			code =
+			#{code,jdbcType=VARCHAR},
+			name =
+			#{name,jdbcType=VARCHAR},
+			spec =
+			#{spec,jdbcType=VARCHAR},
+			expdays = #{expdays,jdbcType=INTEGER},
+			firstInFirstOut =
+			#{firstInFirstOut,jdbcType=CHAR},
+			state =
+			#{state,jdbcType=CHAR},
+			categoryuuid = #{category.uuid,jdbcType=VARCHAR},
+		    categorycode = #{category.code,jdbcType=VARCHAR},
+		    categoryname = #{category.name,jdbcType=VARCHAR},
+			version =
+			#{version,jdbcType=LONGVARCHAR} +
+			1,
+			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
+				LASTMODIFYTIME =
+				#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				LASTMODIFYID =
+				#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				LASTMODIFYCODE =
+				#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				LASTMODIFYNAME =
+				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where uuid = #{uuid,jdbcType=VARCHAR}
+		and version =
+		#{version,jdbcType=LONGVARCHAR}
+	</update>
+
+	<select id="queryByPage" parameterType="PageQueryDefinition"
+		resultMap="BaseResultMap">
+		select u.*
+		from sardine_article u
+		where 1=1
+		<if test="code != null">
+			and u.code like CONCAT(CONCAT('%', #{code}),
+			'%')
+		</if>
+		<if test="name != null">
+			and u.name like CONCAT(CONCAT('%', #{name}),
+			'%')
+		</if>
+		<if test="companyUuid != null">
+			and u.companyUuid = #{companyUuid,jdbcType=VARCHAR}
+		</if>
+		<if test="state != null">
+			and u.state = #{state,jdbcType=VARCHAR}
+		</if>
+		<if test="sortField != null and sortField == 'code'">
+			order by t.code ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'name'">
+			order by t.name ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'createdtime'">
+			order by t.createdtime ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'lastModifytime'">
+			order by t.lastModifytime ${orderDir}
+		</if>
+	</select>
+</mapper>

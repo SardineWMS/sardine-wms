@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd123.sardine.wms.dao.basicInfo.article.impl.ArticleSupplierDaoImpl">
+	<resultMap id="BaseResultMap" type="ArticleSupplier">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="articleUuid" property="articleUuid" jdbcType="VARCHAR" />
+		<result column="supplieruuid" property="supplieruuid" jdbcType="VARCHAR" />
+		<result column="suppliercode" property="suppliercode" jdbcType="VARCHAR" />
+		<result column="suppliername" property="suppliername" jdbcType="VARCHAR" />
+		<result column="default_" property="default_" jdbcType="CHAR" />
+	</resultMap>
+
+	<select id="get" parameterType="String" resultMap="BaseResultMap">
+		select u.*
+		from sardine_article_supplier u
+		where u.uuid = #{uuid,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insert" parameterType="ArticleSupplier">
+		insert into
+		sardine_article_supplier (
+		uuid,
+		articleUuid,
+		supplieruuid,
+		suppliercode,
+		suppliername,
+		default_
+		)
+		values (
+		#{uuid,jdbcType=VARCHAR},
+		#{articleUuid,jdbcType=VARCHAR},
+		#{supplieruuid,jdbcType=VARCHAR},
+		#{suppliercode,jdbcType=VARCHAR},
+		#{suppliername,jdbcType=VARCHAR},
+		#{default_,jdbcType=CHAR}
+		)
+	</insert>
+
+	<update id="setDefault" parameterType="String">
+		update sardine_article_supplier
+		set
+			default_ = '1'
+		where uuid = #{uuid,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="setUnDefault" parameterType="String">
+		update sardine_article_supplier
+		set
+			default_ = '0'
+		where articleUuid = #{articleUuid,jdbcType=VARCHAR}
+	</update>
+
+	<select id="queryByList" parameterType="String"
+		resultMap="BaseResultMap">
+		select u.*
+		from sardine_article_supplier u
+		where u.articleUuid = #{articleUuid,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="removeone" parameterType="String">
+	    delete from sardine_article_supplier t where t.uuid = #{uuid,jdbcType=VARCHAR}
+	</delete>
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd123.sardine.wms.dao.basicInfo.article.impl.ArticleQpcDaoImpl">
+	<resultMap id="BaseResultMap" type="ArticleQpc">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="articleUuid" property="articleUuid" jdbcType="VARCHAR" />
+		<result column="munit" property="munit" jdbcType="VARCHAR" />
+		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+		<result column="length" property="length" jdbcType="DECIMAL" />
+		<result column="width" property="width" jdbcType="DECIMAL" />
+		<result column="height" property="height" jdbcType="DECIMAL" />
+		<result column="weight" property="weight" jdbcType="DECIMAL" />
+		<result column="default_" property="default_" jdbcType="CHAR" />
+	</resultMap>
+
+	<select id="get" parameterType="String" resultMap="BaseResultMap">
+		select u.*
+		from sardine_article_qpc u
+		where u.uuid = #{uuid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getByQpcStr" parameterType="map" resultMap="BaseResultMap" >
+	    select u.*
+		from sardine_article_qpc u
+		where u.qpcstr = #{qpcStr,jdbcType=VARCHAR}
+		and u.articleUuid = #{articleUuid,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insert" parameterType="ArticleQpc">
+		insert into
+		sardine_article_qpc (
+		uuid,
+		articleUuid,
+		munit,
+		qpcStr,
+		length,
+		width,
+		height,
+		weight,
+		default_
+		)
+		values (
+		#{uuid,jdbcType=VARCHAR},
+		#{articleUuid,jdbcType=VARCHAR},
+		#{munit,jdbcType=VARCHAR},
+		#{qpcStr,jdbcType=VARCHAR},
+		#{length,jdbcType=DECIMAL},
+		#{width,jdbcType=DECIMAL},
+		#{height,jdbcType=DECIMAL},
+		#{weight,jdbcType=DECIMAL},
+		#{default_,jdbcType=CHAR}
+		)
+	</insert>
+
+	<update id="setDefault" parameterType="String">
+		update sardine_article_qpc
+		set
+			default_ = '1'
+		where uuid = #{uuid,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="setUnDefault" parameterType="String">
+		update sardine_article_qpc
+		set
+			default_ = '0'
+		where articleUuid = #{articleUuid,jdbcType=VARCHAR}
+	</update>
+
+	<select id="queryByList" parameterType="String"
+		resultMap="BaseResultMap">
+		select u.*
+		from sardine_article_qpc u
+		where u.articleUuid = #{articleUuid,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="removeone" parameterType="String">
+	    delete from sardine_article_qpc t where t.uuid = #{uuid,jdbcType=VARCHAR}
+	</delete>
+</mapper>
