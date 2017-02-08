@@ -118,7 +118,7 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
     checkValidateResult(operCtxResult);
 
     article.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-    articleDao.insert(article);
+    articleDao.update(article);
   }
 
   @Override
@@ -334,6 +334,7 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
     Article article = articleDao.get(articleUuid);
     if (article == null)
       throw new WMSException("商品" + articleUuid + "不存在。");
+    articleSupplierDao.setUnDefault(articleUuid);
     articleSupplierDao.setDefault(articleSupplierUuid);
   }
 
@@ -349,6 +350,7 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
     Article article = articleDao.get(articleUuid);
     if (article == null)
       throw new WMSException("商品" + articleUuid + "不存在。");
+    articleQpcDao.setUnDefault(articleUuid);
     articleQpcDao.setDefault(qpcUuid);
   }
 }

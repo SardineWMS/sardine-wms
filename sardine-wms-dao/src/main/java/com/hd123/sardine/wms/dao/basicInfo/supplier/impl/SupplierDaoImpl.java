@@ -25,7 +25,6 @@ public class SupplierDaoImpl extends BaseDaoImpl<Supplier> implements SupplierDa
     public Supplier getByCode(String code) {
         if (StringUtil.isNullOrBlank(code))
             return null;
-        return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE));
+        return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE), code);
     }
-
 }

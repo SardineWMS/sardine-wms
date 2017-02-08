@@ -4,9 +4,9 @@
 	<resultMap id="BaseResultMap" type="ArticleSupplier">
 		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
 		<result column="articleUuid" property="articleUuid" jdbcType="VARCHAR" />
-		<result column="supplieruuid" property="supplieruuid" jdbcType="VARCHAR" />
-		<result column="suppliercode" property="suppliercode" jdbcType="VARCHAR" />
-		<result column="suppliername" property="suppliername" jdbcType="VARCHAR" />
+		<result column="supplieruuid" property="supplierUuid" jdbcType="VARCHAR" />
+		<result column="suppliercode" property="supplierCode" jdbcType="VARCHAR" />
+		<result column="suppliername" property="supplierName" jdbcType="VARCHAR" />
 		<result column="default_" property="default_" jdbcType="CHAR" />
 	</resultMap>
 
@@ -29,9 +29,9 @@
 		values (
 		#{uuid,jdbcType=VARCHAR},
 		#{articleUuid,jdbcType=VARCHAR},
-		#{supplieruuid,jdbcType=VARCHAR},
-		#{suppliercode,jdbcType=VARCHAR},
-		#{suppliername,jdbcType=VARCHAR},
+		#{supplierUuid,jdbcType=VARCHAR},
+		#{supplierCode,jdbcType=VARCHAR},
+		#{supplierName,jdbcType=VARCHAR},
 		#{default_,jdbcType=CHAR}
 		)
 	</insert>
@@ -58,6 +58,6 @@
 	</select>
 	
 	<delete id="removeone" parameterType="String">
-	    delete from sardine_article_supplier t where t.uuid = #{uuid,jdbcType=VARCHAR}
+	    delete from sardine_article_supplier where uuid = #{uuid,jdbcType=VARCHAR}
 	</delete>
 </mapper>

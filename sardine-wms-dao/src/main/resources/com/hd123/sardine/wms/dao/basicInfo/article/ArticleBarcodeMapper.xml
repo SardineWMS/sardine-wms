@@ -38,6 +38,6 @@
 	</select>
 	
 	<delete id="removeone" parameterType="String">
-	    delete from sardine_article_barcode t where t.uuid = #{uuid,jdbcType=VARCHAR}
+	    delete from sardine_article_barcode where uuid = #{uuid,jdbcType=VARCHAR}
 	</delete>
 </mapper>

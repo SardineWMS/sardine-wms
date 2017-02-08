@@ -77,7 +77,8 @@ public class ArticleUpdateValidateHandler extends GenericValidateHandler<Article
     on("商品类别", bean.getCategory(), notNullValidator);
 
     Article article = (Article) getAttribute(KEY_CODEEXISTS_ARTICLE);
-    on("用户代码" + bean.getCode(), article, nullValidator);
+    if (article.getUuid().equals(bean.getUuid()) == false)
+      on("商品代码" + bean.getCode(), article, nullValidator);
 
     Category category = (Category) getAttribute(KEY_CATEGORY);
     on("类别", category, entityNotNullValidator);

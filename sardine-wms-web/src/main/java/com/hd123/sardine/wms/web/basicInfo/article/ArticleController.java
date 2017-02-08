@@ -28,6 +28,7 @@ import com.hd123.sardine.wms.api.basicInfo.article.ArticleState;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleSupplier;
 import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
 import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierService;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -114,7 +115,10 @@ public class ArticleController extends BaseController {
   public @ResponseBody RespObject insert(@RequestBody Article article) {
     RespObject resp = new RespObject();
     try {
-      String articleUuid = null;
+      UCN category = new UCN("82748c47751247a6b8b44b6b8beddb9b", "0100000000", "可乐");
+      article.setCategory(category);
+      article.setCompanyUuid(getLoginCompany(article.getToken()).getUuid());
+      String articleUuid = article.getUuid();
       if (StringUtil.isNullOrBlank(article.getUuid()))
         articleUuid = articleService.insert(article, getOperateContext(article.getToken()));
       else
@@ -198,7 +202,6 @@ public class ArticleController extends BaseController {
     RespObject resp = new RespObject();
     try {
       articleService.setDefaultArticleSupplier(articleUuid, uuid, getOperateContext(token));
-      ;
       Article article = articleService.get(articleUuid);
       resp.setObj(article);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -216,7 +219,6 @@ public class ArticleController extends BaseController {
     RespObject resp = new RespObject();
     try {
       articleService.setDefaultArticleQpc(articleUuid, uuid, getOperateContext(token));
-      ;
       Article article = articleService.get(articleUuid);
       resp.setObj(article);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -234,7 +236,6 @@ public class ArticleController extends BaseController {
     RespObject resp = new RespObject();
     try {
       articleService.deleteArticleQpc(articleUuid, uuid, getOperateContext(token));
-      ;
       Article article = articleService.get(articleUuid);
       resp.setObj(article);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -303,7 +304,6 @@ public class ArticleController extends BaseController {
     RespObject resp = new RespObject();
     try {
       articleService.deleteArticleBarcode(articleUuid, uuid, getOperateContext(token));
-      ;
       Article article = articleService.get(articleUuid);
       resp.setObj(article);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

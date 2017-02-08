@@ -85,7 +85,7 @@
 		#{name,jdbcType=VARCHAR},
 		#{spec,jdbcType=VARCHAR},
 		#{state,jdbcType=VARCHAR},
-		#{expdays,jdbcType=INTEGER},
+		#{expDays,jdbcType=INTEGER},
 		#{category.uuid,jdbcType=VARCHAR},
 		#{category.code,jdbcType=VARCHAR},
 		#{category.name,jdbcType=VARCHAR},
@@ -112,7 +112,7 @@
 			#{name,jdbcType=VARCHAR},
 			spec =
 			#{spec,jdbcType=VARCHAR},
-			expdays = #{expdays,jdbcType=INTEGER},
+			expdays = #{expDays,jdbcType=INTEGER},
 			firstInFirstOut =
 			#{firstInFirstOut,jdbcType=CHAR},
 			state =
