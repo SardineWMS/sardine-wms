@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd123.sardine.wms.dao.basicInfo.container.impl.ContainerDaoImpl">
+	<resultMap id="BaseResultMap" type="com.hd123.sardine.wms.api.basicInfo.container.Container">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="barcode" property="barcode" jdbcType="VARCHAR" />
+		<result column="containerTypeUuid" property="containerType.uuid" jdbcType="VARCHAR" />
+		<result column="containerTypeCode" property="containerType.code" jdbcType="VARCHAR" />
+		<result column="containerTypeName" property="containerType.name" jdbcType="VARCHAR" />		
+		<result column="position" property="position" jdbcType="VARCHAR" />
+		<result column="toPosition" property="toPosition" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="createdtime" property="createInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="createdID" property="createInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="createdcode" property="createInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="createdName" property="createInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="lastModifytime" property="lastModifyInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="lastModifyid" property="lastModifyInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="lastModifycode" property="lastModifyInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<select id="getByBarcode" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select t.* from sardine_container t
+		where t.barcode = #{barcode,jdbcType=VARCHAR}
+		and t.companyUuid = #{companyUuid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="queryContainer" parameterType="PageQueryDefinition"
+		resultMap="BaseResultMap">
+		select t.*
+		from sardine_container t
+		where 1=1
+		<if test="barcode != null">
+			and t.barcode like CONCAT(CONCAT('%', #{barcode}),
+			'%')
+		</if>
+		<if test="position != null">
+			and t.position = #{position,jdbcType=VARCHAR}
+		</if>
+		<if test="toPosition != null">
+			and t.toPosition = #{toPosition,jdbcType=VARCHAR}
+		</if>
+		<if test="state != null">
+			and t.state = #{state,jdbcType=VARCHAR}
+		</if>
+		order by t.barcode asc
+	</select>
+
+	<insert id="insertContainer" parameterType="com.hd123.sardine.wms.api.basicInfo.container.Container">
+		insert into sardine_container
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="barcode != null">
+				barcode,
+			</if>
+			<if test="containerType != null and containerType.uuid != null">
+				containerTypeUuid,
+			</if>
+			<if test="containerType != null and containerType.code != null">
+				containerTypeCode,
+			</if>
+			<if test="containerType != null and containerType.name != null">
+				containerTypeName,
+			</if>
+			<if test="position != null">
+				position,
+			</if>
+			<if test="toPosition != null">
+				toPosition,
+			</if>
+			<if test="companyUuid != null">
+				companyUuid,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="createInfo != null  and createInfo.time != null">
+				CREATEDTIME,
+			</if>
+			<if test="createInfo != null and createInfo.operator != null and createInfo.operator.id != null">
+				CREATEDID,
+			</if>
+			<if test="createInfo != null and createInfo.operator != null and createInfo.operator.code != null">
+				CREATEDCode,
+			</if>
+			<if test="createInfo != null and createInfo.operator != null and createInfo.operator.fullName != null">
+				CREATEDName,
+			</if>
+			<if test="lastModifyInfo != null  and lastModifyInfo.time != null">
+				LASTMODIFYTIME,
+			</if>
+			<if test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				LASTMODIFYID,
+			</if>
+			<if test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				LASTMODIFYCode,
+			</if>
+			<if test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				LASTMODIFYName,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="barcode != null">
+				#{barcode,jdbcType=VARCHAR},
+			</if>
+			<if test="containerType != null and containerType.uuid != null">
+				#{containerType.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="containerType != null and containerType.code != null">
+				#{containerType.code,jdbcType=VARCHAR},
+			</if>
+			<if test="containerType != null and containerType.name != null">
+				#{containerType.name,jdbcType=VARCHAR},
+			</if>
+			<if test="position != null">
+				#{position,jdbcType=VARCHAR},
+			</if>
+			<if test="toPosition != null">
+				#{toPosition,jdbcType=VARCHAR},
+			</if>
+			<if test="companyUuid != null">
+				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="createInfo != null  and createInfo.time != null">
+				#{createInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createInfo != null and createInfo.operator != null and createInfo.operator.id != null">
+				#{createInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if test="createInfo != null and createInfo.operator != null and createInfo.operator.code != null">
+				#{createInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if test="createInfo != null and createInfo.operator != null and createInfo.operator.fullName != null">
+				#{createInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+			<if test="lastModifyInfo != null  and lastModifyInfo.time != null">
+				#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+</mapper>

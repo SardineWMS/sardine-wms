@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd123.sardine.wms.dao.basicInfo.seq.impl.SequenceDaoImpl">
+	<select id="getNextValue" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		select nextval(#{seqName,jdbcType=VARCHAR}) FROM dual
+	</select>
+	
+	<select id="getCurrentValue" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		select currval(#{seqName,jdbcType=VARCHAR}) FROM dual
+	</select>
+
+	<insert id="insertSequence" parameterType="com.hd123.sardine.wms.dao.basicInfo.seq.Sequence">
+		insert into
+		sequence(name,current_value,increment)
+		values(
+		#{seqName,jdbcType=VARCHAR},
+		#{currentValue,jdbcType=VARCHAR},
+		#{increment,jdbcType=VARCHAR}
+		)
+	</insert>
+</mapper>

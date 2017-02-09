@@ -79,7 +79,7 @@ public class CategoryController extends BaseController {
             resp.setObj(category.getCode());
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("新增商品类别失败", e.getMessage());
+            return new ErrorRespObject("新增商品类别失败。。。", e.getMessage());
         }
         return resp;
     }
