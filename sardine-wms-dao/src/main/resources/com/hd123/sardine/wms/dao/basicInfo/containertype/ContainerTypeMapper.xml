@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.hd123.sardine.wms.dao.basicInfo.containertype.impl.ContainerTypeDaoImpl">
+	<resultMap id="BaseResultMap" type="ContainerType">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="barCodePrefix" property="barCodePrefix"
+			jdbcType="VARCHAR" />
+		<result column="barCodeLength" property="barCodeLength"
+			jdbcType="INTEGER" />
+		<result column="inLength" property="inLength" jdbcType="DECIMAL" />
+		<result column="inWidth" property="inWidth" jdbcType="DECIMAL" />
+		<result column="inHeight" property="inHeight" jdbcType="DECIMAL" />
+		<result column="outLength" property="outLength" jdbcType="DECIMAL" />
+		<result column="outWidth" property="outWidth" jdbcType="DECIMAL" />
+		<result column="outHeight" property="outHeight" jdbcType="DECIMAL" />
+		<result column="weight" property="weight" jdbcType="DECIMAL" />
+		<result column="bearingWeight" property="bearingWeight"
+			jdbcType="DECIMAL" />
+		<result column="isship" property="ship" jdbcType="VARCHAR" />
+		<result column="barCodeType" property="barCodeType" jdbcType="VARCHAR" />
+		<result column="rate" property="rate" jdbcType="DECIMAL" />
+		<result column="createdtime" property="createInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="createdID" property="createInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="createdcode" property="createInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="createdName" property="createInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="lastModifytime" property="lastModifyInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="lastModifyid" property="lastModifyInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="lastModifycode" property="lastModifyInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="INTEGER" />
+	</resultMap>
+
+	<delete id="remove" parameterType="map">
+		delete from
+		sardine_containertype
+		where
+		uuid
+		= #{uuid,jdbcType=VARCHAR}
+		and version =
+		#{version,jdbcType=LONGVARCHAR}
+	</delete>
+
+	<select id="get" parameterType="String" resultMap="BaseResultMap">
+		select t.*
+		from sardine_containertype t
+		where t.uuid = #{uuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getByCode" parameterType="String" resultMap="BaseResultMap">
+		select
+		t.*
+		from sardine_containertype t
+		where t.code = #{code,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insert" parameterType="ContainerType">
+		insert into sardine_containertype
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="code != null">
+				code,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="barCodePrefix != null">
+				barCodePrefix,
+			</if>
+			<if test="barCodeLength != null">
+				barCodeLength,
+			</if>
+			<if test="inLength != null">
+				inLength,
+			</if>
+			<if test="inWidth != null">
+				inWidth,
+			</if>
+			<if test="inHeight != null">
+				inHeight,
+			</if>
+			<if test="outLength != null">
+				outLength,
+			</if>
+			<if test="outWidth != null">
+				outWidth,
+			</if>
+			<if test="outHeight != null">
+				outHeight,
+			</if>
+			<if test="weight != null">
+				weight,
+			</if>
+			<if test="bearingWeight != null">
+				bearingWeight,
+			</if>
+			<if test="rate != null">
+				rate,
+			</if>
+			<if test="barCodeType != null">
+				barCodeType,
+			</if>
+			<if test="ship != null">
+				ISSHIP,
+			</if>
+			<if test="version != null">
+				VERSION,
+			</if>
+			<if test="companyUuid != null">
+				COMPANYUUID,
+			</if>
+			<if test="createInfo != null and createInfo.time != null">
+				CREATEDTIME ,
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.id != null">
+				CREATEDID,
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.code != null">
+				CREATEDCODE,
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.fullName != null">
+				CREATEDNAME,
+			</if>
+			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
+				LASTMODIFYTIME,
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				LASTMODIFYID,
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				LASTMODIFYCODE,
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				LASTMODIFYNAME,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="barCodePrefix != null">
+				#{barCodePrefix,jdbcType=VARCHAR},
+			</if>
+			<if test="barCodeLength != null">
+				#{barCodeLength,jdbcType=INTEGER},
+			</if>
+			<if test="inLength != null">
+				#{inLength,jdbcType=DECIMAL},
+			</if>
+			<if test="inWidth != null">
+				#{inWidth,jdbcType=DECIMAL},
+			</if>
+			<if test="inHeight != null">
+				#{inHeight,jdbcType=DECIMAL},
+			</if>
+			<if test="outLength != null">
+				#{outLength,jdbcType=DECIMAL},
+			</if>
+			<if test="outWidth != null">
+				#{outWidth,jdbcType=DECIMAL},
+			</if>
+			<if test="outHeight != null">
+				#{outHeight,jdbcType=DECIMAL},
+			</if>
+			<if test="weight != null">
+				#{weight,jdbcType=DECIMAL},
+			</if>
+			<if test="bearingWeight != null">
+				#{bearingWeight,jdbcType=DECIMAL},
+			</if>
+			<if test="rate != null">
+				#{rate,jdbcType=DECIMAL},
+			</if>
+			<if test="barCodeType != null">
+				#{barCodeType,jdbcType=VARCHAR},
+			</if>
+			<if test="ship != null">
+				#{ship,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=INTEGER},
+			</if>
+			<if test="companyUuid != null">
+				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="createInfo != null and createInfo.time != null">
+				#{createInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.id != null">
+				#{createInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.code != null">
+				#{createInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.fullName != null">
+				#{createInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
+				#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="ContainerType">
+		update sardine_containertype
+		<set>
+			<if test="code != null">
+				code = #{code,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="barCodePrefix != null">
+				barCodePrefix = #{barCodePrefix,jdbcType=VARCHAR},
+			</if>
+			<if test="barCodeLength != null">
+				barCodeLength = #{barCodeLength,jdbcType=INTEGER},
+			</if>
+			inLength = #{inLength,jdbcType=DECIMAL},
+			inWidth =
+			#{inWidth,jdbcType=DECIMAL},
+			inHeight =
+			#{inHeight,jdbcType=DECIMAL},
+			outLength =
+			#{outLength,jdbcType=DECIMAL},
+			outWidth =
+			#{outWidth,jdbcType=DECIMAL},
+			outHeight =
+			#{outHeight,jdbcType=DECIMAL},
+			weight = #{weight,jdbcType=DECIMAL},
+			bearingWeight = #{bearingWeight,jdbcType=DECIMAL},
+			rate =
+			#{rate,jdbcType=DECIMAL},
+			barCodeType =
+			#{barCodeType,jdbcType=VARCHAR},
+			ISSHIP =
+			#{ship,jdbcType=VARCHAR},
+			version = version + 1,
+			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
+				LASTMODIFYTIME =
+				#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				LASTMODIFYID =
+				#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				LASTMODIFYCODE =
+				#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				LASTMODIFYNAME =
+				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<where>
+			UUID = #{uuid,jdbcType=VARCHAR} and version =
+			#{version,jdbcType=LONGVARCHAR}
+		</where>
+	</update>
+
+	<select id="queryByPage" parameterType="PageQueryDefinition"
+		resultMap="BaseResultMap">
+		select t.*
+		from sardine_containertype t
+		where 1=1
+		<if test="code != null">
+			and s.code like CONCAT(CONCAT('%', #{code}),
+			'%')
+		</if>
+		<if test="name != null">
+			and s.name like CONCAT(CONCAT('%', #{name}),
+			'%')
+		</if>
+		<if test="sortField != null and sortField == 'code'">
+			order by t.code ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'name'">
+			order by t.name ${orderDir}
+		</if>
+	</select>
+</mapper>

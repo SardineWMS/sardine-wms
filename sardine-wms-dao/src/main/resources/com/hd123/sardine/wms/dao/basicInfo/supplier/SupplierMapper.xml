@@ -52,7 +52,7 @@
 		where s.code = #{code,jdbcType=VARCHAR}
 	</select>
 
-	<insert id="insert" parameterType="User">
+	<insert id="insert" parameterType="Supplier">
 		insert into
 		sardine_supplier (
 		uuid,
@@ -94,7 +94,7 @@
 		)
 	</insert>
 
-	<update id="update" parameterType="User">
+	<update id="update" parameterType="Supplier">
 		update sardine_supplier
 		<set>
 			code =
