@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd123.sardine.wms.dao.basicInfo.bin.impl.WrhDaoImpl">
+	<resultMap id="BaseResultMap" type="Wrh">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="note" property="note" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="get" parameterType="map" resultMap="BaseResultMap">
+		select u.*
+		from
+		sardine_wrh u
+		where u.uuid = #{uuid,jdbcType=VARCHAR}
+		and u.companyuuid
+		= #{companyUuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
+		select u.*
+		from sardine_wrh u
+		where u.code = #{code,jdbcType=VARCHAR}
+		and
+		u.companyuuid = #{companyUuid,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insert" parameterType="Wrh">
+		insert into
+		sardine_wrh (
+		uuid,
+		code,
+		name,
+		note,
+		companyuuid
+		)
+		values (
+		#{uuid,jdbcType=VARCHAR},
+		#{code,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{note,jdbcType=VARCHAR},
+		#{companyUuid,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<select id="queryByList" parameterType="map" resultMap="BaseResultMap">
+		select u.*
+		from sardine_wrh u
+		where 1=1
+		<if test="companyUuid != null">
+			and u.companyUuid = #{companyUuid,jdbcType=VARCHAR}
+		</if>
+	</select>
+</mapper>

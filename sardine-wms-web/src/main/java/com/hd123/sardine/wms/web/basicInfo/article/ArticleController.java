@@ -45,7 +45,7 @@ import com.hd123.sardine.wms.web.BaseController;
  *
  */
 @RestController
-@RequestMapping("/wms/basic/article")
+@RequestMapping("/basicinfo/article")
 public class ArticleController extends BaseController {
   @Autowired
   private ArticleService articleService;
