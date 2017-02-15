@@ -88,7 +88,7 @@ create table sardine_wrh(
 			uuid varchar(32) not null primary key,
 			code varchar(30) not null,
 			name varchar(100) not null,
-			note varchar(254) not null,
+			note varchar(254),
 			companyuuid varchar(30) not null
 );
 create unique index idx_sardine_wrh_01 on sardine_wms.sardine_wrh (code, companyuuid);
@@ -101,7 +101,7 @@ create table sardine_zone(
 			wrhuuid varchar(32) not null,
 			wrhcode varchar(30) not null,
 			wrhname varchar(100) not null,
-			note varchar(254) not null,
+			note varchar(254),
 			companyuuid varchar(30) not null
 );
 create unique index idx_sardine_zone_01 on sardine_wms.sardine_zone (code, companyuuid);
@@ -112,7 +112,7 @@ create table sardine_path(
 			uuid varchar(32) not null primary key,
 			code varchar(30) not null,
 			zoneuuid varchar(32) not null,
-			note varchar(254) not null,
+			note varchar(254),
 			companyuuid varchar(30) not null
 );
 create unique index idx_sardine_path_01 on sardine_wms.sardine_path (code, companyuuid);
@@ -123,7 +123,7 @@ create table sardine_shelf(
 			uuid varchar(32) not null primary key,
 			code varchar(30) not null,
 		    pathuuid varchar(32) not null,
-			note varchar(254) not null,
+			note varchar(254),
 			companyuuid varchar(30) not null
 );
 create unique index idx_sardine_shelf_01 on sardine_wms.sardine_shelf (code, companyuuid);

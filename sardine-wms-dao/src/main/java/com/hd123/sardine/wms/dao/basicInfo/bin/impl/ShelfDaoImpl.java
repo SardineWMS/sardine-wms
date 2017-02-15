@@ -40,8 +40,8 @@ public class ShelfDaoImpl extends NameSpaceSupport implements ShelfDao {
       return new ArrayList<Shelf>();
 
     Map<String, String> map = new HashMap<String, String>();
-    map.put(companyUuid, "companyUuid");
-    map.put(pathUuid, "pathUuid");
+    map.put("companyUuid", companyUuid);
+    map.put("pathUuid", pathUuid);
     List<Shelf> shelfs = getSqlSession().selectList(generateStatement(MAPPER_QUERY_BYLIST), map);
     return shelfs;
   }

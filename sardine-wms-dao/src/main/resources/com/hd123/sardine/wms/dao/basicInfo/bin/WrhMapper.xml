@@ -50,6 +50,6 @@
 		where 1=1
 		<if test="companyUuid != null">
 			and u.companyUuid = #{companyUuid,jdbcType=VARCHAR}
-		</if>
+		</if> order by u.code
 	</select>
 </mapper>

@@ -40,8 +40,8 @@ public class ZoneDaoImpl extends NameSpaceSupport implements ZoneDao {
       return new ArrayList<Zone>();
 
     Map<String, String> map = new HashMap<String, String>();
-    map.put(companyUuid, "companyUuid");
-    map.put(wrhUuid, "wrhUuid");
+    map.put("companyUuid", companyUuid);
+    map.put("wrhUuid", wrhUuid);
     List<Zone> zones = getSqlSession().selectList(generateStatement(MAPPER_QUERY_BYLIST), map);
     return zones;
   }

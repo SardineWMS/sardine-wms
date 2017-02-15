@@ -24,6 +24,7 @@ import com.hd123.sardine.wms.api.basicInfo.bin.BinState;
 import com.hd123.sardine.wms.api.basicInfo.bin.Path;
 import com.hd123.sardine.wms.api.basicInfo.bin.Shelf;
 import com.hd123.sardine.wms.api.basicInfo.bin.Wrh;
+import com.hd123.sardine.wms.api.basicInfo.bin.WrhType;
 import com.hd123.sardine.wms.api.basicInfo.bin.Zone;
 import com.hd123.sardine.wms.api.basicInfo.bintype.BinType;
 import com.hd123.sardine.wms.api.basicInfo.bintype.BinTypeService;
@@ -120,9 +121,9 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
     if (codeEqualsZone != null && Objects.equals(codeEqualsZone.getUuid(), zone.getUuid()) == false)
       throw new WMSException("货区" + zone.getCode() + "已存在。");
 
-    Wrh zoneOfWrh = wrhDao.get(zone.getCompanyUuid(), zone.getWrh().getUuid());
+    Wrh zoneOfWrh = wrhDao.get(zone.getWrh().getUuid(), zone.getCompanyUuid());
     if (zoneOfWrh == null) {
-      throw new WMSException("货区对应的仓位" + zone.getWrh().getCode() + "不存在。");
+      throw new WMSException("货区对应的仓位" + zone.getWrh().getUuid() + "不存在。");
     }
 
     zone.setWrh(new UCN(zoneOfWrh.getUuid(), zoneOfWrh.getCode(), zoneOfWrh.getName()));
@@ -157,28 +158,29 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
   }
 
   @Override
-  public void insertShelf(Shelf shelf, OperateContext operCtx)
+  public void insertShelf(String pathCode, String companyUuid, OperateContext operCtx)
       throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(shelf, "shelf");
-    Assert.assertArgumentNotNull(shelf.getPathUuid(), "shelf.zone");
-    Assert.assertArgumentNotNull(shelf.getCompanyUuid(), "shelf.companyUuid");
-    Assert.assertStringNotTooLong(shelf.getCode(), Shelf.LENGTH_CODE, "shelf.code");
-    Assert.assertStringNotTooLong(shelf.getNote(), Shelf.LENGTH_NOTE, "shelf.note");
+    Assert.assertArgumentNotNull(pathCode, "pathCode");
+    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+    Assert.assertStringNotTooLong(pathCode, Path.LENGTH_CODE, "pathCode");
 
     ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
     checkValidateResult(operCtxResult);
 
-    Path shelfOfPath = pathDao.get(shelf.getPathUuid(), shelf.getCompanyUuid());
+    Path shelfOfPath = pathDao.getByCode(companyUuid, pathCode);
     if (shelfOfPath == null) {
-      throw new WMSException("货架对应的货道" + shelf.getPathUuid() + "不存在。");
+      throw new WMSException("货架对应的货道" + pathCode + "不存在。");
     }
 
     int shelfCodeByInt = getSequenceNextValue(Shelf.class.getSimpleName() + shelfOfPath.getCode(),
-        shelf.getCompanyUuid());
+        companyUuid);
     String shelfCode = shelfCodeByInt < 10 ? "0" + String.valueOf(shelfCodeByInt)
         : String.valueOf(shelfCodeByInt);
 
-    shelf.setCode(shelfCode);
+    Shelf shelf = new Shelf();
+    shelf.setPathUuid(shelfOfPath.getUuid());
+    shelf.setCompanyUuid(companyUuid);
+    shelf.setCode(pathCode + shelfCode);
     shelf.setUuid(UUIDGenerator.genUUID());
     shelfDao.insert(shelf);
   }
@@ -187,11 +189,9 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
   public void insertBin(Bin bin, OperateContext operCtx)
       throws IllegalArgumentException, WMSException {
     Assert.assertArgumentNotNull(bin, "bin");
-    Assert.assertArgumentNotNull(bin.getBinLevel(), "bin.level");
-    Assert.assertArgumentNotNull(bin.getBinColumn(), "bin.column");
+    Assert.assertArgumentNotNull(bin.getCode(), "bin.code");
     Assert.assertArgumentNotNull(bin.getUsage(), "bin.usage");
     Assert.assertArgumentNotNull(bin.getBinType(), "bin.type");
-    Assert.assertArgumentNotNull(bin.getShelfUuid(), "bin.shelf");
     Assert.assertArgumentNotNull(bin.getCompanyUuid(), "bin.companyUuid");
     Assert.assertStringNotTooLong(bin.getCode(), Bin.LENGTH_CODE, "bin.code");
 
@@ -202,7 +202,7 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
     if (binType == null) {
       throw new WMSException("货位对应货位类型" + bin.getBinType().getCode() + "不存在。");
     }
-    Shelf binOfShelf = shelfDao.get(bin.getShelfUuid(), bin.getCompanyUuid());
+    Shelf binOfShelf = shelfDao.getByCode(bin.getCompanyUuid(), bin.getCode().substring(0, 6));
     if (binOfShelf == null) {
       throw new WMSException("货位对应货架" + bin.getShelfUuid() + "不存在。");
     }
@@ -214,12 +214,13 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
     if (binOfZone == null) {
       throw new IllegalArgumentException("货区不存在。");
     }
-
-    bin.setCode(binOfShelf.getCode() + bin.getBinColumn() + bin.getBinLevel());
     Bin codeEqualsBin = binDao.getByCode(bin.getCompanyUuid(), bin.getCode());
     if (codeEqualsBin != null && Objects.equals(codeEqualsBin.getUuid(), bin.getUuid()) == false)
       throw new WMSException("货位" + bin.getCode() + "已存在。");
 
+    bin.setShelfUuid(binOfShelf.getUuid());
+    bin.setBinLevel(bin.getCode().substring(7));
+    bin.setBinColumn(bin.getCode().substring(7, 8));
     bin.setBinType(new UCN(binType.getUuid(), binType.getCode(), binType.getName()));
     bin.setWrh(binOfZone.getWrh());
     bin.setState(BinState.free);
@@ -248,31 +249,35 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
     List<Wrh> wrhs = wrhDao.query(companyUuid);
     for (Wrh wrh : wrhs) {
       BinInfo wrhInfo = new BinInfo();
-      wrhInfo.setUuid(wrh.getUuid());
-      wrhInfo.setCode(wrh.toFriendString());
+      wrhInfo.setTitle(wrh.getUuid());
+      wrhInfo.setKey(wrh.toFriendString());
+      wrhInfo.setType(WrhType.wrh);
 
       List<Zone> wrhOfZones = zoneDao.query(companyUuid, wrh.getUuid());
       for (Zone zone : wrhOfZones) {
         BinInfo zoneInfo = new BinInfo();
-        zoneInfo.setUuid(zone.getUuid());
-        zoneInfo.setCode(zone.toFriendString());
+        zoneInfo.setTitle(zone.getUuid());
+        zoneInfo.setKey(zone.toFriendString());
+        zoneInfo.setType(WrhType.zone);
 
         List<Path> zoneOfPaths = pathDao.query(companyUuid, zone.getUuid());
         for (Path path : zoneOfPaths) {
           BinInfo pathInfo = new BinInfo();
-          pathInfo.setUuid(path.getUuid());
-          pathInfo.setCode(path.getCode());
+          pathInfo.setTitle(path.getUuid());
+          pathInfo.setKey(path.getCode());
+          pathInfo.setType(WrhType.path);
 
           List<Shelf> pathOfShelfs = shelfDao.query(companyUuid, path.getUuid());
           for (Shelf shelf : pathOfShelfs) {
             BinInfo shelfInfo = new BinInfo();
-            shelfInfo.setUuid(shelf.getUuid());
-            shelfInfo.setCode(shelf.getCode());
-            pathInfo.getChilders().add(shelfInfo);
+            shelfInfo.setTitle(shelf.getUuid());
+            shelfInfo.setKey(shelf.getCode());
+            shelfInfo.setType(WrhType.shelf);
+            pathInfo.getChildren().add(shelfInfo);
           }
-          zoneInfo.getChilders().add(pathInfo);
+          zoneInfo.getChildren().add(pathInfo);
         }
-        wrhInfo.getChilders().add(zoneInfo);
+        wrhInfo.getChildren().add(zoneInfo);
       }
       result.add(wrhInfo);
     }
@@ -308,17 +313,17 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
     return zones;
   }
 
-  private int getSequenceNextValue(String sequenceName, String companyUuid) {
-    int currentValue = sequenceDao.getCurrentValue(sequenceName, companyUuid);
+  private synchronized int getSequenceNextValue(String sequenceName, String companyUuid) {
+    int currentValue = sequenceDao.getCurrentValue(sequenceName + companyUuid, companyUuid);
     if (currentValue == 0) {
       Sequence seq = new Sequence();
       seq.setCompanyUuid(companyUuid);
       seq.setCurrentValue(0);
       seq.setIncrement(1);
-      seq.setSeqName(sequenceName);
+      seq.setSeqName(sequenceName + companyUuid);
       sequenceDao.saveSequence(seq);
     }
 
-    return sequenceDao.getNextValue(sequenceName, companyUuid);
+    return sequenceDao.getNextValue(sequenceName + companyUuid, companyUuid);
   }
 }

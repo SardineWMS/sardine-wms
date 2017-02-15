@@ -50,7 +50,7 @@
 		shelfuuid,
 		binusage,
 		binlevel,
-		bincolume,
+		bincolumn,
 		state,
 		companyuuid,
 		version
@@ -58,9 +58,9 @@
 		values (
 		#{uuid,jdbcType=VARCHAR},
 		#{code,jdbcType=VARCHAR},
-		#{bintype.uuid,jdbcType=VARCHAR},
-		#{bintype.code,jdbcType=VARCHAR},
-		#{bintype.name,jdbcType=VARCHAR},
+		#{binType.uuid,jdbcType=VARCHAR},
+		#{binType.code,jdbcType=VARCHAR},
+		#{binType.name,jdbcType=VARCHAR},
 		#{wrh.uuid,jdbcType=VARCHAR},
 		#{wrh.code,jdbcType=VARCHAR},
 		#{wrh.name,jdbcType=VARCHAR},
@@ -88,6 +88,24 @@
 		</if>
 		<if test="state != null">
 			and u.state = #{state,jdbcType=VARCHAR}
+		</if>
+		<if test="wrhUuid != null">
+			and u.wrhuuid = #{wrhUuid,jdbcType=VARCHAR}
+		</if>
+	    <if test="zoneUuid != null">
+			and u.shelfUuid in (
+			select s.uuid from sardine_shelf s,sardine_path p,sardine_zone z where 
+			s.pathuuid = p.uuid and p.zoneuuid = z.uuid and z.uuid = #{zoneUuid,jdbcType=VARCHAR}
+			)
+		</if>
+	    <if test="pathUuid != null">
+			and u.shelfUuid in (
+			select s.uuid from sardine_shelf s,sardine_path p where 
+			s.pathuuid = p.uuid and p.uuid = #{pathUuid,jdbcType=VARCHAR}
+			)
+		</if>
+	    <if test="shelfUuid != null">
+			and u.shelfUuid = #{shelfUuid,jdbcType=VARCHAR}
 		</if>
 		<if test="states != null">
 			and u.state in ${states}

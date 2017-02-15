@@ -55,5 +55,6 @@
 		<if test="pathUuid != null">
 			and u.pathUuid = #{pathUuid,jdbcType=VARCHAR}
 		</if>
+		order by u.code
 	</select>
 </mapper>

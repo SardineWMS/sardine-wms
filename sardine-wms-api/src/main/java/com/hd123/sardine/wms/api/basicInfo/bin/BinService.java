@@ -47,6 +47,8 @@ public interface BinService {
   public static final String QUERY_USAGE_FIELD = "usage";
   /** 查询条件：货位类型 */
   public static final String QUERY_BINTYPE_FIELD = "bintype";
+  /** 查询条件：货位代码 */
+  public static final String QUERY_CODE_FIELD = "code";
 
   /**
    * 新增仓位
@@ -102,21 +104,23 @@ public interface BinService {
    * 代码长度6位，后两位由序列生成，前四位为对应的货道代码<br>
    * 且{@link Shelf#getCompanyUuid()}与{@link Shelf#getPathUuid()}所属组织一致
    * 
-   * @param shelf
-   *          货架，not null
+   * @param pathCode
+   *          货道代码，not null
+   * @param companyUuid
+   *          组织ID，not null
    * @param operCtx
    *          操作信息，not null
    * @throws IllegalArgumentException
    *           参数为空
    * @throws WMSException
    */
-  void insertShelf(Shelf shelf, OperateContext operCtx)
+  void insertShelf(String pathCode, String companyUuid, OperateContext operCtx)
       throws IllegalArgumentException, WMSException;
 
   /**
    * 新增货位
    * <p>
-   * 代码自动生成，代码=货架代码+层+列<br>
+   * 代码不能为空<br>
    * 且{@link Bin#getCompanyUuid()}与{@link Bin#getShelfUuid()}所属组织一致
    * 
    * @param bin

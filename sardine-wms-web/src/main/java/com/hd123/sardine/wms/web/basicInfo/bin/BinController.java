@@ -18,14 +18,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.bin.Bin;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinInfo;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
+import com.hd123.sardine.wms.api.basicInfo.bin.BinState;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.api.basicInfo.bin.Path;
-import com.hd123.sardine.wms.api.basicInfo.bin.Shelf;
 import com.hd123.sardine.wms.api.basicInfo.bin.Wrh;
 import com.hd123.sardine.wms.api.basicInfo.bin.Zone;
+import com.hd123.sardine.wms.api.basicInfo.bintype.BinType;
+import com.hd123.sardine.wms.api.basicInfo.bintype.BinTypeService;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
@@ -47,12 +50,19 @@ public class BinController extends BaseController {
   @Autowired
   private BinService binService;
 
+  @Autowired
+  private BinTypeService binTypeService;
+
   @RequestMapping(value = "/query", method = RequestMethod.GET)
   public @ResponseBody RespObject query(
       @RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "page", required = false, defaultValue = "1") int page,
       @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
       @RequestParam(value = "sort", required = false) String sort,
+      @RequestParam(value = "wrhUuid", required = false) String wrhUuid,
+      @RequestParam(value = "zoneUuid", required = false) String zoneUuid,
+      @RequestParam(value = "pathUuid", required = false) String pathUuid,
+      @RequestParam(value = "shelfUuid", required = false) String shelfUuid,
       @RequestParam(value = "code", required = false) String code,
       @RequestParam(value = "state", required = false) String state,
       @RequestParam(value = "usage", required = false) String usage,
@@ -65,17 +75,19 @@ public class BinController extends BaseController {
       definition.setSortField(sort);
       definition.setOrderDir(OrderDir.valueOf(sortDirection));
       definition.setCompanyUuid(getLoginCompany(token).getUuid());
+      definition.put(BinService.QUERY_WRH_FIELD, wrhUuid);
+      definition.put(BinService.QUERY_ZONE_FIELD, zoneUuid);
+      definition.put(BinService.QUERY_PATH_FIELD, pathUuid);
+      definition.put(BinService.QUERY_SHELF_FIELD, shelfUuid);
+      definition.put(BinService.QUERY_CODE_FIELD, code);
+      definition.put(BinService.QUERY_STATE_FIELD, StringUtil.isNullOrBlank(state) ? null : BinState.valueOf(state));
+      definition.put(BinService.QUERY_USAGE_FIELD, StringUtil.isNullOrBlank(usage) ? null : BinUsage.valueOf(usage));
+      
       PageQueryResult<Bin> result = binService.queryBin(definition);
       List<BinInfo> infos = binService.queryTreeData(getLoginCompany(token).getUuid());
       BinQueryResult resultData = new BinQueryResult();
       resultData.setPageData(result);
-      for (BinInfo info : infos) {
-        BinTreeData treeData = new BinTreeData();
-        treeData.setTitle(info.getCode());
-        treeData.setKey(info.getUuid());
-        // treeData.setChildren(info.getChilders());
-        resultData.getTreeData().add(treeData);
-      }
+      resultData.setTreeData(infos);
       resp.setObj(resultData);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
@@ -108,6 +120,24 @@ public class BinController extends BaseController {
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
       return new ErrorRespObject("查询货区信息失败", e.getMessage());
+    }
+    return resp;
+  }
+
+  @RequestMapping(value = "/queryBinTypes", method = RequestMethod.GET)
+  public @ResponseBody RespObject queryBinTypes(
+      @RequestParam(value = "token", required = true) String token) {
+    RespObject resp = new RespObject();
+    try {
+      PageQueryDefinition definition = new PageQueryDefinition();
+      definition.setCompanyUuid(getLoginCompany(token).getUuid());
+      definition.setPage(1);
+      definition.setPageSize(1000);
+      PageQueryResult<BinType> binTypes = binTypeService.query(definition);
+      resp.setObj(binTypes.getRecords());
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("查询货位类型失败", e.getMessage());
     }
     return resp;
   }
@@ -151,6 +181,7 @@ public class BinController extends BaseController {
       binService.insertZone(zone, getOperateContext(token));
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
+      e.printStackTrace();
       return new ErrorRespObject("保存货区失败", e.getMessage());
     }
     return resp;
@@ -168,6 +199,7 @@ public class BinController extends BaseController {
       binService.insertPath(path, getOperateContext(token));
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
+      e.printStackTrace();
       return new ErrorRespObject("保存货道失败", e.getMessage());
     }
     return resp;
@@ -176,15 +208,13 @@ public class BinController extends BaseController {
   @RequestMapping(value = "/insertShelf", method = RequestMethod.PUT)
   public @ResponseBody RespObject insertShelf(
       @RequestParam(value = "token", required = true) String token,
-      @RequestParam(value = "pathUuid", required = true) String pathUuid) {
+      @RequestParam(value = "pathCode", required = true) String pathCode) {
     RespObject resp = new RespObject();
     try {
-      Shelf shelf = new Shelf();
-      shelf.setCompanyUuid(getLoginCompany(token).getUuid());
-      shelf.setPathUuid(pathUuid);
-      binService.insertShelf(shelf, getOperateContext(token));
+      binService.insertShelf(pathCode, getLoginCompany(token).getUuid(), getOperateContext(token));
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
+      e.printStackTrace();
       return new ErrorRespObject("保存货架失败", e.getMessage());
     }
     return resp;
@@ -192,24 +222,21 @@ public class BinController extends BaseController {
 
   @RequestMapping(value = "/insertBin", method = RequestMethod.PUT)
   public @ResponseBody RespObject insertBin(
-      @RequestParam(value = "binLevel", required = true) String binLevel,
-      @RequestParam(value = "binColumn", required = true) String binColumn,
       @RequestParam(value = "token", required = true) String token,
-      @RequestParam(value = "shelfUuid", required = true) String shelfUuid,
+      @RequestParam(value = "code", required = true) String code,
       @RequestParam(value = "binTypeUuid", required = true) String binTypeUuid,
       @RequestParam(value = "binUsage", required = true) String binUsage) {
     RespObject resp = new RespObject();
     try {
       Bin bin = new Bin();
-      bin.setBinLevel(binLevel);
-      bin.setBinColumn(binColumn);
+      bin.setCode(code);
       bin.setCompanyUuid(getLoginCompany(token).getUuid());
-      bin.setShelfUuid(shelfUuid);
       bin.setUsage(BinUsage.valueOf(binUsage));
       bin.setBinType(new UCN(binTypeUuid, null, null));
       binService.insertBin(bin, getOperateContext(token));
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
+      e.printStackTrace();
       return new ErrorRespObject("保存货位失败", e.getMessage());
     }
     return resp;
@@ -218,8 +245,7 @@ public class BinController extends BaseController {
   @RequestMapping(value = "/delete", method = RequestMethod.PUT)
   public @ResponseBody RespObject delete(@RequestParam(value = "uuid", required = true) String uuid,
       @RequestParam(value = "version", required = false) long version,
-      @RequestParam(value = "token", required = true) String token,
-      @RequestParam(value = "type", required = true) String type) {
+      @RequestParam(value = "token", required = true) String token) {
     RespObject resp = new RespObject();
     try {
       binService.remove(uuid, version, getLoginCompany(token).getUuid(), getOperateContext(token));

@@ -14,8 +14,8 @@
 		from
 		sardine_path u
 		where u.uuid = #{uuid,jdbcType=VARCHAR}
-		and u.zoneuuid
-		= #{zoneUuid,jdbcType=VARCHAR}
+		and u.companyUuid
+		= #{companyUuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
@@ -54,5 +54,6 @@
 		<if test="zoneUuid != null">
 			and u.zoneUuid = #{zoneUuid,jdbcType=VARCHAR}
 		</if>
+		order by u.code
 	</select>
 </mapper>

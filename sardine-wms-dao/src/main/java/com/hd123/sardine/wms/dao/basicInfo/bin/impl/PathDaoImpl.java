@@ -40,8 +40,8 @@ public class PathDaoImpl extends NameSpaceSupport implements PathDao {
       return new ArrayList<Path>();
 
     Map<String, String> map = new HashMap<String, String>();
-    map.put(companyUuid, "companyUuid");
-    map.put(zoneUuid, "zoneUuid");
+    map.put("companyUuid", companyUuid);
+    map.put("zoneUuid", zoneUuid);
     List<Path> paths = getSqlSession().selectList(generateStatement(MAPPER_QUERY_BYLIST), map);
     return paths;
   }

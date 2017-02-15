@@ -63,5 +63,6 @@
 		<if test="wrhUuid != null">
 			and u.wrhUuid = #{wrhUuid,jdbcType=VARCHAR}
 		</if>
+		order by u.code
 	</select>
 </mapper>

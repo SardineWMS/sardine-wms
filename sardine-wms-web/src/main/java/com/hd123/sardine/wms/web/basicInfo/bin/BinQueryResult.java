@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hd123.sardine.wms.api.basicInfo.bin.Bin;
+import com.hd123.sardine.wms.api.basicInfo.bin.BinInfo;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 
 /**
@@ -24,7 +25,7 @@ public class BinQueryResult implements Serializable {
   private static final long serialVersionUID = 4475194825649953084L;
 
   private PageQueryResult<Bin> pageData = new PageQueryResult<Bin>();
-  private List<BinTreeData> treeData = new ArrayList<BinTreeData>();
+  private List<BinInfo> treeData = new ArrayList<BinInfo>();
 
   public PageQueryResult<Bin> getPageData() {
     return pageData;
@@ -34,11 +35,11 @@ public class BinQueryResult implements Serializable {
     this.pageData = pageData;
   }
 
-  public List<BinTreeData> getTreeData() {
+  public List<BinInfo> getTreeData() {
     return treeData;
   }
 
-  public void setTreeData(List<BinTreeData> treeData) {
+  public void setTreeData(List<BinInfo> treeData) {
     this.treeData = treeData;
   }
 }
