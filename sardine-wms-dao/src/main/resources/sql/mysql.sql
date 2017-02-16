@@ -153,3 +153,74 @@ create index idx_sardine_bin_03 on sardine_wms.sardine_bin (bintypeuuid);
 create index idx_sardine_bin_04 on sardine_wms.sardine_bin (shelfuuid);
 create index idx_sardine_bin_05 on sardine_wms.sardine_bin (binusage);
 create index idx_sardine_bin_06 on sardine_wms.sardine_bin (state);
+
+--- 序列表
+CREATE TABLE IF NOT EXISTS sequence (  
+  name varchar(50) NOT NULL,
+  current_value int(11) NOT NULL,  
+  increment int(11) NOT NULL DEFAULT '1',
+  companyuuid varchar(32) not null
+);
+
+DROP FUNCTION IF EXISTS currval;  
+CREATE  FUNCTION currval(seq_name VARCHAR(50),companyuuid varchar(32)) RETURNS int(11)
+    READS SQL DATA
+    DETERMINISTIC
+BEGIN  
+DECLARE VALUE INTEGER;  
+SET VALUE = 0;  
+SELECT current_value INTO VALUE FROM sequence WHERE NAME = seq_name and companyuuid = companyuuid;  
+RETURN VALUE;  
+END;
+
+DROP FUNCTION IF EXISTS nextval;  
+CREATE  FUNCTION nextval(seq_name VARCHAR(50),companyuuid varchar(32)) RETURNS int(11)  
+    DETERMINISTIC  
+BEGIN  
+UPDATE sequence SET current_value = current_value + increment WHERE NAME = seq_name and companyuuid = companyuuid;  
+RETURN currval(seq_name,companyuuid);  
+END;
+
+CREATE TABLE sardine_container (
+  uuid varchar(32)  not NULL primary key,
+  barcode varchar(32) not NULL,
+  containerTypeUuid varchar(32) not NULL,
+  containerTypeCode varchar(32) not NULL,
+  containerTypeName varchar(32) not NULL,
+  companyUuid varchar(32)  not NULL,
+  state varchar(32)  not NULL,
+  position varchar(32) not NULL,
+  toposition varchar(32)  NOT NULL,
+  remark varchar(255)  DEFAULT NULL,
+  version int(11) DEFAULT '0',
+  createdtime datetime NOT NULL,
+  createdID varchar(30)  NOT NULL,
+  createdcode varchar(30)  NOT NULL,
+  createdName varchar(100)  NOT NULL,
+  lastModifytime datetime NOT NULL,
+  lastModifyid varchar(30)  NOT NULL,
+  lastModifycode varchar(30)  NOT NULL,
+  lastModifyname varchar(100)  NOT NULL
+);
+create unique index idx_sardine_container_01 on sardine_wms.sardine_container (barcode, companyuuid);
+
+CREATE TABLE sardine_category (
+	uuid  varchar(32)  NOT NULL primary key,
+	code  varchar(32)  NOT NULL ,
+	name  varchar(32)  NOT NULL ,
+	companyUuid  varchar(32)  NULL DEFAULT NULL ,
+	uppercategory  varchar(32)  NOT NULL ,
+	remark  varchar(255)  NULL DEFAULT NULL ,
+	version  int(11) NULL DEFAULT 0 ,
+	createdtime  datetime NOT NULL ,
+	createdID  varchar(30)  NOT NULL ,
+	createdcode  varchar(30)  NOT NULL ,
+	createdName  varchar(100)  NOT NULL ,
+	lastModifytime  datetime NOT NULL ,
+	lastModifyid  varchar(30)  NOT NULL ,
+	lastModifycode  varchar(30)  NOT NULL ,
+	lastModifyname  varchar(100)  NOT NULL 
+);
+create unique index idx_sardine_category_01 on sardine_wms.sardine_category (barcode, companyuuid);
+
+

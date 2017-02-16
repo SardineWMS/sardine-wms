@@ -10,6 +10,7 @@
 package com.hd123.sardine.wms.api.basicInfo.container;
 
 import com.hd123.sardine.wms.common.entity.OperateContext;
+import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 
@@ -25,7 +26,7 @@ public interface ContainerService {
      *            not null
      * @param operateContext
      */
-    void saveNew(String containerTypeUuid, OperateContext operateContext);
+    void saveNew(String containerTypeUuid, OperateContext operateContext) throws WMSException;
 
     /***
      * 根据容器条码和组织查询容器

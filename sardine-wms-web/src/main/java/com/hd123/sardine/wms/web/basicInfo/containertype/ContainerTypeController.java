@@ -9,6 +9,9 @@
  */
 package com.hd123.sardine.wms.web.basicInfo.containertype;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hd123.sardine.wms.api.basicInfo.containertype.ContainerType;
 import com.hd123.sardine.wms.api.basicInfo.containertype.ContainerTypeService;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -47,6 +51,29 @@ public class ContainerTypeController extends BaseController {
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             return new ErrorRespObject("查询失败", e.getMessage());
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/querycontainerTypesUcns", method = RequestMethod.GET)
+    public @ResponseBody RespObject queryContainerTypeUCN(
+            @RequestParam(value = "token", required = false) String token) {
+        RespObject resp = new RespObject();
+        try {
+            PageQueryDefinition definition = new PageQueryDefinition();
+            definition.setPage(1);
+            definition.setPageSize(100);
+            definition.setCompanyUuid(getLoginCompany(token).getUuid());
+            PageQueryResult<ContainerType> result = containerTypeService.query(definition);
+
+            List<UCN> containerTypes = new ArrayList<>();
+            for (ContainerType c : result.getRecords()) {
+                containerTypes.add(new UCN(c.getUuid(), c.getCode(), c.getName()));
+            }
+            resp.setObj(containerTypes);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (Exception e) {
+            return new ErrorRespObject("分页查询失败", e.getMessage());
         }
         return resp;
     }

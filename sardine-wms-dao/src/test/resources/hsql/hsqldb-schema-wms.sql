@@ -113,3 +113,10 @@ CREATE TABLE SARDINE_CONTAINERTYPE
 	CREATEDTIME	   DATETIME	NOT NULL,
 	LASTMODIFYTIME DATETIME	NOT NULL
 );
+
+CREATE TABLE sequence(  
+  name varchar(50) NOT NULL,
+  current_value INT NOT NULL,  
+  increment INT NOT NULL,
+  companyuuid varchar(32) not null
+);

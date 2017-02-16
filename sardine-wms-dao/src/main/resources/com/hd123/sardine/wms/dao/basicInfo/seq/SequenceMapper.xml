@@ -3,21 +3,21 @@
 <mapper namespace="com.hd123.sardine.wms.dao.basicInfo.seq.impl.SequenceDaoImpl">
 	<select id="getNextValue" parameterType="java.util.Map"
 		resultType="java.lang.Integer">
-		select nextval(#{seqName,jdbcType=VARCHAR}) FROM dual
+		select nextval(#{seqName,jdbcType=VARCHAR},#{companyUuid,jdbcType=VARCHAR}) FROM dual
 	</select>
 	
 	<select id="getCurrentValue" parameterType="java.util.Map"
 		resultType="java.lang.Integer">
-		select currval(#{seqName,jdbcType=VARCHAR}) FROM dual
+		select currval(#{seqName,jdbcType=VARCHAR},#{companyUuid,jdbcType=VARCHAR}) FROM dual
 	</select>
 
 	<insert id="insertSequence" parameterType="com.hd123.sardine.wms.dao.basicInfo.seq.Sequence">
 		insert into
-		sequence(name,current_value,increment)
+		sequence(name,current_value,increment,companyUuid)
 		values(
 		#{seqName,jdbcType=VARCHAR},
 		#{currentValue,jdbcType=VARCHAR},
-		#{increment,jdbcType=VARCHAR}
-		)
+		#{increment,jdbcType=VARCHAR},
+		#{companyUuid,jdbcType=VARCHAR})
 	</insert>
 </mapper>

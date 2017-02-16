@@ -9,7 +9,6 @@
  */
 package com.hd123.sardine.wms.web.basicInfo.category;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.api.basicInfo.category.Category;
 import com.hd123.sardine.wms.api.basicInfo.category.CategoryService;
-import com.hd123.sardine.wms.common.entity.OperateContext;
-import com.hd123.sardine.wms.common.entity.Operator;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -41,10 +39,12 @@ public class CategoryController extends BaseController {
     private CategoryService categoryService;
 
     @RequestMapping(value = "/query", method = RequestMethod.GET)
-    public @ResponseBody RespObject getRootCategorys() {
+    public @ResponseBody RespObject getRootCategorys(
+            @RequestParam(value = "token", required = true) String token) {
         try {
             RespObject resp = new RespObject();
-            List<Category> categorys = categoryService.getRootCategorys("1001");
+            List<Category> categorys = categoryService
+                    .getRootCategorys(getLoginCompany(token).getUuid());
             resp.setObj(categorys);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
             return resp;
@@ -68,14 +68,11 @@ public class CategoryController extends BaseController {
 
     @RequestMapping(value = "/savenew", method = RequestMethod.POST)
     public @ResponseBody RespObject saveNew(@RequestBody Category category) {
+        Assert.assertArgumentNotNull(category.getToken(), "category.token");
         RespObject resp = new RespObject();
         try {
-            OperateContext operCtx = new OperateContext();
-            operCtx.setOperator(new Operator("111", "222", "XXX"));
-            operCtx.setTime(new Date());
-            category.setCompanyUuid("1001");
-            
-            categoryService.saveNew(category, operCtx);
+            category.setCompanyUuid(getLoginCompany(category.getToken()).getUuid());
+            categoryService.saveNew(category, getOperateContext(category.getToken()));
             resp.setObj(category.getCode());
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -86,14 +83,11 @@ public class CategoryController extends BaseController {
 
     @RequestMapping(value = "/savemodify", method = RequestMethod.POST)
     public @ResponseBody RespObject saveModify(@RequestBody Category category) {
+        Assert.assertArgumentNotNull(category.getToken(), "category.token");
         try {
             RespObject resp = new RespObject();
-            OperateContext operCtx = new OperateContext();
-            operCtx.setOperator(new Operator("111", "222", "XXX"));
-            operCtx.setTime(new Date());
-            category.setCompanyUuid("1001");
-            
-            categoryService.saveModify(category, operCtx);
+            category.setCompanyUuid(getLoginCompany(category.getToken()).getUuid());
+            categoryService.saveModify(category, getOperateContext(category.getToken()));
             resp.setObj(category.getCode());
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
             return resp;
@@ -105,14 +99,11 @@ public class CategoryController extends BaseController {
     @RequestMapping(value = "/remove", method = RequestMethod.DELETE)
     public @ResponseBody RespObject remove(
             @RequestParam(value = "uuid", required = true) String uuid,
-            @RequestParam(value = "version", required = true) long version) {
+            @RequestParam(value = "version", required = true) long version,
+            @RequestParam(value = "token", required = true) String token) {
         try {
             RespObject resp = new RespObject();
-            OperateContext operCtx = new OperateContext();
-            operCtx.setOperator(new Operator("111", "222", "XXX"));
-            operCtx.setTime(new Date());
-            
-            categoryService.remove(uuid, version, operCtx);
+            categoryService.remove(uuid, version, getOperateContext(token));
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
             return resp;
         } catch (Exception e) {

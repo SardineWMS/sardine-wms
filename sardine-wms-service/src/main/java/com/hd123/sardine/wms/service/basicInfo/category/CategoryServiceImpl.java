@@ -37,14 +37,14 @@ public class CategoryServiceImpl extends BaseWMSService implements CategoryServi
     public List<Category> getRootCategorys(String companyUuid) {
         if (StringUtil.isNullOrBlank(companyUuid))
             return new ArrayList<>();
-        
+
         List<Category> categorys = dao.getRootCategorys(companyUuid);
         for (Category o : categorys) {
             o.setChildren(queryLowers(o.getUuid()));
         }
         return categorys;
     }
-    
+
     private List<Category> queryLowers(String categoryUuid) {
         List<Category> categorys = dao.getLowerCategorys(categoryUuid);
         for (Category o : categorys) {
@@ -108,7 +108,7 @@ public class CategoryServiceImpl extends BaseWMSService implements CategoryServi
         Assert.assertArgumentNotNull(category.getCompanyUuid(), "category.companyUuid");
 
         Category tCategory = dao.getByCode(category.getCode(), category.getCompanyUuid());
-        if (tCategory != null)
+        if (tCategory != null && tCategory.getUuid().equals(category.getUuid()) == false)
             throw new WMSException("类别代码“" + category.getCode() + "”已经存在。");
 
         category.setCreateInfo(OperateInfo.newInstance(operCtx));
@@ -120,7 +120,7 @@ public class CategoryServiceImpl extends BaseWMSService implements CategoryServi
     public void remove(String uuid, long verison, OperateContext operCtx) {
         Assert.assertArgumentNotNull(uuid, "uuid");
         Assert.assertArgumentNotNull(verison, "verison");
-        
+
         dao.remove(uuid, verison);
     }
 }

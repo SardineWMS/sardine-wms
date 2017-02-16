@@ -17,9 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
+import com.hd123.sardine.wms.api.basicInfo.containertype.ContainerType;
+import com.hd123.sardine.wms.api.basicInfo.containertype.ContainerTypeService;
 import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.entity.OperateInfo;
 import com.hd123.sardine.wms.common.entity.UCN;
+import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
@@ -37,30 +40,41 @@ public class ContainerServiceImpl implements ContainerService {
     private ContainerDao dao;
     @Autowired
     private SequenceDao seqDao;
+    @Autowired
+    private ContainerTypeService containerTypeService;
 
     @Override
-    public void saveNew(String containerTypeUuid, OperateContext operateContext) {
-        // 获取容器类型
-        int currentValue = seqDao.getCurrentValue("XX", "XX");
+    public void saveNew(String containerTypeUuid, OperateContext operateContext)
+            throws WMSException {
+        Assert.assertArgumentNotNull(containerTypeUuid, "containerTypeUuid");
+
+        ContainerType containerType = containerTypeService.get(containerTypeUuid);
+        if (containerType == null)
+            throw new WMSException("容器类型不存在。");
+
+        int currentValue = seqDao.getCurrentValue(containerType.getBarCodePrefix(),
+                containerType.getCompanyUuid());
         if (currentValue == 0) {
             Sequence seq = new Sequence();
-            seq.setSeqName("XX");
+            seq.setSeqName(containerType.getBarCodePrefix());
             seq.setIncrement(1);
             seq.setCurrentValue(0);
+            seq.setCompanyUuid(containerType.getCompanyUuid());
             seqDao.saveSequence(seq);
         }
 
         Container container = new Container();
         container.setUuid(UUIDGenerator.genUUID());
-        String flowCode = String.valueOf(seqDao.getNextValue("XX", "XX"));
-        int containerTypeLength = 6;
-        container.setBarcode(
-                "X" + StringUtils.repeat("0", containerTypeLength - flowCode.length()) + flowCode);
-        container.setContainerType(new UCN("XX", "X", "X"));
-        container.setCompanyUuid("001");
+        String flowCode = String.valueOf(seqDao.getNextValue(containerType.getBarCodePrefix(),
+                containerType.getCompanyUuid()));
+        container.setBarcode(containerType.getBarCodePrefix()
+                + StringUtils.repeat("0", containerType.getBarCodeLength() - flowCode.length())
+                + flowCode);
+        container.setContainerType(
+                new UCN(containerTypeUuid, containerType.getCode(), containerType.getName()));
+        container.setCompanyUuid(containerType.getCompanyUuid());
         container.setCreateInfo(OperateInfo.newInstance(operateContext));
         container.setLastModifyInfo(OperateInfo.newInstance(operateContext));
-
         dao.insert(container);
     }
 

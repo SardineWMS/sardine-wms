@@ -9,8 +9,6 @@
  */
 package com.hd123.sardine.wms.web.basicInfo.container;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,10 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
-import com.hd123.sardine.wms.common.entity.OperateContext;
-import com.hd123.sardine.wms.common.entity.Operator;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -65,18 +62,18 @@ public class ContainerController extends BaseController {
         return resp;
     }
 
-    @RequestMapping(value = "/savenew", method = RequestMethod.POST)
-    public @ResponseBody RespObject saveNew(String containerTypeUuid) {
+    @RequestMapping(value = "/savenew", method = RequestMethod.PUT)
+    public @ResponseBody RespObject saveNew(
+            @RequestParam(value = "containerTypeUuid") String containerTypeUuid,
+            @RequestParam(value = "token") String token) {
+        Assert.assertArgumentNotNull(containerTypeUuid, "containerTypeUuid");
+        Assert.assertArgumentNotNull(token, "token");
         RespObject resp = new RespObject();
         try {
-            OperateContext operCtx = new OperateContext();
-            operCtx.setOperator(new Operator("111", "222", "XXX"));
-            operCtx.setTime(new Date());
-
-            containerService.saveNew(containerTypeUuid, operCtx);
+            containerService.saveNew(containerTypeUuid, getOperateContext(token));
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
+            return new ErrorRespObject("新增容器失败", e.getMessage());
         }
         return resp;
     }
