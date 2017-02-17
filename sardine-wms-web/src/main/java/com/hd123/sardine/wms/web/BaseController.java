@@ -27,71 +27,74 @@ import redis.clients.jedis.Jedis;
  */
 public abstract class BaseController {
 
-    private Jedis jedis;
+  private Jedis jedis;
 
-    private void setUp() {
-        if (jedis == null) {
-            jedis = new Jedis("172.17.1.54", 6379);
-            jedis.auth("sardine");
-        }
-
-        if (jedis.isConnected() == false)
-            jedis.connect();
+  private void setUp() {
+    if (jedis == null) {
+      jedis = new Jedis("172.17.1.54", 6379);
+      jedis.auth("sardine");
     }
 
-    public String setLoginInfoCache(UserInfo userInfo) {
-        setUp();
-        String token = UUIDGenerator.genUUID();
-        jedis.set(token, SerializationUtils.serialize(userInfo));
-        return token;
+    if (jedis.isConnected() == false)
+      jedis.connect();
+  }
+
+  public void checkUserInfo(String token) {
+    getLoginUser(token);
+  }
+
+  public String setLoginInfoCache(UserInfo userInfo) {
+    setUp();
+    String token = UUIDGenerator.genUUID();
+    jedis.set(token, SerializationUtils.serialize(userInfo));
+    return token;
+  }
+
+  public void resetToken(String token) {
+    setUp();
+    jedis.del(token);
+  }
+
+  public UCN getLoginUser(String token) throws NotLoginInfoException {
+    if (StringUtil.isNullOrBlank(token))
+      throw new NotLoginInfoException("登录信息为空，请重新登录");
+    setUp();
+    String loginCache = jedis.get(token);
+    if (StringUtil.isNullOrBlank(loginCache)) {
+      throw new NotLoginInfoException("登录信息为空，请重新登录");
     }
 
-    public void resetToken(String token) {
-        setUp();
-        jedis.del(token);
+    try {
+      UserInfo info = SerializationUtils.deserialize(loginCache, UserInfo.class);
+      UCN user = new UCN(info.getUuid(), info.getCode(), info.getName());
+      return user;
+    } catch (Exception e) {
+      throw new NotLoginInfoException("登录信息为空，请重新登录");
+    }
+  }
+
+  public UCN getLoginCompany(String token) throws NotLoginInfoException {
+    setUp();
+    String loginCache = jedis.get(token);
+    if (StringUtil.isNullOrBlank(loginCache)) {
+      throw new NotLoginInfoException("登录信息为空，请重新登录");
     }
 
-    public UCN getLoginUser(String token) throws NotLoginInfoException {
-        setUp();
-        String loginCache = jedis.get(token);
-        if (StringUtil.isNullOrBlank(loginCache)) {
-            return new UCN("001", "001", "001");
-            // throw new NotLoginInfoException("登录信息为空，请重新登录");
-        }
-
-        try {
-            UserInfo info = SerializationUtils.deserialize(loginCache, UserInfo.class);
-            UCN user = new UCN(info.getUuid(), info.getCode(), info.getName());
-            return user;
-        } catch (Exception e) {
-            throw new NotLoginInfoException("登录信息为空，请重新登录");
-        }
+    try {
+      UserInfo info = SerializationUtils.deserialize(loginCache, UserInfo.class);
+      UCN company = new UCN(info.getCompanyUuid(), info.getCompanyCode(), info.getCompanyName());
+      return company;
+    } catch (Exception e) {
+      throw new NotLoginInfoException("登录信息为空，请重新登录");
     }
+  }
 
-    public UCN getLoginCompany(String token) throws NotLoginInfoException {
-        setUp();
-        String loginCache = jedis.get(token);
-        if (StringUtil.isNullOrBlank(loginCache)) {
-            return new UCN("001", "001", "001");
-            // throw new NotLoginInfoException("登录信息为空，请重新登录");
-        }
+  public OperateContext getOperateContext(String token) {
+    Assert.assertArgumentNotNull(token, "token");
 
-        try {
-            UserInfo info = SerializationUtils.deserialize(loginCache, UserInfo.class);
-            UCN company = new UCN(info.getCompanyUuid(), info.getCompanyCode(),
-                    info.getCompanyName());
-            return company;
-        } catch (Exception e) {
-            throw new NotLoginInfoException("登录信息为空，请重新登录");
-        }
-    }
-
-    public OperateContext getOperateContext(String token) {
-        Assert.assertArgumentNotNull(token, "token");
-
-        UCN user = getLoginUser(token);
-        OperateContext operCtx = new OperateContext();
-        operCtx.setOperator(new Operator(user.getUuid(), user.getCode(), user.getName()));
-        return operCtx;
-    }
+    UCN user = getLoginUser(token);
+    OperateContext operCtx = new OperateContext();
+    operCtx.setOperator(new Operator(user.getUuid(), user.getCode(), user.getName()));
+    return operCtx;
+  }
 }

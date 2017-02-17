@@ -128,13 +128,6 @@ class BinTypeBuilderBase<GeneratorT extends BinTypeBuilderBase<GeneratorT>> {
     }
 
     @SuppressWarnings("unchecked")
-    public GeneratorT withToken(String aValue) {
-        instance.setToken(aValue);
-
-        return (GeneratorT) this;
-    }
-
-    @SuppressWarnings("unchecked")
     public GeneratorT withUuid(String aValue) throws UnsupportedOperationException {
         instance.setUuid(aValue);
 

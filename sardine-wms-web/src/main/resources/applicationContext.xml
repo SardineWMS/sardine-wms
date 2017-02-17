@@ -36,4 +36,18 @@
 			</bean>
 		</mvc:message-converters>
 	</mvc:annotation-driven>
+
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean class="com.hd123.sardine.wms.web.ControllerInterceptor">
+				<property name="uncheckUrls">
+					<list>
+						<value>/ia/authen/login</value>
+						<value>/ia/authen/register</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
 </beans>

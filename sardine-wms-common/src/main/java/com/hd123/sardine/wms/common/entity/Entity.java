@@ -23,16 +23,6 @@ public abstract class Entity implements Serializable, IsEntity, Injectable {
 
     private String uuid;
     
-    private String token;
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     /**
      * 全局唯一标识。
      */

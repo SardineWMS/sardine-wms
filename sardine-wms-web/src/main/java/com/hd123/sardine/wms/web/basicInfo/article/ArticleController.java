@@ -54,7 +54,8 @@ public class ArticleController extends BaseController {
   private SupplierService supplierService;
 
   @RequestMapping(value = "/get", method = RequestMethod.GET)
-  public @ResponseBody RespObject get(@RequestParam(value = "articleUuid") String articleUuid) {
+  public @ResponseBody RespObject get(@RequestParam(value = "articleUuid") String articleUuid,
+      @RequestParam(value = "token") String token) {
     RespObject resp = new RespObject();
     try {
       Article article = articleService.get(articleUuid);
@@ -112,17 +113,18 @@ public class ArticleController extends BaseController {
   }
 
   @RequestMapping(value = "/insert", method = RequestMethod.POST)
-  public @ResponseBody RespObject insert(@RequestBody Article article) {
+  public @ResponseBody RespObject insert(
+      @RequestParam(value = "token", required = true) String token, @RequestBody Article article) {
     RespObject resp = new RespObject();
     try {
       UCN category = new UCN("82748c47751247a6b8b44b6b8beddb9b", "0100000000", "可乐");
       article.setCategory(category);
-      article.setCompanyUuid(getLoginCompany(article.getToken()).getUuid());
+      article.setCompanyUuid(getLoginCompany(token).getUuid());
       String articleUuid = article.getUuid();
       if (StringUtil.isNullOrBlank(article.getUuid()))
-        articleUuid = articleService.insert(article, getOperateContext(article.getToken()));
+        articleUuid = articleService.insert(article, getOperateContext(token));
       else
-        articleService.update(article, getOperateContext(article.getToken()));
+        articleService.update(article, getOperateContext(token));
       resp.setObj(articleService.get(articleUuid));
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {

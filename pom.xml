@@ -63,6 +63,7 @@
 		<rumba-commons-mini.version>1.5</rumba-commons-mini.version>
 		<commons-pool-version>1.5.4</commons-pool-version>
 		<jedis.version>2.0.0</jedis.version>
+		<servlet-api.version>2.5</servlet-api.version>
 		<!-- Build args -->
 		<maven_jetty_plugin_version>9.3.6.v20151106</maven_jetty_plugin_version>
 		<skip_maven_deploy>false</skip_maven_deploy>
@@ -345,6 +346,11 @@
 				<groupId>org.easytesting</groupId>
 				<artifactId>fest-assert-core</artifactId>
 				<version>${fest_assert.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>${servlet-api.version}</version>
 			</dependency>
 
 			<!-- file -->
