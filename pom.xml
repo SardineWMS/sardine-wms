@@ -33,6 +33,7 @@
 		<jersey_version>2.23.2</jersey_version>
 		<javax_ws_rs_version>2.0.1</javax_ws_rs_version>
 		<jms_version>1.1</jms_version>
+		<log4j-version>1.2.17</log4j-version>
 		<dubbo_version>2.8.10</dubbo_version>
 		<zookeeper_client_version>0.9</zookeeper_client_version>
 		<!-- DB Libs -->
@@ -64,6 +65,7 @@
 		<commons-pool-version>1.5.4</commons-pool-version>
 		<jedis.version>2.0.0</jedis.version>
 		<servlet-api.version>2.5</servlet-api.version>
+		<slf4j.version>1.7.2</slf4j.version>
 		<!-- Build args -->
 		<maven_jetty_plugin_version>9.3.6.v20151106</maven_jetty_plugin_version>
 		<skip_maven_deploy>false</skip_maven_deploy>
@@ -137,6 +139,16 @@
 				<artifactId>spring-context-support</artifactId>
 				<version>${spring_version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
 			<!-- swaager -->
 			<dependency>
 				<groupId>com.mangofactory</groupId>
@@ -145,6 +157,11 @@
 			</dependency>
 
 			<!-- Common Libs -->
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${log4j-version}</version>
+			</dependency>
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>dubbo</artifactId>
