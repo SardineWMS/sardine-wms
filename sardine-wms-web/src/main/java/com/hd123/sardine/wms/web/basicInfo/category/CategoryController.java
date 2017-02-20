@@ -80,7 +80,7 @@ public class CategoryController extends BaseController {
     return resp;
   }
 
-  @RequestMapping(value = "/savemodify", method = RequestMethod.POST)
+  @RequestMapping(value = "/savemodify", method = RequestMethod.PUT)
   public @ResponseBody RespObject saveModify(
       @RequestParam(value = "token", required = true) String token,
       @RequestBody Category category) {
