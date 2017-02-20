@@ -37,7 +37,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.entity.Operator;
 import com.hd123.sardine.wms.common.utils.BillNumberGenerator;
-import com.hd123.sardine.wms.common.utils.FlowCodeGenerator;
 
 /**
  * @author zhangsai
@@ -82,10 +81,10 @@ public class BaseServiceTest {
                         .thenReturn(RandomStringUtils.randomNumeric(10)).getMock();
         ReflectionTestUtils.setField(BillNumberGenerator.class, "instance", billNumberGenerator);
 
-        FlowCodeGenerator flowCodeGenerator = when(
-                mock(FlowCodeGenerator.class).allocate(anyString()))
-                        .thenReturn(RandomStringUtils.randomNumeric(6)).getMock();
-        ReflectionTestUtils.setField(FlowCodeGenerator.class, "instance", flowCodeGenerator);
+//        FlowCodeGenerator flowCodeGenerator = when(
+//                mock(FlowCodeGenerator.class).allocate(anyString()))
+//                        .thenReturn(RandomStringUtils.randomNumeric(6)).getMock();
+//        ReflectionTestUtils.setField(FlowCodeGenerator.class, "instance", flowCodeGenerator);
         Field[] fields = this.getClass().getDeclaredFields();
         for (Field field : fields) {
             if (field.getAnnotation(InjectMocks.class) != null) {
