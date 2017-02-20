@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hd123.sardine.wms.dao.basicInfo.supplier.impl.SupplierDaoImpl">
+<mapper
+	namespace="com.hd123.sardine.wms.dao.basicInfo.supplier.impl.SupplierDaoImpl">
 	<resultMap id="BaseResultMap" type="Supplier">
 		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
 		<result column="code" property="code" jdbcType="VARCHAR" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="phone" property="phone" jdbcType="VARCHAR" />
-		<result column="address" property="address" jdbcType="VARCHAR"/>
+		<result column="address" property="address" jdbcType="VARCHAR" />
 		<result column="state" property="state" jdbcType="VARCHAR" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
 		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
@@ -28,16 +29,6 @@
 			jdbcType="VARCHAR" />
 		<result column="version" property="version" jdbcType="LONGVARCHAR" />
 	</resultMap>
-
-	<delete id="remove" parameterType="map">
-		delete from
-		sardine_supplier
-		where
-		uuid
-		= #{uuid,jdbcType=VARCHAR}
-		and version =
-		#{version,jdbcType=LONGVARCHAR}
-	</delete>
 
 	<select id="get" parameterType="String" resultMap="BaseResultMap">
 		select s.*

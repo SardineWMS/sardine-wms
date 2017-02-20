@@ -90,7 +90,7 @@ public interface SupplierService {
             throws IllegalArgumentException, WMSException;
 
     /**
-     * 删除供应商
+     * 删除供应商，只标记状态未“已删除”
      * 
      * @param uuid
      *            供应商uuid，not null。
@@ -106,7 +106,7 @@ public interface SupplierService {
             throws IllegalArgumentException, WMSException;
 
     /**
-     * 启用供应商
+     * 恢复供应商状态未“正常”
      * 
      * @param uuid
      *            供应商uuid，not null。
@@ -118,23 +118,7 @@ public interface SupplierService {
      *             参数为空。
      * @throws WMSException
      */
-    void online(String uuid, long version, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException;
-
-    /**
-     * 停用供应商
-     * 
-     * @param uuid
-     *            供应商uuid，not null。
-     * @param version
-     *            版本号，not null。
-     * @param operCtx
-     *            操作信息，not null。
-     * @throws IllegalArgumentException
-     *             参数为空。
-     * @throws WMSException
-     */
-    void offline(String uuid, long version, OperateContext operCtx)
+    void recover(String uuid, long version, OperateContext operCtx)
             throws IllegalArgumentException, WMSException;
 
 }

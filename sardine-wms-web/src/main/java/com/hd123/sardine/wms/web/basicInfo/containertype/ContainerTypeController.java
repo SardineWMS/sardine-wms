@@ -43,7 +43,8 @@ public class ContainerTypeController extends BaseController {
   private ContainerTypeService containerTypeService;
 
   @RequestMapping(value = "/get", method = RequestMethod.GET)
-  public @ResponseBody RespObject get(@RequestParam(value = "uuid") String uuid) {
+  public @ResponseBody RespObject get(@RequestParam(value = "uuid") String uuid,
+          @RequestParam(value = "token", required = true) String token) {
     RespObject resp = new RespObject();
     try {
       ContainerType containerType = containerTypeService.get(uuid);
@@ -57,7 +58,7 @@ public class ContainerTypeController extends BaseController {
 
   @RequestMapping(value = "/querycontainerTypesUcns", method = RequestMethod.GET)
   public @ResponseBody RespObject queryContainerTypeUCN(
-      @RequestParam(value = "token", required = false) String token) {
+      @RequestParam(value = "token", required = true) String token) {
     RespObject resp = new RespObject();
     try {
       PageQueryDefinition definition = new PageQueryDefinition();
@@ -84,7 +85,7 @@ public class ContainerTypeController extends BaseController {
       @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
       @RequestParam(value = "sort", required = false) String sort,
       @RequestParam(value = "order", required = false, defaultValue = "asc") String sortDirection,
-      @RequestParam(value = "token", required = false) String token,
+      @RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "code", required = false) String code,
       @RequestParam(value = "name", required = false) String name) {
     RespObject resp = new RespObject();
