@@ -19,7 +19,6 @@ import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.entity.OperateInfo;
 import com.hd123.sardine.wms.common.entity.Operator;
 import com.hd123.sardine.wms.common.exception.WMSException;
-import com.hd123.sardine.wms.common.utils.FlowCodeGenerator;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.common.validator.ValidateHandler;
 import com.hd123.sardine.wms.common.validator.ValidateResult;
@@ -27,6 +26,7 @@ import com.hd123.sardine.wms.dao.ia.user.UserDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
 import com.hd123.sardine.wms.service.ia.login.validator.RegisterValidateHandler;
 import com.hd123.sardine.wms.service.ia.login.validator.UpdatePasswdValidateHandler;
+import com.hd123.sardine.wms.service.util.FlowCodeGenerator;
 
 /**
  * 登录服务实现
@@ -38,7 +38,10 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
 
     @Autowired
     private UserDao userDao;
-
+    
+    @Autowired 
+    private FlowCodeGenerator flowCodeGenerator;
+    
     @Autowired
     private ValidateHandler<String> loginValidateHandler;
 
@@ -59,9 +62,9 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
                 .validate(user);
         checkValidateResult(result);
 
-        user.setCompanyUuid(FlowCodeGenerator.getInstance().allocate(User.COMPANYUUID_FLOWTYPE));
+        user.setCompanyUuid(flowCodeGenerator.allocate(User.COMPANYUUID_FLOWTYPE, "sardine"));
         user.setCompanyCode(User.COMPANYCODE_PREFIX
-                + user.getCompanyUuid().substring(1, user.getCompanyUuid().length() - 1));
+                + user.getCompanyUuid().substring(1, user.getCompanyUuid().length()));
         user.setUserState(UserState.online);
         user.setUuid(UUIDGenerator.genUUID());
         user.setCreateInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
