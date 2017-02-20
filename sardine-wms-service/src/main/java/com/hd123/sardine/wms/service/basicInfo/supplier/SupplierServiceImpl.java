@@ -132,11 +132,14 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
         if (supplier == null)
             throw EntityNotFoundException.create(Supplier.class.getName(), "uuid", uuid);
         PersistenceUtils.checkVersion(version, supplier, "供应商", uuid);
-        dao.remove(uuid, version);
+
+        supplier.setState(SupplierState.deleted);
+        supplier.setLastModifyInfo(OperateInfo.newInstance(operCtx));
+        dao.update(supplier);
     }
 
     @Override
-    public void online(String uuid, long version, OperateContext operCtx)
+    public void recover(String uuid, long version, OperateContext operCtx)
             throws IllegalArgumentException, WMSException {
         Assert.assertArgumentNotNull(uuid, "uuid");
         Assert.assertArgumentNotNull(version, "version");
@@ -148,27 +151,10 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
             throw EntityNotFoundException.create(Supplier.class.getName(), "uuid", uuid);
         PersistenceUtils.checkVersion(version, supplier, "供应商", uuid);
 
-        supplier.setState(SupplierState.online);
+        supplier.setState(SupplierState.normal);
         supplier.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         dao.update(supplier);
     }
 
-    @Override
-    public void offline(String uuid, long version, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException {
-        Assert.assertArgumentNotNull(uuid, "uuid");
-        Assert.assertArgumentNotNull(version, "version");
-        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-        checkValidateResult(operCtxResult);
-
-        Supplier supplier = dao.get(uuid);
-        if (supplier == null)
-            throw EntityNotFoundException.create(Supplier.class.getName(), "uuid", uuid);
-        PersistenceUtils.checkVersion(version, supplier, "供应商", uuid);
-
-        supplier.setState(SupplierState.offline);
-        supplier.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-        dao.update(supplier);
-    }
 
 }
