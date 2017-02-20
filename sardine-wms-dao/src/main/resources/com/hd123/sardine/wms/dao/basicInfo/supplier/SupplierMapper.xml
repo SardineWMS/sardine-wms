@@ -36,11 +36,13 @@
 		where s.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
 
-	<select id="getByCode" parameterType="String" resultMap="BaseResultMap">
+	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
 		select
 		s.*
 		from sardine_supplier s
 		where s.code = #{code,jdbcType=VARCHAR}
+		and
+		s.companyUuid={companyUuid,jdbcType=VARCHAR}
 	</select>
 
 	<insert id="insert" parameterType="Supplier">
@@ -140,6 +142,9 @@
 		<if test="name != null">
 			and s.name like CONCAT(CONCAT('%', #{name}),
 			'%')
+		</if>
+		<if test="companyUuid != null">
+			and s.companyUuid = #{companyUuid,jdbcType=VARCHAR}
 		</if>
 		<if test="state != null">
 			and s.state = #{state,jdbcType=VARCHAR}

@@ -17,5 +17,5 @@ import com.hd123.sardine.wms.common.dao.BaseDao;
  *
  */
 public interface ContainerTypeDao extends BaseDao<ContainerType> {
-    ContainerType getByCode(String code);
+    ContainerType getByCode(String code,String companyUuid);
 }

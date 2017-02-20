@@ -58,11 +58,13 @@
 		where t.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
 
-	<select id="getByCode" parameterType="String" resultMap="BaseResultMap">
+	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
 		select
 		t.*
 		from sardine_containertype t
 		where t.code = #{code,jdbcType=VARCHAR}
+		and
+		t.companyUuid={companyUuid,jdbcType=VARCHAR}
 	</select>
 
 	<insert id="insert" parameterType="ContainerType">
@@ -308,12 +310,15 @@
 		from sardine_containertype t
 		where 1=1
 		<if test="code != null">
-			and s.code like CONCAT(CONCAT('%', #{code}),
+			and t.code like CONCAT(CONCAT('%', #{code}),
 			'%')
 		</if>
 		<if test="name != null">
-			and s.name like CONCAT(CONCAT('%', #{name}),
+			and t.name like CONCAT(CONCAT('%', #{name}),
 			'%')
+		</if>
+		<if test="companyUuid != null">
+			and t.companyUuid = #{companyUuid,jdbcType=VARCHAR}
 		</if>
 		<if test="sortField != null and sortField == 'code'">
 			order by t.code ${orderDir}

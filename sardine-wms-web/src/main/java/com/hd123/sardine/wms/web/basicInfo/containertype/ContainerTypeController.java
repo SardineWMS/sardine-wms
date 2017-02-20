@@ -95,6 +95,7 @@ public class ContainerTypeController extends BaseController {
       definition.setPageSize(pageSize);
       definition.setSortField(sort);
       definition.setOrderDir(OrderDir.valueOf(sortDirection));
+      definition.setCompanyUuid(getLoginCompany(token).getUuid());
       definition.put(ContainerTypeService.QUERY_CODE_FIELD, code);
       definition.put(ContainerTypeService.QUERY_NAME_FIELD, name);
       PageQueryResult<ContainerType> result = containerTypeService.query(definition);

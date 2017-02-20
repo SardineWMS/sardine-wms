@@ -76,7 +76,8 @@ public class ContainerTypeServiceImpl extends BaseWMSService implements Containe
         ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
         checkValidateResult(operCtxResult);
 
-        ContainerType dbContainerType = dao.getByCode(containerType.getCode());
+        ContainerType dbContainerType = dao.getByCode(containerType.getCode(),
+                containerType.getCompanyUuid());
         if (dbContainerType != null)
             throw new WMSException("已存在代码为" + containerType.getCode() + "的容器类型");
 
@@ -103,7 +104,8 @@ public class ContainerTypeServiceImpl extends BaseWMSService implements Containe
         PersistenceUtils.checkVersion(containerType.getVersion(), oldContainerType, "容器类型",
                 containerType.getUuid());
 
-        ContainerType dbContainerType = dao.getByCode(containerType.getCode());
+        ContainerType dbContainerType = dao.getByCode(containerType.getCode(),
+                containerType.getCompanyUuid());
         if (dbContainerType != null
                 && ObjectUtils.notEqual(containerType.getCode(), dbContainerType.getCode()))
             throw new WMSException("已存在代码为" + containerType.getCode() + "的容器类型");

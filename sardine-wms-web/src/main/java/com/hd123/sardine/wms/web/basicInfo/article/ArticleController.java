@@ -141,7 +141,7 @@ public class ArticleController extends BaseController {
       @RequestParam(value = "supplierCode", required = true) String supplierCode) {
     RespObject resp = new RespObject();
     try {
-      Supplier supplier = supplierService.getByCode(supplierCode);
+      Supplier supplier = supplierService.getByCode(supplierCode,getLoginCompany(token).getUuid());
       if (supplier == null)
         throw new Exception("供应商" + supplierCode + "不存在，");
       ArticleSupplier as = new ArticleSupplier();

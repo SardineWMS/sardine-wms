@@ -45,9 +45,11 @@ public interface SupplierService {
      * 
      * @param code
      *            供应商代码，not null。
+     * @param companyUuid
+     *            组织，not null。        
      * @return 供应商
      */
-    Supplier getByCode(String code);
+    Supplier getByCode(String code,String companyUuid);
 
     /**
      * 分页查询供应商集合

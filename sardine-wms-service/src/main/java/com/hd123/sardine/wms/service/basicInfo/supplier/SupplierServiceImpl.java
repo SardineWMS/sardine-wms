@@ -61,10 +61,10 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
     }
 
     @Override
-    public Supplier getByCode(String code) {
-        if (StringUtil.isNullOrBlank(code))
+    public Supplier getByCode(String code, String companyUuid) {
+        if (StringUtil.isNullOrBlank(code) || StringUtil.isNullOrBlank(companyUuid))
             return null;
-        return dao.getByCode(code);
+        return dao.getByCode(code, companyUuid);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
         ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
         checkValidateResult(operCtxResult);
 
-        Supplier dbSupplier = dao.getByCode(supplier.getCode());
+        Supplier dbSupplier = dao.getByCode(supplier.getCode(), supplier.getCompanyUuid());
         if (dbSupplier != null)
             throw new WMSException("已存在代码为" + supplier.getCode() + "的供应商");
 
@@ -112,7 +112,7 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
         PersistenceUtils.checkVersion(supplier.getVersion(), oldSupplier, "供应商",
                 supplier.getUuid());
 
-        Supplier dbSupplier = dao.getByCode(supplier.getCode());
+        Supplier dbSupplier = dao.getByCode(supplier.getCode(), supplier.getCompanyUuid());
         if (dbSupplier != null && ObjectUtils.notEqual(supplier.getCode(), dbSupplier.getCode()))
             throw new WMSException("已存在代码为" + supplier.getCode() + "的供应商");
 
@@ -155,6 +155,5 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
         supplier.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         dao.update(supplier);
     }
-
 
 }

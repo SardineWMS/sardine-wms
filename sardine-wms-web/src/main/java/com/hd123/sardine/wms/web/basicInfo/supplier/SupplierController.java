@@ -60,7 +60,8 @@ public class SupplierController extends BaseController {
             @RequestParam(value = "token", required = true) String token) {
         RespObject resp = new RespObject();
         try {
-            Supplier supplier = supplierService.getByCode(supplierCode);
+            Supplier supplier = supplierService.getByCode(supplierCode,
+                    getLoginCompany(token).getUuid());
             resp.setObj(supplier);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -87,6 +88,7 @@ public class SupplierController extends BaseController {
             definition.setPageSize(pageSize);
             definition.setSortField(sort);
             definition.setOrderDir(OrderDir.valueOf(sortDirection));
+            definition.setCompanyUuid(getLoginCompany(token).getUuid());
             definition.put(SupplierService.QUERY_CODE_FIELD, code);
             definition.put(SupplierService.QUERY_NAME_FIELD, name);
             if (StringUtil.isNullOrBlank(state) == false && "all".equals(state) == false)

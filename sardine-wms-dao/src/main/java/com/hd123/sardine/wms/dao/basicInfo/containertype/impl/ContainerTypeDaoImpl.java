@@ -9,6 +9,9 @@
  */
 package com.hd123.sardine.wms.dao.basicInfo.containertype.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.containertype.ContainerType;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
@@ -22,10 +25,13 @@ public class ContainerTypeDaoImpl extends BaseDaoImpl<ContainerType> implements 
     public static final String MAPPER_GETBYCODE = "getByCode";
 
     @Override
-    public ContainerType getByCode(String code) {
-        if (StringUtil.isNullOrBlank(code))
+    public ContainerType getByCode(String code, String companyUuid) {
+        if (StringUtil.isNullOrBlank(code) || StringUtil.isNullOrBlank(companyUuid))
             return null;
-        return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE));
+        Map<String, String> map = new HashMap<>();
+        map.put("code", code);
+        map.put("companyUuid", companyUuid);
+        return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE), map);
     }
 
 }
