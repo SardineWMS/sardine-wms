@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.ExpectedDatabase;
 import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
-import com.hd123.sardine.wms.api.basicInfo.containertype.ContainerType;
 import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
 import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierState;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -47,25 +46,25 @@ public class SupplierDaoTest extends AbstractDataAccessTests {
         assertNotNull(suppliers);
         assertEquals(2, suppliers.size());
     }
-    
+
     @Test
     @ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT, value = "Result_Insert.xml")
-    public void insert(){
-        Supplier supplier=dao.get("u1");
+    public void insert() {
+        Supplier supplier = dao.get("u1");
         supplier.setUuid("u3");
         supplier.setCode("c3");
         supplier.setName("n3");
         supplier.setCompanyUuid("o3");
         supplier.setAddress("D3");
-        
+
         int i = dao.insert(supplier);
         assertEquals(1, i);
     }
-    
+
     @Test
     @ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT, value = "Result_Update.xml")
     public void update() {
-        Supplier supplier=dao.get("u2");
+        Supplier supplier = dao.get("u2");
         supplier.setState(SupplierState.deleted);
 
         int i = dao.update(supplier);
