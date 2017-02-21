@@ -14,10 +14,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.xml.DOMConfigurator;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -53,16 +49,13 @@ public class SupplierDaoTest extends AbstractDataAccessTests {
 
     @Test
     @ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT, value = "Result_Insert.xml")
-    public void insert() throws Exception{
+    public void insert() throws Exception {
         Supplier supplier = dao.get("u1");
         supplier.setUuid("u3");
         supplier.setCode("c3");
         supplier.setName("n3");
         supplier.setCompanyUuid("o3");
         supplier.setAddress("D3");
-        
-        supplier=null;
-        System.out.println(supplier.getCreateInfo().getTime());
 
         int i = dao.insert(supplier);
         assertEquals(1, i);
@@ -76,30 +69,5 @@ public class SupplierDaoTest extends AbstractDataAccessTests {
 
         int i = dao.update(supplier);
         assertEquals(1, i);
-    }
-    
-    static Logger log4j = Logger.getLogger(SupplierDaoTest.class.getClass());  
-    
-    @Test
-    public void test(){
-        BasicConfigurator.configure();  
-      //  D:\WORKSPACE\SardineWMS\sardine-wms\sardine-wms-dao\src\main\resources
-        PropertyConfigurator.configure("/src/main/resources/log4j.properties");  
-          
-        DOMConfigurator.configure("");  
-        
-        try{
-            insert();
-        }catch(Exception ex){
-            log4j.error(ex);
-        }
-       
-
-          
-        log4j.debug("log4j debug");  
-        log4j.info("log4j info");  
-        log4j.warn("log4j warn");  
-        log4j.error("log4j error");  
-        log4j.fatal("log4j fatal");  
     }
 }
