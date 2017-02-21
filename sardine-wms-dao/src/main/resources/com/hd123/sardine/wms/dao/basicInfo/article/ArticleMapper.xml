@@ -168,16 +168,16 @@
 			and u.state = #{state,jdbcType=VARCHAR}
 		</if>
 		<if test="sortField != null and sortField == 'code'">
-			order by t.code ${orderDir}
+			order by u.code ${orderDir}
 		</if>
 		<if test="sortField != null and sortField == 'name'">
-			order by t.name ${orderDir}
+			order by u.name ${orderDir}
 		</if>
 		<if test="sortField != null and sortField == 'createdtime'">
-			order by t.createdtime ${orderDir}
+			order by u.createdtime ${orderDir}
 		</if>
 		<if test="sortField != null and sortField == 'lastModifytime'">
-			order by t.lastModifytime ${orderDir}
+			order by u.lastModifytime ${orderDir}
 		</if>
 	</select>
 </mapper>
