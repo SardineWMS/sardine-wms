@@ -11,6 +11,7 @@ package com.hd123.sardine.wms.dao.ia.user;
 
 import com.hd123.sardine.wms.api.ia.user.User;
 import com.hd123.sardine.wms.common.dao.BaseDao;
+import com.hd123.sardine.wms.common.entity.OperateContext;
 
 /**
  * 用户dao层
@@ -24,5 +25,5 @@ public interface UserDao extends BaseDao<User> {
 
     User login(String userCode, String passwd);
 
-    int updatePasswd(String userUuid, String oldPasswd, String newPasswd);
+    int updatePasswd(String userUuid, String oldPasswd, String newPasswd, OperateContext operCtx);
 }

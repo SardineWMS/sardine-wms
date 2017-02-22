@@ -15,6 +15,8 @@ import java.util.Map;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.ia.user.User;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
+import com.hd123.sardine.wms.common.entity.OperateContext;
+import com.hd123.sardine.wms.common.entity.OperateInfo;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.dao.ia.user.UserDao;
 
@@ -48,11 +50,13 @@ public class UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
     }
 
     @Override
-    public int updatePasswd(String userUuid, String oldPasswd, String newPasswd) {
-        Map<String, String> map = new HashMap<String, String>();
+    public int updatePasswd(String userUuid, String oldPasswd, String newPasswd,
+            OperateContext operCtx) {
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("userUuid", userUuid);
         map.put("oldPasswd", oldPasswd);
         map.put("newPasswd", newPasswd);
+        map.put("lastModifyInfo", OperateInfo.newInstance(operCtx));
         int i = getSqlSession().update(generateStatement(MAPPER_UPDATEPASSWD), map);
         PersistenceUtils.optimisticVerify(i);
         return i;

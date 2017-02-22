@@ -38,10 +38,10 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
 
     @Autowired
     private UserDao userDao;
-    
-    @Autowired 
+
+    @Autowired
     private FlowCodeGenerator flowCodeGenerator;
-    
+
     @Autowired
     private ValidateHandler<String> loginValidateHandler;
 
@@ -86,7 +86,7 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
         ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
         checkValidateResult(operCtxResult);
 
-        userDao.updatePasswd(userUuid, oldPasswd, newPasswd);
+        userDao.updatePasswd(userUuid, oldPasswd, newPasswd, operCtx);
         return user.fetchUserInfo();
     }
 

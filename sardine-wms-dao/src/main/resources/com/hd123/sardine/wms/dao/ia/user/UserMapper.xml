@@ -153,8 +153,29 @@
 
 	<update id="updatePasswd" parameterType="map">
 		update sardine_user u
-		set u.passwd = #{newPasswd,jdbcType=VARCHAR}
-		where u.userUuid =
+		<set>
+			u.passwd = #{newPasswd,jdbcType=VARCHAR},
+			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
+				LASTMODIFYTIME =
+				#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				LASTMODIFYID =
+				#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				LASTMODIFYCODE =
+				#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				LASTMODIFYNAME =
+				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where u.uuid =
 		#{userUuid,jdbcType=VARCHAR}
 		and u.passwd =
 		#{oldPasswd,jdbcType=VARCHAR}

@@ -26,6 +26,16 @@ public class UserInfo implements Serializable {
     private String companyCode;
     private String companyName;
 
+    private boolean administrator;
+
+    public boolean isAdministrator() {
+        return administrator;
+    }
+
+    public void setAdministrator(boolean administrator) {
+        this.administrator = administrator;
+    }
+
     public String getUuid() {
         return uuid;
     }

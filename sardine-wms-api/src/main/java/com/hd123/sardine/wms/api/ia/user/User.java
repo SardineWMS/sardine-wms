@@ -132,6 +132,7 @@ public class User extends StandardEntity {
         info.setCompanyCode(companyCode);
         info.setCompanyUuid(companyUuid);
         info.setCompanyName(companyName);
+        info.setAdministrator(administrator);
         return info;
     }
 }
