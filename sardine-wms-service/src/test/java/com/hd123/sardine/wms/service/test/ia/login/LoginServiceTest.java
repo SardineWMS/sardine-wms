@@ -25,6 +25,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.hd123.sardine.wms.api.ia.login.UserInfo;
 import com.hd123.sardine.wms.api.ia.user.User;
 import com.hd123.sardine.wms.api.ia.user.UserState;
+import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.dao.ia.user.UserDao;
 import com.hd123.sardine.wms.service.ia.login.LoginServiceImpl;
 import com.hd123.sardine.wms.service.test.BaseServiceTest;
@@ -78,14 +79,15 @@ public class LoginServiceTest extends BaseServiceTest {
 
     @Test
     public void updatePasswd() throws Exception {
+        OperateContext operCtx = defaultOperCtx();
         User user = UserBuilder.user().withUserState(UserState.online).build();
         when(dao.get(anyString())).thenReturn(user);
 
         UserInfo userInfo = service.updatePasswd(UPDATEPASSWD_USERID, UPDATEPASSWD_OLDPASSWD,
-                UPDATEPASSWD_NEWPASSWD, defaultOperCtx());
+                UPDATEPASSWD_NEWPASSWD, operCtx);
 
         verify(dao).updatePasswd(UPDATEPASSWD_USERID, UPDATEPASSWD_OLDPASSWD,
-                UPDATEPASSWD_NEWPASSWD, defaultOperCtx());
+                UPDATEPASSWD_NEWPASSWD, operCtx);
         assertThat(userInfo).isNotNull();
         assertThat(userInfo.getUuid()).isEqualTo(user.getUuid());
         assertThat(userInfo.getCode()).isEqualTo(user.getCode());
