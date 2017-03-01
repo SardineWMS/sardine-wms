@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.hd123.sardine.wms.dao.log.impl.EntityLogDaoImpl">
+
+	<select id="select_entityLog" parameterType="PageQueryDefinition"
+		resultType="com.hd123.sardine.wms.api.log.EntityLog">
+		select
+		uuid as "uuid",
+		operateInfo as "operateInfo",
+		time as "time",
+		event as "event",
+		message as "message",
+		serviceClass as "serviceClass",
+		servicecaption  as "serviceCaption",
+		entityUuid   as "entityUuid",
+		entityCaption  as "entityCaption"
+		from Sardine_EntityLog
+		where entityUuid =#{entityUuid} order by time desc
+      </select>
+
+	<insert id="insert_EntityLog" parameterType="com.hd123.sardine.wms.api.log.EntityLog">
+		insert into Sardine_EntityLog
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+		      </if>
+			<if test="operateInfo != null">
+				operateInfo,
+		      </if>
+			<if test="time != null">
+				time,
+		      </if>
+		    <if test="event != null">
+			 	event,
+		      </if>
+		    <if test="message != null">
+				message,
+		      </if>
+		    <if test="serviceClass != null">
+				serviceClass,
+		      </if>
+		    <if test="serviceCaption != null">
+				serviceCaption,
+		      </if>
+		    <if test="entityUuid != null">
+				entityUuid,
+		      </if>
+		    <if test="entityCaption != null">
+				entityCaption,
+		      </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+		      </if>
+			<if test="operateInfo != null">
+				#{operateInfo,jdbcType=VARCHAR},
+		      </if>
+			NOW(),
+		    <if test="event != null">
+				#{event,jdbcType=VARCHAR},
+		      </if>
+		    <if test="message != null">
+				#{message,jdbcType=VARCHAR},
+		      </if>
+		    <if test="serviceClass != null">
+				#{serviceClass,jdbcType=VARCHAR},
+		      </if>
+		    <if test="serviceCaption != null">
+				#{serviceCaption,jdbcType=VARCHAR},
+		      </if>
+		    <if test="entityUuid != null">
+				#{entityUuid,jdbcType=VARCHAR},
+		      </if>
+		    <if test="entityCaption != null">
+				#{entityCaption,jdbcType=VARCHAR},
+		      </if>
+		</trim>
+	</insert>
+</mapper>

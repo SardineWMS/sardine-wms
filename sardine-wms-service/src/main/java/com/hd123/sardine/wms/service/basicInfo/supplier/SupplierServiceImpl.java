@@ -32,6 +32,7 @@ import com.hd123.sardine.wms.common.validator.ValidateHandler;
 import com.hd123.sardine.wms.common.validator.ValidateResult;
 import com.hd123.sardine.wms.dao.basicInfo.supplier.SupplierDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
+import com.hd123.sardine.wms.service.log.EntityLogger;
 
 /**
  * 供应商服务实现
@@ -43,6 +44,8 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
 
     @Autowired
     private SupplierDao dao;
+    @Autowired
+    private EntityLogger logger;
 
     @Autowired
     private ValidateHandler<Supplier> supplierSaveNewValidateHandler;
@@ -94,6 +97,9 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
         supplier.setCreateInfo(OperateInfo.newInstance(operCtx));
         supplier.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         dao.insert(supplier);
+
+        logger.injectContext(this, supplier.getUuid(), Supplier.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_ADDNEW, "新增供应商");
         return supplier.getUuid();
     }
 
@@ -118,6 +124,9 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
 
         supplier.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         dao.update(supplier);
+        
+        logger.injectContext(this, supplier.getUuid(), Supplier.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_MODIFY, "修改供应商");
     }
 
     @Override
@@ -136,6 +145,9 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
         supplier.setState(SupplierState.deleted);
         supplier.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         dao.update(supplier);
+        
+        logger.injectContext(this, supplier.getUuid(), Supplier.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_REMOVE, "删除供应商");
     }
 
     @Override
@@ -154,6 +166,9 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
         supplier.setState(SupplierState.normal);
         supplier.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         dao.update(supplier);
+        
+        logger.injectContext(this, supplier.getUuid(), Supplier.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_MODIFY, "恢复供应商");
     }
 
 }

@@ -42,7 +42,7 @@
 		from sardine_supplier s
 		where s.code = #{code,jdbcType=VARCHAR}
 		and
-		s.companyUuid={companyUuid,jdbcType=VARCHAR}
+		s.companyUuid=#{companyUuid,jdbcType=VARCHAR}
 	</select>
 
 	<insert id="insert" parameterType="Supplier">
