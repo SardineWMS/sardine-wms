@@ -23,6 +23,7 @@ import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
 import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierState;
 import com.hd123.sardine.wms.dao.basicInfo.supplier.SupplierDao;
 import com.hd123.sardine.wms.service.basicInfo.supplier.SupplierServiceImpl;
+import com.hd123.sardine.wms.service.log.EntityLogger;
 import com.hd123.sardine.wms.service.test.BaseServiceTest;
 
 /**
@@ -38,6 +39,8 @@ public class SupplierServiceTest extends BaseServiceTest {
     public SupplierServiceImpl service;
     @Mock
     private SupplierDao dao;
+    @Mock
+    private EntityLogger logger;
 
     @Test
     public void insert() throws Exception {
