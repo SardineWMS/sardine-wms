@@ -9,7 +9,7 @@
  */
 package com.hd123.sardine.wms.api.ia.login;
 
-import com.hd123.sardine.wms.api.ia.user.User;
+import com.hd123.sardine.wms.api.ia.user.RegisterUser;
 import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.exception.EntityNotFoundException;
 import com.hd123.sardine.wms.common.exception.WMSException;
@@ -48,7 +48,7 @@ public interface LoginService {
      * <p>
      * 并分配新的组织id
      * 
-     * @param user
+     * @param registerUser
      *            not null
      * @return 用户信息
      * @throws IllegalArgumentException
@@ -56,7 +56,7 @@ public interface LoginService {
      * @throws WMSException
      *             用户名重复时抛出异常
      */
-    UserInfo register(User user) throws IllegalArgumentException, WMSException;
+    UserInfo register(RegisterUser registerUser) throws IllegalArgumentException, WMSException;
 
     /**
      * 修改密码

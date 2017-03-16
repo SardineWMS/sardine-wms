@@ -23,12 +23,15 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.hd123.sardine.wms.api.ia.login.UserInfo;
+import com.hd123.sardine.wms.api.ia.user.CompanyService;
+import com.hd123.sardine.wms.api.ia.user.RegisterUser;
 import com.hd123.sardine.wms.api.ia.user.User;
 import com.hd123.sardine.wms.api.ia.user.UserState;
 import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.dao.ia.user.UserDao;
 import com.hd123.sardine.wms.service.ia.login.LoginServiceImpl;
 import com.hd123.sardine.wms.service.test.BaseServiceTest;
+import com.hd123.sardine.wms.service.test.ia.user.RegisterUserBuilder;
 import com.hd123.sardine.wms.service.test.ia.user.UserBuilder;
 import com.hd123.sardine.wms.service.util.FlowCodeGenerator;
 
@@ -50,6 +53,10 @@ public class LoginServiceTest extends BaseServiceTest {
     private static final String REGISTER_USERNAME = "沙丁鱼";
     private static final String REGISTER_PASSWD = "666666";
     private static final String REGISTER_COMPANYNAME = "天堂伞";
+    private static final String REGISTER_COMPANYCODE = "10001";
+    private static final String ADDRESS = "九堡";
+    private static final String HOMEPAGE = "www.hd123.com";
+    private static final String COMPANYTYPE = "deliveryCenter";
 
     @InjectMocks
     public LoginServiceImpl service;
@@ -57,6 +64,8 @@ public class LoginServiceTest extends BaseServiceTest {
     private UserDao dao;
     @Mock
     private FlowCodeGenerator flowCodeGenerator;
+    @Mock
+    private CompanyService companyService;
 
     @Captor
     private ArgumentCaptor<User> userCaptor;
@@ -99,18 +108,20 @@ public class LoginServiceTest extends BaseServiceTest {
 
     @Test
     public void register() throws Exception {
-        User user = UserBuilder.user().withCode(REGISTER_USERCODE).withName(REGISTER_USERNAME)
-                .withCompanyName(REGISTER_COMPANYNAME).withPasswd(REGISTER_PASSWD).build();
+        RegisterUser registerUser = RegisterUserBuilder.registerUser().withName(REGISTER_USERNAME)
+                .withCompanyName(REGISTER_COMPANYNAME).withPasswd(REGISTER_PASSWD)
+                .withCompanyCode(REGISTER_COMPANYCODE).withAddress(ADDRESS).withHomePage(HOMEPAGE)
+                .withCompanyType(COMPANYTYPE).build();
         when(dao.getByCode(anyString())).thenReturn(null);
         when(flowCodeGenerator.allocate(anyString(), anyString())).thenReturn("800001");
-        service.register(user);
+
+        service.register(registerUser);
 
         verify(dao).insert(userCaptor.capture());
         assertThat(userCaptor.getValue().getUuid()).isNotNull();
         assertThat(userCaptor.getValue().getCompanyUuid()).isNotNull();
         assertThat(userCaptor.getValue().getCompanyCode()).isNotNull();
         assertThat(userCaptor.getValue().getCompanyName()).isEqualTo(REGISTER_COMPANYNAME);
-        assertThat(userCaptor.getValue().getCode()).isEqualTo(REGISTER_USERCODE);
         assertThat(userCaptor.getValue().getName()).isEqualTo(REGISTER_USERNAME);
         assertThat(userCaptor.getValue().getPasswd()).isEqualTo(REGISTER_PASSWD);
     }

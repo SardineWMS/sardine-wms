@@ -13,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.sardine.wms.api.ia.login.LoginService;
 import com.hd123.sardine.wms.api.ia.login.UserInfo;
+import com.hd123.sardine.wms.api.ia.user.Company;
+import com.hd123.sardine.wms.api.ia.user.CompanyService;
+import com.hd123.sardine.wms.api.ia.user.CompanyType;
+import com.hd123.sardine.wms.api.ia.user.RegisterUser;
 import com.hd123.sardine.wms.api.ia.user.User;
 import com.hd123.sardine.wms.api.ia.user.UserState;
 import com.hd123.sardine.wms.common.entity.OperateContext;
@@ -40,6 +44,9 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
     private UserDao userDao;
 
     @Autowired
+    private CompanyService companyService;
+
+    @Autowired
     private FlowCodeGenerator flowCodeGenerator;
 
     @Autowired
@@ -52,26 +59,50 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
     private ValidateHandler<OperateContext> operateContextValidateHandler;
 
     @Autowired
-    private ValidateHandler<User> registerValidateHandler;
+    private ValidateHandler<RegisterUser> registerValidateHandler;
 
     @Override
-    public UserInfo register(User user) throws IllegalArgumentException, WMSException {
-        User existsUser = userDao.getByCode(user != null ? user.getCode() : null);
+    public UserInfo register(RegisterUser registerUser) throws WMSException {
+        User existsUser = userDao.getByCode(registerUser != null ? registerUser.getCode() : null);
         ValidateResult result = registerValidateHandler
                 .putAttribute(RegisterValidateHandler.KEY_CODEEXISTS_USER, existsUser)
-                .validate(user);
+                .validate(registerUser);
         checkValidateResult(result);
 
+        User user = new User();
+        Company dbCompany = companyService.getByName(registerUser.getCompanyName());
+        if (dbCompany != null)
+            throw new WMSException("企业已存在，不能重复注册");
+
         user.setCompanyUuid(flowCodeGenerator.allocate(User.COMPANYUUID_FLOWTYPE, "sardine"));
-        user.setCompanyCode(User.COMPANYCODE_PREFIX
-                + user.getCompanyUuid().substring(1, user.getCompanyUuid().length()));
+        user.setCompanyCode(User.COMPANYCODE_PREFIX + user.getCompanyUuid().substring(1,
+                user.getCompanyUuid().length()));
+        user.setCompanyName(registerUser.getCompanyName());
+        user.setName(registerUser.getName());
         user.setUserState(UserState.online);
+        user.setPasswd(registerUser.getPasswd());
+        user.setCode(registerUser.getCode());
+        user.setPhone(registerUser.getPhone());
         user.setUuid(UUIDGenerator.genUUID());
         user.setCreateInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
         user.setLastModifyInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
+
+        Company company = new Company();
+        company.setAddress(registerUser.getAddress());
+        company.setCode(user.getCompanyCode());
+        company.setCompanyType(CompanyType.valueOf(registerUser.getCompanyType()));
+        company.setCreateInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
+        company.setLastModifyInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
+        company.setUuid(user.getCompanyUuid());
+        company.setHomePage(registerUser.getHomePage());
+        company.setName(registerUser.getCompanyName());
+        OperateContext operCtx = new OperateContext(
+                new Operator(user.getUuid(), user.getCode(), user.getName()), null);
         userDao.insert(user);
+        companyService.insert(company, operCtx);
 
         return user.fetchUserInfo();
+
     }
 
     @Override

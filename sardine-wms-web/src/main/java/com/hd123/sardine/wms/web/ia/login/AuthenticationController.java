@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hd123.sardine.wms.api.ia.login.LoginService;
 import com.hd123.sardine.wms.api.ia.login.UserInfo;
-import com.hd123.sardine.wms.api.ia.user.User;
+import com.hd123.sardine.wms.api.ia.user.RegisterUser;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -88,10 +88,10 @@ public class AuthenticationController extends BaseController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public @ResponseBody RespObject register(@RequestBody User user) {
+    public @ResponseBody RespObject register(@RequestBody RegisterUser registerUser) {
         RespObject resp = new RespObject();
         try {
-            UserInfo userInfo = loginService.register(user);
+            UserInfo userInfo = loginService.register(registerUser);
             String token = setLoginInfoCache(userInfo);
             resp.setObj(userInfo);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

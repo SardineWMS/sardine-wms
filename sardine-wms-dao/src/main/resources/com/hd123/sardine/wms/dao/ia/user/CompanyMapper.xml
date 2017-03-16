@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd123.sardine.wms.dao.ia.user.impl.CompanyDaoImpl">
+	<resultMap type="Company" id="BaseResultMap">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="companycode" property="code" jdbcType="VARCHAR" />
+		<result column="companyname" property="name" jdbcType="VARCHAR" />
+		<result column="companytype" property="companyType" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="homepage" property="homePage" jdbcType="VARCHAR" />
+		<result column="createdtime" property="createInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="createdID" property="createInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="createdcode" property="createInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="createdName" property="createInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="lastModifytime" property="lastModifyInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="lastModifyid" property="lastModifyInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="lastModifycode" property="lastModifyInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<insert id="insert" parameterType="Company">
+		insert into
+		sardine_company (
+		uuid,
+		companycode,
+		companyname,
+		companytype,
+		version,
+		address,
+		CREATEDTIME,
+		CREATEDID,
+		CREATEDCODE,
+		CREATEDNAME,
+		LASTMODIFYTIME,
+		LASTMODIFYID,
+		LASTMODIFYCODE,
+		LASTMODIFYNAME,
+		homepage
+		)
+		values (
+		#{uuid,jdbcType=VARCHAR},
+		#{code,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{companyType,jdbcType=VARCHAR},
+		#{version,jdbcType=LONGVARCHAR},
+		#{address,jdbcType=VARCHAR},
+		#{createInfo.time,jdbcType=TIMESTAMP},
+		#{createInfo.operator.id,jdbcType=VARCHAR},
+		#{createInfo.operator.code,jdbcType=VARCHAR},
+		#{createInfo.operator.fullName,jdbcType=VARCHAR},
+		#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+		#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+		#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		#{homePage,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<select id="getByName" parameterType="String" resultMap="BaseResultMap">
+		select
+		u.*
+		from sardine_company u
+		where u.companyname =
+		#{name,jdbcType=VARCHAR}
+	</select>
+</mapper>

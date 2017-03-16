@@ -12,6 +12,7 @@ package com.hd123.sardine.wms.service.ia.login.validator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.baidu.unbiz.fluentvalidator.Validator;
+import com.hd123.sardine.wms.api.ia.user.RegisterUser;
 import com.hd123.sardine.wms.api.ia.user.User;
 import com.hd123.sardine.wms.common.entity.IsEntity;
 import com.hd123.sardine.wms.common.validator.GenericValidateHandler;
@@ -29,7 +30,7 @@ import com.hd123.sardine.wms.common.validator.ValidateBean;
  * @author zhangsai
  *
  */
-public class RegisterValidateHandler extends GenericValidateHandler<User> {
+public class RegisterValidateHandler extends GenericValidateHandler<RegisterUser> {
 
     /** 调用该校验器的service需传入user对象 与当前注册用户代码一致的已存在用户 */
     public static final String KEY_CODEEXISTS_USER = "codeExists_user";
@@ -47,7 +48,7 @@ public class RegisterValidateHandler extends GenericValidateHandler<User> {
     private Validator<ValidateBean<IsEntity>> nullValidator;
 
     @Override
-    protected void prepareValidators(User bean) {
+    protected void prepareValidators(RegisterUser bean) {
         on("用户", bean, notNullValidator);
         on("用户代码", bean.getCode(), notNullValidator);
         on("用户代码", bean.getCode(), length30Validator);
