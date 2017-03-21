@@ -39,6 +39,6 @@ public class ContainerTypeSaveNewValidateHandler extends GenericValidateHandler<
         on("容器类型代码", bean.getCode(), length30Validator);
         on("容器类型名称", bean.getName(), notNullValidator);
         on("容器类型名称", bean.getName(), length100Validator);
-        on("条码前缀", bean.getBarCodePrefix(), notNullValidator);
+//        on("条码前缀", bean.getBarCodePrefix(), notNullValidator);
     }
 }

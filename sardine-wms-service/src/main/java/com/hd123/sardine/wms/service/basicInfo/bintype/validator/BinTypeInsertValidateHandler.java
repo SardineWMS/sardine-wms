@@ -54,14 +54,14 @@ public class BinTypeInsertValidateHandler extends GenericValidateHandler<BinType
         on("货位类型代码", bean.getCode(), length30Validator);
         on("货位类型名称", bean.getName(), notNullValidator);
         on("货位类型名称", bean.getName(), length100Validator);
-        on("货位类型长度", bean.getLength(), notNullValidator);
-        on("货位类型长度", bean.getLength(), numberValidator);
-        on("货位类型宽度", bean.getWidth(), notNullValidator);
-        on("货位类型宽度", bean.getWidth(), numberValidator);
-        on("货位类型高度", bean.getHeight(), notNullValidator);
-        on("货位类型高度", bean.getHeight(), numberValidator);
-        on("容积率", bean.getPlotRatio(), notNullValidator);
-        on("容积率", bean.getPlotRatio(), ratioValidator);
+        // on("货位类型长度", bean.getLength(), notNullValidator);
+        // on("货位类型长度", bean.getLength(), numberValidator);
+        // on("货位类型宽度", bean.getWidth(), notNullValidator);
+        // on("货位类型宽度", bean.getWidth(), numberValidator);
+        // on("货位类型高度", bean.getHeight(), notNullValidator);
+        // on("货位类型高度", bean.getHeight(), numberValidator);
+        // on("容积率", bean.getPlotRatio(), notNullValidator);
+        // on("容积率", bean.getPlotRatio(), ratioValidator);
         on("承重", bean.getBearing(), notNullValidator);
         on("承重", bean.getBearing(), nonnegativeNumberValidator);
 

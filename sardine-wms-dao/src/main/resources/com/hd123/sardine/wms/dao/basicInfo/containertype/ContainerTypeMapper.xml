@@ -64,7 +64,7 @@
 		from sardine_containertype t
 		where t.code = #{code,jdbcType=VARCHAR}
 		and
-		t.companyUuid={companyUuid,jdbcType=VARCHAR}
+		t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
 	</select>
 
 	<insert id="insert" parameterType="ContainerType">
