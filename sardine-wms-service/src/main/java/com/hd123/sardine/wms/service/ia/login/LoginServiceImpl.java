@@ -9,6 +9,7 @@
  */
 package com.hd123.sardine.wms.service.ia.login;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.sardine.wms.api.ia.login.LoginService;
@@ -75,8 +76,8 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
             throw new WMSException("企业已存在，不能重复注册");
 
         user.setCompanyUuid(flowCodeGenerator.allocate(User.COMPANYUUID_FLOWTYPE, "sardine"));
-        user.setCompanyCode(User.COMPANYCODE_PREFIX + user.getCompanyUuid().substring(1,
-                user.getCompanyUuid().length()));
+        user.setCompanyCode(User.COMPANYCODE_PREFIX
+                + user.getCompanyUuid().substring(1, user.getCompanyUuid().length()));
         user.setCompanyName(registerUser.getCompanyName());
         user.setName(registerUser.getName());
         user.setUserState(UserState.online);
@@ -116,6 +117,9 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
 
         ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
         checkValidateResult(operCtxResult);
+        
+        if(ObjectUtils.notEqual(user.getPasswd(), oldPasswd))
+            throw new WMSException("原始密码错误");
 
         userDao.updatePasswd(userUuid, oldPasswd, newPasswd, operCtx);
         return user.fetchUserInfo();
