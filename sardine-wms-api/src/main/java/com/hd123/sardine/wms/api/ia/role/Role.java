@@ -18,42 +18,42 @@ import com.hd123.sardine.wms.common.entity.StandardEntity;
  *
  */
 public class Role extends StandardEntity {
-  private static final long serialVersionUID = 7747961149895850151L;
+    private static final long serialVersionUID = 7747961149895850151L;
 
-  private String code;
-  private String name;
-  private String orgId;
-  private RoleState state = RoleState.online;
+    private String code;
+    private String name;
+    private String companyUuid;
+    private RoleState state = RoleState.online;
 
-  public String getOrgId() {
-    return orgId;
-  }
+    public String getCompanyUuid() {
+        return companyUuid;
+    }
 
-  public void setOrgId(String orgId) {
-    this.orgId = orgId;
-  }
+    public void setCompanyUuid(String companyUuid) {
+        this.companyUuid = companyUuid;
+    }
 
-  public String getCode() {
-    return code;
-  }
+    public String getCode() {
+        return code;
+    }
 
-  public void setCode(String code) {
-    this.code = code;
-  }
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public RoleState getState() {
-    return state;
-  }
+    public RoleState getState() {
+        return state;
+    }
 
-  public void setState(RoleState state) {
-    this.state = state;
-  }
+    public void setState(RoleState state) {
+        this.state = state;
+    }
 }

@@ -60,9 +60,9 @@ public class RoleServiceImpl extends BaseWMSService implements RoleService {
     Assert.assertArgumentNotNull(operCtx, "operCtx");
     Assert.assertArgumentNotNull(role.getCode(), "role.code");
     Assert.assertArgumentNotNull(role.getName(), "role.name");
-    Assert.assertArgumentNotNull(role.getOrgId(), "role.orgId");
+    Assert.assertArgumentNotNull(role.getCompanyUuid(), "role.companyUuid");
 
-    Role existsRole = roleDao.getByCode(role.getCode(), role.getOrgId());
+    Role existsRole = roleDao.getByCode(role.getCode(), role.getCompanyUuid());
     if (existsRole != null)
       throw new IAException("角色代码" + role.getCode() + "已经存在，请尝试其他代码");
 
@@ -82,19 +82,18 @@ public class RoleServiceImpl extends BaseWMSService implements RoleService {
     Assert.assertArgumentNotNull(role.getUuid(), "role.uuid");
     Assert.assertArgumentNotNull(role.getCode(), "role.code");
     Assert.assertArgumentNotNull(role.getName(), "role.name");
-    Assert.assertArgumentNotNull(role.getOrgId(), "role.orgId");
+    Assert.assertArgumentNotNull(role.getCompanyUuid(), "role.companyUuid");
 
     Role oldRole = roleDao.get(role.getUuid());
     if (oldRole == null)
       throw new EntityNotFoundException("编辑的角色不存在，请重试");
 
-    Role existsRole = roleDao.getByCode(role.getCode(), role.getOrgId());
+    Role existsRole = roleDao.getByCode(role.getCode(), role.getCompanyUuid());
     if (existsRole != null && existsRole.getUuid().equals(role.getUuid()) == false)
       throw new IAException("角色代码" + role.getCode() + "已经存在，请尝试其他代码");
 
-    PersistenceUtils.checkVersion(role.getVersion(), oldRole, "橘色", role.getCode());
+    PersistenceUtils.checkVersion(role.getVersion(), oldRole, "角色", role.getCode());
 
-    role.setState(RoleState.online);
     role.setLastModifyInfo(OperateInfo.newInstance(operCtx));
     roleDao.update(role);
   }
@@ -112,8 +111,7 @@ public class RoleServiceImpl extends BaseWMSService implements RoleService {
     if (oldRole.getState().equals(RoleState.online))
       return;
 
-    PersistenceUtils.checkVersion(version, oldRole, "橘色", oldRole.getCode());
-    // TODO 更新该角色下面用户的权限
+    PersistenceUtils.checkVersion(version, oldRole, "角色", oldRole.getCode());
 
     oldRole.setState(RoleState.online);
     oldRole.setLastModifyInfo(OperateInfo.newInstance(operCtx));
@@ -133,9 +131,7 @@ public class RoleServiceImpl extends BaseWMSService implements RoleService {
     if (oldRole.getState().equals(RoleState.offline))
       return;
 
-    PersistenceUtils.checkVersion(version, oldRole, "橘色", oldRole.getCode());
-
-    // TODO 更新该角色下面用户的权限
+    PersistenceUtils.checkVersion(version, oldRole, "角色", oldRole.getCode());
 
     oldRole.setState(RoleState.offline);
     oldRole.setLastModifyInfo(OperateInfo.newInstance(operCtx));
@@ -152,8 +148,8 @@ public class RoleServiceImpl extends BaseWMSService implements RoleService {
     if (oldRole == null)
       return;
 
-    PersistenceUtils.checkVersion(version, oldRole, "橘色", oldRole.getCode());
-    // TODO 更新该角色下面用户的权限
+    PersistenceUtils.checkVersion(version, oldRole, "角色", oldRole.getCode());
+    // TODO 更新 角色-用户 角色-资源  用户-资源
 
     roleDao.remove(uuid, version);
   }

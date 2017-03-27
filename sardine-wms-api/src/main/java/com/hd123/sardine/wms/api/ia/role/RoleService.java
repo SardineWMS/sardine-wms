@@ -17,26 +17,108 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 
 /**
- * 橘色服务：接口
+ * 角色服务：接口
  * 
  * @author zhangsai
  *
  */
 public interface RoleService {
+    /** 代码查询，支持模糊查询 */
+    public static final String QUERY_CODE_FIELD = "code";
+    /** 名称查询，支持模糊查询 */
+    public static final String QUERY_NAME_FIELD = "name";
+    /** 状态查询 */
+    public static final String QUERY_STATE_FIELD = "state";
 
-  PageQueryResult<Role> query(PageQueryDefinition definition) throws IllegalArgumentException;
+    /** 代码排序 */
+    public static final String ORDER_CODE_FIELD = "code";
+    /** 名称排序 */
+    public static final String ORDER_NAME_FIELD = "name";
 
-  String insert(Role role, OperateContext operCtx) throws IllegalArgumentException, IAException;
 
-  void update(Role role, OperateContext operCtx) throws IllegalArgumentException,
-      EntityNotFoundException, VersionConflictException, IAException;
+    /**
+     * 分页查询角色信息
+     * 
+     * @param definition
+     *            搜索条件，not null。
+     * @return 角色分页集合
+     * @throws IllegalArgumentException
+     */
+    PageQueryResult<Role> query(PageQueryDefinition definition) throws IllegalArgumentException;
 
-  void online(String uuid, long version, OperateContext operCtx)
-      throws IllegalArgumentException, EntityNotFoundException, VersionConflictException;
+    /**
+     * 新建角色
+     * 
+     * @param role
+     *            角色，not nul。
+     * @param operCtx
+     *            操作信息，not null。
+     * @return 角色uuid
+     * @throws IllegalArgumentException
+     * @throws IAException
+     */
+    String insert(Role role, OperateContext operCtx) throws IllegalArgumentException, IAException;
 
-  void offline(String uuid, long version, OperateContext operCtx)
-      throws IllegalArgumentException, EntityNotFoundException, VersionConflictException;
+    /**
+     * 更新角色
+     * 
+     * @param role
+     *            角色实体，not null。
+     * @param operCtx
+     *            操作信息，not null。
+     * @throws IllegalArgumentException
+     * @throws EntityNotFoundException
+     * @throws VersionConflictException
+     * @throws IAException
+     */
+    void update(Role role, OperateContext operCtx) throws IllegalArgumentException,
+            EntityNotFoundException, VersionConflictException, IAException;
 
-  void remove(String uuid, long version, OperateContext operCtx)
-      throws IllegalArgumentException, EntityNotFoundException, VersionConflictException;
+    /**
+     * 启用角色
+     * 
+     * @param uuid
+     *            角色uuid，not null。
+     * @param version
+     *            角色版本号，not null。
+     * @param operCtx
+     *            操作信息，not null。
+     * @throws IllegalArgumentException
+     * @throws EntityNotFoundException
+     * @throws VersionConflictException
+     */
+    void online(String uuid, long version, OperateContext operCtx)
+            throws IllegalArgumentException, EntityNotFoundException, VersionConflictException;
+
+    /**
+     * 停用角色
+     * 
+     * @param uuid
+     *            角色uuid，not null。
+     * @param version
+     *            角色版本号，not null。
+     * @param operCtx
+     *            操作信息，not null。
+     * @throws IllegalArgumentException
+     * @throws EntityNotFoundException
+     * @throws VersionConflictException
+     */
+    void offline(String uuid, long version, OperateContext operCtx)
+            throws IllegalArgumentException, EntityNotFoundException, VersionConflictException;
+
+    /**
+     * 删除角色
+     * 
+     * @param uuid
+     *            角色uuid，not null。
+     * @param version
+     *            角色版本号，not null。
+     * @param operCtx
+     *            操作信息，not null。
+     * @throws IllegalArgumentException
+     * @throws EntityNotFoundException
+     * @throws VersionConflictException
+     */
+    void remove(String uuid, long version, OperateContext operCtx)
+            throws IllegalArgumentException, EntityNotFoundException, VersionConflictException;
 }

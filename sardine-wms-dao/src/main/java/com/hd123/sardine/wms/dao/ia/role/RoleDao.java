@@ -16,17 +16,6 @@ import com.hd123.sardine.wms.common.dao.BaseDao;
  * @author zhangsai
  *
  */
-public interface RoleDao  extends BaseDao<Role>  {
-
-//  List<Role> query(PageQueryDefinition definition);
-//
-//  void insert(Role role);
-//
-//  void update(Role role);
-//
-//  Role getByUuid(String uuid);
-//
-  Role getByCode(String code, String orgId);
-//
-//  void remove(String uuid, long version);
+public interface RoleDao extends BaseDao<Role> {
+    Role getByCode(String code, String orgId);
 }

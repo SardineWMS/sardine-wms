@@ -9,6 +9,10 @@
  */
 package com.hd123.sardine.wms.dao.ia.role.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.ia.role.Role;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
 import com.hd123.sardine.wms.dao.ia.role.RoleDao;
@@ -17,36 +21,17 @@ import com.hd123.sardine.wms.dao.ia.role.RoleDao;
  * @author zhangsai
  *
  */
-public class RoleDaoImpl  extends BaseDaoImpl<Role>  implements RoleDao {
+public class RoleDaoImpl extends BaseDaoImpl<Role> implements RoleDao {
+    private static final String GETBYCODE = "getByCode";
 
-  @Override
-  public int insert(Role model) {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public int update(Role model) {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public int remove(String uuid, long version) {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  @Override
-  public Role get(String uuid) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public Role getByCode(String code, String orgId) {
-    // TODO Auto-generated method stub
-    return null;
-  }
+    @Override
+    public Role getByCode(String code, String companyUuid) {
+        if (StringUtil.isNullOrBlank(code) || StringUtil.isNullOrBlank(companyUuid))
+            return null;
+        Map<String, String> map = new HashMap<>();
+        map.put("code", code);
+        map.put("companyUuid", companyUuid);
+        return getSqlSession().selectOne(generateStatement(GETBYCODE), map);
+    }
 
 }
