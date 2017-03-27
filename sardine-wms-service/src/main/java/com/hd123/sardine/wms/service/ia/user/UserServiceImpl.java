@@ -43,141 +43,155 @@ import com.hd123.sardine.wms.service.ia.user.validator.UserUpdateValidateHandler
  */
 public class UserServiceImpl extends BaseWMSService implements UserService {
 
-    @Autowired
-    private UserDao userDao;
+  @Autowired
+  private UserDao userDao;
 
-    @Autowired
-    private ValidateHandler<User> userInsertValidateHandler;
+  @Autowired
+  private ValidateHandler<User> userInsertValidateHandler;
 
-    @Autowired
-    private ValidateHandler<User> userUpdateValidateHandler;
+  @Autowired
+  private ValidateHandler<User> userUpdateValidateHandler;
 
-    @Autowired
-    private ValidateHandler<String> userRemoveValidateHandler;
+  @Autowired
+  private ValidateHandler<String> userRemoveValidateHandler;
 
-    @Autowired
-    private ValidateHandler<OperateContext> operateContextValidateHandler;
+  @Autowired
+  private ValidateHandler<OperateContext> operateContextValidateHandler;
 
-    @Override
-    public User get(String uuid) {
-        if (StringUtil.isNullOrBlank(uuid))
-            return null;
-        return userDao.get(uuid);
+  @Override
+  public User get(String uuid) {
+    if (StringUtil.isNullOrBlank(uuid))
+      return null;
+    return userDao.get(uuid);
+  }
+
+  @Override
+  public User getByCode(String code) {
+    if (StringUtil.isNullOrBlank(code))
+      return null;
+    return userDao.getByCode(code);
+  }
+
+  @Override
+  public PageQueryResult<User> query(PageQueryDefinition definition)
+      throws IllegalArgumentException {
+    Assert.assertArgumentNotNull(definition, "definition");
+
+    PageQueryResult<User> pgr = new PageQueryResult<User>();
+    List<User> list = userDao.query(definition);
+    PageQueryUtil.assignPageInfo(pgr, definition);
+    pgr.setRecords(list);
+    return pgr;
+  }
+
+  @Override
+  public String insert(User user, OperateContext operCtx)
+      throws IllegalArgumentException, WMSException {
+    User existsUser = userDao.getByCode(user == null ? null : user.getCode());
+    User operatorUser = userDao.get(
+        (operCtx == null || operCtx.getOperator() == null) ? null : operCtx.getOperator().getId());
+
+    ValidateResult insertResult = userInsertValidateHandler
+        .putAttribute(UserInsertValidateHandler.KEY_CODEEXISTS_USER, existsUser)
+        .putAttribute(UserInsertValidateHandler.KEY_OPERATOR_USER, operatorUser).validate(user);
+    checkValidateResult(insertResult);
+    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
+    checkValidateResult(operCtxResult);
+
+    user.setUuid(UUIDGenerator.genUUID());
+    user.setPasswd(User.DEFAULT_PASSWD);
+    user.setCompanyUuid(operatorUser.getCompanyUuid());
+    user.setCompanyCode(operatorUser.getCompanyCode());
+    user.setCompanyName(operatorUser.getCompanyName());
+    user.setCreateInfo(OperateInfo.newInstance(operCtx));
+    user.setLastModifyInfo(OperateInfo.newInstance(operCtx));
+    userDao.insert(user);
+    return user.getUuid();
+  }
+
+  @Override
+  public void update(User user, OperateContext operCtx)
+      throws IllegalArgumentException, WMSException {
+    User updateUser = userDao.get(user == null ? null : user.getUuid());
+    User existsUser = userDao.getByCode(user == null ? null : user.getCode());
+    ValidateResult updateResult = userUpdateValidateHandler
+        .putAttribute(UserUpdateValidateHandler.KEY_CODEEXISTS_USER, existsUser)
+        .putAttribute(UserUpdateValidateHandler.KEY_UPDATE_USER, updateUser)
+        .putAttribute(NullValidator.KEY_CURRENTOPERATOR_UUID, user == null ? null : user.getUuid())
+        .putAttribute(VersionValidator.ATTR_KEY_VERSION, user.getVersion()).validate(user);
+    checkValidateResult(updateResult);
+    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
+    checkValidateResult(operCtxResult);
+
+    user.setLastModifyInfo(OperateInfo.newInstance(operCtx));
+    userDao.update(user);
+  }
+
+  @Override
+  public void remove(String uuid, long version, OperateContext operCtx)
+      throws IllegalArgumentException, WMSException {
+    User deleteUser = userDao.get(uuid);
+    ValidateResult removeResult = userRemoveValidateHandler
+        .putAttribute(UserRemoveValidateHandler.KEY_OPERATOR_USER, deleteUser)
+        .putAttribute(VersionValidator.ATTR_KEY_VERSION, version).validate(uuid);
+    checkValidateResult(removeResult);
+    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
+    checkValidateResult(operCtxResult);
+
+    userDao.remove(uuid, version);
+  }
+
+  @Override
+  public void online(String uuid, long version, OperateContext operCtx)
+      throws IllegalArgumentException, WMSException {
+    User onlineUser = userDao.get(uuid);
+    ValidateResult removeResult = userRemoveValidateHandler
+        .putAttribute(UserRemoveValidateHandler.KEY_OPERATOR_USER, onlineUser)
+        .putAttribute(VersionValidator.ATTR_KEY_VERSION, version).validate(uuid);
+    checkValidateResult(removeResult);
+    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
+    checkValidateResult(operCtxResult);
+
+    if (onlineUser.getUserState().equals(UserState.online))
+      return;
+
+    onlineUser.setUserState(UserState.online);
+    onlineUser.setLastModifyInfo(OperateInfo.newInstance(operCtx));
+    userDao.update(onlineUser);
+  }
+
+  @Override
+  public void offline(String uuid, long version, OperateContext operCtx)
+      throws IllegalArgumentException, WMSException {
+    User offlineUser = userDao.get(uuid);
+    ValidateResult removeResult = userRemoveValidateHandler
+        .putAttribute(UserRemoveValidateHandler.KEY_OPERATOR_USER, offlineUser)
+        .putAttribute(VersionValidator.ATTR_KEY_VERSION, version).validate(uuid);
+    checkValidateResult(removeResult);
+    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
+    checkValidateResult(operCtxResult);
+
+    if (offlineUser.getUserState().equals(UserState.offline))
+      return;
+
+    offlineUser.setUserState(UserState.offline);
+    offlineUser.setLastModifyInfo(OperateInfo.newInstance(operCtx));
+    userDao.update(offlineUser);
+  }
+
+  @Override
+  public void saveUserRoles(List<String> userUuids, List<String> roleUuids) {
+    Assert.assertArgumentNotNull(userUuids, "userUuids");
+    if (userUuids.isEmpty())
+      return;
+
+    for (String userUuid : userUuids) {
+      userDao.removeRolesByUser(userUuid);
+      if (roleUuids == null || roleUuids.isEmpty())
+        continue;
+      for (String roleUuid : roleUuids) {
+        userDao.saveUserRole(userUuid, roleUuid);
+      }
     }
-
-    @Override
-    public User getByCode(String code) {
-        if (StringUtil.isNullOrBlank(code))
-            return null;
-        return userDao.getByCode(code);
-    }
-
-    @Override
-    public PageQueryResult<User> query(PageQueryDefinition definition)
-            throws IllegalArgumentException {
-        Assert.assertArgumentNotNull(definition, "definition");
-
-        PageQueryResult<User> pgr = new PageQueryResult<User>();
-        List<User> list = userDao.query(definition);
-        PageQueryUtil.assignPageInfo(pgr, definition);
-        pgr.setRecords(list);
-        return pgr;
-    }
-
-    @Override
-    public String insert(User user, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException {
-        User existsUser = userDao.getByCode(user == null ? null : user.getCode());
-        User operatorUser = userDao.get((operCtx == null || operCtx.getOperator() == null) ? null
-                : operCtx.getOperator().getId());
-
-        ValidateResult insertResult = userInsertValidateHandler
-                .putAttribute(UserInsertValidateHandler.KEY_CODEEXISTS_USER, existsUser)
-                .putAttribute(UserInsertValidateHandler.KEY_OPERATOR_USER, operatorUser)
-                .validate(user);
-        checkValidateResult(insertResult);
-        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-        checkValidateResult(operCtxResult);
-
-        user.setUuid(UUIDGenerator.genUUID());
-        user.setPasswd(User.DEFAULT_PASSWD);
-        user.setCompanyUuid(operatorUser.getCompanyUuid());
-        user.setCompanyCode(operatorUser.getCompanyCode());
-        user.setCompanyName(operatorUser.getCompanyName());
-        user.setCreateInfo(OperateInfo.newInstance(operCtx));
-        user.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-        userDao.insert(user);
-        return user.getUuid();
-    }
-
-    @Override
-    public void update(User user, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException {
-        User updateUser = userDao.get(user == null ? null : user.getUuid());
-        User existsUser = userDao.getByCode(user == null ? null : user.getCode());
-        ValidateResult updateResult = userUpdateValidateHandler
-                .putAttribute(UserUpdateValidateHandler.KEY_CODEEXISTS_USER, existsUser)
-                .putAttribute(UserUpdateValidateHandler.KEY_UPDATE_USER, updateUser)
-                .putAttribute(NullValidator.KEY_CURRENTOPERATOR_UUID,
-                        user == null ? null : user.getUuid())
-                .putAttribute(VersionValidator.ATTR_KEY_VERSION, user.getVersion()).validate(user);
-        checkValidateResult(updateResult);
-        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-        checkValidateResult(operCtxResult);
-
-        user.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-        userDao.update(user);
-    }
-
-    @Override
-    public void remove(String uuid, long version, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException {
-        User deleteUser = userDao.get(uuid);
-        ValidateResult removeResult = userRemoveValidateHandler
-                .putAttribute(UserRemoveValidateHandler.KEY_OPERATOR_USER, deleteUser)
-                .putAttribute(VersionValidator.ATTR_KEY_VERSION, version).validate(uuid);
-        checkValidateResult(removeResult);
-        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-        checkValidateResult(operCtxResult);
-
-        userDao.remove(uuid, version);
-    }
-
-    @Override
-    public void online(String uuid, long version, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException {
-        User onlineUser = userDao.get(uuid);
-        ValidateResult removeResult = userRemoveValidateHandler
-                .putAttribute(UserRemoveValidateHandler.KEY_OPERATOR_USER, onlineUser)
-                .putAttribute(VersionValidator.ATTR_KEY_VERSION, version).validate(uuid);
-        checkValidateResult(removeResult);
-        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-        checkValidateResult(operCtxResult);
-
-        if (onlineUser.getUserState().equals(UserState.online))
-            return;
-
-        onlineUser.setUserState(UserState.online);
-        onlineUser.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-        userDao.update(onlineUser);
-    }
-
-    @Override
-    public void offline(String uuid, long version, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException {
-        User offlineUser = userDao.get(uuid);
-        ValidateResult removeResult = userRemoveValidateHandler
-                .putAttribute(UserRemoveValidateHandler.KEY_OPERATOR_USER, offlineUser)
-                .putAttribute(VersionValidator.ATTR_KEY_VERSION, version).validate(uuid);
-        checkValidateResult(removeResult);
-        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-        checkValidateResult(operCtxResult);
-
-        if (offlineUser.getUserState().equals(UserState.offline))
-            return;
-
-        offlineUser.setUserState(UserState.offline);
-        offlineUser.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-        userDao.update(offlineUser);
-    }
+  }
 }

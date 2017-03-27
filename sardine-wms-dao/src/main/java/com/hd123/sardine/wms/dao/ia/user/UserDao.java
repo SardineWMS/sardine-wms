@@ -21,9 +21,13 @@ import com.hd123.sardine.wms.common.entity.OperateContext;
  */
 public interface UserDao extends BaseDao<User> {
 
-    User getByCode(String userCode);
+  User getByCode(String userCode);
 
-    User login(String userCode, String passwd);
+  User login(String userCode, String passwd);
 
-    int updatePasswd(String userUuid, String oldPasswd, String newPasswd, OperateContext operCtx);
+  int updatePasswd(String userUuid, String oldPasswd, String newPasswd, OperateContext operCtx);
+
+  void saveUserRole(String userUuid, String roleUuid);
+
+  void removeRolesByUser(String userUuid);
 }

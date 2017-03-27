@@ -61,4 +61,16 @@ public class UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
         PersistenceUtils.optimisticVerify(i);
         return i;
     }
+
+    @Override
+    public void saveUserRole(String userUuid, String roleUuid) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    @Override
+    public void removeRolesByUser(String userUuid) {
+      // TODO Auto-generated method stub
+      
+    }
 }
