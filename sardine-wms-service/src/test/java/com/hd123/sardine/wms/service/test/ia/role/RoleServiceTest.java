@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.hd123.sardine.wms.api.ia.resource.ResourceService;
 import com.hd123.sardine.wms.api.ia.role.Role;
 import com.hd123.sardine.wms.api.ia.role.RoleState;
 import com.hd123.sardine.wms.dao.ia.role.RoleDao;
@@ -38,6 +39,8 @@ public class RoleServiceTest extends BaseServiceTest {
     public RoleServiceImpl service;
     @Mock
     private RoleDao dao;
+    @Mock
+    private ResourceService resourceService;
 
     @Test
     public void insert() throws Exception {
@@ -73,6 +76,7 @@ public class RoleServiceTest extends BaseServiceTest {
 
         service.remove(UUID, VERSION, defaultOperCtx());
 
+        verify(resourceService).removeResourceByRole(UUID);
         verify(dao).remove(UUID, VERSION);
     }
 

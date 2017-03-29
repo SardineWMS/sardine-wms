@@ -13,6 +13,7 @@ import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.exception.EntityNotFoundException;
 import com.hd123.sardine.wms.common.exception.IAException;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
+import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 
@@ -35,7 +36,6 @@ public interface RoleService {
     /** 名称排序 */
     public static final String ORDER_NAME_FIELD = "name";
 
-
     /**
      * 分页查询角色信息
      * 
@@ -57,7 +57,7 @@ public interface RoleService {
      * @throws IllegalArgumentException
      * @throws IAException
      */
-    String insert(Role role, OperateContext operCtx) throws IllegalArgumentException, IAException;
+    String insert(Role role, OperateContext operCtx) throws IllegalArgumentException, WMSException;
 
     /**
      * 更新角色
@@ -72,7 +72,7 @@ public interface RoleService {
      * @throws IAException
      */
     void update(Role role, OperateContext operCtx) throws IllegalArgumentException,
-            EntityNotFoundException, VersionConflictException, IAException;
+            EntityNotFoundException, VersionConflictException, WMSException;
 
     /**
      * 启用角色
@@ -87,8 +87,8 @@ public interface RoleService {
      * @throws EntityNotFoundException
      * @throws VersionConflictException
      */
-    void online(String uuid, long version, OperateContext operCtx)
-            throws IllegalArgumentException, EntityNotFoundException, VersionConflictException;
+    void online(String uuid, long version, OperateContext operCtx) throws IllegalArgumentException,
+            EntityNotFoundException, VersionConflictException, WMSException;
 
     /**
      * 停用角色
@@ -103,8 +103,8 @@ public interface RoleService {
      * @throws EntityNotFoundException
      * @throws VersionConflictException
      */
-    void offline(String uuid, long version, OperateContext operCtx)
-            throws IllegalArgumentException, EntityNotFoundException, VersionConflictException;
+    void offline(String uuid, long version, OperateContext operCtx) throws IllegalArgumentException,
+            EntityNotFoundException, VersionConflictException, WMSException;
 
     /**
      * 删除角色
@@ -119,6 +119,7 @@ public interface RoleService {
      * @throws EntityNotFoundException
      * @throws VersionConflictException
      */
-    void remove(String uuid, long version, OperateContext operCtx)
-            throws IllegalArgumentException, EntityNotFoundException, VersionConflictException;
+    void remove(String uuid, long version, OperateContext operCtx) throws IllegalArgumentException,
+            EntityNotFoundException, VersionConflictException, WMSException;
+
 }

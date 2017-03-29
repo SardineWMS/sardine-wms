@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
+import com.hd123.sardine.wms.api.ia.resource.ResourceService;
 import com.hd123.sardine.wms.api.ia.user.User;
 import com.hd123.sardine.wms.api.ia.user.UserService;
 import com.hd123.sardine.wms.api.ia.user.UserState;
@@ -57,6 +58,9 @@ public class UserServiceImpl extends BaseWMSService implements UserService {
 
   @Autowired
   private ValidateHandler<OperateContext> operateContextValidateHandler;
+  
+  @Autowired
+  private ResourceService resourceService;
 
   @Override
   public User get(String uuid) {
@@ -138,6 +142,7 @@ public class UserServiceImpl extends BaseWMSService implements UserService {
     ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
     checkValidateResult(operCtxResult);
 
+    resourceService.removeResourceByUser(uuid);
     userDao.remove(uuid, version);
   }
 

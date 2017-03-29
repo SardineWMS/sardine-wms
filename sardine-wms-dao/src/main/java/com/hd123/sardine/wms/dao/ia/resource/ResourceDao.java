@@ -19,9 +19,18 @@ import com.hd123.sardine.wms.api.ia.resource.Resource;
  */
 public interface ResourceDao {
 
-  void saveRoleResource(String roleUuid, String resourceUuid);
+    void saveRoleResource(String roleUuid, String resourceUuid);
 
-  void saveUserResource(String userUuid, String resourceUUuid);
+    void saveUserResource(String userUuid, String resourceUUuid);
 
-  List<Resource> queryOwnedResourceByRole(String roleUuid);
+    List<Resource> queryAllResource();
+
+    List<Resource> queryOwnedResourceByRole(String roleUuid);
+
+    List<Resource> queryOwnedResourceByUser(String userUuid);
+
+    void removeResourceByUser(String userUuid);
+
+    void removeResourceByRole(String roleUuid);
+
 }

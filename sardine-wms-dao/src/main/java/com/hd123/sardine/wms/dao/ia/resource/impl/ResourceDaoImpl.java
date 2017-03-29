@@ -9,34 +9,77 @@
  */
 package com.hd123.sardine.wms.dao.ia.resource.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.mybatis.spring.support.SqlSessionDaoSupport;
 
 import com.hd123.sardine.wms.api.ia.resource.Resource;
-import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
+import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.dao.ia.resource.ResourceDao;
 
 /**
  * @author zhangsai
  *
  */
-public class ResourceDaoImpl extends BaseDaoImpl<Resource> implements ResourceDao {
+public class ResourceDaoImpl extends SqlSessionDaoSupport implements ResourceDao {
+    public static final String MAPPER_SAVEROLERESOURCE = "saveRoleResource";
+    public static final String MAPPER_SAVEUSERRESOURCE = "saveUserResource";
+    public static final String MAPPER_QUERYOWNEDRESOURCEBYROLE = "queryOwnedResourceByRole";
+    public static final String MAPPER_QUERYALLRESOURCE = "queryAllResource";
+    public static final String MAPPER_QUERYOWNEDRESOURCEBYUSER = "queryOwnedResourceByUser";
+    public static final String MAPPER_REMOVERESOURCEBYUSER = "removeResourceByUser";
+    public static final String MAPPER_REMOVERESOURCEBYROLE = "removeResourceByRole";
 
-  @Override
-  public void saveRoleResource(String roleUuid, String resourceUuid) {
-    // TODO Auto-generated method stub
-    
-  }
+    public String generateStatement(String mapperId) {
+        return this.getClass().getName() + "." + mapperId;
+    }
 
-  @Override
-  public void saveUserResource(String userUuid, String resourceUUuid) {
-    // TODO Auto-generated method stub
-    
-  }
+    @Override
+    public void saveRoleResource(String roleUuid, String resourceUuid) {
+        Map<String, String> map = new HashMap<>();
+        map.put("roleUuid", roleUuid);
+        map.put("resourceUuid", resourceUuid);
 
-  @Override
-  public List<Resource> queryOwnedResourceByRole(String roleUuid) {
-    // TODO Auto-generated method stub
-    return null;
-  }
+        getSqlSession().insert(generateStatement(MAPPER_SAVEROLERESOURCE), map);
+    }
 
+    @Override
+    public void saveUserResource(String userUuid, String resourceUuid) {
+        Map<String, String> map = new HashMap<>();
+        map.put("userUuid", userUuid);
+        map.put("resourceUuid", resourceUuid);
+
+        getSqlSession().insert(generateStatement(MAPPER_SAVEUSERRESOURCE), map);
+    }
+
+    @Override
+    public List<Resource> queryOwnedResourceByRole(String roleUuid) {
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDRESOURCEBYROLE),
+                roleUuid);
+    }
+
+    @Override
+    public List<Resource> queryAllResource() {
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYALLRESOURCE), null);
+    }
+
+    @Override
+    public List<Resource> queryOwnedResourceByUser(String userUuid) {
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDRESOURCEBYUSER),
+                userUuid);
+    }
+
+    @Override
+    public void removeResourceByUser(String userUuid) {
+        int i = getSqlSession().delete(generateStatement(MAPPER_REMOVERESOURCEBYUSER), userUuid);
+        PersistenceUtils.optimisticVerify(i);
+    }
+
+    @Override
+    public void removeResourceByRole(String roleUuid) {
+        int i = getSqlSession().delete(generateStatement(MAPPER_REMOVERESOURCEBYROLE), roleUuid);
+        PersistenceUtils.optimisticVerify(i);
+    }
 }

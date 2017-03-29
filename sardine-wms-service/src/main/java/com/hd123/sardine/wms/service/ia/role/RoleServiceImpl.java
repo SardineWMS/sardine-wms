@@ -14,21 +14,26 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.sardine.wms.api.ia.resource.ResourceService;
 import com.hd123.sardine.wms.api.ia.role.Role;
 import com.hd123.sardine.wms.api.ia.role.RoleService;
 import com.hd123.sardine.wms.api.ia.role.RoleState;
 import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.entity.OperateInfo;
 import com.hd123.sardine.wms.common.exception.EntityNotFoundException;
-import com.hd123.sardine.wms.common.exception.IAException;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
+import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
+import com.hd123.sardine.wms.common.validator.ValidateHandler;
+import com.hd123.sardine.wms.common.validator.ValidateResult;
 import com.hd123.sardine.wms.dao.ia.role.RoleDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
+import com.hd123.sardine.wms.service.ia.role.validator.RoleInsertValidateHandler;
+import com.hd123.sardine.wms.service.ia.role.validator.RoleUpdateValidateHandler;
 
 /**
  * 角色服务：实现
@@ -38,119 +43,132 @@ import com.hd123.sardine.wms.service.ia.BaseWMSService;
  */
 public class RoleServiceImpl extends BaseWMSService implements RoleService {
 
-  @Autowired
-  private RoleDao roleDao;
+    @Autowired
+    private RoleDao roleDao;
+    @Autowired
+    private ResourceService resourceService;
+    @Autowired
+    private ValidateHandler<Role> roleInsertValidateHandler;
+    @Autowired
+    private ValidateHandler<Role> roleUpdateValidateHandler;
+    @Autowired
+    private ValidateHandler<OperateContext> operateContextValidateHandler;
 
-  @Override
-  public PageQueryResult<Role> query(PageQueryDefinition definition)
-      throws IllegalArgumentException {
-    Assert.assertArgumentNotNull(definition, "definition");
+    @Override
+    public PageQueryResult<Role> query(PageQueryDefinition definition)
+            throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(definition, "definition");
 
-    PageQueryResult<Role> pgr = new PageQueryResult<Role>();
-    List<Role> list = roleDao.query(definition);
-    PageQueryUtil.assignPageInfo(pgr, definition);
-    pgr.setRecords(list);
-    return pgr;
-  }
+        PageQueryResult<Role> pgr = new PageQueryResult<Role>();
+        List<Role> list = roleDao.query(definition);
+        PageQueryUtil.assignPageInfo(pgr, definition);
+        pgr.setRecords(list);
+        return pgr;
+    }
 
-  @Override
-  public String insert(Role role, OperateContext operCtx)
-      throws IllegalArgumentException, IAException {
-    Assert.assertArgumentNotNull(role, "role");
-    Assert.assertArgumentNotNull(operCtx, "operCtx");
-    Assert.assertArgumentNotNull(role.getCode(), "role.code");
-    Assert.assertArgumentNotNull(role.getName(), "role.name");
-    Assert.assertArgumentNotNull(role.getCompanyUuid(), "role.companyUuid");
+    @Override
+    public String insert(Role role, OperateContext operCtx)
+            throws IllegalArgumentException, WMSException {
+        Role dbRole = roleDao.getByCode(role == null ? null : role.getCode(),
+                role == null ? null : role.getCompanyUuid());
 
-    Role existsRole = roleDao.getByCode(role.getCode(), role.getCompanyUuid());
-    if (existsRole != null)
-      throw new IAException("角色代码" + role.getCode() + "已经存在，请尝试其他代码");
+        ValidateResult insertResult = roleInsertValidateHandler
+                .putAttribute(RoleInsertValidateHandler.KEY_CODEEXISTS_ROLE, dbRole).validate(role);
+        checkValidateResult(insertResult);
+        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
+        checkValidateResult(operCtxResult);
 
-    role.setUuid(UUIDGenerator.genUUID());
-    role.setState(RoleState.online);
-    role.setCreateInfo(OperateInfo.newInstance(operCtx));
-    role.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-    roleDao.insert(role);
-    return role.getUuid();
-  }
+        Role existsRole = roleDao.getByCode(role.getCode(), role.getCompanyUuid());
+        if (existsRole != null)
+            throw new WMSException("角色代码" + role.getCode() + "已经存在，请尝试其他代码");
 
-  @Override
-  public void update(Role role, OperateContext operCtx) throws IllegalArgumentException,
-      EntityNotFoundException, VersionConflictException, IAException {
-    Assert.assertArgumentNotNull(role, "role");
-    Assert.assertArgumentNotNull(operCtx, "operCtx");
-    Assert.assertArgumentNotNull(role.getUuid(), "role.uuid");
-    Assert.assertArgumentNotNull(role.getCode(), "role.code");
-    Assert.assertArgumentNotNull(role.getName(), "role.name");
-    Assert.assertArgumentNotNull(role.getCompanyUuid(), "role.companyUuid");
+        role.setUuid(UUIDGenerator.genUUID());
+        role.setState(RoleState.online);
+        role.setCreateInfo(OperateInfo.newInstance(operCtx));
+        role.setLastModifyInfo(OperateInfo.newInstance(operCtx));
+        roleDao.insert(role);
+        return role.getUuid();
+    }
 
-    Role oldRole = roleDao.get(role.getUuid());
-    if (oldRole == null)
-      throw new EntityNotFoundException("编辑的角色不存在，请重试");
+    @Override
+    public void update(Role role, OperateContext operCtx) throws IllegalArgumentException,
+            EntityNotFoundException, VersionConflictException, WMSException {
+        Role oldRole = roleDao.get(role == null ? null : role.getUuid());
+        ValidateResult updateResult = roleUpdateValidateHandler
+                .putAttribute(RoleUpdateValidateHandler.KEY_OPERATOR_ROLE, oldRole).validate(role);
+        checkValidateResult(updateResult);
+        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
+        checkValidateResult(operCtxResult);
 
-    Role existsRole = roleDao.getByCode(role.getCode(), role.getCompanyUuid());
-    if (existsRole != null && existsRole.getUuid().equals(role.getUuid()) == false)
-      throw new IAException("角色代码" + role.getCode() + "已经存在，请尝试其他代码");
+        Role existsRole = roleDao.getByCode(role.getCode(), role.getCompanyUuid());
+        if (existsRole != null && existsRole.getUuid().equals(role.getUuid()) == false)
+            throw new WMSException("角色代码" + role.getCode() + "已经存在，请尝试其他代码");
 
-    PersistenceUtils.checkVersion(role.getVersion(), oldRole, "角色", role.getCode());
+        PersistenceUtils.checkVersion(role.getVersion(), oldRole, "角色", role.getCode());
 
-    role.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-    roleDao.update(role);
-  }
+        role.setLastModifyInfo(OperateInfo.newInstance(operCtx));
+        roleDao.update(role);
+    }
 
-  @Override
-  public void online(String uuid, long version, OperateContext operCtx)
-      throws IllegalArgumentException, EntityNotFoundException, VersionConflictException {
-    Assert.assertArgumentNotNull(uuid, "uuid");
-    Assert.assertArgumentNotNull(operCtx, "operCtx");
+    @Override
+    public void online(String uuid, long version, OperateContext operCtx)
+            throws IllegalArgumentException, EntityNotFoundException, VersionConflictException,
+            WMSException {
+        Assert.assertArgumentNotNull(uuid, "uuid");
+        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
+        checkValidateResult(operCtxResult);
 
-    Role oldRole = roleDao.get(uuid);
-    if (oldRole == null)
-      throw new EntityNotFoundException("编辑的角色不存在，请重试");
+        Role oldRole = roleDao.get(uuid);
+        if (oldRole == null)
+            throw new EntityNotFoundException("编辑的角色不存在，请重试");
 
-    if (oldRole.getState().equals(RoleState.online))
-      return;
+        if (oldRole.getState().equals(RoleState.online))
+            return;
 
-    PersistenceUtils.checkVersion(version, oldRole, "角色", oldRole.getCode());
+        PersistenceUtils.checkVersion(version, oldRole, "角色", oldRole.getCode());
 
-    oldRole.setState(RoleState.online);
-    oldRole.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-    roleDao.update(oldRole);
-  }
+        oldRole.setState(RoleState.online);
+        oldRole.setLastModifyInfo(OperateInfo.newInstance(operCtx));
+        roleDao.update(oldRole);
+    }
 
-  @Override
-  public void offline(String uuid, long version, OperateContext operCtx)
-      throws IllegalArgumentException, EntityNotFoundException, VersionConflictException {
-    Assert.assertArgumentNotNull(uuid, "uuid");
-    Assert.assertArgumentNotNull(operCtx, "operCtx");
+    @Override
+    public void offline(String uuid, long version, OperateContext operCtx)
+            throws IllegalArgumentException, EntityNotFoundException, VersionConflictException,
+            WMSException {
+        Assert.assertArgumentNotNull(uuid, "uuid");
+        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
+        checkValidateResult(operCtxResult);
+        Role oldRole = roleDao.get(uuid);
+        if (oldRole == null)
+            throw new EntityNotFoundException("编辑的角色不存在，请重试");
 
-    Role oldRole = roleDao.get(uuid);
-    if (oldRole == null)
-      throw new EntityNotFoundException("编辑的角色不存在，请重试");
+        if (oldRole.getState().equals(RoleState.offline))
+            return;
 
-    if (oldRole.getState().equals(RoleState.offline))
-      return;
+        PersistenceUtils.checkVersion(version, oldRole, "角色", oldRole.getCode());
 
-    PersistenceUtils.checkVersion(version, oldRole, "角色", oldRole.getCode());
+        oldRole.setState(RoleState.offline);
+        oldRole.setLastModifyInfo(OperateInfo.newInstance(operCtx));
+        roleDao.update(oldRole);
+    }
 
-    oldRole.setState(RoleState.offline);
-    oldRole.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-    roleDao.update(oldRole);
-  }
+    @Override
+    public void remove(String uuid, long version, OperateContext operCtx)
+            throws IllegalArgumentException, EntityNotFoundException, VersionConflictException,
+            WMSException {
+        Assert.assertArgumentNotNull(uuid, "uuid");
+        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
+        checkValidateResult(operCtxResult);
 
-  @Override
-  public void remove(String uuid, long version, OperateContext operCtx)
-      throws IllegalArgumentException, EntityNotFoundException, VersionConflictException {
-    Assert.assertArgumentNotNull(uuid, "uuid");
-    Assert.assertArgumentNotNull(operCtx, "operCtx");
+        Role oldRole = roleDao.get(uuid);
+        if (oldRole == null)
+            return;
 
-    Role oldRole = roleDao.get(uuid);
-    if (oldRole == null)
-      return;
+        PersistenceUtils.checkVersion(version, oldRole, "角色", oldRole.getCode());
+        // TODO 更新 角色-用户
+        resourceService.removeResourceByRole(uuid);
 
-    PersistenceUtils.checkVersion(version, oldRole, "角色", oldRole.getCode());
-    // TODO 更新 角色-用户 角色-资源  用户-资源
-
-    roleDao.remove(uuid, version);
-  }
+        roleDao.remove(uuid, version);
+    }
 }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd123.sardine.wms.dao.ia.resource.impl.ResourceDaoImpl">
+	<resultMap type="Resource" id="BaseResultMap">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="upperUuid" property="upperUuid" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<insert id="saveRoleResource" parameterType="map">
+		insert into
+		sardine_role_resource(
+		roleuuid,
+		resourceuuid
+		)
+		values(
+		#{roleUuid,jdbcType=VARCHAR},
+		#{resourceUuid,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<insert id="saveUserResource" parameterType="map">
+		insert into
+		sardine_user_resource(
+		useruuid,
+		resourceuuid
+		)
+		values(
+		#{userUuid,jdbcType=VARCHAR},
+		#{resourceUuid,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<select id="queryOwnedResourceByRole" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select r.* from sardine_role_resource rr,sardine_resource r
+		where
+		rr.resourceuuid=r.uuid
+	</select>
+
+	<select id="queryOwnedResourceByUser" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select r.* from sardine_user_resource ur,sardine_resource r
+		where
+		ur.resourceuuid=r.uuid
+	</select>
+
+	<select id="queryAllResource" resultMap="BaseResultMap">
+		select * from sardine_resource
+	</select>
+
+	<delete id="removeResourceByUser" parameterType="java.lang.String">
+		delete from
+		sardine_user_resource where useruuid=#{useruuid,jdbcType=VARCHAR}
+	</delete>
+
+	<delete id="removeResourceByRole" parameterType="java.lang.String">
+		delete from
+		sardine_role_resource where roleuuid=#{useruuid,jdbcType=VARCHAR}
+	</delete>
+
+</mapper>
