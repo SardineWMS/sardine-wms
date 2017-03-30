@@ -16,7 +16,6 @@ import java.util.Map;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 
 import com.hd123.sardine.wms.api.ia.resource.Resource;
-import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.dao.ia.resource.ResourceDao;
 
 /**
@@ -73,13 +72,11 @@ public class ResourceDaoImpl extends SqlSessionDaoSupport implements ResourceDao
 
     @Override
     public void removeResourceByUser(String userUuid) {
-        int i = getSqlSession().delete(generateStatement(MAPPER_REMOVERESOURCEBYUSER), userUuid);
-        PersistenceUtils.optimisticVerify(i);
+        getSqlSession().delete(generateStatement(MAPPER_REMOVERESOURCEBYUSER), userUuid);
     }
 
     @Override
     public void removeResourceByRole(String roleUuid) {
-        int i = getSqlSession().delete(generateStatement(MAPPER_REMOVERESOURCEBYROLE), roleUuid);
-        PersistenceUtils.optimisticVerify(i);
+        getSqlSession().delete(generateStatement(MAPPER_REMOVERESOURCEBYROLE), roleUuid);
     }
 }
