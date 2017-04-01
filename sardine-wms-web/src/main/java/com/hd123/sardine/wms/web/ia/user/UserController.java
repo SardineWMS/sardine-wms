@@ -9,6 +9,8 @@
  */
 package com.hd123.sardine.wms.web.ia.user;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hd123.rumba.commons.lang.StringUtil;
+import com.hd123.sardine.wms.api.ia.role.Role;
+import com.hd123.sardine.wms.api.ia.role.RoleService;
 import com.hd123.sardine.wms.api.ia.user.User;
 import com.hd123.sardine.wms.api.ia.user.UserService;
 import com.hd123.sardine.wms.api.ia.user.UserState;
@@ -40,6 +44,8 @@ import com.hd123.sardine.wms.web.BaseController;
 public class UserController extends BaseController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private RoleService roleService;
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public @ResponseBody RespObject get(@RequestParam(value = "userUuid") String userUuid,
@@ -174,4 +180,35 @@ public class UserController extends BaseController {
         }
         return resp;
     }
+
+    @RequestMapping(value = "/saveUserRoles", method = RequestMethod.POST)
+    public @ResponseBody RespObject saveUserRoles(
+            @RequestParam(value = "userUuid", required = true) String userUuid,
+            @RequestParam(value = "token", required = true) String token,
+            @RequestBody List<String> roleUuids) {
+        RespObject resp = new RespObject();
+        try {
+            userService.saveUserRoles(userUuid, roleUuids);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (Exception e) {
+            return new ErrorRespObject("分配角色失败", e.getMessage());
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/queryRolesByUser", method = RequestMethod.GET)
+    public @ResponseBody RespObject queryRolesByUser(
+            @RequestParam(value = "userUuid") String userUuid,
+            @RequestParam(value = "token") String token) {
+        RespObject resp = new RespObject();
+        try {
+            List<Role> roles = roleService.queryRolesByUser(userUuid);
+            resp.setObj(roles);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (Exception e) {
+            return new ErrorRespObject("查询用户拥有的角色失败", e.getMessage());
+        }
+        return resp;
+    }
+
 }
