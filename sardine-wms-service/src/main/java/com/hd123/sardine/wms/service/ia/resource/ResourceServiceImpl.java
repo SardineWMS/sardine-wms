@@ -16,10 +16,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
-import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.ia.resource.Resource;
 import com.hd123.sardine.wms.api.ia.resource.ResourceService;
-import com.hd123.sardine.wms.api.ia.resource.ResourceType;
 import com.hd123.sardine.wms.dao.ia.resource.ResourceDao;
 
 /**
@@ -34,69 +32,76 @@ public class ResourceServiceImpl implements ResourceService {
     private ResourceDao dao;
 
     @Override
-    public List<Resource> queryOwnedResourceByUser(String userUuid, ResourceType type)
+    public List<Resource> queryOwnedMenuResourceByUser(String userUuid)
             throws IllegalArgumentException {
         Assert.assertArgumentNotNull(userUuid, "userUuid");
 
-        List<Resource> resources = new ArrayList<>();
-        resources = dao.queryOwnedResourceByUser(userUuid);
-        if (CollectionUtils.isEmpty(resources) || type == null)
-            return resources;
-
-        List<Resource> menuResources = new ArrayList<>();
-        List<Resource> operateResources = new ArrayList<>();
-        for (Resource resource : resources) {
-            if (StringUtil.isNullOrBlank(resource.getUpperUuid()))
-                menuResources.add(resource);
-            else
-                operateResources.add(resource);
+        List<Resource> topMule = dao.queryOwnedTopMenuResourceByUser(userUuid);
+        for (Resource t : topMule) {
+            List<Resource> moduleMenus = dao.queryOwnedChildResourceByUser(userUuid, t.getUuid());
+            t.getChildren().addAll(moduleMenus);
         }
-        if (ResourceType.menu.equals(type))
-            return menuResources;
-        return operateResources;
+        return topMule;
     }
 
     @Override
     public List<Resource> queryAllResourceByUser(String userUuid) throws IllegalArgumentException {
         Assert.assertArgumentNotNull(userUuid, "userUuid");
 
-        List<Resource> allResources = dao.queryAllResource();
-        List<Resource> ownedResources = dao.queryOwnedResourceByUser(userUuid);
-
-        for (Resource resource : allResources) {
-            if (ownedResources.contains(resource))
-                resource.setOwned(true);
-            else
-                resource.setOwned(false);
+        List<Resource> allTopMules = dao.queryAllTopMenuResource();
+        List<Resource> owmTopMules = dao.queryOwnedTopMenuResourceByUser(userUuid);
+        for (Resource t : allTopMules) {
+            if (owmTopMules.contains(t))
+                t.setOwned(true);
+            List<Resource> allModuleMenus = dao.queryAllChildResource(t.getUuid());
+            List<Resource> ownModuleMenus = dao.queryOwnedChildResourceByUser(userUuid,
+                    t.getUuid());
+            for (Resource m : allModuleMenus) {
+                if (ownModuleMenus.contains(m))
+                    m.setOwned(true);
+                List<Resource> allOperates = dao.queryAllChildResource(m.getUuid());
+                List<Resource> ownOperates = dao.queryOwnedChildResourceByUser(userUuid,
+                        m.getUuid());
+                for (Resource o : allOperates) {
+                    if (ownOperates.contains(o))
+                        o.setOwned(true);
+                }
+                m.getChildren().addAll(allOperates);
+            }
+            t.getChildren().addAll(allModuleMenus);
         }
 
-        return allResources;
-    }
-
-    @Override
-    public List<Resource> queryOwnedResourceByRole(String roleUuid)
-            throws IllegalArgumentException {
-        Assert.assertArgumentNotNull(roleUuid, "roleUuid");
-
-        List<Resource> resources = dao.queryOwnedResourceByRole(roleUuid);
-        return resources;
+        return allTopMules;
     }
 
     @Override
     public List<Resource> queryAllResourceByRole(String roleUuid) throws IllegalArgumentException {
         Assert.assertArgumentNotNull(roleUuid, "roleUuid");
 
-        List<Resource> allResources = dao.queryAllResource();
-        List<Resource> ownedResources = dao.queryOwnedResourceByRole(roleUuid);
-
-        for (Resource resource : allResources) {
-            if (ownedResources.contains(resource))
-                resource.setOwned(true);
-            else
-                resource.setOwned(false);
+        List<Resource> allTopMules = dao.queryAllTopMenuResource();
+        List<Resource> owmTopMules = dao.queryOwnedTopMenuResourceByRole(roleUuid);
+        for (Resource t : allTopMules) {
+            if (owmTopMules.contains(t))
+                t.setOwned(true);
+            List<Resource> allModuleMenus = dao.queryAllChildResource(t.getUuid());
+            List<Resource> ownModuleMenus = dao.queryOwnedChildResourceByRole(roleUuid,
+                    t.getUuid());
+            for (Resource m : allModuleMenus) {
+                if (ownModuleMenus.contains(m))
+                    m.setOwned(true);
+                List<Resource> allOperates = dao.queryAllChildResource(m.getUuid());
+                List<Resource> ownOperates = dao.queryOwnedChildResourceByRole(roleUuid,
+                        m.getUuid());
+                for (Resource o : allOperates) {
+                    if (ownOperates.contains(o))
+                        o.setOwned(true);
+                }
+                m.getChildren().addAll(allOperates);
+            }
+            t.getChildren().addAll(allModuleMenus);
         }
 
-        return allResources;
+        return allTopMules;
     }
 
     @Override
@@ -135,5 +140,45 @@ public class ResourceServiceImpl implements ResourceService {
         Assert.assertArgumentNotNull(roleUuid, "roleUuid");
 
         dao.removeResourceByRole(roleUuid);
+    }
+
+    @Override
+    public List<Resource> queryOwnedResourceByUuser(String userUuid)
+            throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(userUuid, "userUuid");
+        List<Resource> allOwnedResources = new ArrayList<Resource>();
+        List<Resource> topMenuResources = dao.queryOwnedTopMenuResourceByUser(userUuid);
+        allOwnedResources.addAll(topMenuResources);
+        for (Resource t : topMenuResources) {
+            List<Resource> moduleMenuResources = dao.queryOwnedChildResourceByUser(userUuid,
+                    t.getUuid());
+            allOwnedResources.addAll(moduleMenuResources);
+            for (Resource m : moduleMenuResources) {
+                List<Resource> operatesResources = dao.queryOwnedChildResourceByUser(userUuid,
+                        m.getUuid());
+                allOwnedResources.addAll(operatesResources);
+            }
+        }
+        return allOwnedResources;
+    }
+
+    @Override
+    public List<Resource> queryOwnedResourceByRole(String roleUuid)
+            throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(roleUuid, "roleUuid");
+        List<Resource> allOwnedResources = new ArrayList<Resource>();
+        List<Resource> topMenuResources = dao.queryOwnedTopMenuResourceByRole(roleUuid);
+        allOwnedResources.addAll(topMenuResources);
+        for (Resource t : topMenuResources) {
+            List<Resource> moduleMenuResources = dao.queryOwnedChildResourceByRole(roleUuid,
+                    t.getUuid());
+            allOwnedResources.addAll(moduleMenuResources);
+            for (Resource m : moduleMenuResources) {
+                List<Resource> operatesResources = dao.queryOwnedChildResourceByRole(roleUuid,
+                        m.getUuid());
+                allOwnedResources.addAll(operatesResources);
+            }
+        }
+        return allOwnedResources;
     }
 }

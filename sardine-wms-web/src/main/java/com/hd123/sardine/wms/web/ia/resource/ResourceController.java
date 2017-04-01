@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hd123.sardine.wms.api.ia.resource.Resource;
 import com.hd123.sardine.wms.api.ia.resource.ResourceService;
-import com.hd123.sardine.wms.api.ia.resource.ResourceType;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -37,48 +36,13 @@ public class ResourceController extends BaseController {
     @Autowired
     private ResourceService resourceService;
 
-    @RequestMapping(value = "/queryOwnedAllResourceByUser", method = RequestMethod.GET)
+    @RequestMapping(value = "/queryOwnedMenuResourceByUser", method = RequestMethod.GET)
     public @ResponseBody RespObject queryOwnedAllResourceByUser(
             @RequestParam(value = "userUuid") String userUuid,
-            @RequestParam(value = "type") String type,
             @RequestParam(value = "token") String token) {
         RespObject resp = new RespObject();
         try {
-            List<Resource> resources = resourceService.queryOwnedResourceByUser(userUuid, null);
-            resp.setObj(resources);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("查询失败", e.getMessage());
-        }
-        return resp;
-    }
-
-    @RequestMapping(value = "/queryOwnedMenuResourceByUser", method = RequestMethod.GET)
-    public @ResponseBody RespObject queryOwnedMenuResourceByUser(
-            @RequestParam(value = "userUuid") String userUuid,
-            @RequestParam(value = "type") String type,
-            @RequestParam(value = "token") String token) {
-        RespObject resp = new RespObject();
-        try {
-            List<Resource> resources = resourceService.queryOwnedResourceByUser(userUuid,
-                    ResourceType.menu);
-            resp.setObj(resources);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("查询失败", e.getMessage());
-        }
-        return resp;
-    }
-
-    @RequestMapping(value = "/queryOwnedOperateResourceByUser", method = RequestMethod.GET)
-    public @ResponseBody RespObject queryOwnedOperateResourceByUser(
-            @RequestParam(value = "userUuid") String userUuid,
-            @RequestParam(value = "type") String type,
-            @RequestParam(value = "token") String token) {
-        RespObject resp = new RespObject();
-        try {
-            List<Resource> resources = resourceService.queryOwnedResourceByUser(userUuid,
-                    ResourceType.operate);
+            List<Resource> resources = resourceService.queryOwnedMenuResourceByUser(userUuid);
             resp.setObj(resources);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {

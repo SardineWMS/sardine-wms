@@ -35,24 +35,48 @@ public class ResourceDaoTest extends AbstractDataAccessTests {
     private ResourceDao dao;
 
     @Test
-    public void queryAllResource() {
-        List<Resource> resources = dao.queryAllResource();
-
-        assertNotNull(resources);
-        assertEquals(3, resources.size());
-    }
-
-    @Test
-    public void queryOwnedResourceByRole() {
-        List<Resource> resources = dao.queryOwnedResourceByRole("r1");
+    public void queryAllTopMenuResource() {
+        List<Resource> resources = dao.queryAllTopMenuResource();
 
         assertNotNull(resources);
         assertEquals(1, resources.size());
     }
 
     @Test
-    public void queryOwnedResourceByUser() {
-        List<Resource> resources = dao.queryOwnedResourceByUser("s1");
+    public void queryOwnedTopMenuResourceByRole() {
+        List<Resource> resources = dao.queryOwnedTopMenuResourceByRole("r1");
+
+        assertNotNull(resources);
+        assertEquals(1, resources.size());
+    }
+
+    @Test
+    public void queryOwnedTopMenuResourceByUser() {
+        List<Resource> resources = dao.queryOwnedTopMenuResourceByUser("s1");
+
+        assertNotNull(resources);
+        assertEquals(1, resources.size());
+    }
+    
+    @Test
+    public void queryAllChildResource() {
+        List<Resource> resources = dao.queryAllChildResource("u1");
+
+        assertNotNull(resources);
+        assertEquals(1, resources.size());
+    }
+    
+    @Test
+    public void queryOwnedChildResourceByRole() {
+        List<Resource> resources = dao.queryOwnedChildResourceByRole("r1","u1");
+
+        assertNotNull(resources);
+        assertEquals(1, resources.size());
+    }
+    
+    @Test
+    public void queryOwnedChildResourceByUser() {
+        List<Resource> resources = dao.queryOwnedChildResourceByUser("s1","u1");
 
         assertNotNull(resources);
         assertEquals(1, resources.size());
@@ -62,14 +86,14 @@ public class ResourceDaoTest extends AbstractDataAccessTests {
     @ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT,
             value = "Result_Insert_RoleResource.xml")
     public void insert_roleResource() throws ParseException {
-        dao.saveRoleResource("r2", "u2");
+        dao.saveRoleResource("r2", "u1");
     }
     
     @Test
     @ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT,
             value = "Result_Insert_UserResource.xml")
     public void insert_userResource() throws ParseException {
-        dao.saveUserResource("s2", "u2");
+        dao.saveUserResource("s2", "u1");
     }
     
     @Test
