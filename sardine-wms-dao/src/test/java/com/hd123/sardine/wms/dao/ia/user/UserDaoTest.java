@@ -93,4 +93,18 @@ public class UserDaoTest extends AbstractDataAccessTests {
         int count = userDao.remove("u1", version);
         assertEquals(1, count);
     }
+
+    @Test
+    @ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT,
+            value = "Result_Insert_UserRole.xml")
+    public void saveUserRole() throws ParseException {
+        userDao.saveUserRole("u2", "r2");
+    }
+
+    @Test
+    @ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT,
+            value = "Result_Delete_RoleUser.xml")
+    public void removeRolesByUser() {
+        userDao.removeRolesByUser("u1");
+    }
 }

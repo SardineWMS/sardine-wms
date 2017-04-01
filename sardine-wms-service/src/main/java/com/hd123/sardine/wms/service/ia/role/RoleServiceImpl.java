@@ -166,9 +166,14 @@ public class RoleServiceImpl extends BaseWMSService implements RoleService {
             return;
 
         PersistenceUtils.checkVersion(version, oldRole, "角色", oldRole.getCode());
-        // TODO 更新 角色-用户
         resourceService.removeResourceByRole(uuid);
-
+        roleDao.removeRelationRoleAndUserByRole(uuid);
         roleDao.remove(uuid, version);
+    }
+
+    @Override
+    public List<Role> queryRolesByUser(String userUuid) throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(userUuid, "userUuid");
+        return roleDao.queryRolesByUser(userUuid);
     }
 }

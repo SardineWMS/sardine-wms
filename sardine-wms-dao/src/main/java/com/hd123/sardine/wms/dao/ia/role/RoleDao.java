@@ -9,6 +9,8 @@
  */
 package com.hd123.sardine.wms.dao.ia.role;
 
+import java.util.List;
+
 import com.hd123.sardine.wms.api.ia.role.Role;
 import com.hd123.sardine.wms.common.dao.BaseDao;
 
@@ -18,4 +20,8 @@ import com.hd123.sardine.wms.common.dao.BaseDao;
  */
 public interface RoleDao extends BaseDao<Role> {
     Role getByCode(String code, String orgId);
+    
+    List<Role> queryRolesByUser(String userUuid);
+    
+    void removeRelationRoleAndUserByRole(String roleUuid);
 }
