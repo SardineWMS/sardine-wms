@@ -45,12 +45,6 @@ public class BinTypeUpdateValidateHandler extends GenericValidateHandler<BinType
     private Validator<ValidateBean<HasVersion>> versionValidator;
 
     @Autowired
-    private Validator<ValidateBean<Object>> numberValidator;
-
-    @Autowired
-    private Validator<ValidateBean<Object>> ratioValidator;
-
-    @Autowired
     private Validator<ValidateBean<Object>> nonnegativeNumberValidator;
 
     @Override

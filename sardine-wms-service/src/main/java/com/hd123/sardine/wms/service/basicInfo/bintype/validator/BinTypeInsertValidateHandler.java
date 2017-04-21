@@ -39,12 +39,6 @@ public class BinTypeInsertValidateHandler extends GenericValidateHandler<BinType
     private Validator<ValidateBean<IsEntity>> nullValidator;
 
     @Autowired
-    private Validator<ValidateBean<Object>> numberValidator;
-
-    @Autowired
-    private Validator<ValidateBean<Object>> ratioValidator;
-
-    @Autowired
     private Validator<ValidateBean<Object>> nonnegativeNumberValidator;
 
     @Override
