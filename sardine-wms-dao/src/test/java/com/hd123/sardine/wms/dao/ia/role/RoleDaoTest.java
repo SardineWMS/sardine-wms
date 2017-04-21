@@ -89,12 +89,26 @@ public class RoleDaoTest extends AbstractDataAccessTests {
         int i = dao.update(role);
         assertEquals(1, i);
     }
-    
+
     @Test
     @ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT, value = "Result_Delete.xml")
     public void delete() {
         int count = dao.remove("u1", 0);
         assertEquals(1, count);
+    }
+
+    @Test
+    public void queryRolesByUser() {
+        List<Role> roles = dao.queryRolesByUser("s1");
+        assertNotNull(roles);
+        assertEquals(2, roles.size());
+    }
+
+    @Test
+    @ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT,
+            value = "Result_Delete_RoleUser.xml")
+    public void removeRelationRoleAndUserByRole() {
+        dao.removeRelationRoleAndUserByRole("u2");
     }
 
 }

@@ -33,20 +33,43 @@
 		)
 	</insert>
 
-	<select id="queryOwnedResourceByRole" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<select id="queryAllTopMenuResource"  resultMap="BaseResultMap">
+		select r.* from sardine_resource r
+		where
+		r.upperuuid is null
+	</select>
+
+	<select id="queryOwnedTopMenuResourceByRole" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select r.* from sardine_role_resource rr,sardine_resource r
-		where
-		rr.resourceuuid=r.uuid
+		where rr.resourceuuid=r.uuid
+		and r.upperuuid is null
+		and rr.roleuuid=#{roleUuid,jdbcType=VARCHAR}
 	</select>
 
-	<select id="queryOwnedResourceByUser" parameterType="java.lang.String" resultMap="BaseResultMap">
+	<select id="queryOwnedTopMenuResourceByUser" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select r.* from sardine_user_resource ur,sardine_resource r
-		where
-		ur.resourceuuid=r.uuid
+		where ur.resourceuuid=r.uuid
+		and r.upperuuid is null	
+		and ur.useruuid=#{userUuid,jdbcType=VARCHAR}
 	</select>
-
-	<select id="queryAllResource" resultMap="BaseResultMap">
-		select * from sardine_resource
+	
+	<select id="queryAllChildResource" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select r.* from sardine_resource r
+		where r.upperuuid=#{resourceUuid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="queryOwnedChildResourceByRole" parameterType="map" resultMap="BaseResultMap">
+		select r.* from sardine_resource r,sardine_role_resource rr
+		where rr.resourceuuid=r.uuid
+		and r.upperuuid=#{resourceUuid,jdbcType=VARCHAR}
+		and rr.roleuuid=#{roleUuid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="queryOwnedChildResourceByUser" parameterType="map" resultMap="BaseResultMap">
+		select r.* from sardine_resource r,sardine_user_resource ur
+		where ur.resourceuuid=r.uuid
+		and r.upperuuid=#{resourceUuid,jdbcType=VARCHAR}
+		and ur.useruuid=#{userUuid,jdbcType=VARCHAR}
 	</select>
 
 	<delete id="removeResourceByUser" parameterType="java.lang.String">

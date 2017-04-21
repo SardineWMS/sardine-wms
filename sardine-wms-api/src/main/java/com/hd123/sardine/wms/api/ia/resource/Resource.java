@@ -10,6 +10,8 @@
 package com.hd123.sardine.wms.api.ia.resource;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 资源权限
@@ -24,60 +26,70 @@ import java.io.Serializable;
  *
  */
 public class Resource implements Serializable {
-  private static final long serialVersionUID = -9183507457817520821L;
+    private static final long serialVersionUID = -9183507457817520821L;
 
-  private String uuid;
-  private String code;
-  private String name;
-  private String upperUuid;
-  private String type;
-  private boolean owned;
+    private String uuid;
+    private String code;
+    private String name;
+    private String upperUuid;
+    private String type;
+    private boolean owned;
+    private List<Resource> children = new ArrayList<>();
 
-  public boolean isOwned() {
-    return owned;
-  }
+    public boolean isOwned() {
+        return owned;
+    }
 
-  public void setOwned(boolean owned) {
-    this.owned = owned;
-  }
+    public void setOwned(boolean owned) {
+        this.owned = owned;
+    }
 
-  public String getUuid() {
-    return uuid;
-  }
+    public String getUuid() {
+        return uuid;
+    }
 
-  public void setUuid(String uuid) {
-    this.uuid = uuid;
-  }
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
-  public String getCode() {
-    return code;
-  }
+    public String getCode() {
+        return code;
+    }
 
-  public void setCode(String code) {
-    this.code = code;
-  }
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public String getUpperUuid() {
-    return upperUuid;
-  }
+    public String getUpperUuid() {
+        return upperUuid;
+    }
 
-  public void setUpperUuid(String upperUuid) {
-    this.upperUuid = upperUuid;
-  }
+    public void setUpperUuid(String upperUuid) {
+        this.upperUuid = upperUuid;
+    }
 
-  public String getType() {
-    return type;
-  }
+    public String getType() {
+        return type;
+    }
 
-  public void setType(String type) {
-    this.type = type;
-  }
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public List<Resource> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Resource> children) {
+        this.children = children;
+    }
+
 }

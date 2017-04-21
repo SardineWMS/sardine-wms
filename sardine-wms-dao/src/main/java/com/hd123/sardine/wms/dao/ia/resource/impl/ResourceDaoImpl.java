@@ -25,11 +25,14 @@ import com.hd123.sardine.wms.dao.ia.resource.ResourceDao;
 public class ResourceDaoImpl extends SqlSessionDaoSupport implements ResourceDao {
     public static final String MAPPER_SAVEROLERESOURCE = "saveRoleResource";
     public static final String MAPPER_SAVEUSERRESOURCE = "saveUserResource";
-    public static final String MAPPER_QUERYOWNEDRESOURCEBYROLE = "queryOwnedResourceByRole";
-    public static final String MAPPER_QUERYALLRESOURCE = "queryAllResource";
-    public static final String MAPPER_QUERYOWNEDRESOURCEBYUSER = "queryOwnedResourceByUser";
     public static final String MAPPER_REMOVERESOURCEBYUSER = "removeResourceByUser";
     public static final String MAPPER_REMOVERESOURCEBYROLE = "removeResourceByRole";
+    public static final String MAPPER_QUERYALLTOPMENURESOURCE = "queryAllTopMenuResource";
+    public static final String MAPPER_QUERYOWNEDTOPMENURESOURCEBYROLE = "queryOwnedTopMenuResourceByRole";
+    public static final String MAPPER_QUERYOWNEDTOPMENURESOURCEBYUSER = "queryOwnedTopMenuResourceByUser";
+    public static final String MAPPER_QUERYALLCHILDRESOURCE = "queryAllChildResource";
+    public static final String MAPPER_QUERYOWNEDCHILDRESOURCEBYROLE = "queryOwnedChildResourceByRole";
+    public static final String MAPPER_QUERYOWNEDCHILDRESOURCEBYUSER = "queryOwnedChildResourceByUser";
 
     public String generateStatement(String mapperId) {
         return this.getClass().getName() + "." + mapperId;
@@ -54,23 +57,6 @@ public class ResourceDaoImpl extends SqlSessionDaoSupport implements ResourceDao
     }
 
     @Override
-    public List<Resource> queryOwnedResourceByRole(String roleUuid) {
-        return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDRESOURCEBYROLE),
-                roleUuid);
-    }
-
-    @Override
-    public List<Resource> queryAllResource() {
-        return getSqlSession().selectList(generateStatement(MAPPER_QUERYALLRESOURCE), null);
-    }
-
-    @Override
-    public List<Resource> queryOwnedResourceByUser(String userUuid) {
-        return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDRESOURCEBYUSER),
-                userUuid);
-    }
-
-    @Override
     public void removeResourceByUser(String userUuid) {
         getSqlSession().delete(generateStatement(MAPPER_REMOVERESOURCEBYUSER), userUuid);
     }
@@ -78,5 +64,46 @@ public class ResourceDaoImpl extends SqlSessionDaoSupport implements ResourceDao
     @Override
     public void removeResourceByRole(String roleUuid) {
         getSqlSession().delete(generateStatement(MAPPER_REMOVERESOURCEBYROLE), roleUuid);
+    }
+
+    @Override
+    public List<Resource> queryAllTopMenuResource() {
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYALLTOPMENURESOURCE), null);
+    }
+
+    @Override
+    public List<Resource> queryOwnedTopMenuResourceByRole(String roleUuid) {
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDTOPMENURESOURCEBYROLE),
+                roleUuid);
+    }
+
+    @Override
+    public List<Resource> queryOwnedTopMenuResourceByUser(String userUuid) {
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDTOPMENURESOURCEBYUSER),
+                userUuid);
+    }
+
+    @Override
+    public List<Resource> queryAllChildResource(String resourceUuid) {
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYALLCHILDRESOURCE),
+                resourceUuid);
+    }
+
+    @Override
+    public List<Resource> queryOwnedChildResourceByRole(String roleUuid, String resourceUuid) {
+        Map<String, String> map = new HashMap<>();
+        map.put("roleUuid", roleUuid);
+        map.put("resourceUuid", resourceUuid);
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDCHILDRESOURCEBYROLE),
+                map);
+    }
+
+    @Override
+    public List<Resource> queryOwnedChildResourceByUser(String userUuid, String resourceUuid) {
+        Map<String, String> map = new HashMap<>();
+        map.put("userUuid", userUuid);
+        map.put("resourceUuid", resourceUuid);
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDCHILDRESOURCEBYUSER),
+                map);
     }
 }

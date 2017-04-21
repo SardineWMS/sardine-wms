@@ -148,4 +148,14 @@
 		#{version,jdbcType=LONGVARCHAR}
 	</delete>
 	
+	<select id="queryRolesByUser" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select * from sardine_role r,sardine_role_user ru
+		where r.uuid=ru.roleuuid
+		and ru.useruuid=#{userUuid,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="removeRelationRoleAndUserByRole" parameterType="java.lang.String">
+		delete from sardine_role_user where roleuuid=#{roleUuid,jdbcType=VARCHAR}
+	</delete>
+	
 </mapper>

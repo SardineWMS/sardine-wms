@@ -23,11 +23,17 @@ public interface ResourceDao {
 
     void saveUserResource(String userUuid, String resourceUUuid);
 
-    List<Resource> queryAllResource();
+    List<Resource> queryAllTopMenuResource();
 
-    List<Resource> queryOwnedResourceByRole(String roleUuid);
+    List<Resource> queryOwnedTopMenuResourceByRole(String roleUuid);
 
-    List<Resource> queryOwnedResourceByUser(String userUuid);
+    List<Resource> queryOwnedTopMenuResourceByUser(String userUuid);
+    
+    List<Resource> queryAllChildResource(String resourceUuid);
+
+    List<Resource> queryOwnedChildResourceByRole(String roleUuid, String resourceUuid);
+
+    List<Resource> queryOwnedChildResourceByUser(String userUuid, String resourceUuid);
 
     void removeResourceByUser(String userUuid);
 

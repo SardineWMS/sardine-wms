@@ -9,6 +9,8 @@
  */
 package com.hd123.sardine.wms.api.ia.role;
 
+import java.util.List;
+
 import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.exception.EntityNotFoundException;
 import com.hd123.sardine.wms.common.exception.IAException;
@@ -122,4 +124,13 @@ public interface RoleService {
     void remove(String uuid, long version, OperateContext operCtx) throws IllegalArgumentException,
             EntityNotFoundException, VersionConflictException, WMSException;
 
+    /**
+     * 根据用户查询拥有的角色
+     * @param userUuid
+     *  用户uuid，not null。
+     * @return  
+     * @throws IllegalArgumentException
+     */
+    List<Role> queryRolesByUser(String userUuid) throws IllegalArgumentException;
+    
 }

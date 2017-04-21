@@ -29,6 +29,8 @@ public class UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
     public static final String MAPPER_GETBYCODE = "getByCode";
     public static final String MAPPER_LOGIN = "login";
     public static final String MAPPER_UPDATEPASSWD = "updatePasswd";
+    public static final String MAPPER_SAVEUSERROLE = "saveUserRole";
+    public static final String MAPPER_REMOVEROLESBYUSER = "removeRolesByUser";
 
     @Override
     public User getByCode(String userCode) {
@@ -64,13 +66,14 @@ public class UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
 
     @Override
     public void saveUserRole(String userUuid, String roleUuid) {
-      // TODO Auto-generated method stub
-      
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("userUuid", userUuid);
+        map.put("roleUuid", roleUuid);
+        getSqlSession().insert(generateStatement(MAPPER_SAVEUSERROLE), map);
     }
 
     @Override
     public void removeRolesByUser(String userUuid) {
-      // TODO Auto-generated method stub
-      
+        getSqlSession().delete(generateStatement(MAPPER_REMOVEROLESBYUSER), userUuid);
     }
 }

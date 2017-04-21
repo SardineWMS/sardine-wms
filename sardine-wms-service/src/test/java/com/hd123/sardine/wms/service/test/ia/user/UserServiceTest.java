@@ -22,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.hd123.sardine.wms.api.ia.resource.ResourceService;
 import com.hd123.sardine.wms.api.ia.user.User;
 import com.hd123.sardine.wms.api.ia.user.UserState;
 import com.hd123.sardine.wms.dao.ia.user.UserDao;
@@ -52,6 +53,8 @@ public class UserServiceTest extends BaseServiceTest {
     public UserServiceImpl service;
     @Mock
     private UserDao dao;
+    @Mock
+    private ResourceService resourceService;
 
     @Captor
     private ArgumentCaptor<User> userCaptor;
@@ -97,6 +100,8 @@ public class UserServiceTest extends BaseServiceTest {
         service.remove(DELETE_USERUUID, DELETE_USERVERSION, defaultOperCtx());
 
         verify(dao).remove(DELETE_USERUUID, DELETE_USERVERSION);
+        verify(dao).removeRolesByUser(DELETE_USERUUID);
+        verify(resourceService).removeResourceByUser(DELETE_USERUUID);
     }
 
     @Test

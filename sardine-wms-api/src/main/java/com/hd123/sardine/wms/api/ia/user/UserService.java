@@ -172,13 +172,13 @@ public interface UserService {
       throws IllegalArgumentException, WMSException;
 
   /**
-   * 批量给用户分配角色
+   * 给用户分配角色
    * 
    * @param userUuids
-   *          用户UUID集合，not null
+   *          用户UUID，not null
    * @param roleUuids
    *          角色UUID集合，可以为空，为空时表示用户无任何角色
    * @throws IllegalArgumentException
    */
-  void saveUserRoles(List<String> userUuids, List<String> roleUuids);
+  void saveUserRoles(String userUuid, List<String> roleUuids);
 }

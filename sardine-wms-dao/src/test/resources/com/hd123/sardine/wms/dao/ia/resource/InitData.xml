@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
 	<SARDINE_RESOURCE UUID="u1" CODE="c1" NAME="n1" 
-		upperuuid="null" type="menu" />
+		type="menu" />
 		
 	<SARDINE_RESOURCE UUID="u2" CODE="c2" NAME="n2" 
-		upperuuid="u1" type="operate" />
+		upperuuid="u1" type="menu" />
 		
 	<SARDINE_RESOURCE UUID="u3" CODE="c3" NAME="n3" 
-		upperuuid="u1" type="operate" />
+		upperuuid="u2" type="operate" />
 		
 	<SARDINE_ROLE_RESOURCE ROLEUUID="r1" RESOURCEUUID="u1"/>
+	<SARDINE_ROLE_RESOURCE ROLEUUID="r1" RESOURCEUUID="u2"/>
 	
 	<SARDINE_USER_RESOURCE USERUUID="s1" RESOURCEUUID="u1"/>
+	<SARDINE_USER_RESOURCE USERUUID="s1" RESOURCEUUID="u2"/>
 	
 </dataset>

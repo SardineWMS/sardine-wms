@@ -20,7 +20,7 @@ import java.util.List;
 public interface ResourceService {
 
     /**
-     * 根据用户查询该用户拥有的资源权限
+     * 根据用户查询该用户拥有的菜单资源权限
      * <p>
      * 只查询当前用户拥有的权限
      * 
@@ -32,8 +32,7 @@ public interface ResourceService {
      * 
      * @throws IllegalArgumentException
      */
-    List<Resource> queryOwnedResourceByUser(String userUuid, ResourceType type)
-            throws IllegalArgumentException;
+    List<Resource> queryOwnedMenuResourceByUser(String userUuid) throws IllegalArgumentException;
 
     /**
      * 根据用户查询所有资源权限，包括用户拥有和不拥有的
@@ -50,16 +49,6 @@ public interface ResourceService {
     List<Resource> queryAllResourceByUser(String userUuid) throws IllegalArgumentException;
 
     /**
-     * 根据角色查询拥有的所有资源权限
-     * 
-     * @param roleUuid
-     *            角色uuid，not null。
-     * @return 资源操作集合，用树形结构展示
-     * @throws IllegalArgumentException
-     */
-    List<Resource> queryOwnedResourceByRole(String roleUuid) throws IllegalArgumentException;
-
-    /**
      * 根据角色查询所有资源权限，包括角色拥有和不拥有的
      * <p>
      * 拥有的{@link Resource#isOwned()} == true，否则{@link Resource#isOwned()} ==
@@ -72,6 +61,24 @@ public interface ResourceService {
      * @throws IllegalArgumentException
      */
     List<Resource> queryAllResourceByRole(String roleUuid) throws IllegalArgumentException;
+
+    /**
+     * 查询用户拥有的资源，非树型
+     * 
+     * @param roleUuid
+     * @return 资源集合
+     * @throws IllegalArgumentException
+     */
+    List<Resource> queryOwnedResourceByUuser(String userUuid) throws IllegalArgumentException;
+
+    /**
+     * 查询角色拥有的资源，非树型
+     * 
+     * @param roleUuid
+     * @return 资源集合
+     * @throws IllegalArgumentException
+     */
+    List<Resource> queryOwnedResourceByRole(String roleUuid) throws IllegalArgumentException;
 
     /**
      * 保存用户资源权限
