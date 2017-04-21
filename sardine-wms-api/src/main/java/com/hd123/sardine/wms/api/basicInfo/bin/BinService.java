@@ -194,4 +194,48 @@ public interface BinService {
    * @return 组织为空时返回空集合
    */
   List<Zone> queryZones(String companyUuid);
+
+  /**
+   * 查询仓位
+   * 
+   * @param wrhUuid
+   * @return 仓位
+   */
+  Wrh getWrh(String wrhUuid);
+
+  /**
+   * 根据货位代码查询货位
+   * 
+   * @param binCode
+   *          货位代码，not null
+   * @return 货位
+   */
+  Bin getBinByCode(String binCode);
+
+  /**
+   * 获取仓位下指定货位用途的一个货位
+   * 
+   * @param wrhUuid
+   *          仓位UUId
+   * @param usage
+   *          货位用途，
+   * @return 参数为空时返回null
+   */
+  Bin getBinByWrhAndUsage(String wrhUuid, BinUsage usage);
+
+  /**
+   * 修改货位状态
+   * 
+   * @param uuid
+   *          货位UUID，not null
+   * @param version
+   *          版本号
+   * @param state
+   *          状态
+   * @throws IllegalArgumentException
+   * @throws VersionConflictException
+   * @throws WMSException
+   */
+  void changeState(String uuid, long version, BinState state)
+      throws IllegalArgumentException, VersionConflictException, WMSException;
 }

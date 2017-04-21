@@ -21,6 +21,7 @@ import com.hd123.sardine.wms.api.basicInfo.bin.Bin;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinInfo;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinState;
+import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.api.basicInfo.bin.Path;
 import com.hd123.sardine.wms.api.basicInfo.bin.Shelf;
 import com.hd123.sardine.wms.api.basicInfo.bin.Wrh;
@@ -35,6 +36,7 @@ import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.common.validator.ValidateHandler;
@@ -325,5 +327,39 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
     }
 
     return sequenceDao.getNextValue(sequenceName + companyUuid, companyUuid);
+  }
+
+  @Override
+  public Wrh getWrh(String wrhUuid) {
+    return wrhDao.get(wrhUuid, ApplicationContextUtil.getCompanyUuid());
+  }
+
+  @Override
+  public Bin getBinByCode(String binCode) {
+    if (StringUtil.isNullOrBlank(binCode))
+      return null;
+    return binDao.getByCode(ApplicationContextUtil.getCompanyUuid(), binCode);
+  }
+
+  @Override
+  public Bin getBinByWrhAndUsage(String wrhUuid, BinUsage usage) {
+    return binDao.getBinByWrhAndUsage(wrhUuid, usage);
+  }
+
+  @Override
+  public void changeState(String uuid, long version, BinState state)
+      throws IllegalArgumentException, VersionConflictException, WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+    Assert.assertArgumentNotNull(state, "state");
+
+    Bin bin = binDao.get(uuid, ApplicationContextUtil.getCompanyUuid());
+    if (bin == null)
+      throw new WMSException("指定货位不存在！");
+    if (bin.getState().equals(state))
+      return;
+
+    PersistenceUtils.checkVersion(version, bin, "货位", bin.getCode());
+    bin.setState(state);
+    binDao.changeState(uuid, version, state);
   }
 }

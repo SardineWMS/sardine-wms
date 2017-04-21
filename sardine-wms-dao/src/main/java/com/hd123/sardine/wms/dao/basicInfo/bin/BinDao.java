@@ -12,6 +12,8 @@ package com.hd123.sardine.wms.dao.basicInfo.bin;
 import java.util.List;
 
 import com.hd123.sardine.wms.api.basicInfo.bin.Bin;
+import com.hd123.sardine.wms.api.basicInfo.bin.BinState;
+import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 
 /**
@@ -31,4 +33,8 @@ public interface BinDao {
   Bin getByCode(String companyUuid, String code);
 
   Bin get(String uuid, String companyUuid);
+
+  Bin getBinByWrhAndUsage(String wrhUuid, BinUsage usage);
+
+  void changeState(String uuid, long version, BinState state);
 }

@@ -10,8 +10,12 @@
 package com.hd123.sardine.wms.api.basicInfo.article;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.time.DateUtils;
+
+import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.common.entity.StandardEntity;
 import com.hd123.sardine.wms.common.entity.UCN;
 
@@ -137,5 +141,11 @@ public class Article extends StandardEntity {
 
   public void setQpcs(List<ArticleQpc> qpcs) {
     this.qpcs = qpcs;
+  }
+
+  public Date calValidDate(Date produtionDate) {
+    Assert.assertArgumentNotNull(produtionDate, "productionDate");
+
+    return DateUtils.addDays(produtionDate, expDays);
   }
 }

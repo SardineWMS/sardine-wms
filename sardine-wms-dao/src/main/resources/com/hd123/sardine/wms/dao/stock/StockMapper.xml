@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.hd123.sardine.wms.dao.stock.impl.StockDaoImpl">
+	<resultMap id="BaseResultMap" type="Stock">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="supplierUuid" property="supplierUuid" jdbcType="VARCHAR" />
+		<result column="binCode" property="binCode" jdbcType="VARCHAR" />
+		<result column="containerBarcode" property="containerBarcode"
+			jdbcType="VARCHAR" />
+		<result column="articleUuid" property="articleUuid" jdbcType="VARCHAR" />
+		<result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
+		<result column="productionDate" property="productionDate"
+			jdbcType="DATE" />
+		<result column="validDate" property="validDate" jdbcType="DATE" />
+		<result column="sourceBillUuid" property="sourceBillUuid"
+			jdbcType="INTEGER" />
+		<result column="sourceBillNumber" property="sourceBillNumber"
+			jdbcType="VARCHAR" />
+		<result column="sourceBillType" property="sourceBillType"
+			jdbcType="VARCHAR" />
+		<result column="sourceLineNumber" property="sourceLineNumber"
+			jdbcType="INTEGER" />
+		<result column="sourceLineUuid" property="sourceLineUuid"
+			jdbcType="VARCHAR" />
+		<result column="qpc" property="qpc" jdbcType="DECIMAL" />
+		<result column="qty" property="qty" jdbcType="DECIMAL" />
+		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+		<result column="measureUnit" property="measureUnit" jdbcType="VARCHAR" />
+		<result column="instockTime" property="instockTime" jdbcType="TIMESTAMP" />
+		<result column="modifyTime" property="modifyTime" jdbcType="TIMESTAMP" />
+		<result column="onWayQty" property="onWayQty" jdbcType="DECIMAL" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<resultMap id="StockExtendInfoResultMap" type="StockExtendInfo">
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="supplierUuid" property="supplier.uuid"
+			jdbcType="VARCHAR" />
+		<result column="suppliercode" property="supplier.code"
+			jdbcType="VARCHAR" />
+		<result column="suppliername" property="supplier.name"
+			jdbcType="VARCHAR" />
+		<result column="binCode" property="binCode" jdbcType="VARCHAR" />
+		<result column="containerBarcode" property="containerBarcode"
+			jdbcType="VARCHAR" />
+		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
+		<result column="articlecode" property="article.code" jdbcType="VARCHAR" />
+		<result column="articlename" property="article.name" jdbcType="VARCHAR" />
+		<result column="articleSpec" property="articleSpec" jdbcType="VARCHAR" />
+		<result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
+		<result column="productionDate" property="productionDate"
+			jdbcType="DATE" />
+		<result column="validDate" property="validDate" jdbcType="DATE" />
+		<result column="sourceBillUuid" property="sourceBillUuid"
+			jdbcType="INTEGER" />
+		<result column="sourceBillNumber" property="sourceBillNumber"
+			jdbcType="VARCHAR" />
+		<result column="sourceBillType" property="sourceBillType"
+			jdbcType="VARCHAR" />
+		<result column="sourceLineNumber" property="sourceLineNumber"
+			jdbcType="INTEGER" />
+		<result column="sourceLineUuid" property="sourceLineUuid"
+			jdbcType="VARCHAR" />
+		<result column="qpc" property="qpc" jdbcType="DECIMAL" />
+		<result column="qty" property="qty" jdbcType="DECIMAL" />
+		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+		<result column="measureUnit" property="measureUnit" jdbcType="VARCHAR" />
+		<result column="instockTime" property="instockTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<resultMap id="OnWayStockMap" type="OnWayStock">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="stockUuid" property="stockUuid" jdbcType="VARCHAR" />
+		<result column="taskNo" property="taskNo" jdbcType="VARCHAR" />
+		<result column="taskType" property="taskType" jdbcType="VARCHAR" />
+		<result column="qty" property="qty" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<select id="getByPrimaryKey" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select * from db(#{companyUuid, jdbcType=VARCHAR}).sardine_stock t 
+		where t.bincode = #{binCode, jdbcType=VARCHAR} 
+		and t.containerBarcode = #{containerBarcode, jdbcType=VARCHAR}
+		and t.stockBatch = #{stockBatch, jdbcType=VARCHAR}
+		and t.articleUuid = #{articleUuid, jdbcType=VARCHAR}
+	</select>
+	
+	<select id="get" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select * from db(#{companyUuid, jdbcType=VARCHAR}).sardine_stock t 
+		where t.uuid = #{uuid, jdbcType=VARCHAR} 
+	</select>
+	
+	<select id="getByTaskNo" parameterType="java.util.Map"
+		resultMap="OnWayStockMap">
+		select * from db(#{companyUuid, jdbcType=VARCHAR}).sardine_onwaystock t 
+		where t.taskno = #{taskNo, jdbcType=VARCHAR} 
+		and t.stockuuid = #{stockUuid, jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insert" parameterType="Stock">
+		insert into db(#{companyUuid, jdbcType=VARCHAR}).sardine_stock
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="companyUuid != null">
+				companyUuid,
+			</if>
+			<if test="supplierUuid != null">
+				supplierUuid,
+			</if>
+			<if test="binCode != null">
+				binCode,
+			</if>
+			<if test="containerBarcode != null">
+				containerBarcode,
+			</if>
+			<if test="articleUuid != null">
+				articleUuid,
+			</if>
+			<if test="stockBatch != null">
+				stockBatch,
+			</if>
+			<if test="productionDate != null">
+				productionDate,
+			</if>
+			<if test="validDate != null">
+				validDate,
+			</if>
+			<if test="sourceBillUuid != null">
+				sourceBillUuid,
+			</if>
+			<if test="sourceBillNumber != null">
+				sourceBillNumber,
+			</if>
+			<if test="sourceBillType != null">
+				sourceBillType,
+			</if>
+			<if test="sourceLineNumber != null">
+				sourceLineNumber,
+			</if>
+			<if test="sourceLineUuid != null">
+				sourceLineUuid,
+			</if>
+			<if test="qpc != null">
+				qpc,
+			</if>
+			<if test="qty != null">
+				qty,
+			</if>
+			<if test="qpcStr != null">
+				qpcStr,
+			</if>
+			<if test="measureUnit != null">
+				measureUnit,
+			</if>
+			<if test="instockTime != null">
+				instockTime,
+			</if>
+			<if test="modifyTime != null">
+				modifyTime,
+			</if>
+			<if test="onWayQty != null">
+				onWayQty,
+			</if>
+			<if test="version != null">
+				version,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="companyUuid != null">
+				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="supplierUuid != null">
+				#{supplierUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="binCode != null">
+				#{binCode,jdbcType=VARCHAR},
+			</if>
+			<if test="containerBarcode != null">
+				#{containerBarcode,jdbcType=VARCHAR},
+			</if>
+			<if test="articleUuid != null">
+				#{articleUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="stockBatch != null">
+				#{stockBatch,jdbcType=VARCHAR},
+			</if>
+			<if test="productionDate != null">
+				#{productionDate,jdbcType=DATE},
+			</if>
+			<if test="validDate != null">
+				#{validDate,jdbcType=DATE},
+			</if>
+			<if test="sourceBillUuid != null">
+				#{sourceBillUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillNumber != null">
+				#{sourceBillNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillType != null">
+				#{sourceBillType,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceLineNumber != null">
+				#{sourceLineNumber,jdbcType=INTEGER},
+			</if>
+			<if test="sourceLineUuid != null">
+				#{sourceLineUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="qpc != null">
+				#{qpc,jdbcType=DECIMAL},
+			</if>
+			<if test="qty != null">
+				#{qty,jdbcType=DECIMAL},
+			</if>
+			<if test="qpcStr != null">
+				#{qpcStr,jdbcType=VARCHAR},
+			</if>
+			<if test="measureUnit != null">
+				#{measureUnit,jdbcType=VARCHAR},
+			</if>
+			<if test="instockTime != null">
+				#{instockTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyTime != null">
+				#{modifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="onWayQty != null">
+				#{onWayQty,jdbcType=DECIMAL},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	
+	<update id="update" parameterType="Stock">
+	  update db(#{companyUuid, jdbcType=VARCHAR}).sardine_stock t 
+	  set t.qty = #{qty, jdbcType=DECIMAL},
+	      t.onWayQty = #{onWayQty, jdbcType=DECIMAL},
+	      t.modifyTime = #{modifyTime, jdbcType=TIMESTAMP},
+	      t.version = #{version, jdbcType=LONGVARCHAR} + 1 
+	  where t.uuid = #{uuid, jdbcType=VARCHAR} 
+	      and t.version = #{version, jdbcType=LONGVARCHAR}     
+	</update>
+	
+	<delete id="remove" parameterType="java.util.Map">
+	  delete db(#{companyUuid, jdbcType=VARCHAR}).sardine_stock t 
+	  where t.uuid = #{uuid, jdbcType=VARCHAR} 
+	      and t.version = #{version, jdbcType=LONGVARCHAR} 
+	</delete>
+	
+	<insert id="insertOnWayStock" parameterType="OnWayStock">
+	  insert into db(#{companyUuid, jdbcType=VARCHAR}).sardine_onwaystock(
+	    uuid,
+	    stockUuid,
+	    qty,
+	    taskNo,
+	    taskType
+	  )
+	  values(
+	    #{uuid, jdbcType=VARCHAR},
+	    #{stockUuid, jdbcType=VARCHAR},
+	    #{qty, jdbcType=DECIMAL},
+	    #{taskNo, jdbcType=VARCHAR},
+	    #{taskType, jdbcType=VARCHAR}
+	  )
+	</insert>
+	
+	<update id="updateOnWayStock" parameterType="OnWayStock">
+	  update db(#{companyUuid, jdbcType=VARCHAR}).sardine_onwaystock t
+	  set t.qty = #{qty, jdbcType=DECIMAL} 
+	  where t.uuid = #{uuid, jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="removeOnWayStock" parameterType="java.util.Map">
+	  delete db(#{companyUuid, jdbcType=VARCHAR}).sardine_onwaystock t
+	  where t.uuid = #{uuid, jdbcType=VARCHAR}
+	</delete>
+	
+	<select id="query" parameterType="StockFilter" resultMap="BaseResultMap">
+	  select * from db(#{companyUuid, jdbcType=VARCHAR}).sardine_stock t
+	  where 1=1
+	  <if test="binCode != null and binCode != ''">
+	    and t.bincode = #{binCode, jdbcType=VARCHAR}
+	  </if>
+	  <if test="containerBarcode != null and containerBarcode != ''">
+	    and t.containerBarcode = #{containerBarcode, jdbcType=VARCHAR}
+	  </if>
+	  <if test="articleUuid != null and articleUuid != ''">
+	    and t.articleUuid = #{articleUuid, jdbcType=VARCHAR}
+	  </if>
+	  <if test="supplierUuid != null and supplierUuid != ''">
+	    and t.supplierUuid = #{supplierUuid, jdbcType=VARCHAR}
+	  </if>
+	  <if test="qpcStr != null and qpcStr != ''">
+	    and t.qpcStr = #{qpcStr, jdbcType=VARCHAR}
+	  </if>
+	  <if test="stockBatch != null and stockBatch != ''">
+	    and t.stockBatch = #{stockBatch, jdbcType=VARCHAR}
+	  </if>
+	  <if test="sourceBillUuid != null and sourceBillUuid != ''">
+	    and t.sourceBillUuid = #{sourceBillUuid, jdbcType=VARCHAR}
+	  </if>
+	  <if test="sourcebillNumber != null and sourcebillNumber != ''">
+	    and t.sourcebillNumber = #{sourcebillNumber, jdbcType=VARCHAR}
+	  </if>
+	  <if test="stockUuid != null and stockUuid != ''">
+	    and t.stockUuid = #{stockUuid, jdbcType=VARCHAR}
+	  </if>
+	</select>
+	
+	<select id="queryStockExtendInfo" parameterType="StockFilter" resultMap="StockExtendInfoResultMap">
+	  select t.*, a.code articleCode, a.name articleName,
+	         s.code supplierCode, s.name supplierName from 
+	                db(#{companyUuid, jdbcType=VARCHAR}).sardine_onwaystock t,
+	                db(#{companyUuid, jdbcType=VARCHAR}).sardine_article a,
+	                db(#{companyUuid, jdbcType=VARCHAR}).sardine_supplier s
+	  where t.articleUuid = a.uuid 
+	    and t.supplierUuid = s.uuid 
+	  <if test="binCode != null and binCode != ''">
+	    and t.bincode = #{binCode, jdbcType=VARCHAR}
+	  </if>
+	  <if test="containerBarcode != null and containerBarcode != ''">
+	    and t.containerBarcode = #{containerBarcode, jdbcType=VARCHAR}
+	  </if>
+	  <if test="articleUuid != null and articleUuid != ''">
+	    and t.articleUuid = #{articleUuid, jdbcType=VARCHAR}
+	  </if>
+	  <if test="articleCode != null and articleCode != ''">
+	    and t.articleCode = #{articleCode, jdbcType=VARCHAR}
+	  </if>
+	  <if test="supplierUuid != null and supplierUuid != ''">
+	    and t.supplierUuid = #{supplierUuid, jdbcType=VARCHAR}
+	  </if>
+	  <if test="supplierCode != null and supplierCode != ''">
+	    and t.supplierCode = #{supplierCode, jdbcType=VARCHAR}
+	  </if>
+	  <if test="qpcStr != null and qpcStr != ''">
+	    and t.qpcStr = #{qpcStr, jdbcType=VARCHAR}
+	  </if>
+	  <if test="stockBatch != null and stockBatch != ''">
+	    and t.stockBatch = #{stockBatch, jdbcType=VARCHAR}
+	  </if>
+	  <if test="sourceBillUuid != null and sourceBillUuid != ''">
+	    and t.sourceBillUuid = #{sourceBillUuid, jdbcType=VARCHAR}
+	  </if>
+	  <if test="sourcebillNumber != null and sourcebillNumber != ''">
+	    and t.sourcebillNumber = #{sourcebillNumber, jdbcType=VARCHAR}
+	  </if>
+	  <if test="stockUuid != null and stockUuid != ''">
+	    and t.stockUuid = #{stockUuid, jdbcType=VARCHAR}
+	  </if>
+	</select>
+	
+	<insert id="insertLog" parameterType="StockLog"> 
+	  insert into db(#{companyUuid, jdbcType=VARCHAR}).sardine_stocklog(
+	    stockUuid,
+	    binCode,
+	    containerBarcode,
+	    articleUuid,
+	    qpcStr,
+	    supplierUuid,
+	    stockBatch,
+	    beforeQty,
+	    afterQty,
+	    qty,
+	    operateType,
+	    operateNumber,
+	    operateDate,
+	    logType,
+	    companyUuid
+	  )
+	  values(
+	    #{stockUuid, jdbcType=VARCHAR},
+	    #{binCode, jdbcType=VARCHAR},
+	    #{containerBarcode, jdbcType=VARCHAR},
+	    #{articleUuid, jdbcType=VARCHAR},
+	    #{qpcStr, jdbcType=VARCHAR},
+	    #{supplierUuid, jdbcType=VARCHAR},
+	    #{stockBatch, jdbcType=VARCHAR},
+	    #{beforeQty, jdbcType=DECIMAL},
+	    #{afterQty, jdbcType=DECIMAL},
+	    #{qty, jdbcType=DECIMAL},
+	    #{operateType, jdbcType=VARCHAR},
+	    #{operateNumber, jdbcType=VARCHAR},
+	    #{operateDate, jdbcType=TIMESTAMP},
+	    #{logType, jdbcType=VARCHAR},
+	    #{companyUuid, jdbcType=VARCHAR}
+	  )
+	</insert>
+	
+	<select id="binHasStock" parameterType="java.util.Map" resultType="java.lang.String"> 
+	  select 1 from db(#{companyUuid, jdbcType=VARCHAR}).sardine_stock s
+	  where s.bincode = #{binCode, jdbcType=VARCHAR}
+	    and s.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+	</select>
+	
+	<select id="containerHasStock" parameterType="java.util.Map" resultType="java.lang.String"> 
+	  select 1 from db(#{companyUuid, jdbcType=VARCHAR}).sardine_stock s
+	  where s.containerBarcode = #{containerBarcode, jdbcType=VARCHAR}
+	    and s.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+	</select>
+</mapper>

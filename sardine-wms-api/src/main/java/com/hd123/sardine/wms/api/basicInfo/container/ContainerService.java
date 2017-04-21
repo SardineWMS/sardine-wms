@@ -10,6 +10,7 @@
 package com.hd123.sardine.wms.api.basicInfo.container;
 
 import com.hd123.sardine.wms.common.entity.OperateContext;
+import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
@@ -19,31 +20,51 @@ import com.hd123.sardine.wms.common.query.PageQueryResult;
  *
  */
 public interface ContainerService {
-    /***
-     * 新增容器
-     * 
-     * @param containerTypeUuid
-     *            not null
-     * @param operateContext
-     */
-    void saveNew(String containerTypeUuid, OperateContext operateContext) throws WMSException;
+  /***
+   * 新增容器
+   * 
+   * @param containerTypeUuid
+   *          not null
+   * @param operateContext
+   */
+  void saveNew(String containerTypeUuid, OperateContext operateContext) throws WMSException;
 
-    /***
-     * 根据容器条码和组织查询容器
-     * 
-     * @param barcode
-     *            容器条码
-     * @param orgId
-     *            组织
-     * @return 容器
-     */
-    Container getByBarcode(String barcode, String orgId);
+  /***
+   * 根据容器条码和组织查询容器
+   * 
+   * @param barcode
+   *          容器条码
+   * @param orgId
+   *          组织
+   * @return 容器
+   */
+  Container getByBarcode(String barcode, String orgId);
 
-    /***
-     * 分页查询容器列表
-     * 
-     * @param definition
-     * @return 容器列表
-     */
-    PageQueryResult<Container> query(PageQueryDefinition definition);
+  /***
+   * 分页查询容器列表
+   * 
+   * @param definition
+   * @return 容器列表
+   */
+  PageQueryResult<Container> query(PageQueryDefinition definition);
+
+  /**
+   * 修改容器状态和目标位置
+   * <p>
+   * 状态和目标位置不能同时为空
+   * 
+   * @param uuid
+   *          UUID，not null
+   * @param version
+   *          版本号
+   * @param state
+   *          状态
+   * @param position
+   *          目标位置
+   * @throws IllegalArgumentException
+   * @throws VersionConflictException
+   * @throws WMSException
+   */
+  void change(String uuid, long version, ContainerState state, String position)
+      throws IllegalArgumentException, VersionConflictException, WMSException;
 }

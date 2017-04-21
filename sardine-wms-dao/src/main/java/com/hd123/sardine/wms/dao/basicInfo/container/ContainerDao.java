@@ -19,9 +19,13 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
  *
  */
 public interface ContainerDao {
-    Container getByBarcode(String barcode, String companyUuid);
+  Container getByBarcode(String barcode, String companyUuid);
 
-    void insert(Container container);
+  void insert(Container container);
 
-    List<Container> query(PageQueryDefinition param);
+  List<Container> query(PageQueryDefinition param);
+
+  Container get(String uuid);
+  
+  void update(Container container);
 }

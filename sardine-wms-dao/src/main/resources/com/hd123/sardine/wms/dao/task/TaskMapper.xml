@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.hd123.sardine.wms.dao.task.impl.TaskDaoImpl">
+	<resultMap id="BaseResultMap" type="Task">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="taskNo" property="taskNo" jdbcType="VARCHAR" />
+		<result column="taskType" property="taskType" jdbcType="VARCHAR" />
+		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
+		<result column="articlecode" property="article.code" jdbcType="VARCHAR" />
+		<result column="articlename" property="article.name" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+		<result column="qty" property="qty" jdbcType="DECIMAL" />
+		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
+		<result column="realQty" property="realQty" jdbcType="DECIMAL" />
+		<result column="realCaseQtyStr" property="realCaseQtyStr"
+			jdbcType="VARCHAR" />
+		<result column="productionDate" property="productionDate"
+			jdbcType="DATE" />
+		<result column="validDate" property="validDate" jdbcType="DATE" />
+		<result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
+		<result column="supplierUuid" property="supplier.uuid"
+			jdbcType="VARCHAR" />
+		<result column="supplierCode" property="supplier.code"
+			jdbcType="VARCHAR" />
+		<result column="supplierName" property="supplier.name"
+			jdbcType="VARCHAR" />
+		<result column="fromBinCode" property="fromBinCode" jdbcType="VARCHAR" />
+		<result column="fromContainerBarcode" property="fromContainerBarcode"
+			jdbcType="VARCHAR" />
+		<result column="toBinCode" property="toBinCode" jdbcType="VARCHAR" />
+		<result column="toContainerBarcode" property="toContainerBarcode"
+			jdbcType="VARCHAR" />
+		<result column="owner" property="owner" jdbcType="VARCHAR" />
+		<result column="sourceBillType" property="sourceBillType"
+			jdbcType="VARCHAR" />
+		<result column="sourceBillNumber" property="sourceBillNumber"
+			jdbcType="VARCHAR" />
+		<result column="sourceBillUuid" property="sourceBillUuid"
+			jdbcType="VARCHAR" />
+		<result column="sourceBillLine" property="sourceBillLine"
+			jdbcType="INTEGER" />
+		<result column="creatorUuid" property="creator.uuid" jdbcType="VARCHAR" />
+		<result column="creatorcode" property="creator.code" jdbcType="VARCHAR" />
+		<result column="creatorname" property="creator.name" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="operatorUuid" property="operator.uuid"
+			jdbcType="VARCHAR" />
+		<result column="operatorcode" property="operator.code"
+			jdbcType="VARCHAR" />
+		<result column="operatorname" property="operator.name"
+			jdbcType="VARCHAR" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="beginOperateTime" property="beginOperateTime"
+			jdbcType="TIMESTAMP" />
+		<result column="endOperateTime" property="endOperateTime"
+			jdbcType="TIMESTAMP" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<insert id="insert" parameterType="Task">
+		insert into db(#{companyUuid, jdbcType=VARCHAR}).sardine_task
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="taskNo != null">
+				taskNo,
+			</if>
+			<if test="taskType != null">
+				taskType,
+			</if>
+			<if test="article != null and article.uuid != null">
+				articleuuid,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="qpcStr != null">
+				qpcStr,
+			</if>
+			<if test="qty != null">
+				qty,
+			</if>
+			<if test="caseQtyStr != null">
+				caseQtyStr,
+			</if>
+			<if test="realQty != null">
+				realQty,
+			</if>
+			<if test="realCaseQtyStr != null">
+				realCaseQtyStr,
+			</if>
+			<if test="productionDate != null">
+				productionDate,
+			</if>
+			<if test="validDate != null">
+				validDate,
+			</if>
+			<if test="stockBatch != null">
+				stockBatch,
+			</if>
+			<if test="supplier != null and supplier.uuid != null">
+				supplieruuid,
+			</if>
+			<if test="fromBinCode != null">
+				fromBinCode,
+			</if>
+			<if test="fromContainerBarcode != null">
+				fromContainerBarcode,
+			</if>
+			<if test="toBinCode != null">
+				toBinCode,
+			</if>
+			<if test="toContainerBarcode != null">
+				toContainerBarcode,
+			</if>
+			<if test="owner != null">
+				owner,
+			</if>
+			<if test="sourceBillType != null">
+				sourceBillType,
+			</if>
+			<if test="sourceBillNumber != null">
+				sourceBillNumber,
+			</if>
+			<if test="sourceBillUuid != null">
+				sourceBillUuid,
+			</if>
+			<if test="sourceBillLine != null">
+				sourceBillLine,
+			</if>
+			<if test="creator != null and creator.uuid != null">
+				creatoruuid,
+			</if>
+			<if test="creator != null and creator.code != null">
+				creatorcode,
+			</if>
+			<if test="creator != null and creator.name != null">
+				creatorname,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="operator != null and operator.uuid != null">
+				operatoruuid,
+			</if>
+			<if test="operator != null and operator.code != null">
+				operatorcode,
+			</if>
+			<if test="operator != null and operator.name != null">
+				operatorname,
+			</if>
+			<if test="createTime != null">
+				createTime,
+			</if>
+			<if test="beginOperateTime != null">
+				beginOperateTime,
+			</if>
+			<if test="endOperateTime != null">
+				endOperateTime,
+			</if>
+			<if test="companyUuid != null">
+				companyUuid,
+			</if>
+			<if test="version != null">
+				version,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="taskNo != null">
+				#{taskNo,jdbcType=VARCHAR},
+			</if>
+			<if test="taskType != null">
+				#{taskType,jdbcType=VARCHAR},
+			</if>
+			<if test="article != null and article.uuid != null">
+				#{article.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=VARCHAR},
+			</if>
+			<if test="qpcStr != null">
+				#{qpcStr,jdbcType=VARCHAR},
+			</if>
+			<if test="qty != null">
+				#{qty,jdbcType=DECIMAL},
+			</if>
+			<if test="caseQtyStr != null">
+				#{caseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="realQty != null">
+				#{realQty,jdbcType=DECIMAL},
+			</if>
+			<if test="realCaseQtyStr != null">
+				#{realCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="productionDate != null">
+				#{productionDate,jdbcType=DATE},
+			</if>
+			<if test="validDate != null">
+				#{validDate,jdbcType=DATE},
+			</if>
+			<if test="stockBatch != null">
+				#{stockBatch,jdbcType=VARCHAR},
+			</if>
+			<if test="supplier != null and supplier.uuid != null">
+				#{supplier.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="fromBinCode != null">
+				#{fromBinCode,jdbcType=VARCHAR},
+			</if>
+			<if test="fromContainerBarcode != null">
+				#{fromContainerBarcode,jdbcType=VARCHAR},
+			</if>
+			<if test="toBinCode != null">
+				#{toBinCode,jdbcType=VARCHAR},
+			</if>
+			<if test="toContainerBarcode != null">
+				#{toContainerBarcode,jdbcType=VARCHAR},
+			</if>
+			<if test="owner != null">
+				#{owner,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillType != null">
+				#{sourceBillType,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillNumber != null">
+				#{sourceBillNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillUuid != null">
+				#{sourceBillUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillLine != null">
+				#{sourceBillLine,jdbcType=INTEGER},
+			</if>
+			<if test="creator != null and creator.uuid != null">
+				#{creator.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="creator != null and creator.code != null">
+				#{creator.code,jdbcType=VARCHAR},
+			</if>
+			<if test="creator != null and creator.name != null">
+				#{creator.name,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=VARCHAR},
+			</if>
+			<if test="operator != null and operator.uuid != null">
+				#{operator.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="operator != null and operator.code != null">
+				#{operator.code,jdbcType=VARCHAR},
+			</if>
+			<if test="operator != null and operator.name != null">
+				#{operator.name,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="beginOperateTime != null">
+				#{beginOperateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endOperateTime != null">
+				#{endOperateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="companyUuid != null">
+				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="Task">
+		update db(#{companyUuid, jdbcType=VARCHAR}).sardine_task t
+		<set>
+			<if test="state != null">
+				t.state = #{state, jdbcType=VARCHAR},
+			</if>
+			<if test="realQty != null">
+				t.realQty = #{realQty, jdbcType=DECIMAL},
+			</if>
+			<if test="realCaseQtyStr != null">
+				t.state = #{realCaseQtyStr, jdbcType=VARCHAR},
+			</if>
+			<if test="productionDate != null">
+				t.productionDate = #{productionDate, jdbcType=DATE},
+			</if>
+			<if test="validDate != null">
+				t.validDate = #{validDate, jdbcType=DATE},
+			</if>
+			<if test="stockBatch != null">
+				t.stockBatch = #{stockBatch, jdbcType=VARCHAR},
+			</if>
+			<if test="supplier != null and supplier.uuid != null">
+				t.supplierUuid = #{supplier.uuid, jdbcType=VARCHAR},
+			</if>
+			<if test="toBinCode != null">
+				t.toBinCode = #{toBinCode, jdbcType=VARCHAR},
+			</if>
+			<if test="toContainerBarcode != null">
+				t.toContainerBarcode = #{toContainerBarcode,
+				jdbcType=VARCHAR},
+			</if>
+			<if test="owner != null">
+				t.owner = #{owner, jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				t.type = #{type, jdbcType=VARCHAR},
+			</if>
+			<if test="operator != null and operator.uuid != null">
+				t.operatoruuid = #{operator.uuid, jdbcType=VARCHAR},
+			</if>
+			<if test="operator != null and operator.code != null">
+				t.operatorcode = #{operator.code, jdbcType=VARCHAR},
+			</if>
+			<if test="operator != null and operator.name != null">
+				t.operatorname = #{operator.name, jdbcType=VARCHAR},
+			</if>
+			<if test="beginOperateTime != null">
+				t.beginOperateTime = #{beginOperateTime,
+				jdbcType=TIMESTAMP},
+			</if>
+			<if test="endOperateTime != null">
+				t.endOperateTime = #{endOperateTime, jdbcType=TIMESTAMP},
+			</if>
+			t.version = #{version, jdbcType=LONGVARCHAR} + 1,
+		</set>
+		where t.uuid = #{uuid,
+		jdbcType=VARCHAR}
+		and t.version = #{version,
+		jdbcType=LONGVARCHAR}
+	</update>
+
+	<select id="get" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select t.*, s.code supplierCode,s.name suppliername, a.code
+		articlecode,a.name articlename from
+		db(#{companyUuid, jdbcType=VARCHAR}).sardine_task t,
+		db(#{companyUuid, jdbcType=VARCHAR}).sardine_article a,
+		db(#{companyUuid, jdbcType=VARCHAR}).sardine_supplier s
+		where t.articleuuid = a.uuid and t.supplieruuid = s.uuid
+		and t.uuid = #{uuid, jdbcType=VARCHAR}
+	</select>
+
+	<select id="query" parameterType="PageQueryDefinition"
+		resultMap="BaseResultMap">
+		select t.*, s.code supplierCode,s.name suppliername, a.code
+		articlecode,a.name articlename from
+		db(#{companyUuid, jdbcType=VARCHAR}).sardine_task t,
+		db(#{companyUuid, jdbcType=VARCHAR}).sardine_article a,
+		db(#{companyUuid, jdbcType=VARCHAR}).sardine_supplier s
+		where t.articleuuid = a.uuid and t.supplieruuid = s.uuid
+		<if test="taskNoLike != null and taskNoLike != ''">
+			and t.taskNo = #{taskNoLike, jdbcType=VARCHAR}
+		</if>
+		<if test="type != null and type != ''">
+			and t.type = #{type, jdbcType=VARCHAR}
+		</if>
+		<if test="state != null">
+			and t.state = #{state, jdbcType=VARCHAR}
+		</if>
+		<if test="articleUuid != null and articleUuid != ''">
+			and t.articleUuid = #{articleUuid, jdbcType=VARCHAR}
+		</if>
+		<if test="articleCode != null and articleCode != ''">
+			and a.code = #{articleCode, jdbcType=VARCHAR}
+		</if>
+		<if test="fromBinCode != null">
+			and t.fromBinCode = #{fromBinCode, jdbcType=VARCHAR}
+		</if>
+		<if test="toBinCode != null">
+			and t.toBinCode = #{toBinCode, jdbcType=VARCHAR}
+		</if>
+		<if test="fromContainerBarcode != null">
+			and t.fromContainerBarcode = #{fromContainerBarcode, jdbcType=VARCHAR}
+		</if>
+		<if test="toContainerBarcode != null">
+			and t.toContainerBarcode = #{toContainerBarcode, jdbcType=VARCHAR}
+		</if>
+		<if test="supplierUuid != null and supplierUuid != ''">
+			and t.supplierUuid = #{supplierUuid, jdbcType=VARCHAR}
+		</if>
+		<if test="qpcStr != null and qpcStr != ''">
+			and t.qpcStr = #{qpcStr, jdbcType=VARCHAR}
+		</if>
+		<if test="creatorUuid != null">
+		    and t.creatorUuid = #{creatorUuid, jdbcType=VARCHAR}
+		</if>
+		<if test="operatorUuid != null and operatorUuid != ''">
+			and t.operatorUuid = #{operatorUuid, jdbcType=VARCHAR}
+		</if>
+	</select>
+</mapper>

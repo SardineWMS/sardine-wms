@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.hd123.sardine.wms.dao.in.order.impl.OrderBillDaoImpl">
+	<resultMap id="BaseResultMap" type="OrderBill">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="billNumber" property="billNumber" jdbcType="VARCHAR" />
+		<result column="sourceBillNumber" property="sourceBillNumber"
+			jdbcType="VARCHAR" />
+		<result column="billType" property="billType" jdbcType="VARCHAR" />
+		<result column="supplieruuid" property="supplier.uuid"
+			jdbcType="VARCHAR" />
+		<result column="suppliercode" property="supplier.code"
+			jdbcType="VARCHAR" />
+		<result column="suppliername" property="supplier.name"
+			jdbcType="VARCHAR" />
+		<result column="wrhuuid" property="wrh.uuid" jdbcType="VARCHAR" />
+		<result column="wrhcode" property="wrh.code" jdbcType="VARCHAR" />
+		<result column="wrhname" property="wrh.name" jdbcType="VARCHAR" />
+		<result column="expireDate" property="expireDate" jdbcType="DATE" />
+		<result column="bookedDate" property="bookedDate" jdbcType="DATE" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="totalCaseQtyStr" property="totalCaseQtyStr"
+			jdbcType="VARCHAR" />
+		<result column="receivedCaseQtyStr" property="receivedCaseQtyStr"
+			jdbcType="VARCHAR" />
+		<result column="note" property="note" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="createdtime" property="createInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="createdID" property="createInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="createdcode" property="createInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="createdName" property="createInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="lastModifytime" property="lastModifyInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="lastModifyid" property="lastModifyInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="lastModifycode" property="lastModifyInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<resultMap id="OrderBillItemMap" type="OrderBillItem">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="orderBillUuid" property="orderBillUuid"
+			jdbcType="VARCHAR" />
+		<result column="line" property="line" jdbcType="INTEGER" />
+		<result column="articleuuid" property="article.uuid" jdbcType="VARCHAR" />
+		<result column="articlecode" property="article.code" jdbcType="VARCHAR" />
+		<result column="articlename" property="article.name" jdbcType="VARCHAR" />
+		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+		<result column="munit" property="munit" jdbcType="VARCHAR" />
+		<result column="qpc" property="qpc" jdbcType="DECIMAL" />
+		<result column="qty" property="qty" jdbcType="DECIMAL" />
+		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
+		<result column="receivedQty" property="receivedQty" jdbcType="DECIMAL" />
+		<result column="receivedCaseQtyStr" property="receivedCaseQtyStr"
+			jdbcType="VARCHAR" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<insert id="insert" parameterType="OrderBill">
+		insert into db(#{companyUuid, jdbcType=VARCHAR}).sardine_orderbill
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+		    <if test="billNumber != null">
+				billNumber,
+			</if>
+			<if test="sourceBillNumber != null">
+				sourceBillNumber,
+			</if>
+			<if test="billType != null">
+				billType,
+			</if>
+			<if test="supplier.uuid != null">
+				supplierUuid,
+			</if>
+			<if test="wrh.uuid != null">
+				wrhuuid,
+			</if>
+			<if test="expireDate != null">
+				expireDate,
+			</if>
+			<if test="bookedDate != null">
+				bookedDate,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="companyUuid != null">
+				companyUuid,
+			</if>
+			<if test="totalCaseQtyStr != null">
+				totalCaseQtyStr,
+			</if>
+			<if test="receivedCaseQtyStr != null">
+				receivedCaseQtyStr,
+			</if>
+			<if test="note != null">
+				note,
+			</if>
+        version,
+		CREATEDTIME,
+		CREATEDID,
+		CREATEDCODE,
+		CREATEDNAME,
+		LASTMODIFYTIME,
+		LASTMODIFYID,
+		LASTMODIFYCODE,
+		LASTMODIFYNAME,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="billNumber != null">
+				#{billNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillNumber != null">
+				#{sourceBillNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="billType != null">
+				#{billType,jdbcType=VARCHAR},
+			</if>
+			<if test="supplier != null and supplier.uuid != null">
+				#{supplier.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="wrh != null and wrh.uuid != null">
+				#{wrh.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="expireDate != null">
+				#{expireDate,jdbcType=DATE},
+			</if>
+			<if test="bookedDate != null">
+				#{bookedDate,jdbcType=DATE},
+			</if>
+			<if test="validDate != null">
+				#{validDate,jdbcType=DATE},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=VARCHAR},
+			</if>
+			<if test="companyUuid != null">
+				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="totalCaseQtyStr != null">
+				#{totalCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceLineNumber != null">
+				#{sourceLineNumber,jdbcType=INTEGER},
+			</if>
+			<if test="receivedCaseQtyStr != null">
+				#{receivedCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="note != null">
+				#{note,jdbcType=VARCHAR},
+			</if>
+	    #{version,jdbcType=LONGVARCHAR},
+		#{createInfo.time,jdbcType=TIMESTAMP},
+		#{createInfo.operator.id,jdbcType=VARCHAR},
+		#{createInfo.operator.code,jdbcType=VARCHAR},
+		#{createInfo.operator.fullName,jdbcType=VARCHAR},
+		#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+		#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+		#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="OrderBill">
+		update db(#{companyUuid, jdbcType=VARCHAR}).sardine_orderbill t
+		set t.sourceBillNumber = #{sourceBillNumber, jdbcType=VARCHAR},
+		    t.billType = #{billType, jdbcType=VARCHAR},
+		    t.supplieruuid = #{supplier.uuid, jdbcType=VARCHAR},
+		    t.wrhuuid = #{wrh.uuid, jdbcType=VARCHAR},
+		    t.expireDate = #{expireDate, jdbcType=DATE},
+		    t.bookedDate = #{bookedDate, jdbcType=DATE},
+		    t.state = #{state, jdbcType=VARCHAR},
+		    t.companyUuid = #{companyUuid, jdbcType=VARCHAR},
+		    t.totalCaseQtyStr = #{totalCaseQtyStr, jdbcType=VARCHAR},
+		    t.receivedCaseQtyStr = #{receivedCaseQtyStr, jdbcType=VARCHAR},
+		    t.note = #{note, jdbcType=VARCHAR},
+		    t.LASTMODIFYTIME = #{lastModifyInfo.time,jdbcType=TIMESTAMP},
+		    t.LASTMODIFYID = #{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+		    t.LASTMODIFYCODE = #{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+		    t.LASTMODIFYNAME = #{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		    t.version = #{version, jdbcType=LONGVARCHAR} + 1
+		where t.uuid = #{uuid, jdbcType=VARCHAR}
+		  and t.version = #{version, jdbcType=LONGVARCHAR}
+	</update>
+
+	<select id="get" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select t.*, s.code suppliercode, s.name suppliername, w.code wrhcode, w.name wrhname
+		         from db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBill t,
+		              db(#{companyUuid, jdbcType=VARCHAR}).sardine_supplier s,
+		              db(#{companyUuid, jdbcType=VARCHAR}).sardine_wrh w
+		where t.wrhuuid = w.uuid and t.supplieruuid = s.uuid 
+		  and t.uuid = #{uuid, jdbcType=VARCHAR}
+	</select>
+
+	<select id="getByBillNumber" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select t.*, s.code suppliercode, s.name suppliername, w.code wrhcode, w.name wrhname 
+		         from db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBill t,
+		              db(#{companyUuid, jdbcType=VARCHAR}).sardine_supplier s,
+		              db(#{companyUuid, jdbcType=VARCHAR}).sardine_wrh w
+		where t.wrhuuid = w.uuid and t.supplieruuid = s.uuid 
+		  and t.billnumber = #{billNumber, jdbcType=VARCHAR}
+		  and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+	</select>
+
+	<delete id="remove" parameterType="java.util.Map">
+		delete db(#{companyUuid,jdbcType=VARCHAR}).sardine_orderbill t
+		where t.uuid = #{uuid, jdbcType=VARCHAR}
+		  and t.version = #{version, jdbcType=LONGVARCHAR}
+	</delete>
+
+	<insert id="insertItems" parameterType="java.util.Map">
+		insert into db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBillItem(
+		  uuid,
+		  line,
+		  orderBillUuid,
+		  articleuuid,
+		  qpcStr,
+		  munit,
+		  qpc,
+		  qty,
+		  caseQtyStr,
+		  receivedQty,
+		  receivedCaseQtyStr,
+		  price
+		)
+		values(
+		  #{item.uuid, jdbcType=VARCHAR},
+		  #{item.line, jdbcType=INTEGER},
+		  #{item.orderBillUuid, jdbcType=VARCHAR},
+		  #{item.article.uuid, jdbcType=VARCHAR},
+		  #{item.qpcStr, jdbcType=VARCHAR},
+		  #{item.munit, jdbcType=VARCHAR},
+		  #{item.qpc, jdbcType=DECIMAL},
+		  #{item.qty, jdbcType=DECIMAL},
+		  #{item.caseQtyStr, jdbcType=VARCHAR},
+		  #{item.receivedQty, jdbcType=DECIMAL},
+		  #{item.receivedCaseQtyStr, jdbcType=VARCHAR},
+		  #{item.price, jdbcType=DECIMAL}
+		)
+	</insert>
+
+	<update id="updateItem" parameterType="java.util.Map">
+		update db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBillItem t
+		set t.receivedQty = #{qty, jdbcType=DECIMAL},
+		    t.receivedCaseQtyStr = #{caseQtyStr, jdbcType=VARCHAR}
+		where t.uuid = #{uuid, jdbcType=VARCHAR}
+	</update>
+
+	<delete id="removeItems" parameterType="java.util.Map">
+		delete db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBillItem t
+		where t.orderBillUuid = #{orderBillUuid, jdbcType=VARCHAR}
+	</delete>
+	
+	<select id="queryItems" parameterType="java.util.Map" resultMap="OrderBillItemMap">
+	    select t.*, a.code, a.name
+	           from db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBillItem t,
+	                db(#{companyUuid, jdbcType=VARCHAR}).sardine_article a,
+	          where t.articleuuid = a.uuid 
+	            and t.orderBillUuid = #{orderBillUuid, jdbcType=VARCHAR}
+	</select>
+
+	<select id="query" parameterType="PageQueryDefinition" resultMap="BaseResultMap">
+		select .*, s.code suppliercode, s.name suppliername, w.code wrhcode, w.name wrhname from 
+		   db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBill t,
+		   db(#{companyUuid, jdbcType=VARCHAR}).sardine_wrh w,
+		   db(#{companyUuid, jdbcType=VARCHAR}).sardine_supplier s,
+		where t.wrhuuid = w.uuid and t.supplieruuid = s.uuid 
+		  and t.companyuuid = #{companyUuid, jdbcType=VARCHAR}
+		<if test="supplierCode != null and supplierCode != ''">
+			and s.code = #{supplierCode, jdbcType=VARCHAR}
+		</if>
+		<if test="supplierUuid != null and supplierUuid != ''">
+			and t.supplierUuid = #{supplierUuid, jdbcType=VARCHAR}
+		</if>
+		<if test="wrhUuid != null and wrhUuid != ''">
+			and t.wrhuuid = #{wrhUuid, jdbcType=VARCHAR}
+		</if>
+		<if test="wrhCode != null and wrhCode != ''">
+			and w.code = #{wrhCode, jdbcType=VARCHAR}
+		</if>
+		<if test="state != null">
+			and t.state = #{state, jdbcType=VARCHAR}
+		</if>
+		<if test="billNumber != null and billNumber != ''">
+			and t.billNumber = #{billNumber, jdbcType=VARCHAR}
+		</if>
+		<if test="articleUuid != null and articleUuid != ''">
+			and exists (select 1 from db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBillitem oi
+			oi.articleUuid = #{articleUuid, jdbcType=VARCHAR} and t.uuid = oi.orderbilluuid)
+		</if>
+	</select>
+</mapper>

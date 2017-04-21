@@ -23,8 +23,8 @@ public enum BinUsage {
   /** 拣货位 */
   PickUpBin("拣货位"),
 
-  /** 统配收货暂存位 */
-  UnifyReceiveStorageBin("统配收货暂存位"),
+  /** 收货暂存位 */
+  ReceiveStorageBin("收货暂存位"),
   /** 统配更正位 */
   UnifyAdjBin("统配更正位"),
   /** 越库更正位 */

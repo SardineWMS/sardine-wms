@@ -138,4 +138,17 @@
 		and version =
 		#{version,jdbcType=LONGVARCHAR}
 	</delete>
+	
+	<select id="getBinByWrhAndUsage" parameterType="java.util.Map">
+	   select t.* from serdine_bin t where 
+	   t.wrhUuid = #{wrhUuid, jdbcType=VARCHAR}
+	   and t.usage = #{usage, jdbcType=VARCHAR}
+	</select>
+	
+	<update id="changeState" parameterType="java.util.Map">
+	  update sardine_bin b set b.state = #{state, jdbcType=VARCHAR},
+	  b.version = b.version + 1
+	  where b.uuid = #{uuid, jdbcType=VARCHAR}
+	  and b.version = #{version, jdbcType=LONGVARCHAR}
+	</update>
 </mapper>

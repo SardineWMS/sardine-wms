@@ -13,10 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.bin.Bin;
+import com.hd123.sardine.wms.api.basicInfo.bin.BinState;
+import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.common.dao.NameSpaceSupport;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.dao.basicInfo.bin.BinDao;
 
@@ -29,6 +34,8 @@ import com.hd123.sardine.wms.dao.basicInfo.bin.BinDao;
 public class BinDaoImpl extends NameSpaceSupport implements BinDao {
 
   private static final String GETBYCODE = "getByCode";
+  private static final String GETBINBYWRHANDUSAGE = "getBinByWrhAndUsage";
+  private static final String CHANGESTATE = "changeState";
 
   @Override
   public void insert(Bin bin) {
@@ -59,7 +66,7 @@ public class BinDaoImpl extends NameSpaceSupport implements BinDao {
     map.put("code", code);
     return getSqlSession().selectOne(generateStatement(GETBYCODE), map);
   }
-  
+
   @Override
   public Bin get(String uuid, String companyUuid) {
     if (StringUtil.isNullOrBlank(companyUuid) || StringUtil.isNullOrBlank(uuid))
@@ -69,5 +76,28 @@ public class BinDaoImpl extends NameSpaceSupport implements BinDao {
     map.put("companyUuid", companyUuid);
     map.put("uuid", uuid);
     return getSqlSession().selectOne(generateStatement(MAPPER_GET), map);
+  }
+
+  @Override
+  public Bin getBinByWrhAndUsage(String wrhUuid, BinUsage usage) {
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("wrhUuid", wrhUuid);
+    map.put("usage", usage);
+
+    List<Bin> result = getSqlSession().selectList(generateStatement(GETBINBYWRHANDUSAGE), map);
+    if (CollectionUtils.isEmpty(result))
+      return null;
+    return result.get(0);
+  }
+
+  @Override
+  public void changeState(String uuid, long version, BinState state) {
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("uuid", uuid);
+    map.put("version", version);
+    map.put("state", state);
+
+    int updateRows = getSqlSession().update(generateStatement(CHANGESTATE), map);
+    PersistenceUtils.optimisticVerify(updateRows);
   }
 }

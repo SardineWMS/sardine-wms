@@ -9,6 +9,8 @@
  */
 package com.hd123.sardine.wms.common.dao;
 
+import java.util.List;
+
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 
 /**
@@ -18,16 +20,36 @@ import org.mybatis.spring.support.SqlSessionDaoSupport;
  *
  */
 public class NameSpaceSupport extends SqlSessionDaoSupport {
-    public static final String MAPPER_GET = "get";
-    public static final String MAPPER_QUERY_BYPAGE = "queryByPage";
-    public static final String MAPPER_INSERT = "insert";
-    public static final String MAPPER_UPDATE = "update";
-    public static final String MAPPER_DELETE_BYHEADER = "deleteByHeader";
-    public static final String MAPPER_REMOVE = "remove";
-    public static final String MAPPER_QUERY_BYLIST = "queryByList";
-    public static final String MAPPER_INSERT_ITEM = "insertItem";
+  public static final String MAPPER_GET = "get";
+  public static final String MAPPER_QUERY_BYPAGE = "queryByPage";
+  public static final String MAPPER_INSERT = "insert";
+  public static final String MAPPER_UPDATE = "update";
+  public static final String MAPPER_DELETE_BYHEADER = "deleteByHeader";
+  public static final String MAPPER_REMOVE = "remove";
+  public static final String MAPPER_QUERY_BYLIST = "queryByList";
+  public static final String MAPPER_INSERT_ITEM = "insertItem";
 
-    public String generateStatement(String mapperId) {
-        return this.getClass().getName() + "." + mapperId;
-    }
+  public String generateStatement(String mapperId) {
+    return this.getClass().getName() + "." + mapperId;
+  }
+
+  public int insert(String mapperId, Object paramter) {
+    return getSqlSession().insert(generateStatement(mapperId), paramter);
+  }
+
+  public int update(String mapperId, Object paramter) {
+    return getSqlSession().update(generateStatement(mapperId), paramter);
+  }
+
+  public <E> List<E> selectList(String mapperId, Object paramter) {
+    return getSqlSession().selectList(generateStatement(mapperId), paramter);
+  }
+
+  public <T> T selectOne(String mapperId, Object paramter) {
+    return getSqlSession().selectOne(generateStatement(mapperId), paramter);
+  }
+
+  public int delete(String mapperId, Object paramter) {
+    return getSqlSession().delete(generateStatement(MAPPER_REMOVE), paramter);
+  }
 }
