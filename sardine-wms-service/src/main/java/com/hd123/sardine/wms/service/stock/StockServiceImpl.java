@@ -136,14 +136,13 @@ public class StockServiceImpl implements StockService {
       throws IllegalArgumentException, VersionConflictException, WMSException {
     Assert.assertArgumentNotNull(onWayStocks, "onWayStocks");
 
-    if (onWayStocks.isEmpty())
-      return null;
-
     List<Stock> result = new ArrayList<Stock>();
+    if (onWayStocks.isEmpty())
+      return result;
+
     Set<String> stockUuids = new HashSet<String>();
     for (OnWayStock onWayStock : onWayStocks) {
       onWayStock.validate();
-
       Stock stock = null;
       if (StringUtil.isNullOrBlank(onWayStock.getStockUuid()) == false) {
         stock = stockDao.get(onWayStock.getStockUuid());
