@@ -165,7 +165,6 @@ public class StockServiceImpl implements StockService {
         stock.setOnWayQty(onWayStock.getQty());
         stock.setProductionDate(null);
         stock.setQty(BigDecimal.ZERO);
-        stock.setQpc(null);
         stock.setStockBatch(onWayStock.getStockBatch());
         stockDao.insert(stock);
       } else {

@@ -72,4 +72,10 @@
 		where u.companyname =
 		#{name,jdbcType=VARCHAR}
 	</select>
+	
+	<insert id="insertDBMap" parameterType="java.util.Map">
+        insert into sardine_db(companyUuid, dbname)	
+        values(#{companyUuid, jdbcType=VARCHAR},
+               #{dbName, jdbcType=VARCHAR})
+	</insert>
 </mapper>

@@ -3,21 +3,21 @@
 <mapper namespace="com.hd123.sardine.wms.dao.basicInfo.seq.impl.SequenceDaoImpl">
 	<select id="getNextValue" parameterType="java.util.Map"
 		resultType="java.lang.Integer">
-		select nextval(#{seqName,jdbcType=VARCHAR},#{companyUuid,jdbcType=VARCHAR}) FROM dual
+		select sardine_nextValue(#{seqName,jdbcType=VARCHAR}, #{companyUuid,jdbcType=VARCHAR})
 	</select>
 	
 	<select id="getCurrentValue" parameterType="java.util.Map"
 		resultType="java.lang.Integer">
-		select currval(#{seqName,jdbcType=VARCHAR},#{companyUuid,jdbcType=VARCHAR}) FROM dual
+		select sardine_currval(#{seqName,jdbcType=VARCHAR}, #{companyUuid,jdbcType=VARCHAR})
 	</select>
 
-	<insert id="insertSequence" parameterType="com.hd123.sardine.wms.dao.basicInfo.seq.Sequence">
-		insert into
-		sequence(name,current_value,increment,companyUuid)
-		values(
-		#{seqName,jdbcType=VARCHAR},
-		#{currentValue,jdbcType=VARCHAR},
-		#{increment,jdbcType=VARCHAR},
-		#{companyUuid,jdbcType=VARCHAR})
-	</insert>
+	<select id="getCurrentValueWithDate" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		select sardine_datecurrval(#{seqName,jdbcType=VARCHAR}, #{companyUuid,jdbcType=VARCHAR})
+	</select>
+	
+	<select id="getNextValueWithDate" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		select sardine_datenextValue(#{seqName,jdbcType=VARCHAR},#{companyUuid,jdbcType=VARCHAR})
+	</select>
 </mapper>

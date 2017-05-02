@@ -13,8 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
-import com.hd123.rumba.commons.lang.StringUtil;
-import com.hd123.sardine.wms.dao.basicInfo.seq.Sequence;
 import com.hd123.sardine.wms.dao.basicInfo.seq.SequenceDao;
 
 /**
@@ -32,29 +30,17 @@ public class FlowCodeGenerator {
     return instance;
   }
 
-  public String allocate(String sequenceType, String companyUuid) {
+  public String allocate(String sequenceType, String companyUuid, int length) {
     Assert.assertArgumentNotNull(sequenceType, "sequenceType");
-
-    if (StringUtil.isNullOrBlank(companyUuid) == false)
-      sequenceType = sequenceType + companyUuid;
-
-    Sequence seq = new Sequence();
-    seq.setCompanyUuid(companyUuid);
-    seq.setCurrentValue(0);
-    seq.setIncrement(1);
-    seq.setSeqName(sequenceType);
-
-    int currentValue = 0;
-    try {
-      currentValue = sequenceDao.getCurrentValue(sequenceType, companyUuid);
-    } catch (Exception e) {
-      sequenceDao.saveSequence(seq);
-    }
-
-    if (currentValue == 0)
-      sequenceDao.saveSequence(seq);
-
     int seqValue = sequenceDao.getNextValue(sequenceType, companyUuid);
-    return StringUtils.repeat("0", 6 - String.valueOf(seqValue).length()) + seqValue;
+    return StringUtils.repeat("0", length - String.valueOf(seqValue).length()) + seqValue;
+  }
+
+  public String allocateWithDate(String sequenceType, String companyUuid, int length) {
+    Assert.assertArgumentNotNull(sequenceType, "sequenceType");
+    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+
+    int seqValue = sequenceDao.getNextValueWithDate(sequenceType, companyUuid);
+    return StringUtils.repeat("0", length - String.valueOf(seqValue).length()) + seqValue;
   }
 }

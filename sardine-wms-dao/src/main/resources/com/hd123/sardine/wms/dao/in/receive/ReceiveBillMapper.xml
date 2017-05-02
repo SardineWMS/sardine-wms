@@ -179,7 +179,7 @@
 	</insert>
 
 	<update id="update"
-		parameterType="com.hd123.zjlh.wms.api.receivemgr.receive.ReceiveBill">
+		parameterType="com.hd123.sardine.wms.api.in.receive.ReceiveBill">
 		update db(#{companyUuid, jdbcType=VARCHAR}).sardine_receivebill
 		<set>
 			<if test="supplier != null and supplier.uuid != null">
@@ -255,7 +255,7 @@
 	</select>
 
 	<select id="query" resultMap="ReceiveBillMap"
-		parameterType="com.hd123.zjlh.wms.api.receivemgr.receive.ReceiveBillFilter">
+		parameterType="PageQueryDefinition">
 
 	</select>
 
@@ -384,7 +384,7 @@
     </trim>
   </insert>
 
-  <select id="query" resultMap="ReceiveBillItemMap"
+  <select id="queryItems" resultMap="ReceiveBillItemMap"
     parameterType="java.util.Map">
     select t.*, a.code articleCode, a.name articleName from db(#{companyUuid, jdbcType=VARCHAR}).sardine_receivebillItem t,
                   db(#{companyUuid, jdbcType=VARCHAR}).sardine_article a
@@ -392,7 +392,7 @@
     t.receiveBillUuid = #{receiveBillUuid,jdbcType=VARCHAR}
   </select>
 
-  <delete id="remove" parameterType="java.util.Map">
+  <delete id="removeItem" parameterType="java.util.Map">
     delete from
     db(#{companyUuid, jdbcType=VARCHAR}).sardine_receivebillItem 
     t

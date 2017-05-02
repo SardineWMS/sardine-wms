@@ -14,7 +14,6 @@ import java.util.Map;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.common.dao.NameSpaceSupport;
-import com.hd123.sardine.wms.dao.basicInfo.seq.Sequence;
 import com.hd123.sardine.wms.dao.basicInfo.seq.SequenceDao;
 
 /**
@@ -22,39 +21,56 @@ import com.hd123.sardine.wms.dao.basicInfo.seq.SequenceDao;
  *
  */
 public class SequenceDaoImpl extends NameSpaceSupport implements SequenceDao {
-    public static final String GETCURRENTVALUE = "getCurrentValue";
-    public static final String GETNEXTVALUE = "getNextValue";
-    public static final String INSERTSEQUENCE = "insertSequence";
+  public static final String GETCURRENTVALUE = "getCurrentValue";
+  public static final String GETNEXTVALUE = "getNextValue";
+  public static final String GETCURRENTVALUEWITHDATE = "getCurrentValueWithDate";
+  public static final String GETNEXTVALUEWITHDATE = "getNextValueWithDate";
 
-    @Override
-    public int getCurrentValue(String seqName, String companyUuid) {
-        Assert.assertArgumentNotNull(seqName, "seqName");
-        Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+  @Override
+  public int getCurrentValue(String seqName, String companyUuid) {
+    Assert.assertArgumentNotNull(seqName, "seqName");
+    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
 
-        Map<String, String> map = new HashMap<>();
-        map.put("seqName", seqName);
-        map.put("companyUuid", companyUuid);
+    Map<String, String> map = new HashMap<>();
+    map.put("seqName", seqName);
+    map.put("companyUuid", companyUuid);
 
-        return getSqlSession().selectOne(generateStatement(GETCURRENTVALUE), map);
-    }
+    return selectOne(GETCURRENTVALUE, map);
+  }
 
-    @Override
-    public int getNextValue(String seqName, String companyUuid) {
-        Assert.assertArgumentNotNull(seqName, "seqName");
-        Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+  @Override
+  public int getNextValue(String seqName, String companyUuid) {
+    Assert.assertArgumentNotNull(seqName, "seqName");
+    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
 
-        Map<String, String> map = new HashMap<>();
-        map.put("seqName", seqName);
-        map.put("companyUuid", companyUuid);
+    Map<String, String> map = new HashMap<>();
+    map.put("seqName", seqName);
+    map.put("companyUuid", companyUuid);
 
-        return getSqlSession().selectOne(generateStatement(GETNEXTVALUE), map);
-    }
+    return selectOne(GETNEXTVALUE, map);
+  }
 
-    @Override
-    public void saveSequence(Sequence sequence) {
-        Assert.assertArgumentNotNull(sequence, "sequence");
-        Assert.assertArgumentNotNull(sequence.getSeqName(), "sequence.name");
+  @Override
+  public int getCurrentValueWithDate(String seqName, String companyUuid) {
+    Assert.assertArgumentNotNull(seqName, "seqName");
+    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
 
-        getSqlSession().insert(generateStatement(INSERTSEQUENCE), sequence);
-    }
+    Map<String, String> map = new HashMap<>();
+    map.put("seqName", seqName);
+    map.put("companyUuid", companyUuid);
+
+    return selectOne(GETCURRENTVALUEWITHDATE, map);
+  }
+
+  @Override
+  public int getNextValueWithDate(String seqName, String companyUuid) {
+    Assert.assertArgumentNotNull(seqName, "seqName");
+    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+
+    Map<String, String> map = new HashMap<>();
+    map.put("seqName", seqName);
+    map.put("companyUuid", companyUuid);
+
+    return selectOne(GETNEXTVALUEWITHDATE, map);
+  }
 }

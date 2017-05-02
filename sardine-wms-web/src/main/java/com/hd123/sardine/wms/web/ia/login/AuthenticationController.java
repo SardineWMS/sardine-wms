@@ -9,9 +9,6 @@
  */
 package com.hd123.sardine.wms.web.ia.login;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +24,6 @@ import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.web.BaseController;
-import com.hd123.sardine.wms.web.shiro.PasswordHelper;
 
 /**
  * 认证管理控制层
@@ -47,11 +43,11 @@ public class AuthenticationController extends BaseController {
       @RequestParam(value = "password", required = true) String password) {
     RespObject resp = new RespObject();
     try {
-      UsernamePasswordToken usernameToken = new UsernamePasswordToken(loginId,
-          "888888");
-      Subject subject = SecurityUtils.getSubject();
-      subject.hasRole("ere");
-      subject.login(usernameToken);
+//      UsernamePasswordToken usernameToken = new UsernamePasswordToken(loginId,
+//          "888888");
+//      Subject subject = SecurityUtils.getSubject();
+//      subject.hasRole("ere");
+//      subject.login(usernameToken);
       UserInfo userInfo = loginService.login(loginId, password);
       String token = setLoginInfoCache(userInfo);
       resp.setObj(userInfo);

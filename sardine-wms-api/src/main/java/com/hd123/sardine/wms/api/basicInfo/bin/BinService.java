@@ -50,6 +50,10 @@ public interface BinService {
   /** 查询条件：货位代码 */
   public static final String QUERY_CODE_FIELD = "code";
 
+  public static final int PATH_CODE_LENGTH = 2;
+
+  public static final int SHELF_CODE_LENGTH = 2;
+
   /**
    * 新增仓位
    * <p>

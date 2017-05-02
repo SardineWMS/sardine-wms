@@ -34,6 +34,17 @@ public class ReceiveBill extends StandardEntity {
   private ReceiveBillMethod method;
   private String caseQtyStr;
   private String companyUuid;
+  private String note;
+  
+  private List<ReceiveBillItem> items = new ArrayList<ReceiveBillItem>();
+
+  public String getNote() {
+    return note;
+  }
+
+  public void setNote(String note) {
+    this.note = note;
+  }
 
   public String getBillNumber() {
     return billNumber;
@@ -58,8 +69,6 @@ public class ReceiveBill extends StandardEntity {
   public void setCompanyUuid(String companyUuid) {
     this.companyUuid = companyUuid;
   }
-
-  private List<ReceiveBillItem> items = new ArrayList<ReceiveBillItem>();
 
   /** 收货人 */
   public UCN getReceiver() {

@@ -61,7 +61,7 @@
 	</resultMap>
 
 	<insert id="insert" parameterType="Task">
-		insert into db(#{companyUuid, jdbcType=VARCHAR}).sardine_task
+		insert into db_proxy.sardine_task
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="uuid != null">
 				uuid,
@@ -279,7 +279,7 @@
 	</insert>
 
 	<update id="update" parameterType="Task">
-		update db(#{companyUuid, jdbcType=VARCHAR}).sardine_task t
+		update db_proxy.sardine_task t
 		<set>
 			<if test="state != null">
 				t.state = #{state, jdbcType=VARCHAR},
@@ -342,20 +342,20 @@
 	<select id="get" parameterType="java.util.Map" resultMap="BaseResultMap">
 		select t.*, s.code supplierCode,s.name suppliername, a.code
 		articlecode,a.name articlename from
-		db(#{companyUuid, jdbcType=VARCHAR}).sardine_task t,
-		db(#{companyUuid, jdbcType=VARCHAR}).sardine_article a,
-		db(#{companyUuid, jdbcType=VARCHAR}).sardine_supplier s
+		db_proxy.sardine_task t,
+		db_proxy.sardine_article a,
+		db_proxy.sardine_supplier s
 		where t.articleuuid = a.uuid and t.supplieruuid = s.uuid
 		and t.uuid = #{uuid, jdbcType=VARCHAR}
 	</select>
 
-	<select id="query" parameterType="PageQueryDefinition"
+	<select id="queryByList" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
 		select t.*, s.code supplierCode,s.name suppliername, a.code
 		articlecode,a.name articlename from
-		db(#{companyUuid, jdbcType=VARCHAR}).sardine_task t,
-		db(#{companyUuid, jdbcType=VARCHAR}).sardine_article a,
-		db(#{companyUuid, jdbcType=VARCHAR}).sardine_supplier s
+		db_proxy.sardine_task t,
+		db_proxy.sardine_article a,
+		db_proxy.sardine_supplier s
 		where t.articleuuid = a.uuid and t.supplieruuid = s.uuid
 		<if test="taskNoLike != null and taskNoLike != ''">
 			and t.taskNo = #{taskNoLike, jdbcType=VARCHAR}

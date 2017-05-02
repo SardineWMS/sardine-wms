@@ -46,9 +46,8 @@ import com.hd123.sardine.wms.dao.basicInfo.bin.PathDao;
 import com.hd123.sardine.wms.dao.basicInfo.bin.ShelfDao;
 import com.hd123.sardine.wms.dao.basicInfo.bin.WrhDao;
 import com.hd123.sardine.wms.dao.basicInfo.bin.ZoneDao;
-import com.hd123.sardine.wms.dao.basicInfo.seq.Sequence;
-import com.hd123.sardine.wms.dao.basicInfo.seq.SequenceDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
+import com.hd123.sardine.wms.service.util.FlowCodeGenerator;
 
 /**
  * 货位服务：实现
@@ -72,9 +71,6 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
 
   @Autowired
   private BinDao binDao;
-
-  @Autowired
-  private SequenceDao sequenceDao;
 
   @Autowired
   private BinTypeService binTypeService;
@@ -149,11 +145,8 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
       throw new WMSException("货道对应的货区" + path.getZoneUuid() + "不存在。");
     }
 
-    int pathCodeByInt = getSequenceNextValue(Path.class.getSimpleName() + pathOfZone.getCode(),
-        path.getCompanyUuid());
-    String pathCode = pathCodeByInt < 10 ? "0" + String.valueOf(pathCodeByInt)
-        : String.valueOf(pathCodeByInt);
-
+    String pathCode = FlowCodeGenerator.getInstance()
+        .allocate(Path.class.getSimpleName() + pathOfZone.getCode(), path.getCompanyUuid(), 2);
     path.setCode(pathOfZone.getCode() + pathCode);
     path.setUuid(UUIDGenerator.genUUID());
     pathDao.insert(path);
@@ -174,11 +167,8 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
       throw new WMSException("货架对应的货道" + pathCode + "不存在。");
     }
 
-    int shelfCodeByInt = getSequenceNextValue(Shelf.class.getSimpleName() + shelfOfPath.getCode(),
-        companyUuid);
-    String shelfCode = shelfCodeByInt < 10 ? "0" + String.valueOf(shelfCodeByInt)
-        : String.valueOf(shelfCodeByInt);
-
+    String shelfCode = FlowCodeGenerator.getInstance().allocate(
+        Shelf.class.getSimpleName() + shelfOfPath.getCode(), companyUuid, SHELF_CODE_LENGTH);
     Shelf shelf = new Shelf();
     shelf.setPathUuid(shelfOfPath.getUuid());
     shelf.setCompanyUuid(companyUuid);
@@ -313,20 +303,6 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
       zones.addAll(zoneDao.query(companyUuid, wrh.getUuid()));
     }
     return zones;
-  }
-
-  private synchronized int getSequenceNextValue(String sequenceName, String companyUuid) {
-    int currentValue = sequenceDao.getCurrentValue(sequenceName + companyUuid, companyUuid);
-    if (currentValue == 0) {
-      Sequence seq = new Sequence();
-      seq.setCompanyUuid(companyUuid);
-      seq.setCurrentValue(0);
-      seq.setIncrement(1);
-      seq.setSeqName(sequenceName + companyUuid);
-      sequenceDao.saveSequence(seq);
-    }
-
-    return sequenceDao.getNextValue(sequenceName + companyUuid, companyUuid);
   }
 
   @Override

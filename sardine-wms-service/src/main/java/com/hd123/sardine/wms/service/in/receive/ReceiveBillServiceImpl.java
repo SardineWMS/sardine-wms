@@ -272,7 +272,6 @@ public class ReceiveBillServiceImpl implements ReceiveBillService {
         stock.setContainerBarcode(item.getContainerBarcode());
         stock.setMeasureUnit(item.getMunit());
         stock.setProductionDate(item.getProduceDate());
-        stock.setQpc(item.getQpc());
         stock.setQpcStr(item.getQpcStr());
         stock.setQty(item.getQty());
         stock.setSourceBillNumber(bill.getBillNumber());

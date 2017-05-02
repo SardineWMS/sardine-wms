@@ -18,6 +18,8 @@ public interface SequenceDao {
     int getCurrentValue(String seqName, String companyUuid);
 
     int getNextValue(String seqName, String companyUuid);
+    
+    int getCurrentValueWithDate(String seqName, String companyUuid);
 
-    void saveSequence(Sequence sequence);
+    int getNextValueWithDate(String seqName, String companyUuid);
 }

@@ -17,5 +17,7 @@ import com.hd123.sardine.wms.common.dao.BaseDao;
  *
  */
 public interface CompanyDao extends BaseDao<Company> {
-    Company getByName(String name);
+  Company getByName(String name);
+
+  void insertDBMap(String companyUuid, String dbName);
 }

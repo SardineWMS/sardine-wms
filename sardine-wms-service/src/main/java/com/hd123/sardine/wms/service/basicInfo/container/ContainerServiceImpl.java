@@ -11,7 +11,6 @@ package com.hd123.sardine.wms.service.basicInfo.container;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
@@ -33,8 +32,7 @@ import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.basicInfo.container.ContainerDao;
-import com.hd123.sardine.wms.dao.basicInfo.seq.Sequence;
-import com.hd123.sardine.wms.dao.basicInfo.seq.SequenceDao;
+import com.hd123.sardine.wms.service.util.FlowCodeGenerator;
 
 /**
  * @author Jing
@@ -43,8 +41,6 @@ import com.hd123.sardine.wms.dao.basicInfo.seq.SequenceDao;
 public class ContainerServiceImpl implements ContainerService {
   @Autowired
   private ContainerDao dao;
-  @Autowired
-  private SequenceDao seqDao;
   @Autowired
   private ContainerTypeService containerTypeService;
 
@@ -56,23 +52,11 @@ public class ContainerServiceImpl implements ContainerService {
     if (containerType == null)
       throw new WMSException("容器类型不存在。");
 
-    int currentValue = seqDao.getCurrentValue(containerType.getBarCodePrefix(),
-        containerType.getCompanyUuid());
-    if (currentValue == 0) {
-      Sequence seq = new Sequence();
-      seq.setSeqName(containerType.getBarCodePrefix());
-      seq.setIncrement(1);
-      seq.setCurrentValue(0);
-      seq.setCompanyUuid(containerType.getCompanyUuid());
-      seqDao.saveSequence(seq);
-    }
-
     Container container = new Container();
     container.setUuid(UUIDGenerator.genUUID());
-    String flowCode = String.valueOf(
-        seqDao.getNextValue(containerType.getBarCodePrefix(), containerType.getCompanyUuid()));
-    container.setBarcode(containerType.getBarCodePrefix()
-        + StringUtils.repeat("0", containerType.getBarCodeLength() - flowCode.length()) + flowCode);
+    String flowCode = FlowCodeGenerator.getInstance().allocate(containerType.getBarCodePrefix(),
+        containerType.getCompanyUuid(), containerType.getBarCodeLength());
+    container.setBarcode(containerType.getBarCodePrefix() + flowCode);
     container.setContainerType(
         new UCN(containerTypeUuid, containerType.getCode(), containerType.getName()));
     container.setCompanyUuid(containerType.getCompanyUuid());

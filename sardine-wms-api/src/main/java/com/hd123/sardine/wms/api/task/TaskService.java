@@ -24,6 +24,17 @@ import com.hd123.sardine.wms.common.query.PageQueryResult;
  */
 public interface TaskService {
 
+  /** 查询条件 指令号*/
+  public static final String QUERY_FIELD_TASKNO = "taskNo";
+  /** 查询条件 指令类型*/
+  public static final String QUERY_FIELD_TASKTYPE = "taskType";
+  /** 查询条件 指令状态*/
+  public static final String QUERY_FIELD_STATE = "state";
+  /** 查询条件 商品代码*/
+  public static final String QUERY_FIELD_ARTICLECODE = "articleCode";
+  /** 排序条件 指令号*/
+  public static final String ORDER_FIELD_TASKNO = "taskNo";
+  
   /**
    * 批量插入指令
    * <p>

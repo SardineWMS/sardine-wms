@@ -9,6 +9,9 @@
  */
 package com.hd123.sardine.wms.dao.ia.user.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.ia.user.Company;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
@@ -19,13 +22,22 @@ import com.hd123.sardine.wms.dao.ia.user.CompanyDao;
  *
  */
 public class CompanyDaoImpl extends BaseDaoImpl<Company> implements CompanyDao {
-    private static final String GETBYNAME = "getByName";
+  private static final String GETBYNAME = "getByName";
+  private static final String INSERTDBMAP = "insertDBMap";
 
-    @Override
-    public Company getByName(String name) {
-        if (StringUtil.isNullOrBlank(name))
-            return null;
-        return getSqlSession().selectOne(generateStatement(GETBYNAME), name);
-    }
+  @Override
+  public Company getByName(String name) {
+    if (StringUtil.isNullOrBlank(name))
+      return null;
+    return getSqlSession().selectOne(generateStatement(GETBYNAME), name);
+  }
 
+  @Override
+  public void insertDBMap(String companyUuid, String dbName) {
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("companyUuid", companyUuid);
+    map.put("dbName", dbName);
+
+    insert(INSERTDBMAP, map);
+  }
 }

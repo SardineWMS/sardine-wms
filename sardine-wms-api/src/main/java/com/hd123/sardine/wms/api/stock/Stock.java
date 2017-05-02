@@ -49,7 +49,6 @@ public class Stock extends VersionedEntity {
   private String sourceBillType;
   private int sourceLineNumber;
   private String sourceLineUuid;
-  private BigDecimal qpc;
   private BigDecimal qty;
   private String qpcStr;
   private String measureUnit;
@@ -176,15 +175,6 @@ public class Stock extends VersionedEntity {
     this.sourceLineUuid = sourceLineUuid;
   }
 
-  /** 规格 */
-  public BigDecimal getQpc() {
-    return qpc;
-  }
-
-  public void setQpc(BigDecimal qpc) {
-    this.qpc = qpc;
-  }
-
   /** 库存数量 */
   public BigDecimal getQty() {
     return qty;
@@ -272,7 +262,6 @@ public class Stock extends VersionedEntity {
     Assert.assertArgumentNotNull(sourceLineUuid, "sourceLineUuid");
     Assert.assertArgumentNotNull(companyUuid, "companyUuid");
     Assert.assertArgumentNotNull(qpcStr, "qpcStr");
-    Assert.assertArgumentNotNull(qpc, "qpc");
     Assert.assertArgumentNotNull(qty, "qty");
     Assert.assertArgumentNotNull(onWayQty, "onWayQty");
     Assert.assertArgumentNotNull(measureUnit, "measureUnit");

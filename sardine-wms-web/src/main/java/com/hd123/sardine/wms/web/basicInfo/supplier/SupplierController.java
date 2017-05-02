@@ -9,6 +9,7 @@
  */
 package com.hd123.sardine.wms.web.basicInfo.supplier;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,6 +71,7 @@ public class SupplierController extends BaseController {
         return resp;
     }
 
+    @RequiresPermissions("supplier:view")
     @RequestMapping(value = "/querybypage", method = RequestMethod.GET)
     public @ResponseBody RespObject query(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
