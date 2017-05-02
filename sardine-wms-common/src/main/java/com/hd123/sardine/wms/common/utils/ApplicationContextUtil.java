@@ -44,6 +44,12 @@ public class ApplicationContextUtil {
       throw new IllegalArgumentException("登录信息为空，要重新登录咯");
     return COMPANYUUID_LOCAL.get();
   }
+  
+  public static String getCompanyCode() {
+    if (StringUtil.isNullOrBlank(COMPANYCODE_LOCAL.get()))
+      throw new IllegalArgumentException("登录信息为空，要重新登录咯");
+    return COMPANYCODE_LOCAL.get();
+  }
 
   public static String getDBName() {
     if (StringUtil.isNullOrBlank(DBNAME_LOCAL.get()))

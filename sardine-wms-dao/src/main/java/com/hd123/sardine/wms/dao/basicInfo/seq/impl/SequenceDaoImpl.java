@@ -25,6 +25,7 @@ public class SequenceDaoImpl extends NameSpaceSupport implements SequenceDao {
   public static final String GETNEXTVALUE = "getNextValue";
   public static final String GETCURRENTVALUEWITHDATE = "getCurrentValueWithDate";
   public static final String GETNEXTVALUEWITHDATE = "getNextValueWithDate";
+  public static final String GETCURRDATEPART = "getCurrDatePart";
 
   @Override
   public int getCurrentValue(String seqName, String companyUuid) {
@@ -72,5 +73,17 @@ public class SequenceDaoImpl extends NameSpaceSupport implements SequenceDao {
     map.put("companyUuid", companyUuid);
 
     return selectOne(GETNEXTVALUEWITHDATE, map);
+  }
+
+  @Override
+  public String getCurrDatePart(String seqName, String companyUuid) {
+    Assert.assertArgumentNotNull(seqName, "seqName");
+    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+    
+    Map<String, String> map = new HashMap<>();
+    map.put("seqName", seqName);
+    map.put("companyUuid", companyUuid);
+
+    return selectOne(GETCURRDATEPART, map);
   }
 }

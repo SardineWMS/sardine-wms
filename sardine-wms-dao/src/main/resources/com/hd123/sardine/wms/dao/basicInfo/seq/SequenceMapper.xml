@@ -20,4 +20,10 @@
 		resultType="java.lang.Integer">
 		select sardine_datenextValue(#{seqName,jdbcType=VARCHAR},#{companyUuid,jdbcType=VARCHAR})
 	</select>
+	
+	<select id="getCurrDatePart" parameterType="java.util.Map"
+		resultType="java.lang.String">
+	    select max(t.datePart) from sardine_datesequence t where t.sequencename = #{seqName,jdbcType=VARCHAR} 
+	       and t.companyUuid = #{companyUuid,jdbcType=VARCHAR}
+	</select>
 </mapper>

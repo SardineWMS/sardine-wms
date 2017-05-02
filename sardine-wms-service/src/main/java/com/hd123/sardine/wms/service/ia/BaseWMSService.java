@@ -15,6 +15,7 @@ import com.baidu.unbiz.fluentvalidator.ValidationError;
 import com.hd123.sardine.wms.common.exception.EntityNotFoundException;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
+import com.hd123.sardine.wms.common.utils.BillNumberGenerator;
 import com.hd123.sardine.wms.common.validator.ValidateResult;
 import com.hd123.sardine.wms.common.validator.errmsg.ValidateErrorCode;
 import com.hd123.sardine.wms.service.util.FlowCodeGenerator;
@@ -31,6 +32,9 @@ public abstract class BaseWMSService {
   
   @Autowired
   protected StockBatchUtils stockBatchUtils;
+  
+  @Autowired
+  protected BillNumberGenerator billNumberGenerator;
 
   /**
    * 检查

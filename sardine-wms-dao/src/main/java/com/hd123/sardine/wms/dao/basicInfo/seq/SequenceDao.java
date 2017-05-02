@@ -22,4 +22,6 @@ public interface SequenceDao {
     int getCurrentValueWithDate(String seqName, String companyUuid);
 
     int getNextValueWithDate(String seqName, String companyUuid);
+    
+    String getCurrDatePart(String seqName, String companyUuid);
 }
