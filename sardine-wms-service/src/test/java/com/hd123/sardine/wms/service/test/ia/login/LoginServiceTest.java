@@ -49,7 +49,6 @@ public class LoginServiceTest extends BaseServiceTest {
     private static final String UPDATEPASSWD_OLDPASSWD = "888888";
     private static final String UPDATEPASSWD_NEWPASSWD = "666666";
 
-    private static final String REGISTER_USERCODE = "0021";
     private static final String REGISTER_USERNAME = "沙丁鱼";
     private static final String REGISTER_PASSWD = "666666";
     private static final String REGISTER_COMPANYNAME = "天堂伞";

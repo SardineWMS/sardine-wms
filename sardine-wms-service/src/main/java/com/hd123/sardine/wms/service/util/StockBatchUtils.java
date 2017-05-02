@@ -11,6 +11,8 @@ package com.hd123.sardine.wms.service.util;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
@@ -25,16 +27,19 @@ public class StockBatchUtils {
   /** 批次前缀 */
   public static final String WMS_STOCKBATCH_PREFIX = "WC";
 
-  public static String genStockBatch() {
+  @Autowired
+  private FlowCodeGenerator flowCodeGenerator;
+
+  public String genStockBatch() {
     String currentDateStr = StringUtil.dateToString(new Date(), DATEFORMAT);
     String sequenceType = currentDateStr + WMS_STOCKBATCH_PREFIX;
-    String flowCode = FlowCodeGenerator.getInstance().allocate(sequenceType,
+    String flowCode = flowCodeGenerator.allocate(sequenceType,
         ApplicationContextUtil.getCompanyUuid(), STOCKBATCH_FLOW_LEN);
     String stockBatch = WMS_STOCKBATCH_PREFIX + currentDateStr + flowCode;
     return stockBatch;
   }
 
-  public static String genProductionBatch(Date date) {
+  public String genProductionBatch(Date date) {
     Assert.assertArgumentNotNull(date, "date");
     return StringUtil.dateToString(date, "yyyyMMdd");
   }

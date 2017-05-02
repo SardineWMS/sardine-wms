@@ -10,7 +10,7 @@
 
 	<context:component-scan base-package="com.hd123.sardine.wms.service">
 		<context:include-filter type="regex"
-			expression="(.*ServiceImpl)|(.*ValidateHandler)|(.*CodeGenerator)|(EntityLogger)" />
+			expression="(.*ServiceImpl)|(.*ValidateHandler)|(.*CodeGenerator)|(EntityLogger)|(.*BatchUtil)" />
 	</context:component-scan>
 
 	<context:component-scan base-package="com.hd123.sardine.wms.common">

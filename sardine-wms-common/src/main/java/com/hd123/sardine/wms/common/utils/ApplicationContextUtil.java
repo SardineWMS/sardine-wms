@@ -27,11 +27,13 @@ import com.hd123.sardine.wms.common.entity.UCN;
 public class ApplicationContextUtil {
 
   private static ThreadLocal<String> COMPANYUUID_LOCAL = new ThreadLocal<String>();
-  
+
+  private static ThreadLocal<String> COMPANYCODE_LOCAL = new ThreadLocal<String>();
+
   private static ThreadLocal<String> DBNAME_LOCAL = new ThreadLocal<String>();
 
   private static ThreadLocal<OperateContext> OPERATECONTEXT_LOCAL = new ThreadLocal<OperateContext>();
-  
+
   /**
    * 获取公司ID
    * 
@@ -42,7 +44,7 @@ public class ApplicationContextUtil {
       throw new IllegalArgumentException("登录信息为空，要重新登录咯");
     return COMPANYUUID_LOCAL.get();
   }
-  
+
   public static String getDBName() {
     if (StringUtil.isNullOrBlank(DBNAME_LOCAL.get()))
       throw new IllegalArgumentException("登录信息为空，要重新登录咯");
@@ -91,9 +93,12 @@ public class ApplicationContextUtil {
    * 
    * @param companyUuid
    */
-  public static void setCompanyUuid(String companyUuid) {
-    COMPANYUUID_LOCAL.set(companyUuid);
-    DBNAME_LOCAL.set(DBUtils.fetchDbName(companyUuid));
+  public static void setCompany(UCN company) {
+    if (company == null)
+      throw new IllegalArgumentException("登录信息为空，无法货区组织信息！");
+    COMPANYUUID_LOCAL.set(company.getUuid());
+    COMPANYCODE_LOCAL.set(company.getCode());
+    DBNAME_LOCAL.set(DBUtils.fetchDbName(company.getUuid()));
   }
 
   public static Map<String, Object> map() {

@@ -9,40 +9,51 @@
  */
 package com.hd123.sardine.wms.service.ia;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.baidu.unbiz.fluentvalidator.ValidationError;
 import com.hd123.sardine.wms.common.exception.EntityNotFoundException;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.validator.ValidateResult;
 import com.hd123.sardine.wms.common.validator.errmsg.ValidateErrorCode;
+import com.hd123.sardine.wms.service.util.FlowCodeGenerator;
+import com.hd123.sardine.wms.service.util.StockBatchUtils;
 
 /**
  * @author zhangsai
  *
  */
 public abstract class BaseWMSService {
-    /**
-     * 检查
-     * 
-     * @param result
-     * @throws IllegalAccessException
-     * @throws VersionConflictException
-     * @throws WMSException
-     */
-    protected void checkValidateResult(ValidateResult result)
-            throws IllegalArgumentException, VersionConflictException, WMSException {
-        if (result == null || result.isSuccess() || result.getErrorNumber() <= 0)
-            return;
 
-        ValidationError error = result.getErrors().get(0);
+  @Autowired
+  protected FlowCodeGenerator flowCodeGenerator;
+  
+  @Autowired
+  protected StockBatchUtils stockBatchUtils;
 
-        if (error.getErrorCode() == ValidateErrorCode.VERSIONCONFLICT)
-            throw new VersionConflictException(result.toString());
-        else if (error.getErrorCode() == ValidateErrorCode.ILLEGALARGUMENT)
-            throw new IllegalArgumentException(result.toString());
-        else if (error.getErrorCode() == ValidateErrorCode.ENTITYNOTFOUND)
-            throw new EntityNotFoundException(result.toString());
-        else
-            throw new WMSException(result.toString());
-    }
+  /**
+   * 检查
+   * 
+   * @param result
+   * @throws IllegalAccessException
+   * @throws VersionConflictException
+   * @throws WMSException
+   */
+  protected void checkValidateResult(ValidateResult result)
+      throws IllegalArgumentException, VersionConflictException, WMSException {
+    if (result == null || result.isSuccess() || result.getErrorNumber() <= 0)
+      return;
+
+    ValidationError error = result.getErrors().get(0);
+
+    if (error.getErrorCode() == ValidateErrorCode.VERSIONCONFLICT)
+      throw new VersionConflictException(result.toString());
+    else if (error.getErrorCode() == ValidateErrorCode.ILLEGALARGUMENT)
+      throw new IllegalArgumentException(result.toString());
+    else if (error.getErrorCode() == ValidateErrorCode.ENTITYNOTFOUND)
+      throw new EntityNotFoundException(result.toString());
+    else
+      throw new WMSException(result.toString());
+  }
 }

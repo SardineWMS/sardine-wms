@@ -24,12 +24,6 @@ public class FlowCodeGenerator {
   @Autowired
   private SequenceDao sequenceDao;
 
-  private static FlowCodeGenerator instance = new FlowCodeGenerator();
-
-  public static FlowCodeGenerator getInstance() {
-    return instance;
-  }
-
   public String allocate(String sequenceType, String companyUuid, int length) {
     Assert.assertArgumentNotNull(sequenceType, "sequenceType");
     int seqValue = sequenceDao.getNextValue(sequenceType, companyUuid);

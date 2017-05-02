@@ -52,4 +52,28 @@ public class Constants {
 
   /** 虚拟组织ID，用于不需要区分组织的序列 */
   public static final String VIRTUAL_COMPANYUUID = "sardine";
+
+  /** 指令号类型，指令号=5位组织代码+0+6位日期+6位流水 */
+  public static final String TASK_NUMBER_TYPE = "0";
+
+  /** 订单号类型，订单号=5位组织代码+1+6位日期+6位流水 */
+  public static final String ORDER_NUMBER_TYPE = "1";
+
+  /** 收货单号类型，收货单号=5位组织代码+2+6位日期+6位流水 */
+  public static final String RECEIVE_NUMBER_TYPE = "2";
+
+  /** 损益单号类型，损益单号=5位组织代码+3+6位日期+6位流水 */
+  public static final String DI_NUMBER_TYPE = "3";
+
+  /** 出库通知单号类型，出库通知单号=5位组织代码+4+6位日期+6位流水 */
+  public static final String ALC_NUMBER_TYPE = "4";
+
+  /** 要货单号类型，要货单号=5位组织代码+5+6位日期+6位流水 */
+  public static final String ASK_NUMBER_TYPE = "5";
+
+  /** 退仓通知单号类型，退仓通知单号=5位组织代码+6+6位日期+6位流水 */
+  public static final String RTNNTC_NUMBER_TYPE = "6";
+
+  /** 退仓单号类型，退仓单号=5位组织代码+7+6位日期+6位流水 */
+  public static final String RTN_NUMBER_TYPE = "7";
 }

@@ -47,7 +47,6 @@ import com.hd123.sardine.wms.dao.basicInfo.bin.ShelfDao;
 import com.hd123.sardine.wms.dao.basicInfo.bin.WrhDao;
 import com.hd123.sardine.wms.dao.basicInfo.bin.ZoneDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
-import com.hd123.sardine.wms.service.util.FlowCodeGenerator;
 
 /**
  * 货位服务：实现
@@ -145,8 +144,8 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
       throw new WMSException("货道对应的货区" + path.getZoneUuid() + "不存在。");
     }
 
-    String pathCode = FlowCodeGenerator.getInstance()
-        .allocate(Path.class.getSimpleName() + pathOfZone.getCode(), path.getCompanyUuid(), 2);
+    String pathCode = flowCodeGenerator.allocate(Path.class.getSimpleName() + pathOfZone.getCode(),
+        path.getCompanyUuid(), 2);
     path.setCode(pathOfZone.getCode() + pathCode);
     path.setUuid(UUIDGenerator.genUUID());
     pathDao.insert(path);
@@ -167,7 +166,7 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
       throw new WMSException("货架对应的货道" + pathCode + "不存在。");
     }
 
-    String shelfCode = FlowCodeGenerator.getInstance().allocate(
+    String shelfCode = flowCodeGenerator.allocate(
         Shelf.class.getSimpleName() + shelfOfPath.getCode(), companyUuid, SHELF_CODE_LENGTH);
     Shelf shelf = new Shelf();
     shelf.setPathUuid(shelfOfPath.getUuid());

@@ -32,13 +32,13 @@ import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.basicInfo.container.ContainerDao;
-import com.hd123.sardine.wms.service.util.FlowCodeGenerator;
+import com.hd123.sardine.wms.service.ia.BaseWMSService;
 
 /**
  * @author Jing
  *
  */
-public class ContainerServiceImpl implements ContainerService {
+public class ContainerServiceImpl extends BaseWMSService implements ContainerService {
   @Autowired
   private ContainerDao dao;
   @Autowired
@@ -54,7 +54,7 @@ public class ContainerServiceImpl implements ContainerService {
 
     Container container = new Container();
     container.setUuid(UUIDGenerator.genUUID());
-    String flowCode = FlowCodeGenerator.getInstance().allocate(containerType.getBarCodePrefix(),
+    String flowCode = flowCodeGenerator.allocate(containerType.getBarCodePrefix(),
         containerType.getCompanyUuid(), containerType.getBarCodeLength());
     container.setBarcode(containerType.getBarCodePrefix() + flowCode);
     container.setContainerType(

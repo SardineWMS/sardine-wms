@@ -53,13 +53,13 @@ import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.in.receive.ReceiveBillDao;
-import com.hd123.sardine.wms.service.util.StockBatchUtils;
+import com.hd123.sardine.wms.service.ia.BaseWMSService;
 
 /**
  * @author zhangsai
  *
  */
-public class ReceiveBillServiceImpl implements ReceiveBillService {
+public class ReceiveBillServiceImpl extends BaseWMSService implements ReceiveBillService {
 
   @Autowired
   private ReceiveBillDao receiveBillDao;
@@ -81,7 +81,7 @@ public class ReceiveBillServiceImpl implements ReceiveBillService {
 
   @Autowired
   private OrderBillService orderBillService;
-
+  
   @Override
   public String insert(ReceiveBill bill) throws WMSException {
     Assert.assertArgumentNotNull(bill, "bill");
@@ -186,7 +186,7 @@ public class ReceiveBillServiceImpl implements ReceiveBillService {
       item.setBinCode(bin.getCode());
       item.setValidDate(validDate);
       item.setOrderBillLineUuid(orderItem.getUuid());
-      item.setStockBatch(StockBatchUtils.genStockBatch());
+      item.setStockBatch(stockBatchUtils.genStockBatch());
       item.setCaseQtyStr(QpcHelper.qtyToCaseQtyStr(item.getQty(), item.getQpcStr()));
       totalCaseQtyStr = QpcHelper.caseQtyStrAdd(totalCaseQtyStr, item.getCaseQtyStr());
     }

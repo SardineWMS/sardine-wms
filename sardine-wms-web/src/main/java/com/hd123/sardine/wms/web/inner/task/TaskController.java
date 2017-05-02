@@ -53,7 +53,7 @@ public class TaskController extends BaseController {
       @RequestParam(value = "state", required = false) String state) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setCompanyUuid(getLoginCompany(token).getUuid());
+      ApplicationContextUtil.setCompany(getLoginCompany(token));
       PageQueryDefinition definition = new PageQueryDefinition();
       definition.setPage(page);
       definition.setPageSize(pageSize);
