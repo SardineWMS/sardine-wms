@@ -44,15 +44,12 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
 
   @Autowired
   private UserDao userDao;
-  
+
   @Autowired
   private FlowCodeGenerator flowCodeGenerator;
 
   @Autowired
   private CompanyService companyService;
-
-  @Autowired
-  private ValidateHandler<String> loginValidateHandler;
 
   @Autowired
   private ValidateHandler<String> updatePasswdValidateHandler;
@@ -89,7 +86,7 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
     }
 
     String flowCode = flowCodeGenerator.allocate(registerUser.getCompanyType(),
-        "sardine", Constants.COMPANY_FLOW_LENGTH);
+        Constants.VIRTUAL_COMPANYUUID, Constants.COMPANY_FLOW_LENGTH);
 
     Company company = new Company();
     company.setUuid(prefix + flowCode);
