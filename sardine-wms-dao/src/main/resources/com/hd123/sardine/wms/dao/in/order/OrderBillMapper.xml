@@ -65,7 +65,7 @@
 	</resultMap>
 
 	<insert id="insert" parameterType="OrderBill">
-		insert into db(#{companyUuid, jdbcType=VARCHAR}).sardine_orderbill
+		insert into db_proxy.sardine_orderbill
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="uuid != null">
 				uuid,
@@ -175,7 +175,7 @@
 	</insert>
 
 	<update id="update" parameterType="OrderBill">
-		update db(#{companyUuid, jdbcType=VARCHAR}).sardine_orderbill t
+		update db_proxy.sardine_orderbill t
 		set t.sourceBillNumber = #{sourceBillNumber, jdbcType=VARCHAR},
 		    t.billType = #{billType, jdbcType=VARCHAR},
 		    t.supplieruuid = #{supplier.uuid, jdbcType=VARCHAR},
@@ -198,31 +198,31 @@
 
 	<select id="get" parameterType="java.util.Map" resultMap="BaseResultMap">
 		select t.*, s.code suppliercode, s.name suppliername, w.code wrhcode, w.name wrhname
-		         from db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBill t,
-		              db(#{companyUuid, jdbcType=VARCHAR}).sardine_supplier s,
-		              db(#{companyUuid, jdbcType=VARCHAR}).sardine_wrh w
+		         from db_proxy..sardine_OrderBill t,
+		              db_proxy.sardine_supplier s,
+		              db_proxy.sardine_wrh w
 		where t.wrhuuid = w.uuid and t.supplieruuid = s.uuid 
 		  and t.uuid = #{uuid, jdbcType=VARCHAR}
 	</select>
 
 	<select id="getByBillNumber" parameterType="java.util.Map" resultMap="BaseResultMap">
 		select t.*, s.code suppliercode, s.name suppliername, w.code wrhcode, w.name wrhname 
-		         from db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBill t,
-		              db(#{companyUuid, jdbcType=VARCHAR}).sardine_supplier s,
-		              db(#{companyUuid, jdbcType=VARCHAR}).sardine_wrh w
+		         from db_proxy.sardine_OrderBill t,
+		              db_proxy.sardine_supplier s,
+		              db_proxy.sardine_wrh w
 		where t.wrhuuid = w.uuid and t.supplieruuid = s.uuid 
 		  and t.billnumber = #{billNumber, jdbcType=VARCHAR}
 		  and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
 	</select>
 
 	<delete id="remove" parameterType="java.util.Map">
-		delete db(#{companyUuid,jdbcType=VARCHAR}).sardine_orderbill t
+		delete db_proxy.sardine_orderbill t
 		where t.uuid = #{uuid, jdbcType=VARCHAR}
 		  and t.version = #{version, jdbcType=LONGVARCHAR}
 	</delete>
 
 	<insert id="insertItems" parameterType="java.util.Map">
-		insert into db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBillItem(
+		insert into db_proxy.sardine_OrderBillItem(
 		  uuid,
 		  line,
 		  orderBillUuid,
@@ -253,30 +253,30 @@
 	</insert>
 
 	<update id="updateItem" parameterType="java.util.Map">
-		update db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBillItem t
+		update db_proxy.sardine_OrderBillItem t
 		set t.receivedQty = #{qty, jdbcType=DECIMAL},
 		    t.receivedCaseQtyStr = #{caseQtyStr, jdbcType=VARCHAR}
 		where t.uuid = #{uuid, jdbcType=VARCHAR}
 	</update>
 
 	<delete id="removeItems" parameterType="java.util.Map">
-		delete db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBillItem t
+		delete db_proxy.sardine_OrderBillItem t
 		where t.orderBillUuid = #{orderBillUuid, jdbcType=VARCHAR}
 	</delete>
 	
 	<select id="queryItems" parameterType="java.util.Map" resultMap="OrderBillItemMap">
 	    select t.*, a.code, a.name
-	           from db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBillItem t,
-	                db(#{companyUuid, jdbcType=VARCHAR}).sardine_article a,
+	           from db_proxy.sardine_OrderBillItem t,
+	                db_proxy.sardine_article a,
 	          where t.articleuuid = a.uuid 
 	            and t.orderBillUuid = #{orderBillUuid, jdbcType=VARCHAR}
 	</select>
 
 	<select id="query" parameterType="PageQueryDefinition" resultMap="BaseResultMap">
 		select .*, s.code suppliercode, s.name suppliername, w.code wrhcode, w.name wrhname from 
-		   db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBill t,
-		   db(#{companyUuid, jdbcType=VARCHAR}).sardine_wrh w,
-		   db(#{companyUuid, jdbcType=VARCHAR}).sardine_supplier s,
+		   db_proxy.sardine_OrderBill t,
+		   db_proxy.sardine_wrh w,
+		   db_proxy.sardine_supplier s,
 		where t.wrhuuid = w.uuid and t.supplieruuid = s.uuid 
 		  and t.companyuuid = #{companyUuid, jdbcType=VARCHAR}
 		<if test="supplierCode != null and supplierCode != ''">
@@ -298,7 +298,7 @@
 			and t.billNumber = #{billNumber, jdbcType=VARCHAR}
 		</if>
 		<if test="articleUuid != null and articleUuid != ''">
-			and exists (select 1 from db(#{companyUuid, jdbcType=VARCHAR}).sardine_OrderBillitem oi
+			and exists (select 1 from db_proxy.sardine_OrderBillitem oi
 			oi.articleUuid = #{articleUuid, jdbcType=VARCHAR} and t.uuid = oi.orderbilluuid)
 		</if>
 	</select>

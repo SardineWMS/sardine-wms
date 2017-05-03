@@ -22,7 +22,7 @@
 	<select id="get" parameterType="map" resultMap="BaseResultMap">
 		select u.*
 		from
-		sardine_bin u
+		db_proxy.sardine_bin u
 		where u.uuid = #{uuid,jdbcType=VARCHAR}
 		and u.companyuuid
 		= #{companyUuid,jdbcType=VARCHAR}
@@ -30,7 +30,7 @@
 
 	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
 		select u.*
-		from sardine_bin u
+		from db_proxy.sardine_bin u
 		where u.code = #{code,jdbcType=VARCHAR}
 		and
 		u.companyuuid = #{companyUuid,jdbcType=VARCHAR}
@@ -38,7 +38,7 @@
 
 	<insert id="insert" parameterType="Bin">
 		insert into
-		sardine_bin (
+		db_proxy.sardine_bin (
 		uuid,
 		code,
 		bintypeuuid,
@@ -77,7 +77,7 @@
 	<select id="queryByPage" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
 		select u.*
-		from sardine_bin u
+		from db_proxy.sardine_bin u
 		where 1=1
 		<if test="code != null">
 			and u.code like CONCAT(CONCAT('%', #{code}),
@@ -94,13 +94,13 @@
 		</if>
 	    <if test="zoneUuid != null">
 			and u.shelfUuid in (
-			select s.uuid from sardine_shelf s,sardine_path p,sardine_zone z where 
+			select s.uuid from db_proxy.sardine_shelf s,db_proxy.sardine_path p,db_proxy.sardine_zone z where 
 			s.pathuuid = p.uuid and p.zoneuuid = z.uuid and z.uuid = #{zoneUuid,jdbcType=VARCHAR}
 			)
 		</if>
 	    <if test="pathUuid != null">
 			and u.shelfUuid in (
-			select s.uuid from sardine_shelf s,sardine_path p where 
+			select s.uuid from db_proxy.sardine_shelf s,db_proxy.sardine_path p where 
 			s.pathuuid = p.uuid and p.uuid = #{pathUuid,jdbcType=VARCHAR}
 			)
 		</if>
@@ -132,7 +132,7 @@
 	</select>
 
 	<delete id="remove" parameterType="map">
-		delete from sardine_bin where
+		delete from db_proxy.sardine_bin where
 		uuid
 		= #{uuid,jdbcType=VARCHAR}
 		and version =
@@ -140,13 +140,13 @@
 	</delete>
 	
 	<select id="getBinByWrhAndUsage" parameterType="java.util.Map">
-	   select t.* from serdine_bin t where 
+	   select t.* from db_proxy.serdine_bin t where 
 	   t.wrhUuid = #{wrhUuid, jdbcType=VARCHAR}
 	   and t.usage = #{usage, jdbcType=VARCHAR}
 	</select>
 	
 	<update id="changeState" parameterType="java.util.Map">
-	  update sardine_bin b set b.state = #{state, jdbcType=VARCHAR},
+	  update db_proxy.sardine_bin b set b.state = #{state, jdbcType=VARCHAR},
 	  b.version = b.version + 1
 	  where b.uuid = #{uuid, jdbcType=VARCHAR}
 	  and b.version = #{version, jdbcType=LONGVARCHAR}

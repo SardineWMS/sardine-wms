@@ -31,7 +31,7 @@
 	</resultMap>
 
 	<insert id="insert" parameterType="BinType">
-		insert into sardine_bintype (
+		insert into db_proxy.sardine_bintype (
 		uuid,
 		code,
 		name,
@@ -71,13 +71,13 @@
 	</insert>
 
 	<select id="get" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select * from sardine_bintype t
+		select * from db_proxy.sardine_bintype t
 		where t.uuid=#{uuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="getByCode" parameterType="java.lang.String"
 		resultMap="BaseResultMap">
-		select * from sardine_bintype t
+		select * from db_proxy.sardine_bintype t
 		where
 		t.code=#{code,jdbcType=VARCHAR}
 	</select>
@@ -85,7 +85,7 @@
 	<select id="queryByPage" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
 		select t.*
-		from sardine_bintype t
+		from db_proxy.sardine_bintype t
 		where 1=1
 		<if test="code != null">
 			and t.code like CONCAT(CONCAT('%', #{code}),
@@ -104,7 +104,7 @@
 	</select>
 
 	<update id="update" parameterType="BinType">
-		update sardine_bintype
+		update db_proxy.sardine_bintype
 		<set>
 			code =
 			#{code,jdbcType=VARCHAR},
@@ -150,7 +150,7 @@
 	</update>
 
 	<delete id="remove" parameterType="java.util.Map">
-		delete from sardine_bintype
+		delete from db_proxy.sardine_bintype
 		where uuid =
 		#{uuid,jdbcType=VARCHAR}
 		and version=

@@ -15,20 +15,20 @@
 
 	<select id="get" parameterType="String" resultMap="BaseResultMap">
 		select u.*
-		from sardine_article_qpc u
+		from db_proxy.sardine_article_qpc u
 		where u.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
 	
 	<select id="getByQpcStr" parameterType="map" resultMap="BaseResultMap" >
 	    select u.*
-		from sardine_article_qpc u
+		from db_proxy.sardine_article_qpc u
 		where u.qpcstr = #{qpcStr,jdbcType=VARCHAR}
 		and u.articleUuid = #{articleUuid,jdbcType=VARCHAR}
 	</select>
 
 	<insert id="insert" parameterType="ArticleQpc">
 		insert into
-		sardine_article_qpc (
+		db_proxy.sardine_article_qpc (
 		uuid,
 		articleUuid,
 		munit,
@@ -53,14 +53,14 @@
 	</insert>
 
 	<update id="setDefault" parameterType="String">
-		update sardine_article_qpc
+		update db_proxy.sardine_article_qpc
 		set
 			default_ = '1'
 		where uuid = #{uuid,jdbcType=VARCHAR}
 	</update>
 	
 	<update id="setUnDefault" parameterType="String">
-		update sardine_article_qpc
+		update db_proxy.sardine_article_qpc
 		set
 			default_ = '0'
 		where articleUuid = #{articleUuid,jdbcType=VARCHAR}
@@ -69,11 +69,11 @@
 	<select id="queryByList" parameterType="String"
 		resultMap="BaseResultMap">
 		select u.*
-		from sardine_article_qpc u
+		from db_proxy.sardine_article_qpc u
 		where u.articleUuid = #{articleUuid,jdbcType=VARCHAR}
 	</select>
 	
 	<delete id="removeone" parameterType="String">
-	    delete from sardine_article_qpc where uuid = #{uuid,jdbcType=VARCHAR}
+	    delete from db_proxy.sardine_article_qpc where uuid = #{uuid,jdbcType=VARCHAR}
 	</delete>
 </mapper>

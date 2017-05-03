@@ -11,7 +11,7 @@
 
 	<insert id="saveRoleResource" parameterType="map">
 		insert into
-		sardine_role_resource(
+		db_proxy.sardine_role_resource(
 		roleuuid,
 		resourceuuid
 		)
@@ -23,7 +23,7 @@
 
 	<insert id="saveUserResource" parameterType="map">
 		insert into
-		sardine_user_resource(
+		db_proxy.sardine_user_resource(
 		useruuid,
 		resourceuuid
 		)
@@ -34,13 +34,13 @@
 	</insert>
 
 	<select id="queryAllTopMenuResource"  resultMap="BaseResultMap">
-		select r.* from sardine_resource r
+		select r.* from db_proxy.sardine_resource r
 		where
 		r.upperuuid is null
 	</select>
 
 	<select id="queryOwnedTopMenuResourceByRole" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select r.* from sardine_role_resource rr,sardine_resource r
+		select r.* from db_proxy.sardine_role_resource rr,sardine_resource r
 		where rr.resourceuuid=r.uuid
 		and r.upperuuid is null
 		and rr.roleuuid=#{roleUuid,jdbcType=VARCHAR}
@@ -59,7 +59,7 @@
 	</select>
 	
 	<select id="queryOwnedChildResourceByRole" parameterType="map" resultMap="BaseResultMap">
-		select r.* from sardine_resource r,sardine_role_resource rr
+		select r.* from sardine_resource r,db_proxy.sardine_role_resource rr
 		where rr.resourceuuid=r.uuid
 		and r.upperuuid=#{resourceUuid,jdbcType=VARCHAR}
 		and rr.roleuuid=#{roleUuid,jdbcType=VARCHAR}
@@ -79,7 +79,7 @@
 
 	<delete id="removeResourceByRole" parameterType="java.lang.String">
 		delete from
-		sardine_role_resource where roleuuid=#{useruuid,jdbcType=VARCHAR}
+		db_proxy.sardine_role_resource where roleuuid=#{useruuid,jdbcType=VARCHAR}
 	</delete>
 
 </mapper>

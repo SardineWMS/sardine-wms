@@ -29,7 +29,7 @@
 
 	<delete id="removeCategory" parameterType="java.util.Map">
 		delete from
-		sardine_category
+		db_proxy.sardine_category
 		where
 		uuid
 		= #{uuid,jdbcType=VARCHAR}
@@ -38,29 +38,29 @@
 	</delete>
 
 	<select id="get" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select u.* from sardine_category u
+		select u.* from db_proxy.sardine_category u
 		where u.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="getByCode" parameterType="java.util.Map" resultMap="BaseResultMap">
-		select t.* from sardine_category t
+		select t.* from db_proxy.sardine_category t
 		where t.code = #{code,jdbcType=VARCHAR}
 		and t.companyUuid = #{companyUuid,jdbcType=VARCHAR}
 	</select>
 	
 	<select id="getRootCategorys" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select t.* from sardine_category t
+		select t.* from db_proxy.sardine_category t
 		where t.upperCategory = '-' 
 		and t.companyUuid = #{companyUuid,jdbcType=VARCHAR}
 	</select>
 	
 	<select id="getLowerCategorys" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select t.* from sardine_category t
+		select t.* from db_proxy.sardine_category t
 		where t.upperCategory = #{categoryUuid,jdbcType=VARCHAR}
 	</select>
 
 	<insert id="insert" parameterType="com.hd123.sardine.wms.api.basicInfo.category.Category">
-		insert into sardine_category
+		insert into db_proxy.sardine_category
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="uuid != null">
 				uuid,
@@ -152,7 +152,7 @@
 	</insert>
 
 	<update id="update" parameterType="com.hd123.sardine.wms.api.basicInfo.category.Category">
-		update sardine_category
+		update db_proxy.sardine_category
 		<set>
 			code = #{code,jdbcType=VARCHAR},
 			name = #{name,jdbcType=VARCHAR},

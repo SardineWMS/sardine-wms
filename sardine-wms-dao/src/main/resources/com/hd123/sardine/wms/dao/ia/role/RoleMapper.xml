@@ -28,14 +28,14 @@
 	
 	<select id="get" parameterType="String" resultMap="BaseResultMap">
 		select t.*
-		from sardine_role t
+		from db_proxy.sardine_role t
 		where t.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
 	
 	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
 		select
 		t.*
-		from sardine_role t
+		from db_proxy.sardine_role t
 		where t.code = #{code,jdbcType=VARCHAR}
 		and
 		t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
@@ -44,7 +44,7 @@
 	<select id="queryByPage" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
 		select t.*
-		from sardine_role t
+		from db_proxy.sardine_role t
 		where 1=1
 		<if test="code != null">
 			and t.code like CONCAT(CONCAT('%', #{code}),
@@ -70,7 +70,7 @@
 	
 	<insert id="insert" parameterType="Role">
 		insert into
-		sardine_role (
+		db_proxy.sardine_role (
 		uuid,
 		code,
 		name,
@@ -105,7 +105,7 @@
 	</insert>
 	
 	<update id="update" parameterType="Role">
-		update sardine_role
+		update db_proxy.sardine_role
 		<set>
 			code =
 			#{code,jdbcType=VARCHAR},
@@ -142,20 +142,20 @@
 	</update>
 	
 	<delete id="remove" parameterType="map">
-		delete from sardine_role
+		delete from db_proxy.sardine_role
 		where uuid=#{uuid,jdbcType=VARCHAR}
 		and version =
 		#{version,jdbcType=LONGVARCHAR}
 	</delete>
 	
 	<select id="queryRolesByUser" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select * from sardine_role r,sardine_role_user ru
+		select * from db_proxy.sardine_role r,db_proxy.sardine_role_user ru
 		where r.uuid=ru.roleuuid
 		and ru.useruuid=#{userUuid,jdbcType=VARCHAR}
 	</select>
 	
 	<delete id="removeRelationRoleAndUserByRole" parameterType="java.lang.String">
-		delete from sardine_role_user where roleuuid=#{roleUuid,jdbcType=VARCHAR}
+		delete from db_proxy.sardine_role_user where roleuuid=#{roleUuid,jdbcType=VARCHAR}
 	</delete>
 	
 </mapper>

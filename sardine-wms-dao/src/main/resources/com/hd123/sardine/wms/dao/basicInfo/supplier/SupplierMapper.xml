@@ -32,14 +32,14 @@
 
 	<select id="get" parameterType="String" resultMap="BaseResultMap">
 		select s.*
-		from sardine_supplier s
+		from db_proxy.sardine_supplier s
 		where s.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
 		select
 		s.*
-		from sardine_supplier s
+		from db_proxy.sardine_supplier s
 		where s.code = #{code,jdbcType=VARCHAR}
 		and
 		s.companyUuid=#{companyUuid,jdbcType=VARCHAR}
@@ -47,7 +47,7 @@
 
 	<insert id="insert" parameterType="Supplier">
 		insert into
-		sardine_supplier (
+		db_proxy.sardine_supplier (
 		uuid,
 		code,
 		name,
@@ -88,7 +88,7 @@
 	</insert>
 
 	<update id="update" parameterType="Supplier">
-		update sardine_supplier
+		update db_proxy.sardine_supplier
 		<set>
 			code =
 			#{code,jdbcType=VARCHAR},
@@ -133,7 +133,7 @@
 	<select id="queryByPage" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
 		select s.*
-		from sardine_supplier s
+		from db_proxy.sardine_supplier s
 		where 1=1
 		<if test="code != null">
 			and s.code like CONCAT(CONCAT('%', #{code}),

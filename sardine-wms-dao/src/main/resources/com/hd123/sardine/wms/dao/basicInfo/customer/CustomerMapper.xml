@@ -32,7 +32,7 @@
 	</resultMap>
 
 	<insert id="insert" parameterType="Customer">
-		insert into sardine_customer (
+		insert into db_proxy.sardine_customer (
 		uuid,
 		code,
 		name,
@@ -74,13 +74,13 @@
 	</insert>
 	
 	<select id="get" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select * from sardine_customer t
+		select * from db_proxy.sardine_customer t
 		where t.uuid=#{uuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="getByCode" parameterType="java.lang.String"
 		resultMap="BaseResultMap">
-		select * from sardine_customer t
+		select * from db_proxy.sardine_customer t
 		where
 		t.code=#{code,jdbcType=VARCHAR}
 	</select>
@@ -88,7 +88,7 @@
 	<select id="queryByPage" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
 		select t.*
-		from sardine_customer t
+		from db_proxy.sardine_customer t
 		where 1=1
 		<if test="code != null">
 			and t.code like CONCAT(CONCAT('%', #{code}),
@@ -110,7 +110,7 @@
 	</select>
 
 	<update id="updateState" parameterType="Customer">
-		update sardine_customer
+		update db_proxy.sardine_customer
 		<set>
 			state=#{state,jdbcType=VARCHAR},
 			version =
@@ -142,7 +142,7 @@
 	</update>
 
 	<update id="update" parameterType="Customer">
-		update sardine_customer
+		update db_proxy.sardine_customer
 		<set>
 			code =
 			#{code,jdbcType=VARCHAR},

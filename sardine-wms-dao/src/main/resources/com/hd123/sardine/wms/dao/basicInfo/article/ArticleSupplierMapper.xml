@@ -12,13 +12,13 @@
 
 	<select id="get" parameterType="String" resultMap="BaseResultMap">
 		select u.*
-		from sardine_article_supplier u
+		from db_proxy.sardine_article_supplier u
 		where u.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
 
 	<insert id="insert" parameterType="ArticleSupplier">
 		insert into
-		sardine_article_supplier (
+		db_proxy.sardine_article_supplier (
 		uuid,
 		articleUuid,
 		supplieruuid,
@@ -37,14 +37,14 @@
 	</insert>
 
 	<update id="setDefault" parameterType="String">
-		update sardine_article_supplier
+		update db_proxy.sardine_article_supplier
 		set
 			default_ = '1'
 		where uuid = #{uuid,jdbcType=VARCHAR}
 	</update>
 	
 	<update id="setUnDefault" parameterType="String">
-		update sardine_article_supplier
+		update db_proxy.sardine_article_supplier
 		set
 			default_ = '0'
 		where articleUuid = #{articleUuid,jdbcType=VARCHAR}
@@ -53,11 +53,11 @@
 	<select id="queryByList" parameterType="String"
 		resultMap="BaseResultMap">
 		select u.*
-		from sardine_article_supplier u
+		from db_proxy.sardine_article_supplier u
 		where u.articleUuid = #{articleUuid,jdbcType=VARCHAR}
 	</select>
 	
 	<delete id="removeone" parameterType="String">
-	    delete from sardine_article_supplier where uuid = #{uuid,jdbcType=VARCHAR}
+	    delete from db_proxy.sardine_article_supplier where uuid = #{uuid,jdbcType=VARCHAR}
 	</delete>
 </mapper>

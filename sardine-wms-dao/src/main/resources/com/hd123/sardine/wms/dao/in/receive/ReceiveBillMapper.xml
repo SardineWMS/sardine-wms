@@ -75,7 +75,7 @@
 	</resultMap>
 
 	<insert id="insert" parameterType="com.hd123.sardine.wms.api.in.receive.ReceiveBill">
-		insert into db(#{companyUuid, jdbcType=VARCHAR}).sardine_receivebill
+		insert into db_proxy.sardine_receivebill
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="uuid != null">
 				uuid,
@@ -180,7 +180,7 @@
 
 	<update id="update"
 		parameterType="com.hd123.sardine.wms.api.in.receive.ReceiveBill">
-		update db(#{companyUuid, jdbcType=VARCHAR}).sardine_receivebill
+		update db_proxy.sardine_receivebill
 		<set>
 			<if test="supplier != null and supplier.uuid != null">
 				supplieruuid = #{supplier.uuid,jdbcType=VARCHAR},
@@ -235,10 +235,10 @@
 
 	<select id="get" resultMap="ReceiveBillMap" parameterType="java.util.Map">
 		select t.*,s.code suppliercode,s.name suppliername,
-		       w.code wrhcode, w.name wrhname from db(#{companyUuid, jdbcType=VARCHAR}).sardine_receivebill
+		       w.code wrhcode, w.name wrhname from db_proxy..sardine_receivebill
 		t,
-		              db(#{companyUuid, jdbcType=VARCHAR}).sardine_supplier s,
-		              db(#{companyUuid, jdbcType=VARCHAR}).sardine_wrh w
+		              db_proxy..sardine_supplier s,
+		              db_proxy.sardine_wrh w
 		where t.wrhuuid = w.uuid and t.supplieruuid = s.uuid and
 		where t.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
@@ -246,9 +246,9 @@
 	<select id="getByBillNumber" resultMap="ReceiveBillMap"
 		parameterType="java.util.Map">
 		select t.*,s.code suppliercode,s.name suppliername,
-		       w.code wrhcode, w.name wrhname from db(#{companyUuid, jdbcType=VARCHAR}).sardine_receivebill t,
-		              db(#{companyUuid, jdbcType=VARCHAR}).sardine_supplier s,
-		              db(#{companyUuid, jdbcType=VARCHAR}).sardine_wrh w
+		       w.code wrhcode, w.name wrhname from db_proxy.sardine_receivebill t,
+		              db_proxy.sardine_supplier s,
+		              db_proxy.sardine_wrh w
 		where t.wrhuuid = w.uuid and t.supplieruuid = s.uuid and t.billNumber =
 		#{billNumber,jdbcType=VARCHAR} and t.companyUuid =
 		#{companyUuid,jdbcType=VARCHAR}
@@ -260,8 +260,7 @@
 	</select>
 
 	<delete id="remove" parameterType="java.util.Map">
-		delete from db(#{companyUuid,
-		jdbcType=VARCHAR}).sardine_receivebill t
+		delete from db_proxy.sardine_receivebill t
 		where t.uuid =
 		#{uuid,jdbcType=VARCHAR} and t.version =
 		#{version,jdbcType=LONGVARCHAR}
@@ -269,7 +268,7 @@
 
 <insert id="insertItems"
     parameterType="java.util.Map">
-    insert into db(#{companyUuid, jdbcType=VARCHAR}).sardine_receivebillItem
+    insert into db_proxy.sardine_receivebillItem
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="item.uuid != null">
         uuid,
@@ -386,15 +385,15 @@
 
   <select id="queryItems" resultMap="ReceiveBillItemMap"
     parameterType="java.util.Map">
-    select t.*, a.code articleCode, a.name articleName from db(#{companyUuid, jdbcType=VARCHAR}).sardine_receivebillItem t,
-                  db(#{companyUuid, jdbcType=VARCHAR}).sardine_article a
+    select t.*, a.code articleCode, a.name articleName from db_proxy.sardine_receivebillItem t,
+                  db_proxy.sardine_article a
     where t.articleuuid = a.uuid and 
     t.receiveBillUuid = #{receiveBillUuid,jdbcType=VARCHAR}
   </select>
 
   <delete id="removeItem" parameterType="java.util.Map">
     delete from
-    db(#{companyUuid, jdbcType=VARCHAR}).sardine_receivebillItem 
+    db_proxy.sardine_receivebillItem 
     t
     where t.receiveBillUuid =
     #{receiveBillUuid,jdbcType=VARCHAR}

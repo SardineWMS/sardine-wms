@@ -44,7 +44,7 @@
 
 	<delete id="remove" parameterType="map">
 		delete from
-		sardine_containertype
+		db_proxy.sardine_containertype
 		where
 		uuid
 		= #{uuid,jdbcType=VARCHAR}
@@ -54,21 +54,21 @@
 
 	<select id="get" parameterType="String" resultMap="BaseResultMap">
 		select t.*
-		from sardine_containertype t
+		from db_proxy.sardine_containertype t
 		where t.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
 		select
 		t.*
-		from sardine_containertype t
+		from db_proxy.sardine_containertype t
 		where t.code = #{code,jdbcType=VARCHAR}
 		and
 		t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
 	</select>
 
 	<insert id="insert" parameterType="ContainerType">
-		insert into sardine_containertype
+		insert into db_proxy.sardine_containertype
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="uuid != null">
 				uuid,
@@ -244,7 +244,7 @@
 	</insert>
 
 	<update id="update" parameterType="ContainerType">
-		update sardine_containertype
+		update db_proxy.sardine_containertype
 		<set>
 			<if test="code != null">
 				code = #{code,jdbcType=VARCHAR},
@@ -307,7 +307,7 @@
 	<select id="queryByPage" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
 		select t.*
-		from sardine_containertype t
+		from db_proxy.sardine_containertype t
 		where 1=1
 		<if test="code != null">
 			and t.code like CONCAT(CONCAT('%', #{code}),

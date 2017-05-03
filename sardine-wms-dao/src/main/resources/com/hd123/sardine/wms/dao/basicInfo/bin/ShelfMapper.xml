@@ -12,7 +12,7 @@
 	<select id="get" parameterType="map" resultMap="BaseResultMap">
 		select u.*
 		from
-		sardine_shelf u
+		db_proxy.sardine_shelf u
 		where u.uuid = #{uuid,jdbcType=VARCHAR}
 		and u.zoneuuid
 		=
@@ -21,7 +21,7 @@
 
 	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
 		select u.*
-		from sardine_shelf u
+		from db_proxy.sardine_shelf u
 		where u.code = #{code,jdbcType=VARCHAR}
 		and
 		u.companyuuid = #{companyUuid,jdbcType=VARCHAR}
@@ -29,7 +29,7 @@
 
 	<insert id="insert" parameterType="Zone">
 		insert into
-		sardine_shelf (
+		db_proxy.sardine_shelf (
 		uuid,
 		code,
 		pathuuid,
@@ -47,7 +47,7 @@
 
 	<select id="queryByList" parameterType="map" resultMap="BaseResultMap">
 		select u.*
-		from sardine_shelf u
+		from db_proxy.sardine_shelf u
 		where 1=1
 		<if test="companyUuid != null">
 			and u.companyUuid = #{companyUuid,jdbcType=VARCHAR}

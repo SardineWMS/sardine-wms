@@ -34,14 +34,14 @@
 
 	<select id="get" parameterType="String" resultMap="BaseResultMap">
 		select u.*
-		from sardine_article u
+		from db_proxy.sardine_article u
 		where u.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
 		select
 		u.*
-		from sardine_article u
+		from db_proxy.sardine_article u
 		where u.code = #{code,jdbcType=VARCHAR}
 		and u.companyuuid = #{companyUuid, jdbcType=VARCHAR}
 	</select>
@@ -49,15 +49,15 @@
 	<select id="getByBarcode" parameterType="map" resultMap="BaseResultMap">
 		select
 		u.*
-		from sardine_article u
+		from db_proxy.sardine_article u
 		where u.companyuuid = #{companyUuid, jdbcType=VARCHAR}
-		and exists (select 1 from sardine_article_barcode b where u.uuid = b.articleuuid 
+		and exists (select 1 from db_proxy.sardine_article_barcode b where u.uuid = b.articleuuid 
 		and b.barcode = #{barcode,jdbcType=VARCHAR})
 	</select>
 
 	<insert id="insert" parameterType="Article">
 		insert into
-		sardine_article (
+		db_proxy.sardine_article (
 		uuid,
 		code,
 		name,
@@ -104,7 +104,7 @@
 	</insert>
 
 	<update id="update" parameterType="Article">
-		update sardine_article
+		update db_proxy.sardine_article
 		<set>
 			code =
 			#{code,jdbcType=VARCHAR},
@@ -151,7 +151,7 @@
 	<select id="queryByPage" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
 		select u.*
-		from sardine_article u
+		from db_proxy.sardine_article u
 		where 1=1
 		<if test="code != null">
 			and u.code like CONCAT(CONCAT('%', #{code}),

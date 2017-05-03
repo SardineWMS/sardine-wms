@@ -220,7 +220,7 @@
 
 	<insert id="saveUserRole" parameterType="map">
 		insert into
-		sardine_role_user (
+		db_proxy.sardine_role_user (
 		roleuuid,
 		useruuid
 		)
@@ -232,6 +232,6 @@
 
 	<delete id="removeRolesByUser" parameterType="java.lang.String">
 		delete from
-		sardine_role_user where useruuid=#{userUuid,jdbcType=VARCHAR}
+		db_proxy.sardine_role_user where useruuid=#{userUuid,jdbcType=VARCHAR}
 	</delete>
 </mapper>

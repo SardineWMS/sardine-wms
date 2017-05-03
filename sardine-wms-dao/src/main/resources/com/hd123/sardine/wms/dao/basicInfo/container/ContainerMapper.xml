@@ -37,7 +37,7 @@
 
 	<select id="getByBarcode" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
-		select t.* from sardine_container t
+		select t.* from db_proxy.sardine_container t
 		where t.barcode =
 		#{barcode,jdbcType=VARCHAR}
 		and t.companyUuid =
@@ -46,13 +46,13 @@
 
 	<select id="get" parameterType="java.util.Map" resultMap="BaseResultMap">
 		select
-		* from sardine_container where uuid = #{uuid, jdbcType=VARCHAR}
+		* from db_proxy.sardine_container where uuid = #{uuid, jdbcType=VARCHAR}
 	</select>
 
 	<select id="queryContainer" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
 		select t.*
-		from sardine_container t
+		from db_proxy.sardine_container t
 		where 1=1
 		<if test="barcode != null">
 			and t.barcode like CONCAT(CONCAT('%', #{barcode}),
@@ -72,7 +72,7 @@
 
 	<insert id="insertContainer"
 		parameterType="com.hd123.sardine.wms.api.basicInfo.container.Container">
-		insert into sardine_container
+		insert into db_proxy.sardine_container
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="uuid != null">
 				uuid,
@@ -195,7 +195,7 @@
 
 	<update id="update"
 		parameterType="com.hd123.sardine.wms.api.basicInfo.container.Container">
-		update sardine_container t
+		update db_proxy.sardine_container t
 		<set>
 			<if test="lastModifyInfo != null  and lastModifyInfo.time != null">
 				t.LASTMODIFYTIME =

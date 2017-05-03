@@ -10,13 +10,13 @@
 
 	<select id="get" parameterType="String" resultMap="BaseResultMap">
 		select u.*
-		from sardine_article_barcode u
+		from db_proxy.sardine_article_barcode u
 		where u.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
 
 	<insert id="insert" parameterType="ArticleBarcode">
 		insert into
-		sardine_article_barcode (
+		db_proxy.sardine_article_barcode (
 		uuid,
 		articleUuid,
 		barcode,
@@ -33,11 +33,11 @@
 	<select id="queryByList" parameterType="String"
 		resultMap="BaseResultMap">
 		select u.*
-		from sardine_article_barcode u
+		from db_proxy.sardine_article_barcode u
 		where u.articleUuid = #{articleUuid,jdbcType=VARCHAR}
 	</select>
 	
 	<delete id="removeone" parameterType="String">
-	    delete from sardine_article_barcode where uuid = #{uuid,jdbcType=VARCHAR}
+	    delete from db_proxy.sardine_article_barcode where uuid = #{uuid,jdbcType=VARCHAR}
 	</delete>
 </mapper>

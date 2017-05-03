@@ -15,12 +15,12 @@
 		servicecaption  as "serviceCaption",
 		entityUuid   as "entityUuid",
 		entityCaption  as "entityCaption"
-		from Sardine_EntityLog
+		from db_proxy.Sardine_EntityLog
 		where entityUuid =#{entityUuid} order by time desc
       </select>
 
 	<insert id="insert_EntityLog" parameterType="com.hd123.sardine.wms.api.log.EntityLog">
-		insert into Sardine_EntityLog
+		insert into db_proxy.Sardine_EntityLog
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="uuid != null">
 				uuid,
