@@ -42,12 +42,13 @@ import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.task.TaskDao;
+import com.hd123.sardine.wms.service.ia.BaseWMSService;
 
 /**
  * @author zhangsai
  *
  */
-public class TaskServiceImpl implements TaskService {
+public class TaskServiceImpl extends BaseWMSService implements TaskService {
 
   @Autowired
   private TaskDao taskDao;

@@ -53,8 +53,29 @@ public class Constants {
   /** 虚拟组织ID，用于不需要区分组织的序列 */
   public static final String VIRTUAL_COMPANYUUID = "sardine";
 
-  /** 指令号类型，指令号=5位组织代码+0+6位日期+6位流水 */
-  public static final String TASK_NUMBER_TYPE = "0";
+  /** 上架指令号类型，指令号=5位组织代码+01+6位日期+6位流水 */
+  public static final String PUTAWAYTASK_NUMBER_TYPE = "01";
+
+  /** 拣货指令号类型，指令号=5位组织代码+02+6位日期+6位流水 */
+  public static final String PICKUPTASK_NUMBER_TYPE = "02";
+
+  /** 补货指令号类型，指令号=5位组织代码+03+6位日期+6位流水 */
+  public static final String RPLTASK_NUMBER_TYPE = "03";
+
+  /** 退仓上架指令号类型，指令号=5位组织代码+04+6位日期+6位流水 */
+  public static final String RTNPUTAWAYTASK_NUMBER_TYPE = "04";
+
+  /** 退货下架指令号类型，指令号=5位组织代码+05+6位日期+6位流水 */
+  public static final String RTNSHELFTASK_NUMBER_TYPE = "05";
+
+  /** 退货交接指令号类型，指令号=5位组织代码+06+6位日期+6位流水 */
+  public static final String RTNHANDOVERTASK_NUMBER_TYPE = "06";
+
+  /** 移库指令号类型，指令号=5位组织代码+07+6位日期+6位流水 */
+  public static final String MOVETASK_NUMBER_TYPE = "07";
+
+  /** 装车指令号类型，指令号=5位组织代码+08+6位日期+6位流水 */
+  public static final String SHIPTASK_NUMBER_TYPE = "08";
 
   /** 订单号类型，订单号=5位组织代码+1+6位日期+6位流水 */
   public static final String ORDER_NUMBER_TYPE = "1";
