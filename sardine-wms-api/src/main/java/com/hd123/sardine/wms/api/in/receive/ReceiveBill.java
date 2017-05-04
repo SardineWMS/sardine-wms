@@ -9,6 +9,7 @@
  */
 package com.hd123.sardine.wms.api.in.receive;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class ReceiveBill extends StandardEntity {
   private ReceiveBillMethod method;
   private String caseQtyStr;
   private String companyUuid;
+  private BigDecimal totalAmount;
   private String note;
   
   private List<ReceiveBillItem> items = new ArrayList<ReceiveBillItem>();
@@ -130,6 +132,14 @@ public class ReceiveBill extends StandardEntity {
 
   public void setCaseQtyStr(String caseQtyStr) {
     this.caseQtyStr = caseQtyStr;
+  }
+  
+  public BigDecimal getTotalAmount() {
+    return totalAmount;
+  }
+
+  public void setTotalAmount(BigDecimal totalAmount) {
+    this.totalAmount = totalAmount;
   }
 
   public void validate() {

@@ -124,6 +124,15 @@ public class OrderBillItem extends Entity {
     this.price = price;
   }
 
+  /** 金额 = price*qty */
+  public BigDecimal getAmount() {
+    return amount;
+  }
+
+  public void setAmount(BigDecimal amount) {
+    this.amount = amount;
+  }
+
   private int line;
   private String orderBillUuid;
   private UCN article;
@@ -135,6 +144,7 @@ public class OrderBillItem extends Entity {
   private BigDecimal receivedQty;
   private String receivedCaseQtyStr;
   private BigDecimal price;
+  private BigDecimal amount;
 
   public void validate() {
     Assert.assertArgumentNotNull(article, "article");

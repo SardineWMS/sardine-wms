@@ -39,6 +39,7 @@ public class OrderBill extends StandardEntity {
   private String companyUuid;
   private String totalCaseQtyStr;
   private String receivedCaseQtyStr;
+  private BigDecimal totalAmount;
   private String note;
 
   private List<OrderBillItem> items = new ArrayList<OrderBillItem>();
@@ -140,6 +141,15 @@ public class OrderBill extends StandardEntity {
 
   public void setReceivedCaseQtyStr(String receivedCaseQtyStr) {
     this.receivedCaseQtyStr = receivedCaseQtyStr;
+  }
+  
+  /** 总金额，明细金额之和*/
+  public BigDecimal getTotalAmount() {
+    return totalAmount;
+  }
+
+  public void setTotalAmount(BigDecimal totalAmount) {
+    this.totalAmount = totalAmount;
   }
 
   /** 备注 */

@@ -40,6 +40,26 @@ public class ReceiveBillItem extends Entity {
   private String munit;
   private Date receiveDate;
   private String orderBillLineUuid;
+  private BigDecimal price;
+  private BigDecimal amount;
+  
+  /** 商品单价，取自订单明细price */
+  public BigDecimal getPrice() {
+    return price;
+  }
+
+  public void setPrice(BigDecimal price) {
+    this.price = price;
+  }
+
+  /** 金额 = price*qty */
+  public BigDecimal getAmount() {
+    return amount;
+  }
+
+  public void setAmount(BigDecimal amount) {
+    this.amount = amount;
+  }
 
   public int getLine() {
     return line;
