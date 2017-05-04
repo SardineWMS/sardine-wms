@@ -27,6 +27,7 @@ public class RoleDaoImpl extends BaseDaoImpl<Role> implements RoleDao {
     private static final String MAPPER_GETBYCODE = "getByCode";
     private static final String MAPPER_QUERYROLESBYUSER = "queryRolesByUser";
     public static final String MAPPER_REMOVERELATIONROLEANDUSERBYROLE = "removeRelationRoleAndUserByRole";
+    private static final String MAPPER_QUERYALLROLE_BYCOMPANYUUID = "queryAllRoleBycompany";
 
     @Override
     public Role getByCode(String code, String companyUuid) {
@@ -49,6 +50,14 @@ public class RoleDaoImpl extends BaseDaoImpl<Role> implements RoleDao {
         Assert.assertArgumentNotNull(roleUuid, "roleUuid");
 
         getSqlSession().delete(generateStatement(MAPPER_REMOVERELATIONROLEANDUSERBYROLE), roleUuid);
+    }
+
+    @Override
+    public List<Role> queryAllRoleByCompany(String companyUuid) {
+        Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYALLROLE_BYCOMPANYUUID),
+                companyUuid);
     }
 
 }

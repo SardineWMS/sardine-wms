@@ -34,6 +34,7 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.DateHelper;
 import com.hd123.sardine.wms.web.BaseController;
 
@@ -141,6 +142,7 @@ public class CustomerController extends BaseController {
             @RequestParam(value = "state", required = false) String state) {
         RespObject resp = new RespObject();
         try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
             PageQueryDefinition definition = new PageQueryDefinition();
             definition.setPage(page);
             definition.setPageSize(pageSize);
@@ -176,7 +178,7 @@ public class CustomerController extends BaseController {
             resp.setObj(uuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (IllegalArgumentException e) {
-           return new ErrorRespObject("新增客户失败", e.getMessage());
+            return new ErrorRespObject("新增客户失败", e.getMessage());
         } catch (WMSException e) {
             return new ErrorRespObject("新增客户失败", e.getMessage());
         }

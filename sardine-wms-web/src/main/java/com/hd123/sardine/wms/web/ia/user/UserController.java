@@ -31,6 +31,7 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.BaseController;
 
 /**
@@ -188,6 +189,7 @@ public class UserController extends BaseController {
             @RequestBody List<String> roleUuids) {
         RespObject resp = new RespObject();
         try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
             userService.saveUserRoles(userUuid, roleUuids);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {

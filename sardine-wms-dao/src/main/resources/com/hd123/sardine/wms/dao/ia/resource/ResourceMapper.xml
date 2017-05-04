@@ -23,7 +23,7 @@
 
 	<insert id="saveUserResource" parameterType="map">
 		insert into
-		db_proxy.sardine_user_resource(
+		sardine_user_resource(
 		useruuid,
 		resourceuuid
 		)
@@ -34,7 +34,7 @@
 	</insert>
 
 	<select id="queryAllTopMenuResource"  resultMap="BaseResultMap">
-		select r.* from db_proxy.sardine_resource r
+		select r.* from sardine_resource r
 		where
 		r.upperuuid is null
 	</select>

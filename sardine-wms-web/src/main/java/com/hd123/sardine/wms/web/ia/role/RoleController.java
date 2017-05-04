@@ -9,6 +9,8 @@
  */
 package com.hd123.sardine.wms.web.ia.role;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,7 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.BaseController;
 
 /**
@@ -54,6 +57,7 @@ public class RoleController extends BaseController {
             @RequestParam(value = "state", required = false) String state) {
         RespObject resp = new RespObject();
         try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
             PageQueryDefinition definition = new PageQueryDefinition();
             definition.setPage(page);
             definition.setPageSize(pageSize);
@@ -144,5 +148,22 @@ public class RoleController extends BaseController {
             return new ErrorRespObject("禁用角色失败", e.getMessage());
         }
         return resp;
+    }
+
+    @RequestMapping(value = "/queryAllResource", method = RequestMethod.GET)
+    public @ResponseBody RespObject queryAllResource(
+            @RequestParam(value = "token", required = true) String token) {
+        RespObject resp = new RespObject();
+        try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
+            List<Role> list = roleService.queryAllRoleByUser(getLoginUser(token).getUuid(),
+                    getLoginCompany(token).getUuid());
+            resp.setObj(list);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (Exception e) {
+            return new ErrorRespObject("查询角色失败", e.getMessage());
+        }
+        return resp;
+
     }
 }

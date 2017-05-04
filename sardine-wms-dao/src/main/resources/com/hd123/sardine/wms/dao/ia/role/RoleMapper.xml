@@ -25,13 +25,13 @@
 			jdbcType="VARCHAR" />
 		<result column="version" property="version" jdbcType="LONGVARCHAR" />
 	</resultMap>
-	
+
 	<select id="get" parameterType="String" resultMap="BaseResultMap">
 		select t.*
 		from db_proxy.sardine_role t
 		where t.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
-	
+
 	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
 		select
 		t.*
@@ -40,7 +40,7 @@
 		and
 		t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
 	</select>
-	
+
 	<select id="queryByPage" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
 		select t.*
@@ -67,7 +67,7 @@
 			order by t.name ${orderDir}
 		</if>
 	</select>
-	
+
 	<insert id="insert" parameterType="Role">
 		insert into
 		db_proxy.sardine_role (
@@ -103,7 +103,7 @@
 		#{companyUuid,jdbcType=VARCHAR}
 		)
 	</insert>
-	
+
 	<update id="update" parameterType="Role">
 		update db_proxy.sardine_role
 		<set>
@@ -140,22 +140,33 @@
 		and version =
 		#{version,jdbcType=LONGVARCHAR}
 	</update>
-	
+
 	<delete id="remove" parameterType="map">
-		delete from db_proxy.sardine_role
+		delete from
+		db_proxy.sardine_role
 		where uuid=#{uuid,jdbcType=VARCHAR}
 		and version =
 		#{version,jdbcType=LONGVARCHAR}
 	</delete>
-	
-	<select id="queryRolesByUser" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select * from db_proxy.sardine_role r,db_proxy.sardine_role_user ru
+
+	<select id="queryRolesByUser" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select * from db_proxy.sardine_role
+		r,db_proxy.sardine_role_user ru
 		where r.uuid=ru.roleuuid
-		and ru.useruuid=#{userUuid,jdbcType=VARCHAR}
+		and
+		ru.useruuid=#{userUuid,jdbcType=VARCHAR}
 	</select>
-	
+
 	<delete id="removeRelationRoleAndUserByRole" parameterType="java.lang.String">
-		delete from db_proxy.sardine_role_user where roleuuid=#{roleUuid,jdbcType=VARCHAR}
+		delete from db_proxy.sardine_role_user where
+		roleuuid=#{roleUuid,jdbcType=VARCHAR}
 	</delete>
-	
+
+	<select id="queryAllRoleBycompany" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select * from db_proxy.sardine_role where
+		companyUuid=#{companyUuid,jdbcType=VARCHAR}
+	</select>
+
 </mapper>

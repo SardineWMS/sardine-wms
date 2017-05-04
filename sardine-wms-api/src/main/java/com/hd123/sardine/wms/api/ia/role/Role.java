@@ -25,6 +25,8 @@ public class Role extends StandardEntity {
     private String companyUuid;
     private RoleState state = RoleState.online;
 
+    private boolean owned;
+
     public String getCompanyUuid() {
         return companyUuid;
     }
@@ -55,5 +57,53 @@ public class Role extends StandardEntity {
 
     public void setState(RoleState state) {
         this.state = state;
+    }
+
+    public boolean isOwned() {
+        return owned;
+    }
+
+    public void setOwned(boolean owned) {
+        this.owned = owned;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((code == null) ? 0 : code.hashCode());
+        result = prime * result + ((companyUuid == null) ? 0 : companyUuid.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((state == null) ? 0 : state.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Role other = (Role) obj;
+        if (code == null) {
+            if (other.code != null)
+                return false;
+        } else if (!code.equals(other.code))
+            return false;
+        if (companyUuid == null) {
+            if (other.companyUuid != null)
+                return false;
+        } else if (!companyUuid.equals(other.companyUuid))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (state != other.state)
+            return false;
+        return true;
     }
 }

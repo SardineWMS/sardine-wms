@@ -92,4 +92,62 @@ public class Resource implements Serializable {
         this.children = children;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((children == null) ? 0 : children.hashCode());
+        result = prime * result + ((code == null) ? 0 : code.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + (owned ? 1231 : 1237);
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((upperUuid == null) ? 0 : upperUuid.hashCode());
+        result = prime * result + ((uuid == null) ? 0 : uuid.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Resource other = (Resource) obj;
+        if (children == null) {
+            if (other.children != null)
+                return false;
+        } else if (!children.equals(other.children))
+            return false;
+        if (code == null) {
+            if (other.code != null)
+                return false;
+        } else if (!code.equals(other.code))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (owned != other.owned)
+            return false;
+        if (type == null) {
+            if (other.type != null)
+                return false;
+        } else if (!type.equals(other.type))
+            return false;
+        if (upperUuid == null) {
+            if (other.upperUuid != null)
+                return false;
+        } else if (!upperUuid.equals(other.upperUuid))
+            return false;
+        if (uuid == null) {
+            if (other.uuid != null)
+                return false;
+        } else if (!uuid.equals(other.uuid))
+            return false;
+        return true;
+    }
+
 }

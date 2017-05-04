@@ -24,6 +24,7 @@ import com.hd123.sardine.wms.api.ia.resource.ResourceService;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.BaseController;
 
 /**
@@ -42,6 +43,7 @@ public class ResourceController extends BaseController {
             @RequestParam(value = "token") String token) {
         RespObject resp = new RespObject();
         try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
             List<Resource> resources = resourceService.queryOwnedMenuResourceByUser(userUuid);
             resp.setObj(resources);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -57,6 +59,7 @@ public class ResourceController extends BaseController {
             @RequestParam(value = "token") String token) {
         RespObject resp = new RespObject();
         try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
             List<Resource> resources = resourceService.queryAllResourceByUser(userUuid);
             resp.setObj(resources);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -103,6 +106,7 @@ public class ResourceController extends BaseController {
             @RequestBody List<String> resourceUuids) {
         RespObject resp = new RespObject();
         try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
             resourceService.saveUserResource(userUuid, resourceUuids);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -118,6 +122,7 @@ public class ResourceController extends BaseController {
             @RequestBody List<String> resourceUuids) {
         RespObject resp = new RespObject();
         try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
             resourceService.saveRoleResource(roleUuid, resourceUuids);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {

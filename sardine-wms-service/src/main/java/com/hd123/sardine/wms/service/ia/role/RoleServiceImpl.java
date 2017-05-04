@@ -174,6 +174,27 @@ public class RoleServiceImpl extends BaseWMSService implements RoleService {
     @Override
     public List<Role> queryRolesByUser(String userUuid) throws IllegalArgumentException {
         Assert.assertArgumentNotNull(userUuid, "userUuid");
-        return roleDao.queryRolesByUser(userUuid);
+        List<Role> list = roleDao.queryRolesByUser(userUuid);
+        for (Role role : list) {
+            role.setOwned(true);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Role> queryAllRoleByUser(String userUuid, String companyUuid)
+            throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+        Assert.assertArgumentNotNull(userUuid, "userUuid");
+        List<Role> allRoles = roleDao.queryAllRoleByCompany(companyUuid);
+        List<Role> ownRoles = queryRolesByUser(userUuid);
+        for (Role allRole : allRoles) {
+            for (Role ownRole : ownRoles) {
+                if (ownRole.equals(allRole)) {
+                    allRole.setOwned(ownRole.isOwned());
+                }
+            }
+        }
+        return allRoles;
     }
 }

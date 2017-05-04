@@ -126,11 +126,24 @@ public interface RoleService {
 
     /**
      * 根据用户查询拥有的角色
+     * 
      * @param userUuid
-     *  用户uuid，not null。
-     * @return  
+     *            用户uuid，not null。
+     * @return
      * @throws IllegalArgumentException
      */
     List<Role> queryRolesByUser(String userUuid) throws IllegalArgumentException;
-    
+
+    /**
+     * 查询公司下所有角色
+     * 
+     * @param userUuid
+     *            员工，not null
+     * @return 角色集合
+     * @throws IllegalArgumentException
+     * 
+     */
+    List<Role> queryAllRoleByUser(String userUuid, String companyUuid)
+            throws IllegalArgumentException;
+
 }

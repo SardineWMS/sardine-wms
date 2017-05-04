@@ -20,8 +20,10 @@ import com.hd123.sardine.wms.common.dao.BaseDao;
  */
 public interface RoleDao extends BaseDao<Role> {
     Role getByCode(String code, String orgId);
-    
+
     List<Role> queryRolesByUser(String userUuid);
-    
+
     void removeRelationRoleAndUserByRole(String roleUuid);
+
+    List<Role> queryAllRoleByCompany(String companyUuid);
 }
