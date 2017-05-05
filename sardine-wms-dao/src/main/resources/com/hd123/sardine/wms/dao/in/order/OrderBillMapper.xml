@@ -198,7 +198,7 @@
 
 	<select id="get" parameterType="java.util.Map" resultMap="BaseResultMap">
 		select t.*, s.code suppliercode, s.name suppliername, w.code wrhcode, w.name wrhname
-		         from db_proxy..sardine_OrderBill t,
+		         from db_proxy.sardine_OrderBill t,
 		              db_proxy.sardine_supplier s,
 		              db_proxy.sardine_wrh w
 		where t.wrhuuid = w.uuid and t.supplieruuid = s.uuid 
@@ -265,18 +265,18 @@
 	</delete>
 	
 	<select id="queryItems" parameterType="java.util.Map" resultMap="OrderBillItemMap">
-	    select t.*, a.code, a.name
+	    select t.*, a.code articlecode, a.name articlename
 	           from db_proxy.sardine_OrderBillItem t,
-	                db_proxy.sardine_article a,
+	                db_proxy.sardine_article a
 	          where t.articleuuid = a.uuid 
 	            and t.orderBillUuid = #{orderBillUuid, jdbcType=VARCHAR}
 	</select>
 
 	<select id="query" parameterType="PageQueryDefinition" resultMap="BaseResultMap">
-		select .*, s.code suppliercode, s.name suppliername, w.code wrhcode, w.name wrhname from 
+		select t.*, s.code suppliercode, s.name suppliername, w.code wrhcode, w.name wrhname from 
 		   db_proxy.sardine_OrderBill t,
 		   db_proxy.sardine_wrh w,
-		   db_proxy.sardine_supplier s,
+		   db_proxy.sardine_supplier s
 		where t.wrhuuid = w.uuid and t.supplieruuid = s.uuid 
 		  and t.companyuuid = #{companyUuid, jdbcType=VARCHAR}
 		<if test="supplierCode != null and supplierCode != ''">
