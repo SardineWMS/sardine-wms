@@ -20,9 +20,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hd123.rumba.commons.lang.StringUtil;
+import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
+import com.hd123.sardine.wms.api.basicInfo.bin.Wrh;
+import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
+import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierService;
 import com.hd123.sardine.wms.api.in.order.OrderBill;
 import com.hd123.sardine.wms.api.in.order.OrderBillService;
 import com.hd123.sardine.wms.api.in.order.OrderBillState;
+import com.hd123.sardine.wms.common.entity.UCN;
+import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -44,6 +50,10 @@ public class OrderBillController extends BaseController {
 
     @Autowired
     private OrderBillService orderBillService;
+    @Autowired
+    private SupplierService supplierService;
+    @Autowired
+    private BinService binService;
 
     @RequestMapping(value = "/querybypage", method = RequestMethod.GET)
     public @ResponseBody RespObject query(
@@ -103,7 +113,8 @@ public class OrderBillController extends BaseController {
         try {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             ApplicationContextUtil.setOperateContext(getOperateContext(token));
-
+            refreshBill(orderBill);
+            orderBill.setExpireDate(new Date());
             String orderBillUuid = orderBillService.insert(orderBill);
             resp.setObj(orderBillUuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -121,7 +132,7 @@ public class OrderBillController extends BaseController {
         try {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             ApplicationContextUtil.setOperateContext(getOperateContext(token));
-            
+            refreshBill(orderBill);
             orderBillService.update(orderBill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -139,7 +150,7 @@ public class OrderBillController extends BaseController {
         try {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             ApplicationContextUtil.setOperateContext(getOperateContext(token));
-            
+
             orderBillService.remove(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -158,8 +169,8 @@ public class OrderBillController extends BaseController {
         try {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             ApplicationContextUtil.setOperateContext(getOperateContext(token));
-            
-            orderBillService.bookReg(uuid, version, bookDate);
+
+            orderBillService.uploadStateToPreBookReg(uuid, version, bookDate);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             return new ErrorRespObject("订单预约失败", e.getMessage());
@@ -176,8 +187,8 @@ public class OrderBillController extends BaseController {
         try {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             ApplicationContextUtil.setOperateContext(getOperateContext(token));
-            
-            orderBillService.check(uuid, version);
+
+            orderBillService.uploadStateToPreChecked(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             return new ErrorRespObject("订单预检失败", e.getMessage());
@@ -194,8 +205,8 @@ public class OrderBillController extends BaseController {
         try {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             ApplicationContextUtil.setOperateContext(getOperateContext(token));
-            
-            orderBillService.finish(uuid, version);
+
+            orderBillService.upload_finish(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             return new ErrorRespObject("订单完成失败", e.getMessage());
@@ -212,13 +223,29 @@ public class OrderBillController extends BaseController {
         try {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             ApplicationContextUtil.setOperateContext(getOperateContext(token));
-            
-            orderBillService.abort(uuid, version);
+
+            orderBillService.uploadStateToAborted(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             return new ErrorRespObject("订单作废失败", e.getMessage());
         }
         return resp;
+    }
+
+    private void refreshBill(OrderBill orderBill) throws WMSException {
+        if (orderBill.getSupplier() == null
+                || StringUtil.isNullOrBlank(orderBill.getSupplier().getUuid()))
+            throw new WMSException("供应商不能为空");
+        if (orderBill.getWrh() == null || StringUtil.isNullOrBlank(orderBill.getWrh().getUuid()))
+            throw new WMSException("仓位不能为空");
+        Supplier supplier = supplierService.get(orderBill.getSupplier().getUuid());
+        if (supplier == null)
+            throw new WMSException("供应商不存在");
+        Wrh wrh = binService.getWrh(orderBill.getWrh().getUuid());
+        if (wrh == null)
+            throw new WMSException("仓位不存在");
+        orderBill.setSupplier(new UCN(supplier.getUuid(), supplier.getCode(), supplier.getName()));
+        orderBill.setWrh(new UCN(wrh.getUuid(), wrh.getCode(), wrh.getName()));
     }
 
 }

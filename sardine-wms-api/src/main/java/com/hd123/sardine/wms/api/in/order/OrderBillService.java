@@ -109,7 +109,7 @@ public interface OrderBillService {
      * @throws VersionConflictException
      * @throws WMSException
      */
-    void bookReg(String uuid, long version, Date bookDate)
+    void uploadStateToPreBookReg(String uuid, long version, Date bookDate)
             throws IllegalArgumentException, VersionConflictException, WMSException;
 
     /**
@@ -123,7 +123,7 @@ public interface OrderBillService {
      * @throws VersionConflictException
      * @throws WMSException
      */
-    void check(String uuid, long version)
+    void uploadStateToPreChecked(String uuid, long version)
             throws IllegalArgumentException, VersionConflictException, WMSException;
 
     /**
@@ -136,7 +136,7 @@ public interface OrderBillService {
      * @throws VersionConflictException
      * @throws WMSException
      */
-    void finish(String uuid, long version)
+    void upload_finish(String uuid, long version)
             throws IllegalArgumentException, VersionConflictException, WMSException;
 
     /**
@@ -149,7 +149,7 @@ public interface OrderBillService {
      * @throws VersionConflictException
      * @throws WMSException
      */
-    void abort(String uuid, long version)
+    void uploadStateToAborted(String uuid, long version)
             throws IllegalArgumentException, VersionConflictException, WMSException;
 
     /**

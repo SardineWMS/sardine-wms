@@ -153,7 +153,7 @@ public class OrderBillItem extends Entity {
     Assert.assertArgumentNotNull(qpc, "qpc");
     Assert.assertArgumentNotNull(qty, "qty");
 
-    if (BigDecimal.ZERO.compareTo(qty) <= 0)
+    if (BigDecimal.ZERO.compareTo(qty) >= 0)
       throw new IllegalArgumentException("商品" + article.getCode() + "订货数量必须大于0！");
   }
 }

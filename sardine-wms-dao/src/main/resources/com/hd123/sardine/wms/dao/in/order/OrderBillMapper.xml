@@ -141,9 +141,6 @@
 			<if test="bookedDate != null">
 				#{bookedDate,jdbcType=DATE},
 			</if>
-			<if test="validDate != null">
-				#{validDate,jdbcType=DATE},
-			</if>
 			<if test="state != null">
 				#{state,jdbcType=VARCHAR},
 			</if>
@@ -153,9 +150,7 @@
 			<if test="totalCaseQtyStr != null">
 				#{totalCaseQtyStr,jdbcType=VARCHAR},
 			</if>
-			<if test="sourceLineNumber != null">
-				#{sourceLineNumber,jdbcType=INTEGER},
-			</if>
+		
 			<if test="receivedCaseQtyStr != null">
 				#{receivedCaseQtyStr,jdbcType=VARCHAR},
 			</if>
@@ -175,25 +170,25 @@
 	</insert>
 
 	<update id="update" parameterType="OrderBill">
-		update db_proxy.sardine_orderbill t
-		set t.sourceBillNumber = #{sourceBillNumber, jdbcType=VARCHAR},
-		    t.billType = #{billType, jdbcType=VARCHAR},
-		    t.supplieruuid = #{supplier.uuid, jdbcType=VARCHAR},
-		    t.wrhuuid = #{wrh.uuid, jdbcType=VARCHAR},
-		    t.expireDate = #{expireDate, jdbcType=DATE},
-		    t.bookedDate = #{bookedDate, jdbcType=DATE},
-		    t.state = #{state, jdbcType=VARCHAR},
-		    t.companyUuid = #{companyUuid, jdbcType=VARCHAR},
-		    t.totalCaseQtyStr = #{totalCaseQtyStr, jdbcType=VARCHAR},
-		    t.receivedCaseQtyStr = #{receivedCaseQtyStr, jdbcType=VARCHAR},
-		    t.note = #{note, jdbcType=VARCHAR},
-		    t.LASTMODIFYTIME = #{lastModifyInfo.time,jdbcType=TIMESTAMP},
-		    t.LASTMODIFYID = #{lastModifyInfo.operator.id,jdbcType=VARCHAR},
-		    t.LASTMODIFYCODE = #{lastModifyInfo.operator.code,jdbcType=VARCHAR},
-		    t.LASTMODIFYNAME = #{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
-		    t.version = #{version, jdbcType=LONGVARCHAR} + 1
-		where t.uuid = #{uuid, jdbcType=VARCHAR}
-		  and t.version = #{version, jdbcType=LONGVARCHAR}
+		update db_proxy.sardine_orderbill 
+		set sourceBillNumber = #{sourceBillNumber, jdbcType=VARCHAR},
+		    billType = #{billType, jdbcType=VARCHAR},
+		    supplieruuid = #{supplier.uuid, jdbcType=VARCHAR},
+		    wrhuuid = #{wrh.uuid, jdbcType=VARCHAR},
+		    expireDate = #{expireDate, jdbcType=DATE},
+		    bookedDate = #{bookedDate, jdbcType=DATE},
+		    state = #{state, jdbcType=VARCHAR},
+		    companyUuid = #{companyUuid, jdbcType=VARCHAR},
+		    totalCaseQtyStr = #{totalCaseQtyStr, jdbcType=VARCHAR},
+		    receivedCaseQtyStr = #{receivedCaseQtyStr, jdbcType=VARCHAR},
+		    note = #{note, jdbcType=VARCHAR},
+		    LASTMODIFYTIME = #{lastModifyInfo.time,jdbcType=TIMESTAMP},
+		    LASTMODIFYID = #{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+		    LASTMODIFYCODE = #{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+		    LASTMODIFYNAME = #{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		    version = #{version, jdbcType=LONGVARCHAR} + 1
+		where uuid = #{uuid, jdbcType=VARCHAR}
+		  and version = #{version, jdbcType=LONGVARCHAR}
 	</update>
 
 	<select id="get" parameterType="java.util.Map" resultMap="BaseResultMap">
@@ -216,9 +211,9 @@
 	</select>
 
 	<delete id="remove" parameterType="java.util.Map">
-		delete db_proxy.sardine_orderbill t
-		where t.uuid = #{uuid, jdbcType=VARCHAR}
-		  and t.version = #{version, jdbcType=LONGVARCHAR}
+		delete from db_proxy.sardine_orderbill 
+		where uuid = #{uuid, jdbcType=VARCHAR}
+		  and version = #{version, jdbcType=LONGVARCHAR}
 	</delete>
 
 	<insert id="insertItems" parameterType="java.util.Map">
@@ -260,8 +255,8 @@
 	</update>
 
 	<delete id="removeItems" parameterType="java.util.Map">
-		delete db_proxy.sardine_OrderBillItem t
-		where t.orderBillUuid = #{orderBillUuid, jdbcType=VARCHAR}
+		delete from db_proxy.sardine_OrderBillItem 
+		where orderBillUuid = #{orderBillUuid, jdbcType=VARCHAR}
 	</delete>
 	
 	<select id="queryItems" parameterType="java.util.Map" resultMap="OrderBillItemMap">
