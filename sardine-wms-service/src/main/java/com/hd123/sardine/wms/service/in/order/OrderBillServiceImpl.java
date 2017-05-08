@@ -32,6 +32,7 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
+import com.hd123.sardine.wms.common.utils.Constants;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
@@ -64,7 +65,7 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
 
         orderBill.refreshCaseQtyStr();
         orderBill.setUuid(UUIDGenerator.genUUID());
-        orderBill.setBillNumber(billNumberGenerator.allocate(OrderBill.class.getSimpleName()));
+        orderBill.setBillNumber(billNumberGenerator.allocate(Constants.ORDER_NUMBER_TYPE));
         orderBill.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
         orderBill.setState(OrderBillState.Initial);
         orderBill

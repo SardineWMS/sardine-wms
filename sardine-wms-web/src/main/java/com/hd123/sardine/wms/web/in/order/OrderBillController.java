@@ -11,6 +11,8 @@ package com.hd123.sardine.wms.web.in.order;
 
 import java.util.Date;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,7 @@ import com.hd123.sardine.wms.api.basicInfo.bin.Wrh;
 import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
 import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierService;
 import com.hd123.sardine.wms.api.in.order.OrderBill;
+import com.hd123.sardine.wms.api.in.order.OrderBillItem;
 import com.hd123.sardine.wms.api.in.order.OrderBillService;
 import com.hd123.sardine.wms.api.in.order.OrderBillState;
 import com.hd123.sardine.wms.common.entity.UCN;
@@ -36,6 +39,7 @@ import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
+import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.web.BaseController;
 
 /**
@@ -114,7 +118,6 @@ public class OrderBillController extends BaseController {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             ApplicationContextUtil.setOperateContext(getOperateContext(token));
             refreshBill(orderBill);
-            orderBill.setExpireDate(new Date());
             String orderBillUuid = orderBillService.insert(orderBill);
             resp.setObj(orderBillUuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -164,13 +167,13 @@ public class OrderBillController extends BaseController {
             @RequestParam(value = "token", required = true) String token,
             @RequestParam(value = "uuid", required = true) String uuid,
             @RequestParam(value = "version", required = true) long version,
-            @RequestParam(value = "bookDate", required = true) Date bookDate) {
+            @RequestParam(value = "bookedDate", required = true) String bookedDate) {
         RespObject resp = new RespObject();
         try {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             ApplicationContextUtil.setOperateContext(getOperateContext(token));
-
-            orderBillService.uploadStateToPreBookReg(uuid, version, bookDate);
+            Date date=DateUtils.parseDate(bookedDate, "YYYY-MM-DD HH:mm:ss");
+            orderBillService.uploadStateToPreBookReg(uuid, version, date);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             return new ErrorRespObject("订单预约失败", e.getMessage());
@@ -246,6 +249,10 @@ public class OrderBillController extends BaseController {
             throw new WMSException("仓位不存在");
         orderBill.setSupplier(new UCN(supplier.getUuid(), supplier.getCode(), supplier.getName()));
         orderBill.setWrh(new UCN(wrh.getUuid(), wrh.getCode(), wrh.getName()));
+        if (CollectionUtils.isEmpty(orderBill.getItems()))
+            return;
+        for (OrderBillItem item : orderBill.getItems())
+            item.setQpc(QpcHelper.qpcStrToQpc(item.getQpcStr()));
     }
 
 }
