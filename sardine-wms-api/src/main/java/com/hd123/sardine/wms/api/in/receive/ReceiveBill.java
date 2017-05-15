@@ -23,132 +23,132 @@ import com.hd123.sardine.wms.common.entity.UCN;
  */
 public class ReceiveBill extends StandardEntity {
 
-  private static final long serialVersionUID = -7222233711042552662L;
-  public static final String CAPTION = "收货单";
+    private static final long serialVersionUID = -7222233711042552662L;
+    public static final String CAPTION = "收货单";
 
-  private String billNumber;
-  private UCN receiver;
-  private ReceiveBillState state = ReceiveBillState.Initial;
-  private UCN supplier;
-  private String orderBillNumber;
-  private UCN wrh;
-  private ReceiveBillMethod method;
-  private String caseQtyStr;
-  private String companyUuid;
-  private BigDecimal totalAmount;
-  private String note;
-  
-  private List<ReceiveBillItem> items = new ArrayList<ReceiveBillItem>();
+    private String billNumber;
+    private UCN receiver;
+    private ReceiveBillState state = ReceiveBillState.Initial;
+    private UCN supplier;
+    private String orderBillNumber;
+    private UCN wrh;
+    private ReceiveBillMethod method;
+    private String caseQtyStr;
+    private String companyUuid;
+    private BigDecimal totalAmount;
+    private String remark;
 
-  public String getNote() {
-    return note;
-  }
+    private List<ReceiveBillItem> items = new ArrayList<ReceiveBillItem>();
 
-  public void setNote(String note) {
-    this.note = note;
-  }
+    public String getRemark() {
+        return remark;
+    }
 
-  public String getBillNumber() {
-    return billNumber;
-  }
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
-  public void setBillNumber(String billNumber) {
-    this.billNumber = billNumber;
-  }
-  
-  public String getOrderBillNumber() {
-    return orderBillNumber;
-  }
+    public String getBillNumber() {
+        return billNumber;
+    }
 
-  public void setOrderBillNumber(String orderBillNumber) {
-    this.orderBillNumber = orderBillNumber;
-  }
+    public void setBillNumber(String billNumber) {
+        this.billNumber = billNumber;
+    }
 
-  public String getCompanyUuid() {
-    return companyUuid;
-  }
+    public String getOrderBillNumber() {
+        return orderBillNumber;
+    }
 
-  public void setCompanyUuid(String companyUuid) {
-    this.companyUuid = companyUuid;
-  }
+    public void setOrderBillNumber(String orderBillNumber) {
+        this.orderBillNumber = orderBillNumber;
+    }
 
-  /** 收货人 */
-  public UCN getReceiver() {
-    return receiver;
-  }
+    public String getCompanyUuid() {
+        return companyUuid;
+    }
 
-  public void setReceiver(UCN receiver) {
-    this.receiver = receiver;
-  }
+    public void setCompanyUuid(String companyUuid) {
+        this.companyUuid = companyUuid;
+    }
 
-  /** 状态 */
-  public ReceiveBillState getState() {
-    return state;
-  }
+    /** 收货人 */
+    public UCN getReceiver() {
+        return receiver;
+    }
 
-  public void setState(ReceiveBillState state) {
-    this.state = state;
-  }
+    public void setReceiver(UCN receiver) {
+        this.receiver = receiver;
+    }
 
-  /** 供应商 */
-  public UCN getSupplier() {
-    return supplier;
-  }
+    /** 状态 */
+    public ReceiveBillState getState() {
+        return state;
+    }
 
-  public void setSupplier(UCN supplier) {
-    this.supplier = supplier;
-  }
+    public void setState(ReceiveBillState state) {
+        this.state = state;
+    }
 
-  /** 仓位 */
-  public UCN getWrh() {
-    return wrh;
-  }
+    /** 供应商 */
+    public UCN getSupplier() {
+        return supplier;
+    }
 
-  public void setWrh(UCN wrh) {
-    this.wrh = wrh;
-  }
+    public void setSupplier(UCN supplier) {
+        this.supplier = supplier;
+    }
 
-  /** 收货方式 */
-  public ReceiveBillMethod getMethod() {
-    return method;
-  }
+    /** 仓位 */
+    public UCN getWrh() {
+        return wrh;
+    }
 
-  public void setMethod(ReceiveBillMethod method) {
-    this.method = method;
-  }
+    public void setWrh(UCN wrh) {
+        this.wrh = wrh;
+    }
 
-  public List<ReceiveBillItem> getItems() {
-    return items;
-  }
+    /** 收货方式 */
+    public ReceiveBillMethod getMethod() {
+        return method;
+    }
 
-  public void setItems(List<ReceiveBillItem> items) {
-    this.items = items;
-  }
+    public void setMethod(ReceiveBillMethod method) {
+        this.method = method;
+    }
 
-  /** 件数 */
-  public String getCaseQtyStr() {
-    return caseQtyStr;
-  }
+    public List<ReceiveBillItem> getItems() {
+        return items;
+    }
 
-  public void setCaseQtyStr(String caseQtyStr) {
-    this.caseQtyStr = caseQtyStr;
-  }
-  
-  public BigDecimal getTotalAmount() {
-    return totalAmount;
-  }
+    public void setItems(List<ReceiveBillItem> items) {
+        this.items = items;
+    }
 
-  public void setTotalAmount(BigDecimal totalAmount) {
-    this.totalAmount = totalAmount;
-  }
+    /** 件数 */
+    public String getCaseQtyStr() {
+        return caseQtyStr;
+    }
 
-  public void validate() {
-    Assert.assertArgumentNotNull(receiver, "receiver");
-    Assert.assertArgumentNotNull(state, "state");
-    Assert.assertArgumentNotNull(method, "method");
-    Assert.assertArgumentNotNull(orderBillNumber, "orderBillNumber");
+    public void setCaseQtyStr(String caseQtyStr) {
+        this.caseQtyStr = caseQtyStr;
+    }
 
-    for (ReceiveBillItem item : items)
-      item.validate();
-  }
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public void validate() {
+        Assert.assertArgumentNotNull(receiver, "receiver");
+        Assert.assertArgumentNotNull(state, "state");
+        Assert.assertArgumentNotNull(method, "method");
+        Assert.assertArgumentNotNull(orderBillNumber, "orderBillNumber");
+
+        for (ReceiveBillItem item : items)
+            item.validate();
+    }
 }
