@@ -9,7 +9,6 @@
  */
 package com.hd123.sardine.wms.api.ia.user;
 
-import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.exception.WMSException;
 
 /**
@@ -19,28 +18,25 @@ import com.hd123.sardine.wms.common.exception.WMSException;
  *
  */
 public interface CompanyService {
-    /**
-     * 保存企业
-     * 
-     * @param company
-     *            要保存的企业，not null
-     * @param operCtx
-     *            操作信息，not null
-     * @return 保存企业的UUID
-     * @throws IllegalArgumentException
-     *             参数异常
-     * @throws WMSException
-     *             其他业务异常
-     */
-    String insert(Company company, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException;
+  /**
+   * 保存企业
+   * 
+   * @param company
+   *          要保存的企业，not null
+   * @return 保存企业的UUID
+   * @throws IllegalArgumentException
+   *           参数异常
+   * @throws WMSException
+   *           其他业务异常
+   */
+  String insert(Company company) throws IllegalArgumentException, WMSException;
 
-    /**
-     * 根据名称获取企业信息
-     * 
-     * @param name
-     *            企业名称
-     * @return 企业信息
-     */
-    Company getByName(String name);
+  /**
+   * 根据名称获取企业信息
+   * 
+   * @param name
+   *          企业名称
+   * @return 企业信息
+   */
+  Company getByName(String name);
 }

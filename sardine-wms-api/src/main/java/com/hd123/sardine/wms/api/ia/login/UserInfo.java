@@ -27,6 +27,25 @@ public class UserInfo implements Serializable {
     private String companyName;
 
     private boolean administrator;
+    
+    private String ownedResources;
+    private String ownedMenus;
+
+    public String getOwnedMenus() {
+      return ownedMenus;
+    }
+
+    public void setOwnedMenus(String ownedMenus) {
+      this.ownedMenus = ownedMenus;
+    }
+
+    public String getOwnedResources() {
+      return ownedResources;
+    }
+
+    public void setOwnedResources(String ownedResources) {
+      this.ownedResources = ownedResources;
+    }
 
     public boolean isAdministrator() {
         return administrator;

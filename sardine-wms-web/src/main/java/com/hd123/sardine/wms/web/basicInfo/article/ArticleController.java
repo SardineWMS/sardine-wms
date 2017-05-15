@@ -72,7 +72,7 @@ public class ArticleController extends BaseController {
       @RequestParam(value = "token") String token) {
     RespObject resp = new RespObject();
     try {
-      Article article = articleService.getByCode(articleCode, getLoginCompany(token).getUuid());
+      Article article = articleService.getByCode(articleCode);
       resp.setObj(article);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
@@ -102,7 +102,6 @@ public class ArticleController extends BaseController {
       definition.put(ArticleService.QUERY_NAME_FIELD, name);
       definition.put(ArticleService.QUERY_STATE_FIELD,
           StringUtil.isNullOrBlank(state) ? null : ArticleState.valueOf(state));
-      definition.setCompanyUuid(getLoginCompany(token).getUuid());
       PageQueryResult<Article> result = articleService.query(definition);
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -122,9 +121,9 @@ public class ArticleController extends BaseController {
       article.setCompanyUuid(getLoginCompany(token).getUuid());
       String articleUuid = article.getUuid();
       if (StringUtil.isNullOrBlank(article.getUuid()))
-        articleUuid = articleService.insert(article, getOperateContext(token));
+        articleUuid = articleService.insert(article);
       else
-        articleService.update(article, getOperateContext(token));
+        articleService.update(article);
       resp.setObj(articleService.get(articleUuid));
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
@@ -141,7 +140,7 @@ public class ArticleController extends BaseController {
       @RequestParam(value = "supplierCode", required = true) String supplierCode) {
     RespObject resp = new RespObject();
     try {
-      Supplier supplier = supplierService.getByCode(supplierCode,getLoginCompany(token).getUuid());
+      Supplier supplier = supplierService.getByCode(supplierCode);
       if (supplier == null)
         throw new Exception("供应商" + supplierCode + "不存在，");
       ArticleSupplier as = new ArticleSupplier();
@@ -150,7 +149,7 @@ public class ArticleController extends BaseController {
       as.setSupplierUuid(supplier.getUuid());
       as.setSupplierCode(supplier.getCode());
       as.setSupplierName(supplier.getName());
-      articleService.insertArticleSupplier(as, getOperateContext(token));
+      articleService.insertArticleSupplier(as);
 
       Article article = articleService.get(articleUuid);
       resp.setObj(article);
@@ -186,7 +185,7 @@ public class ArticleController extends BaseController {
       @RequestParam(value = "uuid", required = true) String uuid) {
     RespObject resp = new RespObject();
     try {
-      articleService.deleteArticleSupplier(articleUuid, uuid, getOperateContext(token));
+      articleService.deleteArticleSupplier(articleUuid, uuid);
       Article article = articleService.get(articleUuid);
       resp.setObj(article);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -203,7 +202,7 @@ public class ArticleController extends BaseController {
       @RequestParam(value = "uuid", required = true) String uuid) {
     RespObject resp = new RespObject();
     try {
-      articleService.setDefaultArticleSupplier(articleUuid, uuid, getOperateContext(token));
+      articleService.setDefaultArticleSupplier(articleUuid, uuid);
       Article article = articleService.get(articleUuid);
       resp.setObj(article);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -220,7 +219,7 @@ public class ArticleController extends BaseController {
       @RequestParam(value = "uuid", required = true) String uuid) {
     RespObject resp = new RespObject();
     try {
-      articleService.setDefaultArticleQpc(articleUuid, uuid, getOperateContext(token));
+      articleService.setDefaultArticleQpc(articleUuid, uuid);
       Article article = articleService.get(articleUuid);
       resp.setObj(article);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -237,7 +236,7 @@ public class ArticleController extends BaseController {
       @RequestParam(value = "uuid", required = true) String uuid) {
     RespObject resp = new RespObject();
     try {
-      articleService.deleteArticleQpc(articleUuid, uuid, getOperateContext(token));
+      articleService.deleteArticleQpc(articleUuid, uuid);
       Article article = articleService.get(articleUuid);
       resp.setObj(article);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -270,7 +269,7 @@ public class ArticleController extends BaseController {
       qpc.setDefault_(false);
       qpc.setUuid(uuid);
       qpc.setArticleUuid(articleUuid);
-      articleService.insertArticleQpc(qpc, getOperateContext(token));
+      articleService.insertArticleQpc(qpc);
       Article article = articleService.get(articleUuid);
       resp.setObj(article);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -305,7 +304,7 @@ public class ArticleController extends BaseController {
       @RequestParam(value = "uuid", required = true) String uuid) {
     RespObject resp = new RespObject();
     try {
-      articleService.deleteArticleBarcode(articleUuid, uuid, getOperateContext(token));
+      articleService.deleteArticleBarcode(articleUuid, uuid);
       Article article = articleService.get(articleUuid);
       resp.setObj(article);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -329,7 +328,7 @@ public class ArticleController extends BaseController {
       articleBarcode.setBarcode(barcode);
       articleBarcode.setQpcStr(qpcStr);
       articleBarcode.setArticleUuid(articleUuid);
-      articleService.insertArticleBarcode(articleBarcode, getOperateContext(token));
+      articleService.insertArticleBarcode(articleBarcode);
       Article article = articleService.get(articleUuid);
       resp.setObj(article);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

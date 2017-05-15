@@ -17,20 +17,17 @@ package com.hd123.sardine.wms.common.utils;
  */
 public class Constants {
 
-  /** 公司ID起始序号 */
-  public static final String COMPANY_ID_START = "100001";
-
   /** 资源标示前缀，用于后续扩展 */
   public static final String RESOURCE_PREFIX = "xxxx";
 
   /** 配送中心ID前缀 */
-  public static final String DC_PREFIX = "dc";
+  public static final String DC_PREFIX = "d";
 
   /** 供应商ID前缀 */
-  public static final String SUPP_PREFIX = "supp";
+  public static final String SUPP_PREFIX = "s";
 
   /** 承运商ID前缀 */
-  public static final String CARR_PREFIX = "carr";
+  public static final String CARR_PREFIX = "c";
 
   /** 数据库前缀名 */
   public static final String DB_PREFIX = "sardine";

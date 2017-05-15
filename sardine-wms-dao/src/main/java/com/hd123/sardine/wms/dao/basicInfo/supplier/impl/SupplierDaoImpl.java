@@ -9,12 +9,12 @@
  */
 package com.hd123.sardine.wms.dao.basicInfo.supplier.impl;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.dao.basicInfo.supplier.SupplierDao;
 
 /**
@@ -22,15 +22,14 @@ import com.hd123.sardine.wms.dao.basicInfo.supplier.SupplierDao;
  *
  */
 public class SupplierDaoImpl extends BaseDaoImpl<Supplier> implements SupplierDao {
-    public static final String MAPPER_GETBYCODE = "getByCode";
+  public static final String MAPPER_GETBYCODE = "getByCode";
 
-    @Override
-    public Supplier getByCode(String code, String companyUuid) {
-        if (StringUtil.isNullOrBlank(code) || StringUtil.isNullOrBlank(companyUuid))
-            return null;
-        Map<String, String> map = new HashMap<>();
-        map.put("code", code);
-        map.put("companyUuid", companyUuid);
-        return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE), map);
-    }
+  @Override
+  public Supplier getByCode(String code) {
+    if (StringUtil.isNullOrBlank(code))
+      return null;
+    Map<String, Object> map = ApplicationContextUtil.mapWithParentCompanyUuid();
+    map.put("code", code);
+    return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE), map);
+  }
 }

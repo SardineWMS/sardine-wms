@@ -19,24 +19,25 @@ import com.hd123.sardine.wms.api.ia.resource.Resource;
  */
 public interface ResourceDao {
 
-    void saveRoleResource(String roleUuid, String resourceUuid);
+  void saveRoleResource(String roleUuid, String resourceUuid);
 
-    void saveUserResource(String userUuid, String resourceUUuid);
+  void saveUserResource(String userUuid, String resourceUUuid);
 
-    List<Resource> queryAllTopMenuResource();
+  List<Resource> queryAllTopMenuResource();
 
-    List<Resource> queryOwnedTopMenuResourceByRole(String roleUuid);
+  List<Resource> queryOwnedTopMenuResourceByRole(String roleUuid);
 
-    List<Resource> queryOwnedTopMenuResourceByUser(String userUuid);
-    
-    List<Resource> queryAllChildResource(String resourceUuid);
+  List<Resource> queryOwnedTopMenuResourceByUser(String userUuid);
 
-    List<Resource> queryOwnedChildResourceByRole(String roleUuid, String resourceUuid);
+  List<Resource> queryAllChildResource(String resourceUuid);
 
-    List<Resource> queryOwnedChildResourceByUser(String userUuid, String resourceUuid);
+  List<Resource> queryOwnedChildResourceByRole(String roleUuid, String resourceUuid);
 
-    void removeResourceByUser(String userUuid);
+  List<Resource> queryOwnedChildResourceByUser(String userUuid, String resourceUuid);
 
-    void removeResourceByRole(String roleUuid);
+  void removeResourceByUser(String userUuid);
 
+  void removeResourceByRole(String roleUuid);
+
+  List<Resource> queryOwnedOperateByUser(String userUuid);
 }

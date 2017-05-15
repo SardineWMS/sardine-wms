@@ -9,9 +9,12 @@
  */
 package com.hd123.sardine.wms.dao.basicInfo.customer.impl;
 
+import java.util.Map;
+
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.customer.Customer;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.dao.basicInfo.customer.CustomerDao;
 
 /**
@@ -19,19 +22,21 @@ import com.hd123.sardine.wms.dao.basicInfo.customer.CustomerDao;
  *
  */
 public class CustomerDaoImpl extends BaseDaoImpl<Customer> implements CustomerDao {
-    public static final String MAPPER_GETBYCODE = "getByCode";
-    public static final String MAPPER_UPDATESTATE = "updateState";
+  public static final String MAPPER_GETBYCODE = "getByCode";
+  public static final String MAPPER_UPDATESTATE = "updateState";
 
-    @Override
-    public Customer getByCode(String code) {
-        if (StringUtil.isNullOrBlank(code))
-            return null;
-        return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE), code);
-    }
+  @Override
+  public Customer getByCode(String code) {
+    if (StringUtil.isNullOrBlank(code))
+      return null;
+    Map<String, Object> map = ApplicationContextUtil.mapWithParentCompanyUuid();
+    map.put("code", code);
+    return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE), map);
+  }
 
-    @Override
-    public int updateState(Customer customer) {
-        return getSqlSession().update(generateStatement(MAPPER_UPDATESTATE), customer);
-    }
+  @Override
+  public int updateState(Customer customer) {
+    return getSqlSession().update(generateStatement(MAPPER_UPDATESTATE), customer);
+  }
 
 }

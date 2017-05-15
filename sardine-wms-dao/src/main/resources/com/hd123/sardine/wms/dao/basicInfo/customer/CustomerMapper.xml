@@ -78,11 +78,12 @@
 		where t.uuid=#{uuid,jdbcType=VARCHAR}
 	</select>
 
-	<select id="getByCode" parameterType="java.lang.String"
+	<select id="getByCode" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
 		select * from db_proxy.sardine_customer t
 		where
 		t.code=#{code,jdbcType=VARCHAR}
+		and t.companyUuid = #{companyUuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="queryByPage" parameterType="PageQueryDefinition"

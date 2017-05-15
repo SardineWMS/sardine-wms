@@ -63,7 +63,6 @@ public class ArticleInsertValidateHandler extends GenericValidateHandler<Article
     on("商品名称", bean.getName(), length100Validator);
     on("商品规格", bean.getSpec(), notNullValidator);
     on("商品规格", bean.getSpec(), length30Validator);
-    on("组织id", bean.getCompanyUuid(), notNullValidator);
     on("商品类别", bean.getCategory(), notNullValidator);
 
     Article article = (Article) getAttribute(KEY_CODEEXISTS_ARTICLE);

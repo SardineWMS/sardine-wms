@@ -16,6 +16,7 @@ import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.entity.Operator;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.SerializationUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 
@@ -41,6 +42,8 @@ public abstract class BaseController {
 
   public void checkUserInfo(String token) {
     getLoginUser(token);
+    ApplicationContextUtil.setCompany(getLoginCompany(token));
+    ApplicationContextUtil.setOperateContext(getOperateContext(token));
   }
 
   public String setLoginInfoCache(UserInfo userInfo) {
@@ -63,7 +66,6 @@ public abstract class BaseController {
     if (StringUtil.isNullOrBlank(loginCache)) {
       throw new NotLoginInfoException("登录信息为空，请重新登录");
     }
-
     try {
       UserInfo info = SerializationUtils.deserialize(loginCache, UserInfo.class);
       UCN user = new UCN(info.getUuid(), info.getCode(), info.getName());

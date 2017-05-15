@@ -39,7 +39,6 @@ public class CompanyInsertValidateHandler extends GenericValidateHandler<Company
         on("企业信息", bean, notNullValidator);
         on("企业名称", bean.getName(), notNullValidator);
         on("企业名称", bean.getName(), length100Validator);
-        on("企业地址", bean.getAddress(), notNullValidator);
         on("企业地址", bean.getAddress(), length100Validator);
         on("主页", bean.getHomePage(), length100Validator);
 

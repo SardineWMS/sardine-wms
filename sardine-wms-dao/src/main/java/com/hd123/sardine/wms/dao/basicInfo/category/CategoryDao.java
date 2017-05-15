@@ -18,11 +18,11 @@ import com.hd123.sardine.wms.api.basicInfo.category.Category;
  *
  */
 public interface CategoryDao {
-    Category getByCode(String code, String companyUuid);
+    Category getByCode(String code);
 
     Category get(String uuid);
 
-    List<Category> getRootCategorys(String companyUuid);
+    List<Category> getRootCategorys();
 
     List<Category> getLowerCategorys(String categoryUuid);
 

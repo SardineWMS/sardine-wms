@@ -19,13 +19,12 @@ import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
 import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierService;
 import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierState;
-import com.hd123.sardine.wms.common.entity.OperateContext;
-import com.hd123.sardine.wms.common.entity.OperateInfo;
 import com.hd123.sardine.wms.common.exception.EntityNotFoundException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.common.validator.ValidateHandler;
@@ -42,133 +41,122 @@ import com.hd123.sardine.wms.service.log.EntityLogger;
  */
 public class SupplierServiceImpl extends BaseWMSService implements SupplierService {
 
-    @Autowired
-    private SupplierDao dao;
-    @Autowired
-    private EntityLogger logger;
+  @Autowired
+  private SupplierDao dao;
+  @Autowired
+  private EntityLogger logger;
 
-    @Autowired
-    private ValidateHandler<Supplier> supplierSaveNewValidateHandler;
+  @Autowired
+  private ValidateHandler<Supplier> supplierSaveNewValidateHandler;
 
-    @Autowired
-    private ValidateHandler<Supplier> supplierSaveModifyValidateHandler;
+  @Autowired
+  private ValidateHandler<Supplier> supplierSaveModifyValidateHandler;
 
-    @Autowired
-    private ValidateHandler<OperateContext> operateContextValidateHandler;
+  @Override
+  public Supplier get(String uuid) {
+    if (StringUtil.isNullOrBlank(uuid))
+      return null;
+    return dao.get(uuid);
+  }
 
-    @Override
-    public Supplier get(String uuid) {
-        if (StringUtil.isNullOrBlank(uuid))
-            return null;
-        return dao.get(uuid);
-    }
+  @Override
+  public Supplier getByCode(String code) {
+    if (StringUtil.isNullOrBlank(code))
+      return null;
+    return dao.getByCode(code);
+  }
 
-    @Override
-    public Supplier getByCode(String code, String companyUuid) {
-        if (StringUtil.isNullOrBlank(code) || StringUtil.isNullOrBlank(companyUuid))
-            return null;
-        return dao.getByCode(code, companyUuid);
-    }
+  @Override
+  public PageQueryResult<Supplier> query(PageQueryDefinition definition)
+      throws IllegalArgumentException {
+    Assert.assertArgumentNotNull(definition, "definition");
+    definition.setCompanyUuid(ApplicationContextUtil.getParentCompanyUuid());
+    PageQueryResult<Supplier> pgr = new PageQueryResult<Supplier>();
+    List<Supplier> list = dao.query(definition);
+    PageQueryUtil.assignPageInfo(pgr, definition);
+    pgr.setRecords(list);
+    return pgr;
+  }
 
-    @Override
-    public PageQueryResult<Supplier> query(PageQueryDefinition definition)
-            throws IllegalArgumentException {
+  @Override
+  public String saveNew(Supplier supplier) throws IllegalArgumentException, WMSException {
+    ValidateResult saveNewResult = supplierSaveNewValidateHandler.validate(supplier);
+    checkValidateResult(saveNewResult);
 
-        PageQueryResult<Supplier> pgr = new PageQueryResult<Supplier>();
-        List<Supplier> list = dao.query(definition);
-        PageQueryUtil.assignPageInfo(pgr, definition);
-        pgr.setRecords(list);
-        return pgr;
-    }
+    Supplier dbSupplier = dao.getByCode(supplier.getCode());
+    if (dbSupplier != null)
+      throw new WMSException("已存在代码为" + supplier.getCode() + "的供应商");
 
-    @Override
-    public String saveNew(Supplier supplier, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException {
-        ValidateResult saveNewResult = supplierSaveNewValidateHandler.validate(supplier);
-        checkValidateResult(saveNewResult);
-        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-        checkValidateResult(operCtxResult);
+    supplier.setUuid(UUIDGenerator.genUUID());
+    supplier.setCompanyUuid(ApplicationContextUtil.getParentCompanyUuid());
+    supplier.setCreateInfo(ApplicationContextUtil.getOperateInfo());
+    supplier.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.insert(supplier);
 
-        Supplier dbSupplier = dao.getByCode(supplier.getCode(), supplier.getCompanyUuid());
-        if (dbSupplier != null)
-            throw new WMSException("已存在代码为" + supplier.getCode() + "的供应商");
+    logger.injectContext(this, supplier.getUuid(), Supplier.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_ADDNEW, "新增供应商");
+    return supplier.getUuid();
+  }
 
-        supplier.setUuid(UUIDGenerator.genUUID());
-        supplier.setCreateInfo(OperateInfo.newInstance(operCtx));
-        supplier.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-        dao.insert(supplier);
+  @Override
+  public void saveModify(Supplier supplier) throws IllegalArgumentException, WMSException {
+    ValidateResult saveModifyResult = supplierSaveModifyValidateHandler.validate(supplier);
+    checkValidateResult(saveModifyResult);
 
-        logger.injectContext(this, supplier.getUuid(), Supplier.class.getName(), operCtx);
-        logger.log(EntityLogger.EVENT_ADDNEW, "新增供应商");
-        return supplier.getUuid();
-    }
+    Supplier oldSupplier = dao.get(supplier.getUuid());
+    if (oldSupplier == null)
+      throw EntityNotFoundException.create(Supplier.class.getName(), "uuid", supplier.getUuid());
+    PersistenceUtils.checkVersion(supplier.getVersion(), oldSupplier, "供应商", supplier.getUuid());
 
-    @Override
-    public void saveModify(Supplier supplier, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException {
-        ValidateResult saveModifyResult = supplierSaveModifyValidateHandler.validate(supplier);
-        checkValidateResult(saveModifyResult);
-        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-        checkValidateResult(operCtxResult);
+    Supplier dbSupplier = dao.getByCode(supplier.getCode());
+    if (dbSupplier != null && ObjectUtils.notEqual(supplier.getCode(), dbSupplier.getCode()))
+      throw new WMSException("已存在代码为" + supplier.getCode() + "的供应商");
 
-        Supplier oldSupplier = dao.get(supplier.getUuid());
-        if (oldSupplier == null)
-            throw EntityNotFoundException.create(Supplier.class.getName(), "uuid",
-                    supplier.getUuid());
-        PersistenceUtils.checkVersion(supplier.getVersion(), oldSupplier, "供应商",
-                supplier.getUuid());
+    supplier.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(supplier);
 
-        Supplier dbSupplier = dao.getByCode(supplier.getCode(), supplier.getCompanyUuid());
-        if (dbSupplier != null && ObjectUtils.notEqual(supplier.getCode(), dbSupplier.getCode()))
-            throw new WMSException("已存在代码为" + supplier.getCode() + "的供应商");
+    logger.injectContext(this, supplier.getUuid(), Supplier.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_MODIFY, "修改供应商");
+  }
 
-        supplier.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-        dao.update(supplier);
-        
-        logger.injectContext(this, supplier.getUuid(), Supplier.class.getName(), operCtx);
-        logger.log(EntityLogger.EVENT_MODIFY, "修改供应商");
-    }
+  @Override
+  public void remove(String uuid, long version) throws IllegalArgumentException, WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+    Assert.assertArgumentNotNull(version, "version");
 
-    @Override
-    public void remove(String uuid, long version, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException {
-        Assert.assertArgumentNotNull(uuid, "uuid");
-        Assert.assertArgumentNotNull(version, "version");
-        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-        checkValidateResult(operCtxResult);
+    Supplier supplier = dao.get(uuid);
+    if (supplier == null)
+      throw EntityNotFoundException.create(Supplier.class.getName(), "uuid", uuid);
+    PersistenceUtils.checkVersion(version, supplier, "供应商", uuid);
 
-        Supplier supplier = dao.get(uuid);
-        if (supplier == null)
-            throw EntityNotFoundException.create(Supplier.class.getName(), "uuid", uuid);
-        PersistenceUtils.checkVersion(version, supplier, "供应商", uuid);
+    supplier.setState(SupplierState.deleted);
+    supplier.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(supplier);
 
-        supplier.setState(SupplierState.deleted);
-        supplier.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-        dao.update(supplier);
-        
-        logger.injectContext(this, supplier.getUuid(), Supplier.class.getName(), operCtx);
-        logger.log(EntityLogger.EVENT_REMOVE, "删除供应商");
-    }
+    logger.injectContext(this, supplier.getUuid(), Supplier.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_REMOVE, "删除供应商");
+  }
 
-    @Override
-    public void recover(String uuid, long version, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException {
-        Assert.assertArgumentNotNull(uuid, "uuid");
-        Assert.assertArgumentNotNull(version, "version");
-        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-        checkValidateResult(operCtxResult);
+  @Override
+  public void recover(String uuid, long version) throws IllegalArgumentException, WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+    Assert.assertArgumentNotNull(version, "version");
 
-        Supplier supplier = dao.get(uuid);
-        if (supplier == null)
-            throw EntityNotFoundException.create(Supplier.class.getName(), "uuid", uuid);
-        PersistenceUtils.checkVersion(version, supplier, "供应商", uuid);
+    Supplier supplier = dao.get(uuid);
+    if (supplier == null)
+      throw EntityNotFoundException.create(Supplier.class.getName(), "uuid", uuid);
+    PersistenceUtils.checkVersion(version, supplier, "供应商", uuid);
 
-        supplier.setState(SupplierState.normal);
-        supplier.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-        dao.update(supplier);
-        
-        logger.injectContext(this, supplier.getUuid(), Supplier.class.getName(), operCtx);
-        logger.log(EntityLogger.EVENT_MODIFY, "恢复供应商");
-    }
+    supplier.setState(SupplierState.normal);
+    supplier.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(supplier);
+
+    logger.injectContext(this, supplier.getUuid(), Supplier.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_MODIFY, "恢复供应商");
+  }
 
 }

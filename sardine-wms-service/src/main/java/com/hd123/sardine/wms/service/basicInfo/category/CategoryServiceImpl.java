@@ -18,9 +18,8 @@ import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.category.Category;
 import com.hd123.sardine.wms.api.basicInfo.category.CategoryService;
-import com.hd123.sardine.wms.common.entity.OperateContext;
-import com.hd123.sardine.wms.common.entity.OperateInfo;
 import com.hd123.sardine.wms.common.exception.WMSException;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.basicInfo.category.CategoryDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
@@ -30,97 +29,94 @@ import com.hd123.sardine.wms.service.ia.BaseWMSService;
  *
  */
 public class CategoryServiceImpl extends BaseWMSService implements CategoryService {
-    @Autowired
-    private CategoryDao dao;
+  @Autowired
+  private CategoryDao dao;
 
-    @Override
-    public List<Category> getRootCategorys(String companyUuid) {
-        if (StringUtil.isNullOrBlank(companyUuid))
-            return new ArrayList<>();
+  @Override
+  public List<Category> getRootCategorys() {
 
-        List<Category> categorys = dao.getRootCategorys(companyUuid);
-        for (Category o : categorys) {
-            o.setChildren(queryLowers(o.getUuid()));
-        }
-        return categorys;
+    List<Category> categorys = dao.getRootCategorys();
+    for (Category o : categorys) {
+      o.setChildren(queryLowers(o.getUuid()));
+    }
+    return categorys;
+  }
+
+  private List<Category> queryLowers(String categoryUuid) {
+    List<Category> categorys = dao.getLowerCategorys(categoryUuid);
+    for (Category o : categorys) {
+      o.setChildren(queryLowers(o.getUuid()));
+    }
+    return categorys;
+  }
+
+  @Override
+  public List<Category> getLowerCategorys(String categoryUuid) {
+    if (StringUtil.isNullOrBlank(categoryUuid))
+      return new ArrayList<>();
+
+    return dao.getLowerCategorys(categoryUuid);
+  }
+
+  @Override
+  public Category get(String categoryUuid) {
+    if (StringUtil.isNullOrBlank(categoryUuid))
+      return null;
+
+    return dao.get(categoryUuid);
+  }
+
+  @Override
+  public Category getByCode(String categoryCode) {
+    if (StringUtil.isNullOrBlank(categoryCode))
+      return null;
+
+    return dao.getByCode(categoryCode);
+  }
+
+  @Override
+  public void saveNew(Category category) throws WMSException {
+    Assert.assertArgumentNotNull(category, "category");
+    Assert.assertArgumentNotNull(category.getCode(), "category.code");
+    Assert.assertArgumentNotNull(category.getName(), "category.name");
+
+    if (Category.DEFAULT_ROOTCATEGORY.equals(category.getUpperCategory()) == false) {
+      Category upperCategory = dao.get(category.getUpperCategory());
+      if (upperCategory == null)
+        throw new WMSException("上级类别不存在，无法保存。");
     }
 
-    private List<Category> queryLowers(String categoryUuid) {
-        List<Category> categorys = dao.getLowerCategorys(categoryUuid);
-        for (Category o : categorys) {
-            o.setChildren(queryLowers(o.getUuid()));
-        }
-        return categorys;
-    }
+    Category tCategory = dao.getByCode(category.getCode());
+    if (tCategory != null)
+      throw new WMSException("类别代码“" + category.getCode() + "”已经存在。");
 
-    @Override
-    public List<Category> getLowerCategorys(String categoryUuid) {
-        if (StringUtil.isNullOrBlank(categoryUuid))
-            return new ArrayList<>();
+    category.setUuid(UUIDGenerator.genUUID());
+    category.setCompanyUuid(ApplicationContextUtil.getParentCompanyUuid());
+    category.setCreateInfo(ApplicationContextUtil.getOperateInfo());
+    category.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.insert(category);
+  }
 
-        return dao.getLowerCategorys(categoryUuid);
-    }
+  @Override
+  public void saveModify(Category category) throws WMSException {
+    Assert.assertArgumentNotNull(category, "category");
+    Assert.assertArgumentNotNull(category.getCode(), "category.code");
+    Assert.assertArgumentNotNull(category.getName(), "category.name");
+    Assert.assertArgumentNotNull(category.getCompanyUuid(), "category.companyUuid");
 
-    @Override
-    public Category get(String categoryUuid) {
-        if (StringUtil.isNullOrBlank(categoryUuid))
-            return null;
+    Category tCategory = dao.getByCode(category.getCode());
+    if (tCategory != null && tCategory.getUuid().equals(category.getUuid()) == false)
+      throw new WMSException("类别代码“" + category.getCode() + "”已经存在。");
 
-        return dao.get(categoryUuid);
-    }
+    category.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(category);
+  }
 
-    @Override
-    public Category getByCode(String categoryCode, String companyUuid) {
-        if (StringUtil.isNullOrBlank(categoryCode) || StringUtil.isNullOrBlank(companyUuid))
-            return null;
+  @Override
+  public void remove(String uuid, long verison) {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+    Assert.assertArgumentNotNull(verison, "verison");
 
-        return dao.getByCode(categoryCode, companyUuid);
-    }
-
-    @Override
-    public void saveNew(Category category, OperateContext operCtx) throws WMSException {
-        Assert.assertArgumentNotNull(category, "category");
-        Assert.assertArgumentNotNull(category.getCode(), "category.code");
-        Assert.assertArgumentNotNull(category.getName(), "category.name");
-        Assert.assertArgumentNotNull(category.getCompanyUuid(), "category.companyUuid");
-
-        if (Category.DEFAULT_ROOTCATEGORY.equals(category.getUpperCategory()) == false) {
-            Category upperCategory = dao.get(category.getUpperCategory());
-            if (upperCategory == null)
-                throw new WMSException("上级类别不存在，无法保存。");
-        }
-
-        Category tCategory = dao.getByCode(category.getCode(), category.getCompanyUuid());
-        if (tCategory != null)
-            throw new WMSException("类别代码“" + category.getCode() + "”已经存在。");
-
-        category.setUuid(UUIDGenerator.genUUID());
-        category.setCreateInfo(OperateInfo.newInstance(operCtx));
-        category.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-        dao.insert(category);
-    }
-
-    @Override
-    public void saveModify(Category category, OperateContext operCtx) throws WMSException {
-        Assert.assertArgumentNotNull(category, "category");
-        Assert.assertArgumentNotNull(category.getCode(), "category.code");
-        Assert.assertArgumentNotNull(category.getName(), "category.name");
-        Assert.assertArgumentNotNull(category.getCompanyUuid(), "category.companyUuid");
-
-        Category tCategory = dao.getByCode(category.getCode(), category.getCompanyUuid());
-        if (tCategory != null && tCategory.getUuid().equals(category.getUuid()) == false)
-            throw new WMSException("类别代码“" + category.getCode() + "”已经存在。");
-
-        category.setCreateInfo(OperateInfo.newInstance(operCtx));
-        category.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-        dao.update(category);
-    }
-
-    @Override
-    public void remove(String uuid, long verison, OperateContext operCtx) {
-        Assert.assertArgumentNotNull(uuid, "uuid");
-        Assert.assertArgumentNotNull(verison, "verison");
-
-        dao.remove(uuid, verison);
-    }
+    dao.remove(uuid, verison);
+  }
 }

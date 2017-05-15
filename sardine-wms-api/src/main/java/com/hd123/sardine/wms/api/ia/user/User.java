@@ -24,6 +24,7 @@ import com.hd123.sardine.wms.common.entity.StandardEntity;
  */
 public class User extends StandardEntity {
     public static final String DEFAULT_PASSWD = "888888";
+    public static final String DEFAULT_ADMIN_PASSWD = "admin8888";
     public static final String COMPANYUUID_FLOWTYPE = "companyid";
     public static final String COMPANYCODE_PREFIX = "8";
 

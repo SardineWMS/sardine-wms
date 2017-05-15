@@ -23,7 +23,17 @@ public class DBUtils {
     if (StringUtil.isNullOrBlank(companyUuid))
       throw new IllegalArgumentException("组织ID为空，无法确定数据库名称！");
 
-    String seqNumber = companyUuid.substring(companyUuid.length() - 4, companyUuid.length());
+    String containDBName = null;
+    if (companyUuid.indexOf(Constants.DC_PREFIX) >= 0) {
+      containDBName = companyUuid.substring(0, companyUuid.indexOf(Constants.DC_PREFIX));
+    } else if (companyUuid.indexOf(Constants.SUPP_PREFIX) >= 0) {
+      containDBName = companyUuid.substring(0, companyUuid.indexOf(Constants.SUPP_PREFIX));
+    } else if (companyUuid.indexOf(Constants.CARR_PREFIX) >= 0) {
+      containDBName = companyUuid.substring(0, companyUuid.indexOf(Constants.CARR_PREFIX));
+    } else {
+      containDBName = companyUuid;
+    }
+    String seqNumber = containDBName.substring(containDBName.length() - 4, containDBName.length());
     int number = Integer.valueOf(seqNumber) % DB_COUNT;
     return Constants.DB_PREFIX.concat(String.valueOf(number + 1));
   }

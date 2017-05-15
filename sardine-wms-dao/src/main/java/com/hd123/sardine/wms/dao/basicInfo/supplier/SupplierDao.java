@@ -18,5 +18,5 @@ import com.hd123.sardine.wms.common.dao.BaseDao;
  */
 public interface SupplierDao extends BaseDao<Supplier>{
 
-    Supplier getByCode(String code,String companyUuid);
+    Supplier getByCode(String code);
 }

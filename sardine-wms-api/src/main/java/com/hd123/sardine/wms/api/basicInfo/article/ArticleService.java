@@ -9,7 +9,6 @@
  */
 package com.hd123.sardine.wms.api.basicInfo.article;
 
-import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
@@ -56,16 +55,13 @@ public interface ArticleService {
    * 
    * @param article
    *          商品，not null
-   * @param operCtx
-   *          操作信息，not null
    * @return 商品UUID
    * @throws IllegalArgumentException
    *           参数为空或者不合法
    * @throws WMSException
    *           代码重复
    */
-  String insert(Article article, OperateContext operCtx)
-      throws IllegalArgumentException, WMSException;
+  String insert(Article article) throws IllegalArgumentException, WMSException;
 
   /**
    * 编辑商品
@@ -74,16 +70,13 @@ public interface ArticleService {
    * 
    * @param article
    *          商品，not null
-   * @param operCtx
-   *          操作信息，not null
    * @return 商品UUID
    * @throws IllegalArgumentException
    *           参数为空或者不合法
    * @throws WMSException
    *           代码重复
    */
-  void update(Article article, OperateContext operCtx)
-      throws IllegalArgumentException, WMSException;
+  void update(Article article) throws IllegalArgumentException, WMSException;
 
   /**
    * 根据uuid查询商品
@@ -103,7 +96,7 @@ public interface ArticleService {
    *          组织id
    * @return 商品，不存在则返回null
    */
-  Article getByCode(String code, String companyUuid);
+  Article getByCode(String code);
 
   /**
    * 根据barcode查询商品
@@ -114,7 +107,7 @@ public interface ArticleService {
    *          组织id
    * @return 商品，不存在则返回null
    */
-  Article getByBarcode(String barcode, String companyUuid);
+  Article getByBarcode(String barcode);
 
   /**
    * 分页查询商品
@@ -135,13 +128,10 @@ public interface ArticleService {
    * 
    * @param qpc
    *          规格，not null
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    * @throws WMSException
    */
-  void insertArticleQpc(ArticleQpc qpc, OperateContext operCtx)
-      throws IllegalArgumentException, WMSException;
+  void insertArticleQpc(ArticleQpc qpc) throws IllegalArgumentException, WMSException;
 
   /**
    * 新增商品条码
@@ -151,13 +141,10 @@ public interface ArticleService {
    * 
    * @param barcode
    *          条码，not null
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    * @throws WMSException
    */
-  void insertArticleBarcode(ArticleBarcode barcode, OperateContext operCtx)
-      throws IllegalArgumentException, WMSException;
+  void insertArticleBarcode(ArticleBarcode barcode) throws IllegalArgumentException, WMSException;
 
   /**
    * 新增商品规格
@@ -168,12 +155,10 @@ public interface ArticleService {
    * 
    * @param supplier
    *          商品供应商，not null
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    * @throws WMSException
    */
-  void insertArticleSupplier(ArticleSupplier supplier, OperateContext operCtx)
+  void insertArticleSupplier(ArticleSupplier supplier)
       throws IllegalArgumentException, WMSException;
 
   /**
@@ -183,12 +168,10 @@ public interface ArticleService {
    *          商品uuid，not null
    * @param qpcUuid
    *          规格uuid，not null
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    * @throws WMSException
    */
-  void deleteArticleQpc(String articleUuid, String qpcUuid, OperateContext operCtx)
+  void deleteArticleQpc(String articleUuid, String qpcUuid)
       throws IllegalArgumentException, WMSException;
 
   /**
@@ -198,12 +181,10 @@ public interface ArticleService {
    *          商品uuid，not null
    * @param barcodeUuid
    *          条码uuid，not null
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    * @throws WMSException
    */
-  void deleteArticleBarcode(String articleUuid, String barcodeUuid, OperateContext operCtx)
+  void deleteArticleBarcode(String articleUuid, String barcodeUuid)
       throws IllegalArgumentException, WMSException;
 
   /**
@@ -213,12 +194,10 @@ public interface ArticleService {
    *          商品uuid，not null
    * @param articleSupplierUuid
    *          商品供应商uuid，not null
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    * @throws WMSException
    */
-  void deleteArticleSupplier(String articleUuid, String articleSupplierUuid, OperateContext operCtx)
+  void deleteArticleSupplier(String articleUuid, String articleSupplierUuid)
       throws IllegalArgumentException, WMSException;
 
   /**
@@ -230,14 +209,12 @@ public interface ArticleService {
    *          商品uuid，not null
    * @param articleSupplierUuid
    *          供应商uuid，not null
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    * @throws WMSException
    *           指定的供应商不存在
    */
-  void setDefaultArticleSupplier(String articleUuid, String articleSupplierUuid,
-      OperateContext operCtx) throws IllegalArgumentException, WMSException;
+  void setDefaultArticleSupplier(String articleUuid, String articleSupplierUuid)
+      throws IllegalArgumentException, WMSException;
 
   /**
    * 将指定uuid的商品规格设置为商品的默认规格
@@ -248,12 +225,10 @@ public interface ArticleService {
    *          商品uuid，not null
    * @param qpcUuid
    *          规格uuid，not null
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    * @throws WMSException
    *           指定的规格不存在
    */
-  void setDefaultArticleQpc(String articleUuid, String qpcUuid, OperateContext operCtx)
+  void setDefaultArticleQpc(String articleUuid, String qpcUuid)
       throws IllegalArgumentException, WMSException;
 }

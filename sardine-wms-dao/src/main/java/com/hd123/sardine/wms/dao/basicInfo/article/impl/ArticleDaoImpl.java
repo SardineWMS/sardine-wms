@@ -9,12 +9,12 @@
  */
 package com.hd123.sardine.wms.dao.basicInfo.article.impl;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.article.Article;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.dao.basicInfo.article.ArticleDao;
 
 /**
@@ -27,24 +27,22 @@ public class ArticleDaoImpl extends BaseDaoImpl<Article> implements ArticleDao {
   public static final String MAPPER_GETBYBARCODE = "getByBarcode";
 
   @Override
-  public Article getByCode(String code, String companyUuid) {
-    if (StringUtil.isNullOrBlank(code) || StringUtil.isNullOrBlank(companyUuid))
+  public Article getByCode(String code) {
+    if (StringUtil.isNullOrBlank(code))
       return null;
 
-    Map<String, String> map = new HashMap<String, String>();
+    Map<String, Object> map = ApplicationContextUtil.mapWithParentCompanyUuid();
     map.put("code", code);
-    map.put("companyUuid", companyUuid);
     return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE), map);
   }
 
   @Override
-  public Article getByBarcode(String barcode, String companyUuid) {
-    if (StringUtil.isNullOrBlank(barcode) || StringUtil.isNullOrBlank(companyUuid))
+  public Article getByBarcode(String barcode) {
+    if (StringUtil.isNullOrBlank(barcode))
       return null;
 
-    Map<String, String> map = new HashMap<String, String>();
+    Map<String, Object> map = ApplicationContextUtil.mapWithParentCompanyUuid();
     map.put("barcode", barcode);
-    map.put("companyUuid", companyUuid);
     return getSqlSession().selectOne(generateStatement(MAPPER_GETBYBARCODE), map);
   }
 }

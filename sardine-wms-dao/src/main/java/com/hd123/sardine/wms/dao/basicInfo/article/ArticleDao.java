@@ -18,7 +18,7 @@ import com.hd123.sardine.wms.common.dao.BaseDao;
  */
 public interface ArticleDao extends BaseDao<Article> {
 
-  Article getByCode(String code, String companyUuid);
+  Article getByCode(String code);
 
-  Article getByBarcode(String barcode, String companyUuid);
+  Article getByBarcode(String barcode);
 }

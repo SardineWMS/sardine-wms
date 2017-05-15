@@ -23,12 +23,11 @@ import com.hd123.sardine.wms.api.basicInfo.category.Category;
 import com.hd123.sardine.wms.api.basicInfo.category.CategoryService;
 import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
 import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierService;
-import com.hd123.sardine.wms.common.entity.OperateContext;
-import com.hd123.sardine.wms.common.entity.OperateInfo;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.validator.ValidateHandler;
 import com.hd123.sardine.wms.common.validator.ValidateResult;
 import com.hd123.sardine.wms.dao.basicInfo.article.ArticleBarcodeDao;
@@ -67,20 +66,16 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
   private ValidateHandler<ArticleQpc> articleQpcInsertValidateHandler;
 
   @Autowired
-  private ValidateHandler<OperateContext> operateContextValidateHandler;
-
-  @Autowired
   private CategoryService categoryService;
 
   @Autowired
   private SupplierService supplierService;
 
   @Override
-  public String insert(Article article, OperateContext operCtx)
-      throws IllegalArgumentException, WMSException {
+  public String insert(Article article) throws IllegalArgumentException, WMSException {
     Assert.assertArgumentNotNull(article, "article");
 
-    Article existsArticle = articleDao.getByCode(article.getCode(), article.getCompanyUuid());
+    Article existsArticle = articleDao.getByCode(article.getCode());
     Category category = categoryService
         .get(article.getCategory() == null ? null : article.getCategory().getUuid());
 
@@ -88,23 +83,21 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
         .putAttribute(ArticleInsertValidateHandler.KEY_CODEEXISTS_ARTICLE, existsArticle)
         .putAttribute(ArticleInsertValidateHandler.KEY_CATEGORY, category).validate(article);
     checkValidateResult(insertResult);
-    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-    checkValidateResult(operCtxResult);
 
+    article.setCompanyUuid(ApplicationContextUtil.getParentCompanyUuid());
     article.setUuid(article.getCompanyUuid() + article.getCode());
-    article.setCreateInfo(OperateInfo.newInstance(operCtx));
-    article.setLastModifyInfo(OperateInfo.newInstance(operCtx));
+    article.setCreateInfo(ApplicationContextUtil.getOperateInfo());
+    article.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     articleDao.insert(article);
 
     return article.getUuid();
   }
 
   @Override
-  public void update(Article article, OperateContext operCtx)
-      throws IllegalArgumentException, WMSException {
+  public void update(Article article) throws IllegalArgumentException, WMSException {
     Assert.assertArgumentNotNull(article, "article");
 
-    Article existsArticle = articleDao.getByCode(article.getCode(), article.getCompanyUuid());
+    Article existsArticle = articleDao.getByCode(article.getCode());
     Article updateArticle = articleDao.get(article.getUuid());
     Category category = categoryService
         .get(article.getCategory() == null ? null : article.getCategory().getUuid());
@@ -114,10 +107,8 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
         .putAttribute(ArticleUpdateValidateHandler.KEY_UPDATE_ARTICLE, updateArticle)
         .putAttribute(ArticleUpdateValidateHandler.KEY_CATEGORY, category).validate(article);
     checkValidateResult(insertResult);
-    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-    checkValidateResult(operCtxResult);
 
-    article.setLastModifyInfo(OperateInfo.newInstance(operCtx));
+    article.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     articleDao.update(article);
   }
 
@@ -133,8 +124,8 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
   }
 
   @Override
-  public Article getByCode(String code, String companyUuid) {
-    Article article = articleDao.getByCode(code, companyUuid);
+  public Article getByCode(String code) {
+    Article article = articleDao.getByCode(code);
     if (article != null) {
       article.setQpcs(articleQpcDao.queryByList(article.getUuid()));
       article.setArticleSuppliers(articleSupplierDao.queryByList(article.getUuid()));
@@ -144,8 +135,8 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
   }
 
   @Override
-  public Article getByBarcode(String barcode, String companyUuid) {
-    Article article = articleDao.getByBarcode(barcode, companyUuid);
+  public Article getByBarcode(String barcode) {
+    Article article = articleDao.getByBarcode(barcode);
     if (article != null) {
       article.setQpcs(articleQpcDao.queryByList(article.getUuid()));
       article.setArticleSuppliers(articleSupplierDao.queryByList(article.getUuid()));
@@ -167,12 +158,9 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
   }
 
   @Override
-  public void insertArticleQpc(ArticleQpc qpc, OperateContext operCtx)
-      throws IllegalArgumentException, WMSException {
+  public void insertArticleQpc(ArticleQpc qpc) throws IllegalArgumentException, WMSException {
     ValidateResult insertResult = articleQpcInsertValidateHandler.validate(qpc);
     checkValidateResult(insertResult);
-    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-    checkValidateResult(operCtxResult);
 
     Article article = articleDao.get(qpc.getArticleUuid());
     if (article == null)
@@ -197,12 +185,9 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
   }
 
   @Override
-  public void insertArticleBarcode(ArticleBarcode barcode, OperateContext operCtx)
+  public void insertArticleBarcode(ArticleBarcode barcode)
       throws IllegalArgumentException, WMSException {
     Assert.assertArgumentNotNull(barcode, "barcode");
-
-    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-    checkValidateResult(operCtxResult);
 
     ArticleQpc qpc = articleQpcDao.getByQpcStr(barcode.getArticleUuid(), barcode.getQpcStr());
     if (qpc == null)
@@ -210,8 +195,7 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
     Article article = articleDao.get(barcode.getArticleUuid());
     if (article == null)
       throw new WMSException("商品" + barcode.getArticleUuid() + "不存在。");
-    Article articleByBarcode = articleDao.getByBarcode(barcode.getBarcode(),
-        article.getCompanyUuid());
+    Article articleByBarcode = articleDao.getByBarcode(barcode.getBarcode());
     if (articleByBarcode != null
         && articleByBarcode.getUuid().equals(barcode.getArticleUuid()) == false)
       throw new WMSException("商品条码" + barcode.getBarcode() + "已被其他商品占用。");
@@ -235,12 +219,9 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
   }
 
   @Override
-  public void insertArticleSupplier(ArticleSupplier supplier, OperateContext operCtx)
+  public void insertArticleSupplier(ArticleSupplier supplier)
       throws IllegalArgumentException, WMSException {
     Assert.assertArgumentNotNull(supplier, "supplier");
-
-    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-    checkValidateResult(operCtxResult);
 
     Supplier sup = supplierService.get(supplier.getSupplierUuid());
     if (sup == null)
@@ -278,13 +259,10 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
   }
 
   @Override
-  public void deleteArticleQpc(String articleUuid, String qpcUuid, OperateContext operCtx)
+  public void deleteArticleQpc(String articleUuid, String qpcUuid)
       throws IllegalArgumentException, WMSException {
     Assert.assertArgumentNotNull(articleUuid, "articleUuid");
     Assert.assertArgumentNotNull(qpcUuid, "qpcUuid");
-
-    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-    checkValidateResult(operCtxResult);
 
     Article article = articleDao.get(articleUuid);
     if (article == null)
@@ -293,13 +271,10 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
   }
 
   @Override
-  public void deleteArticleBarcode(String articleUuid, String barcodeUuid, OperateContext operCtx)
+  public void deleteArticleBarcode(String articleUuid, String barcodeUuid)
       throws IllegalArgumentException, WMSException {
     Assert.assertArgumentNotNull(articleUuid, "articleUuid");
     Assert.assertArgumentNotNull(barcodeUuid, "barcodeUuid");
-
-    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-    checkValidateResult(operCtxResult);
 
     Article article = articleDao.get(articleUuid);
     if (article == null)
@@ -308,13 +283,10 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
   }
 
   @Override
-  public void deleteArticleSupplier(String articleUuid, String articleSupplierUuid,
-      OperateContext operCtx) throws IllegalArgumentException, WMSException {
+  public void deleteArticleSupplier(String articleUuid, String articleSupplierUuid)
+      throws IllegalArgumentException, WMSException {
     Assert.assertArgumentNotNull(articleUuid, "articleUuid");
     Assert.assertArgumentNotNull(articleSupplierUuid, "articleSupplierUuid");
-
-    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-    checkValidateResult(operCtxResult);
 
     Article article = articleDao.get(articleUuid);
     if (article == null)
@@ -323,13 +295,10 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
   }
 
   @Override
-  public void setDefaultArticleSupplier(String articleUuid, String articleSupplierUuid,
-      OperateContext operCtx) throws IllegalArgumentException, WMSException {
+  public void setDefaultArticleSupplier(String articleUuid, String articleSupplierUuid)
+      throws IllegalArgumentException, WMSException {
     Assert.assertArgumentNotNull(articleUuid, "articleUuid");
     Assert.assertArgumentNotNull(articleSupplierUuid, "articleSupplierUuid");
-
-    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-    checkValidateResult(operCtxResult);
 
     Article article = articleDao.get(articleUuid);
     if (article == null)
@@ -339,13 +308,10 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
   }
 
   @Override
-  public void setDefaultArticleQpc(String articleUuid, String qpcUuid, OperateContext operCtx)
+  public void setDefaultArticleQpc(String articleUuid, String qpcUuid)
       throws IllegalArgumentException, WMSException {
     Assert.assertArgumentNotNull(articleUuid, "articleUuid");
     Assert.assertArgumentNotNull(qpcUuid, "qpcUuid");
-
-    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-    checkValidateResult(operCtxResult);
 
     Article article = articleDao.get(articleUuid);
     if (article == null)

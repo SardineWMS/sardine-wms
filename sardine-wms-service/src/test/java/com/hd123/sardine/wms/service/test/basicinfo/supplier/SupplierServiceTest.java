@@ -32,64 +32,64 @@ import com.hd123.sardine.wms.service.test.BaseServiceTest;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class SupplierServiceTest extends BaseServiceTest {
-    private static final String UUID = "89757";
-    private static final long VERSION = 0;
+  private static final String UUID = "89757";
+  private static final long VERSION = 0;
 
-    @InjectMocks
-    public SupplierServiceImpl service;
-    @Mock
-    private SupplierDao dao;
-    @Mock
-    private EntityLogger logger;
+  @InjectMocks
+  public SupplierServiceImpl service;
+  @Mock
+  private SupplierDao dao;
+  @Mock
+  private EntityLogger logger;
 
-    @Test
-    public void insert() throws Exception {
-        Supplier supplier = SupplierBuilder.supplier().withUuid(null).build();
+  @Test
+  public void insert() throws Exception {
+    Supplier supplier = SupplierBuilder.supplier().withUuid(null).build();
 
-        service.saveNew(supplier, defaultOperCtx());
+    service.saveNew(supplier);
 
-        verify(dao).insert(supplier);
-        Assertions.assertThat(supplier.getUuid()).isNotEmpty();
-    }
+    verify(dao).insert(supplier);
+    Assertions.assertThat(supplier.getUuid()).isNotEmpty();
+  }
 
-    @Test
-    public void update() throws Exception {
-        Supplier supplier = SupplierBuilder.supplier().withUuid(UUID).withVersion(0).build();
-        when(dao.get(UUID)).thenReturn(supplier);
+  @Test
+  public void update() throws Exception {
+    Supplier supplier = SupplierBuilder.supplier().withUuid(UUID).withVersion(0).build();
+    when(dao.get(UUID)).thenReturn(supplier);
 
-        service.saveModify(supplier, defaultOperCtx());
+    service.saveModify(supplier);
 
-        verify(dao).update(supplier);
-        Assertions.assertThat(supplier.getLastModifyInfo().getOperator())
-                .isEqualTo(defaultOperCtx().getOperator());
-    }
+    verify(dao).update(supplier);
+    Assertions.assertThat(supplier.getLastModifyInfo().getOperator())
+        .isEqualTo(defaultOperCtx().getOperator());
+  }
 
-    @Test
-    public void remove() throws Exception {
-        Supplier supplier = SupplierBuilder.supplier().withUuid(UUID)
-                .withState(SupplierState.normal).withVersion(VERSION).build();
-        when(dao.get(UUID)).thenReturn(supplier);
+  @Test
+  public void remove() throws Exception {
+    Supplier supplier = SupplierBuilder.supplier().withUuid(UUID).withState(SupplierState.normal)
+        .withVersion(VERSION).build();
+    when(dao.get(UUID)).thenReturn(supplier);
 
-        service.remove(UUID, VERSION, defaultOperCtx());
+    service.remove(UUID, VERSION);
 
-        verify(dao).update(supplier);
-        Assertions.assertThat(SupplierState.deleted).isEqualTo(supplier.getState());
-        Assertions.assertThat(supplier.getLastModifyInfo().getOperator())
-                .isEqualTo(defaultOperCtx().getOperator());
-    }
+    verify(dao).update(supplier);
+    Assertions.assertThat(SupplierState.deleted).isEqualTo(supplier.getState());
+    Assertions.assertThat(supplier.getLastModifyInfo().getOperator())
+        .isEqualTo(defaultOperCtx().getOperator());
+  }
 
-    @Test
-    public void recover() throws Exception {
-        Supplier supplier = SupplierBuilder.supplier().withUuid(UUID)
-                .withState(SupplierState.deleted).withVersion(VERSION).build();
-        when(dao.get(UUID)).thenReturn(supplier);
+  @Test
+  public void recover() throws Exception {
+    Supplier supplier = SupplierBuilder.supplier().withUuid(UUID).withState(SupplierState.deleted)
+        .withVersion(VERSION).build();
+    when(dao.get(UUID)).thenReturn(supplier);
 
-        service.recover(UUID, VERSION, defaultOperCtx());
+    service.recover(UUID, VERSION);
 
-        verify(dao).update(supplier);
-        Assertions.assertThat(SupplierState.normal).isEqualTo(supplier.getState());
-        Assertions.assertThat(supplier.getLastModifyInfo().getOperator())
-                .isEqualTo(defaultOperCtx().getOperator());
-    }
+    verify(dao).update(supplier);
+    Assertions.assertThat(SupplierState.normal).isEqualTo(supplier.getState());
+    Assertions.assertThat(supplier.getLastModifyInfo().getOperator())
+        .isEqualTo(defaultOperCtx().getOperator());
+  }
 
 }

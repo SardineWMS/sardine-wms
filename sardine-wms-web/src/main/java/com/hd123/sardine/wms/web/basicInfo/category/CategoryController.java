@@ -42,7 +42,7 @@ public class CategoryController extends BaseController {
       @RequestParam(value = "token", required = true) String token) {
     try {
       RespObject resp = new RespObject();
-      List<Category> categorys = categoryService.getRootCategorys(getLoginCompany(token).getUuid());
+      List<Category> categorys = categoryService.getRootCategorys();
       resp.setObj(categorys);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
       return resp;
@@ -70,8 +70,7 @@ public class CategoryController extends BaseController {
       @RequestBody Category category) {
     RespObject resp = new RespObject();
     try {
-      category.setCompanyUuid(getLoginCompany(token).getUuid());
-      categoryService.saveNew(category, getOperateContext(token));
+      categoryService.saveNew(category);
       resp.setObj(category.getCode());
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
@@ -86,8 +85,7 @@ public class CategoryController extends BaseController {
       @RequestBody Category category) {
     try {
       RespObject resp = new RespObject();
-      category.setCompanyUuid(getLoginCompany(token).getUuid());
-      categoryService.saveModify(category, getOperateContext(token));
+      categoryService.saveModify(category);
       resp.setObj(category.getCode());
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
       return resp;
@@ -102,7 +100,7 @@ public class CategoryController extends BaseController {
       @RequestParam(value = "token", required = true) String token) {
     try {
       RespObject resp = new RespObject();
-      categoryService.remove(uuid, version, getOperateContext(token));
+      categoryService.remove(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
       return resp;
     } catch (Exception e) {

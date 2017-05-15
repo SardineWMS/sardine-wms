@@ -34,42 +34,41 @@ import com.hd123.sardine.wms.service.test.BaseServiceTest;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CustomerServiceTest extends BaseServiceTest {
-    private static final String UUID = "UUID";
+  private static final String UUID = "UUID";
 
-    @InjectMocks
-    public CustomerServiceImpl service;
-    @Mock
-    private CustomerDao dao;
-    @Captor
-    private ArgumentCaptor<Customer> customerCaptor;
+  @InjectMocks
+  public CustomerServiceImpl service;
+  @Mock
+  private CustomerDao dao;
+  @Captor
+  private ArgumentCaptor<Customer> customerCaptor;
 
-    @Test
-    public void insert() throws Exception {
-        Customer customer = CustomerBuilder.customer().withState(CustomerState.normal).build();
-        when(dao.getByCode(anyString())).thenReturn(null);
-        service.insert(customer, defaultOperCtx());
-        verify(dao).insert(customerCaptor.capture());
-        Assertions.assertThat(customerCaptor.getValue().getUuid()).isNotEmpty();
-    }
+  @Test
+  public void insert() throws Exception {
+    Customer customer = CustomerBuilder.customer().withState(CustomerState.normal).build();
+    when(dao.getByCode(anyString())).thenReturn(null);
+    service.insert(customer);
+    verify(dao).insert(customerCaptor.capture());
+    Assertions.assertThat(customerCaptor.getValue().getUuid()).isNotEmpty();
+  }
 
-    @Test
-    public void deleteState() throws Exception {
-        Customer customer = CustomerBuilder.customer().withState(CustomerState.normal)
-                .withVersion(0).withUuid(UUID).build();
-        when(dao.get(anyString())).thenReturn(customer);
-        service.removeState(UUID, 0, defaultOperCtx());
-        verify(dao).update(customerCaptor.capture());
-        Assertions.assertThat(customerCaptor.getValue().getState())
-                .isEqualTo(CustomerState.deleted);
-    }
+  @Test
+  public void deleteState() throws Exception {
+    Customer customer = CustomerBuilder.customer().withState(CustomerState.normal).withVersion(0)
+        .withUuid(UUID).build();
+    when(dao.get(anyString())).thenReturn(customer);
+    service.removeState(UUID, 0);
+    verify(dao).update(customerCaptor.capture());
+    Assertions.assertThat(customerCaptor.getValue().getState()).isEqualTo(CustomerState.deleted);
+  }
 
-    @Test
-    public void recover() throws Exception {
-        Customer customer = CustomerBuilder.customer().withState(CustomerState.deleted)
-                .withVersion(0).withUuid(UUID).build();
-        when(dao.get(anyString())).thenReturn(customer);
-        service.recover(UUID, 0, defaultOperCtx());
-        verify(dao).update(customerCaptor.capture());
-        Assertions.assertThat(customerCaptor.getValue().getState()).isEqualTo(CustomerState.normal);
-    }
+  @Test
+  public void recover() throws Exception {
+    Customer customer = CustomerBuilder.customer().withState(CustomerState.deleted).withVersion(0)
+        .withUuid(UUID).build();
+    when(dao.get(anyString())).thenReturn(customer);
+    service.recover(UUID, 0);
+    verify(dao).update(customerCaptor.capture());
+    Assertions.assertThat(customerCaptor.getValue().getState()).isEqualTo(CustomerState.normal);
+  }
 }

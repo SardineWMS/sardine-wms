@@ -53,6 +53,13 @@
 		and ur.useruuid=#{userUuid,jdbcType=VARCHAR}
 	</select>
 	
+    <select id="queryOwnedOperateByUser" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select r.* from sardine_user_resource ur,sardine_resource r
+		where ur.resourceuuid=r.uuid
+		and ur.useruuid=#{userUuid,jdbcType=VARCHAR}
+		and r.type = 'operator'
+	</select>
+	
 	<select id="queryAllChildResource" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select r.* from sardine_resource r
 		where r.upperuuid=#{resourceUuid,jdbcType=VARCHAR}
