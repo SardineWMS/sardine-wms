@@ -40,7 +40,7 @@ public class StockExtendInfo implements Serializable {
   private String sourceBillType;
   private int sourceLineNumber;
   private String sourceLineUuid;
-  private BigDecimal qpc;
+//  private BigDecimal qpc;
   private BigDecimal qty;
   private String qpcStr;
   private String measureUnit;
@@ -158,13 +158,13 @@ public class StockExtendInfo implements Serializable {
     this.sourceLineUuid = sourceLineUuid;
   }
 
-  public BigDecimal getQpc() {
-    return qpc;
-  }
-
-  public void setQpc(BigDecimal qpc) {
-    this.qpc = qpc;
-  }
+//  public BigDecimal getQpc() {
+//    return qpc;
+//  }
+//
+//  public void setQpc(BigDecimal qpc) {
+//    this.qpc = qpc;
+//  }
 
   public BigDecimal getQty() {
     return qty;

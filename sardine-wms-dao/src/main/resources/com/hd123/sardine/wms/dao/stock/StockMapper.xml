@@ -24,7 +24,6 @@
 			jdbcType="INTEGER" />
 		<result column="sourceLineUuid" property="sourceLineUuid"
 			jdbcType="VARCHAR" />
-		<result column="qpc" property="qpc" jdbcType="DECIMAL" />
 		<result column="qty" property="qty" jdbcType="DECIMAL" />
 		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
 		<result column="measureUnit" property="measureUnit" jdbcType="VARCHAR" />
@@ -63,7 +62,6 @@
 			jdbcType="INTEGER" />
 		<result column="sourceLineUuid" property="sourceLineUuid"
 			jdbcType="VARCHAR" />
-		<result column="qpc" property="qpc" jdbcType="DECIMAL" />
 		<result column="qty" property="qty" jdbcType="DECIMAL" />
 		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
 		<result column="measureUnit" property="measureUnit" jdbcType="VARCHAR" />
@@ -145,9 +143,6 @@
 			<if test="sourceLineUuid != null">
 				sourceLineUuid,
 			</if>
-			<if test="qpc != null">
-				qpc,
-			</if>
 			<if test="qty != null">
 				qty,
 			</if>
@@ -212,9 +207,6 @@
 			</if>
 			<if test="sourceLineUuid != null">
 				#{sourceLineUuid,jdbcType=VARCHAR},
-			</if>
-			<if test="qpc != null">
-				#{qpc,jdbcType=DECIMAL},
 			</if>
 			<if test="qty != null">
 				#{qty,jdbcType=DECIMAL},
