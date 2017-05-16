@@ -15,6 +15,6 @@
 
 	<context:component-scan base-package="com.hd123.sardine.wms.common">
 		<context:include-filter type="regex"
-			expression="(.*Validator)|(.*ValidateHandler)" />
+			expression="(.*Validator)|(.*ValidateHandler)|(.*Helper)" />
 	</context:component-scan>
 </beans>

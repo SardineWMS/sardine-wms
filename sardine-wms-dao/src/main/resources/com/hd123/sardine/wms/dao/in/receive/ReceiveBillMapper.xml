@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.hd123.sardine.wms.dao.in.receive.ReceiveBillDaoImpl">
+<mapper namespace="com.hd123.sardine.wms.dao.in.receive.impl.ReceiveBillDaoImpl">
 	<resultMap id="ReceiveBillMap"
 		type="com.hd123.sardine.wms.api.in.receive.ReceiveBill">
 		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
@@ -29,7 +29,8 @@
 		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
 		<result column="orderBillNumber" property="orderBillNumber"
 			jdbcType="VARCHAR" />
-		<result column="createdtime" property="createInfo.time"
+		<result column="totalAmount" property="totalAmount" jdbcType="DECIMAL" />
+		<result column=" createdtime " property="createInfo.time"
 			jdbcType="TIMESTAMP" />
 		<result column="createdID" property="createInfo.operator.id"
 			jdbcType="VARCHAR" />
@@ -71,7 +72,10 @@
 		<result column="articleName" property="article.name" jdbcType="VARCHAR" />
 		<result column="articleSpec" property="articleSpec" jdbcType="VARCHAR" />
 		<result column="munit" property="munit" jdbcType="VARCHAR" />
-		<result column="orderBillLineUuid" property="orderBillLineUuid" jdbcType="VARCHAR" />
+		<result column="orderBillLineUuid" property="orderBillLineUuid"
+			jdbcType="VARCHAR" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="amount" property="amount" jdbcType="DECIMAL" />
 	</resultMap>
 
 	<insert id="insert" parameterType="com.hd123.sardine.wms.api.in.receive.ReceiveBill">
@@ -86,6 +90,12 @@
 			<if test="supplier != null and supplier.uuid != null">
 				supplieruuid,
 			</if>
+			<if test="supplier != null and supplier.code != null">
+				suppliercode,
+			</if>
+			<if test="supplier != null and supplier.name != null">
+				suppliername,
+			</if>
 			<if test="companyUuid != null">
 				companyUuid,
 			</if>
@@ -97,6 +107,12 @@
 			</if>
 			<if test="wrh != null and wrh.uuid != null">
 				wrhuuid,
+			</if>
+			<if test="wrh != null and wrh.code != null">
+				wrhcode,
+			</if>
+			<if test="wrh != null and wrh.name != null">
+				wrhname,
 			</if>
 			<if test="method != null">
 				method,
@@ -115,6 +131,9 @@
 			</if>
 			<if test="caseQtyStr != null">
 				caseQtyStr,
+			</if>
+			<if test="totalAmount != null">
+				totalAmount,
 			</if>
 			version,
 			CREATEDTIME,
@@ -136,6 +155,12 @@
 			<if test="supplier != null and supplier.uuid != null">
 				#{supplier.uuid,jdbcType=VARCHAR},
 			</if>
+			<if test="supplier != null and supplier.code != null">
+				#{supplier.code,jdbcType=VARCHAR},
+			</if>
+			<if test="supplier != null and supplier.name != null">
+				#{supplier.name,jdbcType=VARCHAR},
+			</if>
 			<if test="companyUuid != null">
 				#{companyUuid,jdbcType=VARCHAR},
 			</if>
@@ -147,6 +172,12 @@
 			</if>
 			<if test="wrh != null and wrh.uuid != null">
 				#{wrh.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="wrh != null and wrh.code != null">
+				#{wrh.code,jdbcType=VARCHAR},
+			</if>
+			<if test="wrh != null and wrh.name != null">
+				#{wrh.name,jdbcType=VARCHAR},
 			</if>
 			<if test="method != null">
 				#{method,jdbcType=VARCHAR},
@@ -166,6 +197,9 @@
 			<if test="caseQtyStr != null">
 				#{caseQtyStr,jdbcType=VARCHAR},
 			</if>
+			<if test="totalAmount != null">
+				#{totalAmount,jdbcType=DECIMAL},
+			</if>
 			#{version,jdbcType=LONGVARCHAR},
 			#{createInfo.time,jdbcType=TIMESTAMP},
 			#{createInfo.operator.id,jdbcType=VARCHAR},
@@ -178,8 +212,7 @@
 		</trim>
 	</insert>
 
-	<update id="update"
-		parameterType="com.hd123.sardine.wms.api.in.receive.ReceiveBill">
+	<update id="update" parameterType="com.hd123.sardine.wms.api.in.receive.ReceiveBill">
 		update db_proxy.sardine_receivebill
 		<set>
 			<if test="supplier != null and supplier.uuid != null">
@@ -215,6 +248,9 @@
 			<if test="caseQtyStr != null">
 				caseQtyStr = #{caseQtyStr,jdbcType=VARCHAR},
 			</if>
+			<if test="totalAmount != null">
+				totalAmount= #{totalAmount,jdbcType=DECIMAL},
+			</if>
 			remark = #{remark,jdbcType=VARCHAR},
 			LASTMODIFYTIME =
 			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
@@ -235,167 +271,224 @@
 
 	<select id="get" resultMap="ReceiveBillMap" parameterType="java.util.Map">
 		select t.*,s.code suppliercode,s.name suppliername,
-		       w.code wrhcode, w.name wrhname from db_proxy..sardine_receivebill
+		w.code wrhcode,
+		w.name wrhname from db_proxy.sardine_receivebill
 		t,
-		              db_proxy..sardine_supplier s,
-		              db_proxy.sardine_wrh w
-		where t.wrhuuid = w.uuid and t.supplieruuid = s.uuid and
-		where t.uuid = #{uuid,jdbcType=VARCHAR}
+		db_proxy.sardine_supplier s,
+		db_proxy.sardine_wrh w
+		where t.wrhuuid =
+		w.uuid and t.supplieruuid = s.uuid and t.uuid
+		=
+		#{uuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="getByBillNumber" resultMap="ReceiveBillMap"
 		parameterType="java.util.Map">
 		select t.*,s.code suppliercode,s.name suppliername,
-		       w.code wrhcode, w.name wrhname from db_proxy.sardine_receivebill t,
-		              db_proxy.sardine_supplier s,
-		              db_proxy.sardine_wrh w
-		where t.wrhuuid = w.uuid and t.supplieruuid = s.uuid and t.billNumber =
+		w.code wrhcode, w.name wrhname from db_proxy.sardine_receivebill t,
+		db_proxy.sardine_supplier s,
+		db_proxy.sardine_wrh w
+		where t.wrhuuid =
+		w.uuid and t.supplieruuid = s.uuid and
+		t.billNumber =
 		#{billNumber,jdbcType=VARCHAR} and t.companyUuid =
 		#{companyUuid,jdbcType=VARCHAR}
 	</select>
 
-	<select id="query" resultMap="ReceiveBillMap"
-		parameterType="PageQueryDefinition">
-
+	<select id="query" resultMap="ReceiveBillMap" parameterType="PageQueryDefinition">
+		select t.*
+		from db_proxy.sardine_receivebill
+		t,db_proxy.sardine_orderbill o where t.orderBillNumber=o.billNumber
+		<if test="billNumber != null and billNumber != ''">
+			and t.billNumber like CONCAT(CONCAT('%',
+			#{billNumber,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="state != null">
+			and t.state = #{state,jdbcType=VARCHAR}
+		</if>
+		<if test="supplier != null and supplier != ''">
+			and t.supplieruuid like CONCAT(CONCAT('%',
+			#{supplier,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="wrh != null and wrh != ''">
+			and t.wrhuuid like CONCAT(CONCAT('%',
+			#{wrh,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="orderBill != null and orderBill != ''">
+			and t.orderBillNumber like CONCAT(CONCAT('%',
+			#{orderBill,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="sortField != null and sortField == 'billNumber'">
+			order by t.billNumber ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'orderBill'">
+			order by t.orderBillNumber ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'supplierCode'">
+			order by t.supplierCode ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'caseQtyStr'">
+			order by t.caseQtyStr ${orderDir}
+		</if>
 	</select>
 
 	<delete id="remove" parameterType="java.util.Map">
-		delete from db_proxy.sardine_receivebill t
-		where t.uuid =
-		#{uuid,jdbcType=VARCHAR} and t.version =
+		delete from
+		db_proxy.sardine_receivebill
+		where uuid =
+		#{uuid,jdbcType=VARCHAR}
+		and
+		version =
 		#{version,jdbcType=LONGVARCHAR}
 	</delete>
 
-<insert id="insertItems"
-    parameterType="java.util.Map">
-    insert into db_proxy.sardine_receivebillItem
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="item.uuid != null">
-        uuid,
-      </if>
-      <if test="item.receiveBillUuid != null">
-        receiveBillUuid,
-      </if>
-      <if test="item.line != null">
-        line,
-      </if>
-      <if test="item.binCode != null">
-        binCode,
-      </if>
-      <if test="item.qpcStr != null">
-        qpcStr,
-      </if>
-      <if test="item.qpc != null">
-        qpc,
-      </if>
-      <if test="item.qty != null">
-        qty,
-      </if>
-      <if test="item.caseQtyStr != null">
-        caseQtyStr,
-      </if>
-      <if test="item.produceDate != null">
-        produceDate,
-      </if>
-      <if test="item.validDate != null">
-        validDate,
-      </if>
-      <if test="item.receiveDate != null">
-        receiveDate,
-      </if>
-      <if test="item.productionBatch != null">
-        productionBatch,
-      </if>
-      <if test="item.stockBatch != null">
-        stockBatch,
-      </if>
-      <if test="item.containerBarcode != null">
-        containerBarcode,
-      </if>
-      <if test="item.article != null and item.article.uuid != null">
-        articleUuid,
-      </if>
-      <if test="item.articleSpec != null">
-        articleSpec,
-      </if>
-      <if test="item.munit != null">
-        munit,
-      </if>
-      <if test="item.orderBillLineUuid != null">
-        orderBillLineUuid
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="item.uuid != null">
-        #{item.uuid,jdbcType=VARCHAR},
-      </if>
-      <if test="item.receiveBillUuid != null">
-        #{item.receiveBillUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="item.line != null">
-        #{item.line,jdbcType=INTEGER},
-      </if>
-      <if test="item.binCode != null">
-        #{item.binCode,jdbcType=VARCHAR},
-      </if>
-      <if test="item.qpcStr != null">
-        #{item.qpcStr,jdbcType=VARCHAR},
-      </if>
-      <if test="item.qpc != null">
-        #{item.qpc,jdbcType=DECIMAL},
-      </if>
-      <if test="item.qty != null">
-        #{item.qty,jdbcType=DECIMAL},
-      </if>
-      <if test="item.caseQtyStr != null">
-        #{item.caseQtyStr,jdbcType=VARCHAR},
-      </if>
-      <if test="item.produceDate != null">
-        #{item.produceDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="item.validDate != null">
-        #{item.validDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="item.receiveDate != null">
-        #{item.receiveDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="item.productionBatch != null">
-        #{item.productionBatch,jdbcType=VARCHAR},
-      </if>
-      <if test="item.stockBatch != null">
-        #{item.stockBatch,jdbcType=VARCHAR},
-      </if>
-      <if test="item.containerBarcode != null">
-        #{item.containerBarcode,jdbcType=VARCHAR},
-      </if>
-      <if test="item.article != null and item.article.uuid != null">
-        #{item.article.uuid,jdbcType=VARCHAR},
-      </if>
-      <if test="item.articleSpec != null">
-        #{item.articleSpec,jdbcType=VARCHAR},
-      </if>
-      <if test="item.munit != null">
-        #{item.munit,jdbcType=VARCHAR},
-      </if>
-      <if test="item.orderBillLineUuid != null">
-        #{item.orderBillLineUuid,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
+	<insert id="insertItems" parameterType="java.util.Map">
+		insert into db_proxy.sardine_receivebillItem
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="item.uuid != null">
+				uuid,
+			</if>
+			<if test="item.receiveBillUuid != null">
+				receiveBillUuid,
+			</if>
+			<if test="item.line != null">
+				line,
+			</if>
+			<if test="item.binCode != null">
+				binCode,
+			</if>
+			<if test="item.qpcStr != null">
+				qpcStr,
+			</if>
+			<if test="item.qpc != null">
+				qpc,
+			</if>
+			<if test="item.qty != null">
+				qty,
+			</if>
+			<if test="item.caseQtyStr != null">
+				caseQtyStr,
+			</if>
+			<if test="item.produceDate != null">
+				produceDate,
+			</if>
+			<if test="item.validDate != null">
+				validDate,
+			</if>
+			<if test="item.receiveDate != null">
+				receiveDate,
+			</if>
+			<if test="item.productionBatch != null">
+				productionBatch,
+			</if>
+			<if test="item.stockBatch != null">
+				stockBatch,
+			</if>
+			<if test="item.containerBarcode != null">
+				containerBarcode,
+			</if>
+			<if test="item.article != null and item.article.uuid != null">
+				articleUuid,
+			</if>
+			<if test="item.articleSpec != null">
+				articleSpec,
+			</if>
+			<if test="item.munit != null">
+				munit,
+			</if>
+			<if test="item.orderBillLineUuid != null">
+				orderBillLineUuid,
+			</if>
+			<if test="item.price != null">
+				price,
+			</if>
+			<if test="item.amount != null">
+				amount
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="item.uuid != null">
+				#{item.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="item.receiveBillUuid != null">
+				#{item.receiveBillUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="item.line != null">
+				#{item.line,jdbcType=INTEGER},
+			</if>
+			<if test="item.binCode != null">
+				#{item.binCode,jdbcType=VARCHAR},
+			</if>
+			<if test="item.qpcStr != null">
+				#{item.qpcStr,jdbcType=VARCHAR},
+			</if>
+			<if test="item.qpc != null">
+				#{item.qpc,jdbcType=DECIMAL},
+			</if>
+			<if test="item.qty != null">
+				#{item.qty,jdbcType=DECIMAL},
+			</if>
+			<if test="item.caseQtyStr != null">
+				#{item.caseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="item.produceDate != null">
+				#{item.produceDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="item.validDate != null">
+				#{item.validDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="item.receiveDate != null">
+				#{item.receiveDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="item.productionBatch != null">
+				#{item.productionBatch,jdbcType=VARCHAR},
+			</if>
+			<if test="item.stockBatch != null">
+				#{item.stockBatch,jdbcType=VARCHAR},
+			</if>
+			<if test="item.containerBarcode != null">
+				#{item.containerBarcode,jdbcType=VARCHAR},
+			</if>
+			<if test="item.article != null and item.article.uuid != null">
+				#{item.article.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="item.articleSpec != null">
+				#{item.articleSpec,jdbcType=VARCHAR},
+			</if>
+			<if test="item.munit != null">
+				#{item.munit,jdbcType=VARCHAR},
+			</if>
+			<if test="item.orderBillLineUuid != null">
+				#{item.orderBillLineUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="item.price != null">
+				#{item.price,jdbcType=DECIMAL},
+			</if>
+			<if test="item.amount != null">
+				#{item.amount,jdbcType=DECIMAL}
+			</if>
+		</trim>
+	</insert>
 
-  <select id="queryItems" resultMap="ReceiveBillItemMap"
-    parameterType="java.util.Map">
-    select t.*, a.code articleCode, a.name articleName from db_proxy.sardine_receivebillItem t,
-                  db_proxy.sardine_article a
-    where t.articleuuid = a.uuid and 
-    t.receiveBillUuid = #{receiveBillUuid,jdbcType=VARCHAR}
-  </select>
+	<select id="queryItems" resultMap="ReceiveBillItemMap"
+		parameterType="java.util.Map">
+		select t.*, a.code articleCode, a.name articleName from
+		db_proxy.sardine_receivebillItem t,
+		db_proxy.sardine_article a
+		where
+		t.articleuuid = a.uuid and
+		t.receiveBillUuid =
+		#{receiveBillUuid,jdbcType=VARCHAR}
+	</select>
 
-  <delete id="removeItem" parameterType="java.util.Map">
-    delete from
-    db_proxy.sardine_receivebillItem 
-    t
-    where t.receiveBillUuid =
-    #{receiveBillUuid,jdbcType=VARCHAR}
-  </delete>
+	<delete id="removeItems" parameterType="java.util.Map">
+		delete from
+		db_proxy.sardine_receivebillItem
+		where receiveBillUuid =
+		#{receiveBillUuid,jdbcType=VARCHAR}
+	</delete>
 </mapper>
