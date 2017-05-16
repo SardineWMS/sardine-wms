@@ -19,6 +19,7 @@ import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.ia.resource.Resource;
 import com.hd123.sardine.wms.api.ia.resource.ResourceService;
+import com.hd123.sardine.wms.common.utils.UserType;
 import com.hd123.sardine.wms.dao.ia.resource.ResourceDao;
 
 /**
@@ -194,5 +195,24 @@ public class ResourceServiceImpl implements ResourceService {
   @Override
   public List<Resource> queryOwnedOperateByUser(String userUuid) {
     return dao.queryOwnedOperateByUser(userUuid);
+  }
+
+  @Override
+  public List<Resource> queryOwnedOperateByUserType(UserType userType) {
+    Assert.assertArgumentNotNull(userType, "userType");
+
+    return dao.queryOwnedOperateByUserType(userType);
+  }
+
+  @Override
+  public List<Resource> queryOwnedMenuByUserType(UserType userType) {
+    Assert.assertArgumentNotNull(userType, "userType");
+
+    List<Resource> topMule = dao.queryOwnedTopMenuResourceByUserType(userType);
+    for (Resource t : topMule) {
+      List<Resource> moduleMenus = dao.queryAllChildResource(t.getUuid());
+      t.getChildren().addAll(moduleMenus);
+    }
+    return topMule;
   }
 }
