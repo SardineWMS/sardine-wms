@@ -16,6 +16,7 @@ import java.util.Map;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 
 import com.hd123.sardine.wms.api.ia.resource.Resource;
+import com.hd123.sardine.wms.common.utils.UserType;
 import com.hd123.sardine.wms.dao.ia.resource.ResourceDao;
 
 /**
@@ -34,6 +35,8 @@ public class ResourceDaoImpl extends SqlSessionDaoSupport implements ResourceDao
   public static final String MAPPER_QUERYOWNEDCHILDRESOURCEBYROLE = "queryOwnedChildResourceByRole";
   public static final String MAPPER_QUERYOWNEDCHILDRESOURCEBYUSER = "queryOwnedChildResourceByUser";
   public static final String MAPPER_QUERYOWNEDOPERATEBYUSER = "queryOwnedOperateByUser";
+  public static final String MAPPER_QUERYOWNEDTOPMENURESOURCEBYUSERTYPE = "queryOwnedTopMenuResourceByUserType";
+  public static final String MAPPER_QUERYOWNEDOPERATEBYUSERTYPE = "queryOwnedOperateByUserType";
 
   public String generateStatement(String mapperId) {
     return this.getClass().getName() + "." + mapperId;
@@ -108,7 +111,23 @@ public class ResourceDaoImpl extends SqlSessionDaoSupport implements ResourceDao
 
   @Override
   public List<Resource> queryOwnedOperateByUser(String userUuid) {
-    return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDOPERATEBYUSER),
-        userUuid);
+    return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDOPERATEBYUSER), userUuid);
+  }
+
+  @Override
+  public List<Resource> queryOwnedTopMenuResourceByUserType(UserType userType) {
+    return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDTOPMENURESOURCEBYUSERTYPE),
+        userType.name());
+  }
+
+  @Override
+  public List<Resource> queryOwnedOperateByUserType(UserType userType) {
+    return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDOPERATEBYUSERTYPE),
+        userType.name());
+  }
+
+  @Override
+  public List<Resource> queryOwnedResourceByUserType(UserType userType) {
+    return null;
   }
 }

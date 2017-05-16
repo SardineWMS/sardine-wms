@@ -11,6 +11,8 @@ package com.hd123.sardine.wms.api.ia.resource;
 
 import java.util.List;
 
+import com.hd123.sardine.wms.common.utils.UserType;
+
 /**
  * 资源服务：接口
  * 
@@ -139,4 +141,8 @@ public interface ResourceService {
    * @return 操作集合
    */
   List<Resource> queryOwnedOperateByUser(String userUuid);
+
+  List<Resource> queryOwnedOperateByUserType(UserType userType);
+  
+  List<Resource> queryOwnedMenuByUserType(UserType userType);
 }

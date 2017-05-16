@@ -151,4 +151,17 @@ public class ApplicationContextUtil {
     map.put("companyUuid", getParentCompanyUuid());
     return map;
   }
+
+  public static UserType getUserType() {
+    String companyUuid = COMPANYUUID_LOCAL.get();
+    if (companyUuid.contains(Constants.DC_PREFIX)) {
+      return UserType.dcUser;
+    } else if (companyUuid.contains(Constants.SUPP_PREFIX)) {
+      return UserType.supplierUser;
+    } else if (companyUuid.contains(Constants.CARR_PREFIX)) {
+      return UserType.carrierUser;
+    } else {
+      return UserType.systemUser;
+    }
+  }
 }

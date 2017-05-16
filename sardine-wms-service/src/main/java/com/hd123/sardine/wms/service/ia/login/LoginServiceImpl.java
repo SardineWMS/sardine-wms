@@ -9,7 +9,6 @@
  */
 package com.hd123.sardine.wms.service.ia.login;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -158,8 +157,17 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
     if (user.getUserState().equals(UserState.online) == false)
       throw new WMSException("登录失败，当前用户未被启用。");
 
-    List<Resource> ownedMenus = resourceService.queryOwnedMenuResourceByUser(user.getUuid());
-    List<Resource> ownedResources = resourceService.queryOwnedOperateByUser(user.getUuid());
+    List<Resource> ownedMenus = null;
+    List<Resource> ownedResources = null;
+    if (user.isAdministrator()) {
+      ownedMenus = resourceService.queryOwnedMenuByUserType(ApplicationContextUtil.getUserType());
+      ownedResources = resourceService
+          .queryOwnedOperateByUserType(ApplicationContextUtil.getUserType());
+    } else {
+      ownedMenus = resourceService.queryOwnedMenuResourceByUser(user.getUuid());
+      ownedResources = resourceService.queryOwnedOperateByUser(user.getUuid());
+    }
+
     UserInfo userInfo = user.fetchUserInfo();
     userInfo.setOwnedMenus(SerializationUtils.serialize(ownedMenus));
     userInfo.setOwnedResources(SerializationUtils.serialize(ownedResources));
@@ -187,6 +195,7 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
     user.setName("企业管理员");
     user.setPasswd(registerInfo.getPasswd());
     user.setPhone(null);
+    user.setAdministrator(true);
     user.setUserState(UserState.online);
     user.setCreateInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
     user.setLastModifyInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
@@ -197,20 +206,20 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
     String dbName = ApplicationContextUtil.getDBName();
     companyDao.insertDBMap(user.getCompanyUuid(), dbName);
 
-    List<String> resourceUuids = new ArrayList<String>();
-    List<Resource> basicResources = resourceService
-        .queryByUpperResource(Resource.BASIC_RESOURCE_UUID);
-    resourceUuids.add(Resource.BASIC_RESOURCE_UUID);
-    for (Resource resource : basicResources) {
-      resourceUuids.add(resource.getUuid());
-    }
-    List<Resource> systemResources = resourceService
-        .queryByUpperResource(Resource.SYSTEM_RESOURCE_UUID);
-    resourceUuids.add(Resource.SYSTEM_RESOURCE_UUID);
-    for (Resource resource : systemResources) {
-      resourceUuids.add(resource.getUuid());
-    }
-    resourceService.saveUserResource(user.getUuid(), resourceUuids);
+//    List<String> resourceUuids = new ArrayList<String>();
+//    List<Resource> basicResources = resourceService
+//        .queryByUpperResource(Resource.BASIC_RESOURCE_UUID);
+//    resourceUuids.add(Resource.BASIC_RESOURCE_UUID);
+//    for (Resource resource : basicResources) {
+//      resourceUuids.add(resource.getUuid());
+//    }
+//    List<Resource> systemResources = resourceService
+//        .queryByUpperResource(Resource.SYSTEM_RESOURCE_UUID);
+//    resourceUuids.add(Resource.SYSTEM_RESOURCE_UUID);
+//    for (Resource resource : systemResources) {
+//      resourceUuids.add(resource.getUuid());
+//    }
+//    resourceService.saveUserResource(user.getUuid(), resourceUuids);
     return user.fetchUserInfo();
   }
 }

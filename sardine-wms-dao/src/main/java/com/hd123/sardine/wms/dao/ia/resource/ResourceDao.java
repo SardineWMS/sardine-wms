@@ -12,6 +12,7 @@ package com.hd123.sardine.wms.dao.ia.resource;
 import java.util.List;
 
 import com.hd123.sardine.wms.api.ia.resource.Resource;
+import com.hd123.sardine.wms.common.utils.UserType;
 
 /**
  * @author zhangsai
@@ -29,6 +30,8 @@ public interface ResourceDao {
 
   List<Resource> queryOwnedTopMenuResourceByUser(String userUuid);
 
+  List<Resource> queryOwnedTopMenuResourceByUserType(UserType userType);
+
   List<Resource> queryAllChildResource(String resourceUuid);
 
   List<Resource> queryOwnedChildResourceByRole(String roleUuid, String resourceUuid);
@@ -40,4 +43,8 @@ public interface ResourceDao {
   void removeResourceByRole(String roleUuid);
 
   List<Resource> queryOwnedOperateByUser(String userUuid);
+
+  List<Resource> queryOwnedOperateByUserType(UserType userType);
+
+  List<Resource> queryOwnedResourceByUserType(UserType userType);
 }
