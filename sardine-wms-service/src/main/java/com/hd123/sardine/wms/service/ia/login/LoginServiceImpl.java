@@ -159,6 +159,7 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
 
     List<Resource> ownedMenus = null;
     List<Resource> ownedResources = null;
+    ApplicationContextUtil.setCompany(new UCN(user.getCompanyUuid(), user.getCompanyCode(), user.getCompanyName()));
     if (user.isAdministrator()) {
       ownedMenus = resourceService.queryOwnedMenuByUserType(ApplicationContextUtil.getUserType());
       ownedResources = resourceService
