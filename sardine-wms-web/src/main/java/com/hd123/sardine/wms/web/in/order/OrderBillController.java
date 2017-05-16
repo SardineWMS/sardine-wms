@@ -9,10 +9,10 @@
  */
 package com.hd123.sardine.wms.web.in.order;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -167,13 +167,12 @@ public class OrderBillController extends BaseController {
             @RequestParam(value = "token", required = true) String token,
             @RequestParam(value = "uuid", required = true) String uuid,
             @RequestParam(value = "version", required = true) long version,
-            @RequestParam(value = "bookedDate", required = true) String bookedDate) {
+            @RequestBody Date bookedDate) {
         RespObject resp = new RespObject();
         try {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             ApplicationContextUtil.setOperateContext(getOperateContext(token));
-            Date date=DateUtils.parseDate(bookedDate, "YYYY-MM-DD HH:mm:ss");
-            orderBillService.uploadStateToPreBookReg(uuid, version, date);
+            orderBillService.uploadStateToPreBookReg(uuid, version, bookedDate);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             return new ErrorRespObject("订单预约失败", e.getMessage());
@@ -231,6 +230,47 @@ public class OrderBillController extends BaseController {
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             return new ErrorRespObject("订单作废失败", e.getMessage());
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/refreshcaseqtyandamount", method = RequestMethod.PUT)
+    public @ResponseBody RespObject refreshCaseQtyAndAmount(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "line", required = true) int line,
+            @RequestBody OrderBill orderBill) {
+        RespObject resp = new RespObject();
+        try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
+            ApplicationContextUtil.setOperateContext(getOperateContext(token));
+            if (CollectionUtils.isEmpty(orderBill.getItems())) {
+                orderBill.setTotalAmount(BigDecimal.ZERO);
+                orderBill.setTotalCaseQtyStr("0");
+            } else {
+                for (OrderBillItem item : orderBill.getItems()) {
+                    if (line == item.getLine()) {
+                        if (StringUtil.isNullOrBlank(item.getQpcStr()))
+                            throw new WMSException("规格不能为空");
+                        item.setCaseQtyStr(
+                                QpcHelper.qtyToCaseQtyStr(item.getQty(), item.getQpcStr()));
+                        orderBill
+                                .setTotalCaseQtyStr(QpcHelper.caseQtyStrAdd(
+                                        orderBill.getTotalCaseQtyStr() == null ? "0"
+                                                : orderBill.getTotalCaseQtyStr(),
+                                        item.getCaseQtyStr()));
+                        item.setAmount(item.getQty().multiply(item.getPrice()));
+                        if (orderBill.getTotalAmount() == null)
+                            orderBill.setTotalAmount(BigDecimal.ZERO);
+                        orderBill.setTotalAmount(orderBill.getTotalAmount().add(item.getAmount()));
+                        break;
+                    }
+                }
+            }
+
+            resp.setObj(orderBill);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (Exception e) {
+            return new ErrorRespObject("刷新订单件数失败", e.getMessage());
         }
         return resp;
     }
