@@ -20,31 +20,33 @@ import com.hd123.sardine.wms.common.utils.UserType;
  */
 public interface ResourceDao {
 
-  void saveRoleResource(String roleUuid, String resourceUuid);
+    void saveRoleResource(String roleUuid, String resourceUuid);
 
-  void saveUserResource(String userUuid, String resourceUUuid);
+    void saveUserResource(String userUuid, String resourceUUuid);
 
-  List<Resource> queryAllTopMenuResource();
+    List<Resource> queryAllTopMenuResource();
 
-  List<Resource> queryOwnedTopMenuResourceByRole(String roleUuid);
+    List<Resource> queryOwnedTopMenuResourceByRole(String roleUuid);
 
-  List<Resource> queryOwnedTopMenuResourceByUser(String userUuid);
+    List<Resource> queryOwnedTopMenuResourceByUser(String userUuid);
 
-  List<Resource> queryOwnedTopMenuResourceByUserType(UserType userType);
+    List<Resource> queryOwnedTopMenuResourceByUserType(UserType userType);
 
-  List<Resource> queryAllChildResource(String resourceUuid);
+    List<Resource> queryAllChildResource(String resourceUuid);
 
-  List<Resource> queryOwnedChildResourceByRole(String roleUuid, String resourceUuid);
+    List<Resource> queryOwnedChildResourceByRole(String roleUuid, String resourceUuid);
 
-  List<Resource> queryOwnedChildResourceByUser(String userUuid, String resourceUuid);
+    List<Resource> queryOwnedChildResourceByUser(String userUuid, String resourceUuid);
 
-  void removeResourceByUser(String userUuid);
+    void removeResourceByUser(String userUuid);
 
-  void removeResourceByRole(String roleUuid);
+    void removeResourceByRole(String roleUuid);
 
-  List<Resource> queryOwnedOperateByUser(String userUuid);
+    List<Resource> queryOwnedOperateByUser(String userUuid);
 
-  List<Resource> queryOwnedOperateByUserType(UserType userType);
+    List<Resource> queryOwnedOperateByUserType(UserType userType);
 
-  List<Resource> queryOwnedResourceByUserType(UserType userType);
+    List<Resource> queryOwnedResourceByUserType(UserType userType);
+
+    Resource getParentResourceByResource(String resourceUuid);
 }

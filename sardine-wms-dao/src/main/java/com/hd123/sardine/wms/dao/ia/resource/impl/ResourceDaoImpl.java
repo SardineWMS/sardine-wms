@@ -24,110 +24,123 @@ import com.hd123.sardine.wms.dao.ia.resource.ResourceDao;
  *
  */
 public class ResourceDaoImpl extends SqlSessionDaoSupport implements ResourceDao {
-  public static final String MAPPER_SAVEROLERESOURCE = "saveRoleResource";
-  public static final String MAPPER_SAVEUSERRESOURCE = "saveUserResource";
-  public static final String MAPPER_REMOVERESOURCEBYUSER = "removeResourceByUser";
-  public static final String MAPPER_REMOVERESOURCEBYROLE = "removeResourceByRole";
-  public static final String MAPPER_QUERYALLTOPMENURESOURCE = "queryAllTopMenuResource";
-  public static final String MAPPER_QUERYOWNEDTOPMENURESOURCEBYROLE = "queryOwnedTopMenuResourceByRole";
-  public static final String MAPPER_QUERYOWNEDTOPMENURESOURCEBYUSER = "queryOwnedTopMenuResourceByUser";
-  public static final String MAPPER_QUERYALLCHILDRESOURCE = "queryAllChildResource";
-  public static final String MAPPER_QUERYOWNEDCHILDRESOURCEBYROLE = "queryOwnedChildResourceByRole";
-  public static final String MAPPER_QUERYOWNEDCHILDRESOURCEBYUSER = "queryOwnedChildResourceByUser";
-  public static final String MAPPER_QUERYOWNEDOPERATEBYUSER = "queryOwnedOperateByUser";
-  public static final String MAPPER_QUERYOWNEDTOPMENURESOURCEBYUSERTYPE = "queryOwnedTopMenuResourceByUserType";
-  public static final String MAPPER_QUERYOWNEDOPERATEBYUSERTYPE = "queryOwnedOperateByUserType";
+    public static final String MAPPER_SAVEROLERESOURCE = "saveRoleResource";
+    public static final String MAPPER_SAVEUSERRESOURCE = "saveUserResource";
+    public static final String MAPPER_REMOVERESOURCEBYUSER = "removeResourceByUser";
+    public static final String MAPPER_REMOVERESOURCEBYROLE = "removeResourceByRole";
+    public static final String MAPPER_QUERYALLTOPMENURESOURCE = "queryAllTopMenuResource";
+    public static final String MAPPER_QUERYOWNEDTOPMENURESOURCEBYROLE = "queryOwnedTopMenuResourceByRole";
+    public static final String MAPPER_QUERYOWNEDTOPMENURESOURCEBYUSER = "queryOwnedTopMenuResourceByUser";
+    public static final String MAPPER_QUERYALLCHILDRESOURCE = "queryAllChildResource";
+    public static final String MAPPER_QUERYOWNEDCHILDRESOURCEBYROLE = "queryOwnedChildResourceByRole";
+    public static final String MAPPER_QUERYOWNEDCHILDRESOURCEBYUSER = "queryOwnedChildResourceByUser";
+    public static final String MAPPER_QUERYOWNEDOPERATEBYUSER = "queryOwnedOperateByUser";
+    public static final String MAPPER_QUERYOWNEDTOPMENURESOURCEBYUSERTYPE = "queryOwnedTopMenuResourceByUserType";
+    public static final String MAPPER_QUERYOWNEDOPERATEBYUSERTYPE = "queryOwnedOperateByUserType";
+    public static final String MAPPER_GETPARENTRESOURCEBYRESOURCEUUID = "getParentResourceByResourceUuid";
 
-  public String generateStatement(String mapperId) {
-    return this.getClass().getName() + "." + mapperId;
-  }
+    public String generateStatement(String mapperId) {
+        return this.getClass().getName() + "." + mapperId;
+    }
 
-  @Override
-  public void saveRoleResource(String roleUuid, String resourceUuid) {
-    Map<String, String> map = new HashMap<>();
-    map.put("roleUuid", roleUuid);
-    map.put("resourceUuid", resourceUuid);
+    @Override
+    public void saveRoleResource(String roleUuid, String resourceUuid) {
+        Map<String, String> map = new HashMap<>();
+        map.put("roleUuid", roleUuid);
+        map.put("resourceUuid", resourceUuid);
 
-    getSqlSession().insert(generateStatement(MAPPER_SAVEROLERESOURCE), map);
-  }
+        getSqlSession().insert(generateStatement(MAPPER_SAVEROLERESOURCE), map);
+    }
 
-  @Override
-  public void saveUserResource(String userUuid, String resourceUuid) {
-    Map<String, String> map = new HashMap<>();
-    map.put("userUuid", userUuid);
-    map.put("resourceUuid", resourceUuid);
+    @Override
+    public void saveUserResource(String userUuid, String resourceUuid) {
+        Map<String, String> map = new HashMap<>();
+        map.put("userUuid", userUuid);
+        map.put("resourceUuid", resourceUuid);
 
-    getSqlSession().insert(generateStatement(MAPPER_SAVEUSERRESOURCE), map);
-  }
+        getSqlSession().insert(generateStatement(MAPPER_SAVEUSERRESOURCE), map);
+    }
 
-  @Override
-  public void removeResourceByUser(String userUuid) {
-    getSqlSession().delete(generateStatement(MAPPER_REMOVERESOURCEBYUSER), userUuid);
-  }
+    @Override
+    public void removeResourceByUser(String userUuid) {
+        getSqlSession().delete(generateStatement(MAPPER_REMOVERESOURCEBYUSER), userUuid);
+    }
 
-  @Override
-  public void removeResourceByRole(String roleUuid) {
-    getSqlSession().delete(generateStatement(MAPPER_REMOVERESOURCEBYROLE), roleUuid);
-  }
+    @Override
+    public void removeResourceByRole(String roleUuid) {
+        getSqlSession().delete(generateStatement(MAPPER_REMOVERESOURCEBYROLE), roleUuid);
+    }
 
-  @Override
-  public List<Resource> queryAllTopMenuResource() {
-    return getSqlSession().selectList(generateStatement(MAPPER_QUERYALLTOPMENURESOURCE), null);
-  }
+    @Override
+    public List<Resource> queryAllTopMenuResource() {
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYALLTOPMENURESOURCE), null);
+    }
 
-  @Override
-  public List<Resource> queryOwnedTopMenuResourceByRole(String roleUuid) {
-    return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDTOPMENURESOURCEBYROLE),
-        roleUuid);
-  }
+    @Override
+    public List<Resource> queryOwnedTopMenuResourceByRole(String roleUuid) {
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDTOPMENURESOURCEBYROLE),
+                roleUuid);
+    }
 
-  @Override
-  public List<Resource> queryOwnedTopMenuResourceByUser(String userUuid) {
-    return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDTOPMENURESOURCEBYUSER),
-        userUuid);
-  }
+    @Override
+    public List<Resource> queryOwnedTopMenuResourceByUser(String userUuid) {
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDTOPMENURESOURCEBYUSER),
+                userUuid);
+    }
 
-  @Override
-  public List<Resource> queryAllChildResource(String resourceUuid) {
-    return getSqlSession().selectList(generateStatement(MAPPER_QUERYALLCHILDRESOURCE),
-        resourceUuid);
-  }
+    @Override
+    public List<Resource> queryAllChildResource(String resourceUuid) {
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYALLCHILDRESOURCE),
+                resourceUuid);
+    }
 
-  @Override
-  public List<Resource> queryOwnedChildResourceByRole(String roleUuid, String resourceUuid) {
-    Map<String, String> map = new HashMap<>();
-    map.put("roleUuid", roleUuid);
-    map.put("resourceUuid", resourceUuid);
-    return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDCHILDRESOURCEBYROLE), map);
-  }
+    @Override
+    public List<Resource> queryOwnedChildResourceByRole(String roleUuid, String resourceUuid) {
+        Map<String, String> map = new HashMap<>();
+        map.put("roleUuid", roleUuid);
+        map.put("resourceUuid", resourceUuid);
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDCHILDRESOURCEBYROLE),
+                map);
+    }
 
-  @Override
-  public List<Resource> queryOwnedChildResourceByUser(String userUuid, String resourceUuid) {
-    Map<String, String> map = new HashMap<>();
-    map.put("userUuid", userUuid);
-    map.put("resourceUuid", resourceUuid);
-    return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDCHILDRESOURCEBYUSER), map);
-  }
+    @Override
+    public List<Resource> queryOwnedChildResourceByUser(String userUuid, String resourceUuid) {
+        Map<String, String> map = new HashMap<>();
+        map.put("userUuid", userUuid);
+        map.put("resourceUuid", resourceUuid);
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDCHILDRESOURCEBYUSER),
+                map);
+    }
 
-  @Override
-  public List<Resource> queryOwnedOperateByUser(String userUuid) {
-    return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDOPERATEBYUSER), userUuid);
-  }
+    @Override
+    public List<Resource> queryOwnedOperateByUser(String userUuid) {
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDOPERATEBYUSER),
+                userUuid);
+    }
 
-  @Override
-  public List<Resource> queryOwnedTopMenuResourceByUserType(UserType userType) {
-    return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDTOPMENURESOURCEBYUSERTYPE),
-        userType.name());
-  }
+    @Override
+    public List<Resource> queryOwnedTopMenuResourceByUserType(UserType userType) {
+        return getSqlSession().selectList(
+                generateStatement(MAPPER_QUERYOWNEDTOPMENURESOURCEBYUSERTYPE), userType.name());
+    }
 
-  @Override
-  public List<Resource> queryOwnedOperateByUserType(UserType userType) {
-    return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDOPERATEBYUSERTYPE),
-        userType.name());
-  }
+    @Override
+    public List<Resource> queryOwnedOperateByUserType(UserType userType) {
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDOPERATEBYUSERTYPE),
+                userType.name());
+    }
 
-  @Override
-  public List<Resource> queryOwnedResourceByUserType(UserType userType) {
-    return null;
-  }
+    @Override
+    public List<Resource> queryOwnedResourceByUserType(UserType userType) {
+        return null;
+    }
+
+    @Override
+    public Resource getParentResourceByResource(String resourceUuid) {
+        List<Resource> list = getSqlSession().selectList(
+                generateStatement(MAPPER_GETPARENTRESOURCEBYRESOURCEUUID), resourceUuid);
+        if (list != null && list.size() > 0)
+            return list.get(0);
+        return null;
+    }
 }

@@ -33,60 +33,87 @@
 		)
 	</insert>
 
-	<select id="queryAllTopMenuResource"  resultMap="BaseResultMap">
-		select r.uuid, r.code, r.name, r.upperUuid, r.type from sardine_resource r
+	<select id="queryAllTopMenuResource" resultMap="BaseResultMap">
+		select r.uuid,
+		r.code, r.name, r.upperUuid, r.type from sardine_resource r
 		where
 		r.upperuuid is null
 	</select>
-	
-	<select id="queryOwnedTopMenuResourceByUserType" parameterType="java.lang.String" resultMap="BaseResultMap">
-	    select r.uuid, r.code, r.name, r.upperUuid, r.type from sardine_resource r
+
+	<select id="queryOwnedTopMenuResourceByUserType" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select r.uuid, r.code, r.name, r.upperUuid, r.type from
+		sardine_resource r
 		where
-		r.upperuuid is null and r.usertype like concat(concat('%',#{userType}),'%')
-	</select>
-	
-    <select id="queryOwnedOperateByUserType" parameterType="java.lang.String" resultMap="BaseResultMap">
-	    select r.uuid, r.code, r.name, r.upperUuid, r.type from sardine_resource r
-		where
-		r.type = 'operator' and r.usertype like concat(concat('%',#{userType}),'%')
-	</select>
-	
-	<select id="queryOwnedTopMenuResourceByRole" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select r.uuid, r.code, r.name, r.upperUuid, r.type from db_proxy.sardine_role_resource rr,sardine_resource r
-		where rr.resourceuuid=r.uuid
-		and r.upperuuid is null
-		and rr.roleuuid=#{roleUuid,jdbcType=VARCHAR}
+		r.upperuuid is null and r.usertype like
+		concat(concat('%',#{userType}),'%')
 	</select>
 
-	<select id="queryOwnedTopMenuResourceByUser" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select r.uuid, r.code, r.name, r.upperUuid, r.type from sardine_user_resource ur,sardine_resource r
-		where ur.resourceuuid=r.uuid
-		and r.upperuuid is null	
-		and ur.useruuid=#{userUuid,jdbcType=VARCHAR}
+	<select id="queryOwnedOperateByUserType" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select r.uuid, r.code, r.name, r.upperUuid, r.type from
+		sardine_resource r
+		where
+		r.type = 'operator' and r.usertype like
+		concat(concat('%',#{userType}),'%')
 	</select>
-	
-    <select id="queryOwnedOperateByUser" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select r.uuid, r.code, r.name, r.upperUuid, r.type from sardine_user_resource ur,sardine_resource r
-		where ur.resourceuuid=r.uuid
-		and ur.useruuid=#{userUuid,jdbcType=VARCHAR}
-		and r.type = 'operator'
+
+	<select id="queryOwnedTopMenuResourceByRole" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select r.uuid, r.code, r.name, r.upperUuid, r.type from
+		db_proxy.sardine_role_resource rr,sardine_resource r
+		where
+		rr.resourceuuid=r.uuid
+		and r.upperuuid is null
+		and
+		rr.roleuuid=#{roleUuid,jdbcType=VARCHAR}
 	</select>
-	
-	<select id="queryAllChildResource" parameterType="java.lang.String" resultMap="BaseResultMap">
-		select r.uuid, r.code, r.name, r.upperUuid, r.type from sardine_resource r
+
+	<select id="queryOwnedTopMenuResourceByUser" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select r.uuid, r.code, r.name, r.upperUuid, r.type from
+		sardine_user_resource ur,sardine_resource r
+		where
+		ur.resourceuuid=r.uuid
+		and r.upperuuid is null
+		and
+		ur.useruuid=#{userUuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="queryOwnedOperateByUser" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select r.uuid, r.code, r.name, r.upperUuid, r.type from
+		sardine_user_resource ur,sardine_resource r
+		where
+		ur.resourceuuid=r.uuid
+		and ur.useruuid=#{userUuid,jdbcType=VARCHAR}
+		and
+		r.type = 'operator'
+	</select>
+
+	<select id="queryAllChildResource" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select r.uuid, r.code, r.name, r.upperUuid, r.type from
+		sardine_resource r
 		where r.upperuuid=#{resourceUuid,jdbcType=VARCHAR}
 	</select>
-	
-	<select id="queryOwnedChildResourceByRole" parameterType="map" resultMap="BaseResultMap">
-		select r.uuid, r.code, r.name, r.upperUuid, r.type from sardine_resource r,db_proxy.sardine_role_resource rr
-		where rr.resourceuuid=r.uuid
+
+	<select id="queryOwnedChildResourceByRole" parameterType="map"
+		resultMap="BaseResultMap">
+		select r.uuid, r.code, r.name, r.upperUuid, r.type from
+		sardine_resource r,db_proxy.sardine_role_resource rr
+		where
+		rr.resourceuuid=r.uuid
 		and r.upperuuid=#{resourceUuid,jdbcType=VARCHAR}
 		and rr.roleuuid=#{roleUuid,jdbcType=VARCHAR}
 	</select>
-	
-	<select id="queryOwnedChildResourceByUser" parameterType="map" resultMap="BaseResultMap">
-		select r.uuid, r.code, r.name, r.upperUuid, r.type from sardine_resource r,sardine_user_resource ur
-		where ur.resourceuuid=r.uuid
+
+	<select id="queryOwnedChildResourceByUser" parameterType="map"
+		resultMap="BaseResultMap">
+		select r.uuid, r.code, r.name, r.upperUuid, r.type from
+		sardine_resource r,sardine_user_resource ur
+		where
+		ur.resourceuuid=r.uuid
 		and r.upperuuid=#{resourceUuid,jdbcType=VARCHAR}
 		and ur.useruuid=#{userUuid,jdbcType=VARCHAR}
 	</select>
@@ -98,7 +125,16 @@
 
 	<delete id="removeResourceByRole" parameterType="java.lang.String">
 		delete from
-		db_proxy.sardine_role_resource where roleuuid=#{useruuid,jdbcType=VARCHAR}
+		db_proxy.sardine_role_resource where
+		roleuuid=#{useruuid,jdbcType=VARCHAR}
 	</delete>
+
+	<select id="getParentResourceByResourceUuid" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select parent.* from sardine_resource child,
+		sardine_resource parent where child.uuid =
+		#{uuid,jdbcType=VARCHAR} and
+		child.upperUuid=parent.uuid
+	</select>
 
 </mapper>
