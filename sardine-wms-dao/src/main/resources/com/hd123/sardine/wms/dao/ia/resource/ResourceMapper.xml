@@ -77,6 +77,12 @@
 		where r.upperuuid=#{resourceUuid,jdbcType=VARCHAR}
 	</select>
 	
+    <select id="queryAllChildResourceByUserType" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select r.uuid, r.code, r.name, r.upperUuid, r.type from sardine_resource r
+		where r.upperuuid=#{resourceUuid,jdbcType=VARCHAR}
+		and r.userType like concat(concat('%',#{userType}),'%')
+	</select>
+	
 	<select id="queryOwnedChildResourceByRole" parameterType="map" resultMap="BaseResultMap">
 		select r.uuid, r.code, r.name, r.upperUuid, r.type from sardine_resource r,db_proxy.sardine_role_resource rr
 		where rr.resourceuuid=r.uuid

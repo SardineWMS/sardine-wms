@@ -34,6 +34,8 @@ public interface ResourceDao {
 
   List<Resource> queryAllChildResource(String resourceUuid);
 
+  List<Resource> queryAllChildResourceByUserType(String resourceUuid, UserType userType);
+
   List<Resource> queryOwnedChildResourceByRole(String roleUuid, String resourceUuid);
 
   List<Resource> queryOwnedChildResourceByUser(String userUuid, String resourceUuid);

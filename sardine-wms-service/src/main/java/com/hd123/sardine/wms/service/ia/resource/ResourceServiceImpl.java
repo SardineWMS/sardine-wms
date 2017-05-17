@@ -210,7 +210,7 @@ public class ResourceServiceImpl implements ResourceService {
 
     List<Resource> topMule = dao.queryOwnedTopMenuResourceByUserType(userType);
     for (Resource t : topMule) {
-      List<Resource> moduleMenus = dao.queryAllChildResource(t.getUuid());
+      List<Resource> moduleMenus = dao.queryAllChildResourceByUserType(t.getUuid(), userType);
       t.getChildren().addAll(moduleMenus);
     }
     return topMule;
