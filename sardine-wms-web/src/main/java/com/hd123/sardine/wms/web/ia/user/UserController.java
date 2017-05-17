@@ -53,6 +53,7 @@ public class UserController extends BaseController {
             @RequestParam(value = "token") String token) {
         RespObject resp = new RespObject();
         try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
             User user = userService.get(userUuid);
             resp.setObj(user);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -115,6 +116,7 @@ public class UserController extends BaseController {
             @RequestParam(value = "token", required = true) String token, @RequestBody User user) {
         RespObject resp = new RespObject();
         try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
             String userUuid = userService.insert(user, getOperateContext(token));
             resp.setObj(userUuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

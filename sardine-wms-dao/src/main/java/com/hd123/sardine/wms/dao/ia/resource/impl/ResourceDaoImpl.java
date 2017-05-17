@@ -38,6 +38,7 @@ public class ResourceDaoImpl extends SqlSessionDaoSupport implements ResourceDao
   public static final String MAPPER_QUERYOWNEDTOPMENURESOURCEBYUSERTYPE = "queryOwnedTopMenuResourceByUserType";
   public static final String MAPPER_QUERYOWNEDOPERATEBYUSERTYPE = "queryOwnedOperateByUserType";
   public static final String MAPPER_QUERYALLCHILDRESOURCEBYUSERTYPE = "queryAllChildResourceByUserType";
+  public static final String MAPPER_GETPARENTRESOURCEBYRESOURCEUUID = "getParentResourceByResourceUuid";
 
   public String generateStatement(String mapperId) {
     return this.getClass().getName() + "." + mapperId;
@@ -137,6 +138,16 @@ public class ResourceDaoImpl extends SqlSessionDaoSupport implements ResourceDao
     Map<String, String> map = new HashMap<String, String>();
     map.put("resourceUuid", resourceUuid);
     map.put("userType", userType.name());
-    return getSqlSession().selectList(generateStatement(MAPPER_QUERYALLCHILDRESOURCEBYUSERTYPE), map);
+    return getSqlSession().selectList(generateStatement(MAPPER_QUERYALLCHILDRESOURCEBYUSERTYPE),
+        map);
+  }
+
+  @Override
+  public Resource getParentResourceByResource(String resourceUuid) {
+    List<Resource> list = getSqlSession()
+        .selectList(generateStatement(MAPPER_GETPARENTRESOURCEBYRESOURCEUUID), resourceUuid);
+    if (list != null && list.size() > 0)
+      return list.get(0);
+    return null;
   }
 }

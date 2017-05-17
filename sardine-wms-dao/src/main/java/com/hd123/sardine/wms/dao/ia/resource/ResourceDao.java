@@ -49,4 +49,6 @@ public interface ResourceDao {
   List<Resource> queryOwnedOperateByUserType(UserType userType);
 
   List<Resource> queryOwnedResourceByUserType(UserType userType);
+
+  Resource getParentResourceByResource(String resourceUuid);
 }

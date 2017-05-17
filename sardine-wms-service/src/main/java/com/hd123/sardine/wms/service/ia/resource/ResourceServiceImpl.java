@@ -10,7 +10,9 @@
 package com.hd123.sardine.wms.service.ia.resource;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,7 +112,13 @@ public class ResourceServiceImpl implements ResourceService {
     dao.removeResourceByUser(userUuid);
     if (CollectionUtils.isEmpty(resourceUuids))
       return;
-    for (String resourceUuid : resourceUuids)
+    Set<String> results = new HashSet<String>();
+
+    for (String rUuids : resourceUuids) {
+      Set<String> parentResources = queryResourceAllParentResource(rUuids);
+      results.addAll(parentResources);
+    }
+    for (String resourceUuid : results)
       dao.saveUserResource(userUuid, resourceUuid);
   }
 
@@ -210,9 +218,32 @@ public class ResourceServiceImpl implements ResourceService {
 
     List<Resource> topMule = dao.queryOwnedTopMenuResourceByUserType(userType);
     for (Resource t : topMule) {
-      List<Resource> moduleMenus = dao.queryAllChildResourceByUserType(t.getUuid(), userType);
+      List<Resource> moduleMenus = dao.queryAllChildResource(t.getUuid());
       t.getChildren().addAll(moduleMenus);
     }
     return topMule;
+  }
+
+  @Override
+  public Set<String> queryResourceAllParentResource(String resourceUuid) {
+    if (StringUtil.isNullOrBlank(resourceUuid))
+      return null;
+    Set<String> parentUuids = new HashSet<String>();
+    Set<String> results = getParentResource(resourceUuid, parentUuids);
+    return results;
+
+  }
+
+  private Set<String> getParentResource(String resourceUuid, Set<String> parentUuids) {
+    parentUuids.add(resourceUuid);
+    Resource parentResource = dao.getParentResourceByResource(resourceUuid);
+    if (parentResource == null)
+      return parentUuids;
+    if (StringUtil.isNullOrBlank(parentResource.getUpperUuid())) {
+      parentUuids.add(parentResource.getUuid());
+      return parentUuids;
+    }
+    Set<String> results = getParentResource(parentResource.getUuid(), parentUuids);
+    return results;
   }
 }
