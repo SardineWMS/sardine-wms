@@ -24,7 +24,8 @@
 		from
 		db_proxy.sardine_bin u
 		where u.uuid = #{uuid,jdbcType=VARCHAR}
-		and u.companyuuid
+		and
+		u.companyuuid
 		= #{companyUuid,jdbcType=VARCHAR}
 	</select>
 
@@ -92,19 +93,25 @@
 		<if test="wrhUuid != null">
 			and u.wrhuuid = #{wrhUuid,jdbcType=VARCHAR}
 		</if>
-	    <if test="zoneUuid != null">
+		<if test="zoneUuid != null">
 			and u.shelfUuid in (
-			select s.uuid from db_proxy.sardine_shelf s,db_proxy.sardine_path p,db_proxy.sardine_zone z where 
-			s.pathuuid = p.uuid and p.zoneuuid = z.uuid and z.uuid = #{zoneUuid,jdbcType=VARCHAR}
+			select s.uuid from
+			db_proxy.sardine_shelf s,db_proxy.sardine_path
+			p,db_proxy.sardine_zone z where
+			s.pathuuid = p.uuid and p.zoneuuid =
+			z.uuid and z.uuid =
+			#{zoneUuid,jdbcType=VARCHAR}
 			)
 		</if>
-	    <if test="pathUuid != null">
+		<if test="pathUuid != null">
 			and u.shelfUuid in (
-			select s.uuid from db_proxy.sardine_shelf s,db_proxy.sardine_path p where 
-			s.pathuuid = p.uuid and p.uuid = #{pathUuid,jdbcType=VARCHAR}
+			select s.uuid from
+			db_proxy.sardine_shelf s,db_proxy.sardine_path p where
+			s.pathuuid =
+			p.uuid and p.uuid = #{pathUuid,jdbcType=VARCHAR}
 			)
 		</if>
-	    <if test="shelfUuid != null">
+		<if test="shelfUuid != null">
 			and u.shelfUuid = #{shelfUuid,jdbcType=VARCHAR}
 		</if>
 		<if test="states != null">
@@ -132,23 +139,29 @@
 	</select>
 
 	<delete id="remove" parameterType="map">
-		delete from db_proxy.sardine_bin where
+		delete from
+		db_proxy.sardine_bin where
 		uuid
 		= #{uuid,jdbcType=VARCHAR}
 		and version =
 		#{version,jdbcType=LONGVARCHAR}
 	</delete>
-	
-	<select id="getBinByWrhAndUsage" parameterType="java.util.Map">
-	   select t.* from db_proxy.serdine_bin t where 
-	   t.wrhUuid = #{wrhUuid, jdbcType=VARCHAR}
-	   and t.usage = #{usage, jdbcType=VARCHAR}
+
+	<select id="getBinByWrhAndUsage" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select t.* from db_proxy.sardine_bin t where
+		t.wrhUuid =
+		#{wrhUuid, jdbcType=VARCHAR}
+		and t.binusage = #{usage,
+		jdbcType=VARCHAR}
 	</select>
-	
+
 	<update id="changeState" parameterType="java.util.Map">
-	  update db_proxy.sardine_bin b set b.state = #{state, jdbcType=VARCHAR},
-	  b.version = b.version + 1
-	  where b.uuid = #{uuid, jdbcType=VARCHAR}
-	  and b.version = #{version, jdbcType=LONGVARCHAR}
+		update
+		db_proxy.sardine_bin b set b.state = #{state, jdbcType=VARCHAR},
+		b.version = b.version + 1
+		where b.uuid = #{uuid, jdbcType=VARCHAR}
+		and
+		b.version = #{version, jdbcType=LONGVARCHAR}
 	</update>
 </mapper>
