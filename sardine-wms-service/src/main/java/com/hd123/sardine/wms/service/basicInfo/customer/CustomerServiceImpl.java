@@ -32,103 +32,126 @@ import com.hd123.sardine.wms.service.basicInfo.customer.validator.CustomerInsert
 import com.hd123.sardine.wms.service.basicInfo.customer.validator.CustomerRemoveAndRecoverValidateHandler;
 import com.hd123.sardine.wms.service.basicInfo.customer.validator.CustomerUpdateValidateHandler;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
+import com.hd123.sardine.wms.service.log.EntityLogger;
 
 /**
  * @author yangwenzhu
  *
  */
 public class CustomerServiceImpl extends BaseWMSService implements CustomerService {
-  @Autowired
-  private CustomerDao customerDao;
+    @Autowired
+    private CustomerDao customerDao;
 
-  @Autowired
-  private ValidateHandler<Customer> customerInsertValidateHandler;
+    @Autowired
+    private ValidateHandler<Customer> customerInsertValidateHandler;
 
-  @Autowired
-  private ValidateHandler<Customer> customerUpdateValidateHandler;
+    @Autowired
+    private ValidateHandler<Customer> customerUpdateValidateHandler;
 
-  @Autowired
-  private ValidateHandler<Customer> customerRemoveAndRecoverValidateHandler;
+    @Autowired
+    private ValidateHandler<Customer> customerRemoveAndRecoverValidateHandler;
 
-  @Override
-  public String insert(Customer customer) throws IllegalArgumentException, WMSException {
-    Customer dbCustomer = customerDao.getByCode(customer == null ? null : customer.getCode());
+    @Autowired
+    private EntityLogger logger;
 
-    ValidateResult insertResult = customerInsertValidateHandler
-        .putAttribute(CustomerInsertValidateHandler.KEY_CODEEXISTS_CUSTOMER, dbCustomer)
-        .validate(customer);
-    checkValidateResult(insertResult);
+    @Override
+    public String insert(Customer customer) throws IllegalArgumentException, WMSException {
+        Customer dbCustomer = customerDao.getByCode(customer == null ? null : customer.getCode());
 
-    customer.setUuid(UUIDGenerator.genUUID());
-    customer.setCompanyUuid(ApplicationContextUtil.getParentCompanyUuid());
-    customer.setCreateInfo(ApplicationContextUtil.getOperateInfo());
-    customer.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
-    customer.setState(CustomerState.normal);
-    customerDao.insert(customer);
-    return customer.getUuid();
-  }
+        ValidateResult insertResult = customerInsertValidateHandler
+                .putAttribute(CustomerInsertValidateHandler.KEY_CODEEXISTS_CUSTOMER, dbCustomer)
+                .validate(customer);
+        checkValidateResult(insertResult);
 
-  @Override
-  public void removeState(String uuid, long version) throws IllegalArgumentException, WMSException {
-    Customer dbCustomer = customerDao.get(uuid);
-    ValidateResult updateResult = customerRemoveAndRecoverValidateHandler
-        .putAttribute(CustomerRemoveAndRecoverValidateHandler.KEY_OPERATOR_CUSTOMER, dbCustomer)
-        .validate(dbCustomer);
-    checkValidateResult(updateResult);
-    PersistenceUtils.checkVersion(version, dbCustomer, "客户", uuid);
-    dbCustomer.setState(CustomerState.deleted);
-    dbCustomer.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
-    customerDao.update(dbCustomer);
-  }
+        customer.setUuid(UUIDGenerator.genUUID());
+        customer.setCompanyUuid(ApplicationContextUtil.getParentCompanyUuid());
+        customer.setCreateInfo(ApplicationContextUtil.getOperateInfo());
+        customer.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+        customer.setState(CustomerState.normal);
+        customerDao.insert(customer);
 
-  @Override
-  public void update(Customer customer) throws IllegalArgumentException, WMSException {
-    Customer dbCustomer = customerDao.get(customer == null ? null : customer.getCode());
-    ValidateResult updateResult = customerUpdateValidateHandler
-        .putAttribute(CustomerUpdateValidateHandler.KEY_CODEEXISTS_CUSTOMER, dbCustomer)
-        .validate(customer);
-    checkValidateResult(updateResult);
-    PersistenceUtils.checkVersion(customer.getVersion(), dbCustomer, "客户", customer.getUuid());
-    customer.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
-    customerDao.update(customer);
-  }
+        logger.injectContext(this, customer.getUuid(), Customer.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "新增客户");
+        return customer.getUuid();
+    }
 
-  @Override
-  public Customer getByCode(String code) {
-    if (StringUtil.isNullOrBlank(code))
-      return null;
-    return customerDao.getByCode(code);
-  }
+    @Override
+    public void removeState(String uuid, long version)
+            throws IllegalArgumentException, WMSException {
+        Customer dbCustomer = customerDao.get(uuid);
+        ValidateResult updateResult = customerRemoveAndRecoverValidateHandler
+                .putAttribute(CustomerRemoveAndRecoverValidateHandler.KEY_OPERATOR_CUSTOMER,
+                        dbCustomer)
+                .validate(dbCustomer);
+        checkValidateResult(updateResult);
+        PersistenceUtils.checkVersion(version, dbCustomer, "客户", uuid);
+        dbCustomer.setState(CustomerState.deleted);
+        dbCustomer.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+        customerDao.update(dbCustomer);
 
-  @Override
-  public PageQueryResult<Customer> query(PageQueryDefinition definition) {
-    Assert.assertArgumentNotNull(definition, "definition");
-    definition.setCompanyUuid(ApplicationContextUtil.getParentCompanyUuid());
-    PageQueryResult<Customer> pgr = new PageQueryResult<Customer>();
-    List<Customer> list = customerDao.query(definition);
-    PageQueryUtil.assignPageInfo(pgr, definition);
-    pgr.setRecords(list);
-    return pgr;
-  }
+        logger.injectContext(this, uuid, Customer.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_DELETE, "删除客户（标记）");
+    }
 
-  @Override
-  public void recover(String uuid, long version) throws IllegalArgumentException, WMSException {
-    Customer dbCustomer = customerDao.get(uuid);
-    ValidateResult updateResult = customerRemoveAndRecoverValidateHandler
-        .putAttribute(CustomerRemoveAndRecoverValidateHandler.KEY_OPERATOR_CUSTOMER, dbCustomer)
-        .validate(dbCustomer);
-    checkValidateResult(updateResult);
-    PersistenceUtils.checkVersion(version, dbCustomer, "客户", uuid);
-    dbCustomer.setState(CustomerState.normal);
-    dbCustomer.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
-    customerDao.update(dbCustomer);
-  }
+    @Override
+    public void update(Customer customer) throws IllegalArgumentException, WMSException {
+        Customer dbCustomer = customerDao.get(customer == null ? null : customer.getCode());
+        ValidateResult updateResult = customerUpdateValidateHandler
+                .putAttribute(CustomerUpdateValidateHandler.KEY_CODEEXISTS_CUSTOMER, dbCustomer)
+                .validate(customer);
+        checkValidateResult(updateResult);
+        PersistenceUtils.checkVersion(customer.getVersion(), dbCustomer, "客户", customer.getUuid());
+        customer.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+        customerDao.update(customer);
 
-  @Override
-  public Customer get(String uuid) {
-    if (StringUtil.isNullOrBlank(uuid))
-      return null;
-    return customerDao.get(uuid);
-  }
+        logger.injectContext(this, customer.getUuid(), Customer.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "修改客户");
+    }
+
+    @Override
+    public Customer getByCode(String code) {
+        if (StringUtil.isNullOrBlank(code))
+            return null;
+        return customerDao.getByCode(code);
+    }
+
+    @Override
+    public PageQueryResult<Customer> query(PageQueryDefinition definition) {
+        Assert.assertArgumentNotNull(definition, "definition");
+        definition.setCompanyUuid(ApplicationContextUtil.getParentCompanyUuid());
+        PageQueryResult<Customer> pgr = new PageQueryResult<Customer>();
+        List<Customer> list = customerDao.query(definition);
+        PageQueryUtil.assignPageInfo(pgr, definition);
+        pgr.setRecords(list);
+        return pgr;
+    }
+
+    @Override
+    public void recover(String uuid, long version) throws IllegalArgumentException, WMSException {
+        Customer dbCustomer = customerDao.get(uuid);
+        ValidateResult updateResult = customerRemoveAndRecoverValidateHandler
+                .putAttribute(CustomerRemoveAndRecoverValidateHandler.KEY_OPERATOR_CUSTOMER,
+                        dbCustomer)
+                .validate(dbCustomer);
+        checkValidateResult(updateResult);
+        PersistenceUtils.checkVersion(version, dbCustomer, "客户", uuid);
+        dbCustomer.setState(CustomerState.normal);
+        dbCustomer.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+        customerDao.update(dbCustomer);
+
+        logger.injectContext(this, uuid, Customer.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "恢复客户");
+    }
+
+    @Override
+    public Customer get(String uuid) {
+        if (StringUtil.isNullOrBlank(uuid))
+            return null;
+        return customerDao.get(uuid);
+    }
 
 }

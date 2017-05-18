@@ -9,6 +9,7 @@
  */
 package com.hd123.sardine.wms.service.ia.login;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -42,6 +43,7 @@ import com.hd123.sardine.wms.dao.ia.user.UserDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
 import com.hd123.sardine.wms.service.ia.login.validator.RegisterValidateHandler;
 import com.hd123.sardine.wms.service.ia.login.validator.UpdatePasswdValidateHandler;
+import com.hd123.sardine.wms.service.log.EntityLogger;
 import com.hd123.sardine.wms.service.util.FlowCodeGenerator;
 
 /**
@@ -52,175 +54,188 @@ import com.hd123.sardine.wms.service.util.FlowCodeGenerator;
  */
 public class LoginServiceImpl extends BaseWMSService implements LoginService {
 
-  @Autowired
-  private UserDao userDao;
+    @Autowired
+    private UserDao userDao;
 
-  @Autowired
-  private CompanyDao companyDao;
+    @Autowired
+    private CompanyDao companyDao;
 
-  @Autowired
-  private FlowCodeGenerator flowCodeGenerator;
+    @Autowired
+    private FlowCodeGenerator flowCodeGenerator;
 
-  @Autowired
-  private CompanyService companyService;
+    @Autowired
+    private CompanyService companyService;
 
-  @Autowired
-  private ResourceService resourceService;
+    @Autowired
+    private ResourceService resourceService;
 
-  @Autowired
-  private ValidateHandler<String> updatePasswdValidateHandler;
+    @Autowired
+    private ValidateHandler<String> updatePasswdValidateHandler;
 
-  @Autowired
-  private ValidateHandler<OperateContext> operateContextValidateHandler;
+    @Autowired
+    private ValidateHandler<OperateContext> operateContextValidateHandler;
 
-  @Autowired
-  private ValidateHandler<RegisterUser> registerValidateHandler;
+    @Autowired
+    private ValidateHandler<RegisterUser> registerValidateHandler;
 
-  @Override
-  public UserInfo register(RegisterUser registerUser) throws WMSException {
-    User existsUser = userDao.getByCode(registerUser != null ? registerUser.getCode() : null);
-    ValidateResult result = registerValidateHandler
-        .putAttribute(RegisterValidateHandler.KEY_CODEEXISTS_USER, existsUser)
-        .validate(registerUser);
-    checkValidateResult(result);
+    @Autowired
+    private EntityLogger logger;
 
-    Company dbCompany = companyService.getByName(registerUser.getCompanyName());
-    if (dbCompany != null)
-      throw new WMSException("企业已存在，不能重复注册");
+    @Override
+    public UserInfo register(RegisterUser registerUser) throws WMSException {
+        User existsUser = userDao.getByCode(registerUser != null ? registerUser.getCode() : null);
+        ValidateResult result = registerValidateHandler
+                .putAttribute(RegisterValidateHandler.KEY_CODEEXISTS_USER, existsUser)
+                .validate(registerUser);
+        checkValidateResult(result);
 
-    String prefix = Constants.RESOURCE_PREFIX;
-    String codePrefix;
-    if (registerUser.getCompanyType().equals(CompanyType.carrier.name())) {
-      prefix = prefix + Constants.CARR_PREFIX;
-      codePrefix = Constants.CARR_CODE_PREFIX;
-    } else if (registerUser.getCompanyType().equals(CompanyType.deliveryCenter.name())) {
-      prefix = prefix + Constants.DC_PREFIX;
-      codePrefix = Constants.DC_CODE_PREFIX;
-    } else {
-      prefix = prefix + Constants.SUPP_PREFIX;
-      codePrefix = Constants.SUPP_CODE_PREFIX;
+        Company dbCompany = companyService.getByName(registerUser.getCompanyName());
+        if (dbCompany != null)
+            throw new WMSException("企业已存在，不能重复注册");
+
+        String prefix = Constants.RESOURCE_PREFIX;
+        String codePrefix;
+        if (registerUser.getCompanyType().equals(CompanyType.carrier.name())) {
+            prefix = prefix + Constants.CARR_PREFIX;
+            codePrefix = Constants.CARR_CODE_PREFIX;
+        } else if (registerUser.getCompanyType().equals(CompanyType.deliveryCenter.name())) {
+            prefix = prefix + Constants.DC_PREFIX;
+            codePrefix = Constants.DC_CODE_PREFIX;
+        } else {
+            prefix = prefix + Constants.SUPP_PREFIX;
+            codePrefix = Constants.SUPP_CODE_PREFIX;
+        }
+
+        String flowCode = flowCodeGenerator.allocate(registerUser.getCompanyType(),
+                Constants.VIRTUAL_COMPANYUUID, Constants.COMPANY_FLOW_LENGTH);
+
+        Company company = new Company();
+        company.setUuid(prefix + flowCode);
+        company.setAddress(registerUser.getAddress());
+        company.setCode(codePrefix + flowCode);
+        company.setCompanyType(CompanyType.valueOf(registerUser.getCompanyType()));
+        company.setHomePage(registerUser.getHomePage());
+        company.setName(registerUser.getCompanyName());
+
+        User user = new User();
+        user.setCompanyUuid(company.getUuid());
+        user.setCompanyCode(company.getCode());
+        user.setCompanyName(company.getName());
+        user.setName(registerUser.getName());
+        user.setUserState(UserState.online);
+        user.setPasswd(registerUser.getPasswd());
+        user.setCode(registerUser.getCode());
+        user.setPhone(registerUser.getPhone());
+        user.setUuid(UUIDGenerator.genUUID());
+        user.setCreateInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
+        user.setLastModifyInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
+        userDao.insert(user);
+        companyService.insert(company);
+
+        logger.injectContext(this, user.getUuid(), User.class.getName(), new OperateContext(
+                new Operator(user.getUuid(), user.getCode(), user.getName()), new Date()));
+        logger.log(EntityLogger.EVENT_ADDNEW, "注册用户");
+        return user.fetchUserInfo();
     }
 
-    String flowCode = flowCodeGenerator.allocate(registerUser.getCompanyType(),
-        Constants.VIRTUAL_COMPANYUUID, Constants.COMPANY_FLOW_LENGTH);
+    @Override
+    public UserInfo updatePasswd(String userUuid, String oldPasswd, String newPasswd,
+            OperateContext operCtx) throws IllegalArgumentException, WMSException {
+        User user = userDao.get(userUuid);
+        ValidateResult result = updatePasswdValidateHandler
+                .putAttribute(UpdatePasswdValidateHandler.KEY_UPDATEPASSWD_USER, user)
+                .validate(userUuid);
+        checkValidateResult(result);
 
-    Company company = new Company();
-    company.setUuid(prefix + flowCode);
-    company.setAddress(registerUser.getAddress());
-    company.setCode(codePrefix + flowCode);
-    company.setCompanyType(CompanyType.valueOf(registerUser.getCompanyType()));
-    company.setHomePage(registerUser.getHomePage());
-    company.setName(registerUser.getCompanyName());
+        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
+        checkValidateResult(operCtxResult);
 
-    User user = new User();
-    user.setCompanyUuid(company.getUuid());
-    user.setCompanyCode(company.getCode());
-    user.setCompanyName(company.getName());
-    user.setName(registerUser.getName());
-    user.setUserState(UserState.online);
-    user.setPasswd(registerUser.getPasswd());
-    user.setCode(registerUser.getCode());
-    user.setPhone(registerUser.getPhone());
-    user.setUuid(UUIDGenerator.genUUID());
-    user.setCreateInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
-    user.setLastModifyInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
-    userDao.insert(user);
-    companyService.insert(company);
-    return user.fetchUserInfo();
-  }
+        if (ObjectUtils.notEqual(user.getPasswd(), oldPasswd))
+            throw new WMSException("原始密码错误");
 
-  @Override
-  public UserInfo updatePasswd(String userUuid, String oldPasswd, String newPasswd,
-      OperateContext operCtx) throws IllegalArgumentException, WMSException {
-    User user = userDao.get(userUuid);
-    ValidateResult result = updatePasswdValidateHandler
-        .putAttribute(UpdatePasswdValidateHandler.KEY_UPDATEPASSWD_USER, user).validate(userUuid);
-    checkValidateResult(result);
+        userDao.updatePasswd(userUuid, oldPasswd, newPasswd, operCtx);
 
-    ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-    checkValidateResult(operCtxResult);
-
-    if (ObjectUtils.notEqual(user.getPasswd(), oldPasswd))
-      throw new WMSException("原始密码错误");
-
-    userDao.updatePasswd(userUuid, oldPasswd, newPasswd, operCtx);
-    return user.fetchUserInfo();
-  }
-
-  @Override
-  public UserInfo login(String userCode, String passwd)
-      throws IllegalArgumentException, WMSException {
-    User user = userDao.login(userCode, passwd);
-    if (user == null)
-      throw new WMSException("登录失败，用户名或密码错误。");
-
-    if (user.getUserState().equals(UserState.online) == false)
-      throw new WMSException("登录失败，当前用户未被启用。");
-
-    List<Resource> ownedMenus = null;
-    List<Resource> ownedResources = null;
-    ApplicationContextUtil.setCompany(new UCN(user.getCompanyUuid(), user.getCompanyCode(), user.getCompanyName()));
-    if (user.isAdministrator()) {
-      ownedMenus = resourceService.queryOwnedMenuByUserType(ApplicationContextUtil.getUserType());
-      ownedResources = resourceService
-          .queryOwnedOperateByUserType(ApplicationContextUtil.getUserType());
-    } else {
-      ownedMenus = resourceService.queryOwnedMenuResourceByUser(user.getUuid());
-      ownedResources = resourceService.queryOwnedOperateByUser(user.getUuid());
+        logger.injectContext(this, userUuid, User.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_MODIFY, "用户修改密码");
+        return user.fetchUserInfo();
     }
 
-    UserInfo userInfo = user.fetchUserInfo();
-    userInfo.setOwnedMenus(SerializationUtils.serialize(ownedMenus));
-    userInfo.setOwnedResources(SerializationUtils.serialize(ownedResources));
-    return userInfo;
-  }
+    @Override
+    public UserInfo login(String userCode, String passwd)
+            throws IllegalArgumentException, WMSException {
+        User user = userDao.login(userCode, passwd);
+        if (user == null)
+            throw new WMSException("登录失败，用户名或密码错误。");
 
-  @Override
-  public UserInfo register(RegisterInfo registerInfo)
-      throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(registerInfo, "registerInfo");
-    registerInfo.validate();
+        if (user.getUserState().equals(UserState.online) == false)
+            throw new WMSException("登录失败，当前用户未被启用。");
 
-    User existsUser = userDao.getByCode(registerInfo.getLoginId());
-    if (existsUser != null)
-      throw new WMSException("用户名已存在！");
+        List<Resource> ownedMenus = null;
+        List<Resource> ownedResources = null;
+        ApplicationContextUtil.setCompany(
+                new UCN(user.getCompanyUuid(), user.getCompanyCode(), user.getCompanyName()));
+        if (user.isAdministrator()) {
+            ownedMenus = resourceService
+                    .queryOwnedMenuByUserType(ApplicationContextUtil.getUserType());
+            ownedResources = resourceService
+                    .queryOwnedOperateByUserType(ApplicationContextUtil.getUserType());
+        } else {
+            ownedMenus = resourceService.queryOwnedMenuResourceByUser(user.getUuid());
+            ownedResources = resourceService.queryOwnedOperateByUser(user.getUuid());
+        }
 
-    User user = new User();
-    user.setUuid(UUIDGenerator.genUUID());
-    user.setCode(registerInfo.getLoginId());
-    String flowCode = flowCodeGenerator.allocate(Constants.RESOURCE_PREFIX,
-        Constants.VIRTUAL_COMPANYUUID, Constants.COMPANY_FLOW_LENGTH);
-    user.setCompanyUuid(Constants.RESOURCE_PREFIX.concat(flowCode));
-    user.setCompanyCode(flowCode);
-    user.setCompanyName(registerInfo.getCompanyName());
-    user.setName("企业管理员");
-    user.setPasswd(registerInfo.getPasswd());
-    user.setPhone(null);
-    user.setAdministrator(true);
-    user.setUserState(UserState.online);
-    user.setCreateInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
-    user.setLastModifyInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
-    userDao.insert(user);
+        UserInfo userInfo = user.fetchUserInfo();
+        userInfo.setOwnedMenus(SerializationUtils.serialize(ownedMenus));
+        userInfo.setOwnedResources(SerializationUtils.serialize(ownedResources));
+        return userInfo;
+    }
 
-    ApplicationContextUtil
-        .setCompany(new UCN(user.getCompanyUuid(), user.getCompanyCode(), user.getCompanyName()));
-    String dbName = ApplicationContextUtil.getDBName();
-    companyDao.insertDBMap(user.getCompanyUuid(), dbName);
+    @Override
+    public UserInfo register(RegisterInfo registerInfo)
+            throws IllegalArgumentException, WMSException {
+        Assert.assertArgumentNotNull(registerInfo, "registerInfo");
+        registerInfo.validate();
 
-//    List<String> resourceUuids = new ArrayList<String>();
-//    List<Resource> basicResources = resourceService
-//        .queryByUpperResource(Resource.BASIC_RESOURCE_UUID);
-//    resourceUuids.add(Resource.BASIC_RESOURCE_UUID);
-//    for (Resource resource : basicResources) {
-//      resourceUuids.add(resource.getUuid());
-//    }
-//    List<Resource> systemResources = resourceService
-//        .queryByUpperResource(Resource.SYSTEM_RESOURCE_UUID);
-//    resourceUuids.add(Resource.SYSTEM_RESOURCE_UUID);
-//    for (Resource resource : systemResources) {
-//      resourceUuids.add(resource.getUuid());
-//    }
-//    resourceService.saveUserResource(user.getUuid(), resourceUuids);
-    return user.fetchUserInfo();
-  }
+        User existsUser = userDao.getByCode(registerInfo.getLoginId());
+        if (existsUser != null)
+            throw new WMSException("用户名已存在！");
+
+        User user = new User();
+        user.setUuid(UUIDGenerator.genUUID());
+        user.setCode(registerInfo.getLoginId());
+        String flowCode = flowCodeGenerator.allocate(Constants.RESOURCE_PREFIX,
+                Constants.VIRTUAL_COMPANYUUID, Constants.COMPANY_FLOW_LENGTH);
+        user.setCompanyUuid(Constants.RESOURCE_PREFIX.concat(flowCode));
+        user.setCompanyCode(flowCode);
+        user.setCompanyName(registerInfo.getCompanyName());
+        user.setName("企业管理员");
+        user.setPasswd(registerInfo.getPasswd());
+        user.setPhone(null);
+        user.setAdministrator(true);
+        user.setUserState(UserState.online);
+        user.setCreateInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
+        user.setLastModifyInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
+        userDao.insert(user);
+
+        ApplicationContextUtil.setCompany(
+                new UCN(user.getCompanyUuid(), user.getCompanyCode(), user.getCompanyName()));
+        String dbName = ApplicationContextUtil.getDBName();
+        companyDao.insertDBMap(user.getCompanyUuid(), dbName);
+
+        // List<String> resourceUuids = new ArrayList<String>();
+        // List<Resource> basicResources = resourceService
+        // .queryByUpperResource(Resource.BASIC_RESOURCE_UUID);
+        // resourceUuids.add(Resource.BASIC_RESOURCE_UUID);
+        // for (Resource resource : basicResources) {
+        // resourceUuids.add(resource.getUuid());
+        // }
+        // List<Resource> systemResources = resourceService
+        // .queryByUpperResource(Resource.SYSTEM_RESOURCE_UUID);
+        // resourceUuids.add(Resource.SYSTEM_RESOURCE_UUID);
+        // for (Resource resource : systemResources) {
+        // resourceUuids.add(resource.getUuid());
+        // }
+        // resourceService.saveUserResource(user.getUuid(), resourceUuids);
+        return user.fetchUserInfo();
+    }
 }

@@ -43,8 +43,8 @@
 
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
-			<tx:method name="register*" propagation="REQUIRED" rollback-for="java.lang.Exception"
-				no-rollback-for="java.lang.RuntimeException" />
+			<tx:method name="register*" propagation="REQUIRED"
+				rollback-for="java.lang.Exception" no-rollback-for="java.lang.RuntimeException" />
 			<tx:method name="save*" propagation="REQUIRED"
 				rollback-for="Exception" />
 			<tx:method name="insert*" propagation="REQUIRED"
@@ -69,6 +69,14 @@
 			<tx:method name="effective*" propagation="REQUIRED"
 				rollback-for="Exception" />
 			<tx:method name="upload*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="recover*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="setDefault*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="online*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="offline*" propagation="REQUIRED"
 				rollback-for="Exception" />
 			<tx:method name="*" read-only="true" />
 		</tx:attributes>

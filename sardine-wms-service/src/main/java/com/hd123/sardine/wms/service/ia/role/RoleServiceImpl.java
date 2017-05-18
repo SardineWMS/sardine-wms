@@ -34,6 +34,7 @@ import com.hd123.sardine.wms.dao.ia.role.RoleDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
 import com.hd123.sardine.wms.service.ia.role.validator.RoleInsertValidateHandler;
 import com.hd123.sardine.wms.service.ia.role.validator.RoleUpdateValidateHandler;
+import com.hd123.sardine.wms.service.log.EntityLogger;
 
 /**
  * 角色服务：实现
@@ -53,6 +54,8 @@ public class RoleServiceImpl extends BaseWMSService implements RoleService {
     private ValidateHandler<Role> roleUpdateValidateHandler;
     @Autowired
     private ValidateHandler<OperateContext> operateContextValidateHandler;
+    @Autowired
+    private EntityLogger logger;
 
     @Override
     public PageQueryResult<Role> query(PageQueryDefinition definition)
@@ -87,6 +90,9 @@ public class RoleServiceImpl extends BaseWMSService implements RoleService {
         role.setCreateInfo(OperateInfo.newInstance(operCtx));
         role.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         roleDao.insert(role);
+
+        logger.injectContext(this, role.getUuid(), Role.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_ADDNEW, "新建角色");
         return role.getUuid();
     }
 
@@ -108,6 +114,9 @@ public class RoleServiceImpl extends BaseWMSService implements RoleService {
 
         role.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         roleDao.update(role);
+
+        logger.injectContext(this, role.getUuid(), Role.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_MODIFY, "修改角色");
     }
 
     @Override
@@ -130,6 +139,9 @@ public class RoleServiceImpl extends BaseWMSService implements RoleService {
         oldRole.setState(RoleState.online);
         oldRole.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         roleDao.update(oldRole);
+
+        logger.injectContext(this, uuid, Role.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_MODIFY, "启用角色");
     }
 
     @Override
@@ -151,6 +163,9 @@ public class RoleServiceImpl extends BaseWMSService implements RoleService {
         oldRole.setState(RoleState.offline);
         oldRole.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         roleDao.update(oldRole);
+
+        logger.injectContext(this, uuid, Role.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_MODIFY, "停用角色");
     }
 
     @Override
@@ -169,6 +184,9 @@ public class RoleServiceImpl extends BaseWMSService implements RoleService {
         resourceService.removeResourceByRole(uuid);
         roleDao.removeRelationRoleAndUserByRole(uuid);
         roleDao.remove(uuid, version);
+
+        logger.injectContext(this, uuid, Role.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_REMOVE, "删除角色");
     }
 
     @Override

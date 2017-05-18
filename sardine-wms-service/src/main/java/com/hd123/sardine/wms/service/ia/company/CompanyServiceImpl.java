@@ -33,6 +33,7 @@ import com.hd123.sardine.wms.dao.ia.user.CompanyDao;
 import com.hd123.sardine.wms.dao.ia.user.UserDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
 import com.hd123.sardine.wms.service.ia.company.validator.CompanyInsertValidateHandler;
+import com.hd123.sardine.wms.service.log.EntityLogger;
 
 /**
  * @author yangwenzhu
@@ -51,6 +52,9 @@ public class CompanyServiceImpl extends BaseWMSService implements CompanyService
 
     @Autowired
     private ValidateHandler<Company> companyInsertValidateHandler;
+
+    @Autowired
+    private EntityLogger logger;
 
     @Override
     public String insert(Company company) throws IllegalArgumentException, WMSException {
@@ -112,6 +116,10 @@ public class CompanyServiceImpl extends BaseWMSService implements CompanyService
         resourceUuids.remove(ResourceConstants.DC_BASIC_CATEGORY_DELETE_UUID);
         resourceUuids.remove(ResourceConstants.DC_BASIC_CATEGORY_EDIT_UUID);
         resourceService.saveUserResource(user.getUuid(), resourceUuids);
+
+        logger.injectContext(this, company.getUuid(), Company.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "新建公司");
         return company.getUuid();
     }
 

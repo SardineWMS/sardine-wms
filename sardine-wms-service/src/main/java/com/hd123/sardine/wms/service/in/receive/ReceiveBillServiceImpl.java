@@ -56,6 +56,7 @@ import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.in.receive.ReceiveBillDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
+import com.hd123.sardine.wms.service.log.EntityLogger;
 
 /**
  * @author zhangsai
@@ -84,6 +85,9 @@ public class ReceiveBillServiceImpl extends BaseWMSService implements ReceiveBil
     @Autowired
     private OrderBillService orderBillService;
 
+    @Autowired
+    private EntityLogger logger;
+
     @Override
     public String insert(ReceiveBill bill) throws WMSException {
         Assert.assertArgumentNotNull(bill, "bill");
@@ -103,6 +107,10 @@ public class ReceiveBillServiceImpl extends BaseWMSService implements ReceiveBil
         }
         receiveBillDao.insert(bill);
         receiveBillDao.insertItems(bill.getItems());
+
+        logger.injectContext(this, bill.getUuid(), ReceiveBill.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "新建收货单");
         return bill.getBillNumber();
     }
 
@@ -132,6 +140,10 @@ public class ReceiveBillServiceImpl extends BaseWMSService implements ReceiveBil
         receiveBillDao.update(bill);
         receiveBillDao.removeItems(bill.getUuid());
         receiveBillDao.insertItems(bill.getItems());
+
+        logger.injectContext(this, bill.getUuid(), ReceiveBill.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "修改收货单");
     }
 
     private void verifyAndRefresh(ReceiveBill bill) throws WMSException {
@@ -259,6 +271,10 @@ public class ReceiveBillServiceImpl extends BaseWMSService implements ReceiveBil
 
         receiveBillDao.remove(uuid, version);
         receiveBillDao.removeItems(uuid);
+
+        logger.injectContext(this, uuid, ReceiveBill.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_REMOVE, "删除收货单");
     }
 
     @Override
@@ -300,7 +316,7 @@ public class ReceiveBillServiceImpl extends BaseWMSService implements ReceiveBil
                 stock.setStockBatch(item.getStockBatch());
                 stock.setSupplierUuid(bill.getSupplier().getUuid());
                 stock.setValidDate(item.getValidDate());
-//                stock.setQpc(item.getQpc());
+                // stock.setQpc(item.getQpc());
                 stocks.add(stock);
             }
             stockService.shiftIn("收货单", bill.getBillNumber(), stocks);
@@ -369,6 +385,10 @@ public class ReceiveBillServiceImpl extends BaseWMSService implements ReceiveBil
         bill.setState(ReceiveBillState.Audited);
         bill.setLastModifyInfo(OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
         receiveBillDao.update(bill);
+
+        logger.injectContext(this, uuid, ReceiveBill.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "审核收货单");
     }
 
     private void verifyContainer(ReceiveBill bill) throws WMSException {

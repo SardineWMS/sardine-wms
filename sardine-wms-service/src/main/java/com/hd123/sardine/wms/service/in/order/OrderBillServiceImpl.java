@@ -38,6 +38,7 @@ import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.in.order.OrderBillDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
+import com.hd123.sardine.wms.service.log.EntityLogger;
 
 /**
  * 订单服务：实现
@@ -55,6 +56,9 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
 
     @Autowired
     private OrderBillDao orderBillDao;
+
+    @Autowired
+    private EntityLogger logger;
 
     @Override
     public String insert(OrderBill orderBill) throws IllegalArgumentException, WMSException {
@@ -79,6 +83,10 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
             item.setOrderBillUuid(orderBill.getUuid());
         }
         orderBillDao.insertItems(orderBill.getItems());
+
+        logger.injectContext(this, orderBill.getUuid(), OrderBill.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "新建订单");
         return orderBill.getUuid();
     }
 
@@ -123,6 +131,10 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
         }
         orderBillDao.removeItems(orderBill.getUuid());
         orderBillDao.insertItems(orderBill.getItems());
+
+        logger.injectContext(this, orderBill.getUuid(), OrderBill.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "修改订单");
     }
 
     @Override
@@ -140,6 +152,10 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
 
         orderBillDao.remove(uuid, version);
         orderBillDao.removeItems(uuid);
+
+        logger.injectContext(this, uuid, OrderBill.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_REMOVE, "删除订单");
     }
 
     @Override
@@ -197,6 +213,10 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
                 OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
         oldOrderBill.setState(OrderBillState.PreBookReg);
         orderBillDao.update(oldOrderBill);
+
+        logger.injectContext(this, uuid, OrderBill.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "订单预约");
     }
 
     @Override
@@ -217,6 +237,10 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
                 OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
         oldOrderBill.setState(OrderBillState.PreChecked);
         orderBillDao.update(oldOrderBill);
+
+        logger.injectContext(this, uuid, OrderBill.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "订单预检");
     }
 
     @Override
@@ -239,6 +263,10 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
         oldOrderBill.setState(OrderBillState.Finished);
         orderBillDao.update(oldOrderBill);
 
+        logger.injectContext(this, uuid, OrderBill.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "完成订单");
+
         // TODO 完成进行中的收货单，针对app收货
     }
 
@@ -260,6 +288,10 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
                 OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
         oldOrderBill.setState(OrderBillState.Aborted);
         orderBillDao.update(oldOrderBill);
+
+        logger.injectContext(this, uuid, OrderBill.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "订单作废");
     }
 
     @Override
@@ -310,5 +342,9 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
         orderBill.setLastModifyInfo(
                 OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
         orderBillDao.update(orderBill);
+
+        logger.injectContext(this, orderBill.getUuid(), OrderBill.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "订单收货");
     }
 }

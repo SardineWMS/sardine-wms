@@ -33,6 +33,7 @@ import com.hd123.sardine.wms.service.basicInfo.bintype.validator.BinTypeInsertVa
 import com.hd123.sardine.wms.service.basicInfo.bintype.validator.BinTypeRemoveValidateHandler;
 import com.hd123.sardine.wms.service.basicInfo.bintype.validator.BinTypeUpdateValidateHandler;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
+import com.hd123.sardine.wms.service.log.EntityLogger;
 
 /**
  * @author yangwenzhu
@@ -54,6 +55,9 @@ public class BinTypeServiceImpl extends BaseWMSService implements BinTypeService
 
     @Autowired
     private ValidateHandler<BinType> binTypeUpdateValidateHandler;
+
+    @Autowired
+    private EntityLogger logger;
 
     @Override
     public BinType get(String uuid) {
@@ -84,6 +88,9 @@ public class BinTypeServiceImpl extends BaseWMSService implements BinTypeService
         binType.setCreateInfo(OperateInfo.newInstance(operCtx));
         binType.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         binTypeDao.insert(binType);
+
+        logger.injectContext(this, binType.getUuid(), BinType.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_ADDNEW, "新增货位类型");
         return binType.getUuid();
     }
 
@@ -98,6 +105,9 @@ public class BinTypeServiceImpl extends BaseWMSService implements BinTypeService
         ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
         checkValidateResult(operCtxResult);
         binTypeDao.remove(uuid, version);
+
+        logger.injectContext(this, uuid, BinType.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_REMOVE, "删除货位类型");
     }
 
     @Override
@@ -118,6 +128,9 @@ public class BinTypeServiceImpl extends BaseWMSService implements BinTypeService
 
         binType.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         binTypeDao.update(binType);
+
+        logger.injectContext(this, binType.getUuid(), BinType.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_MODIFY, "修改货位类型");
     }
 
     @Override

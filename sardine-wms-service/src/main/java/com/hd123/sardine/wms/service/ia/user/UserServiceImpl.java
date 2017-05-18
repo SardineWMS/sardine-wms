@@ -29,6 +29,7 @@ import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.common.validator.ValidateHandler;
 import com.hd123.sardine.wms.common.validator.ValidateResult;
@@ -39,6 +40,7 @@ import com.hd123.sardine.wms.service.ia.BaseWMSService;
 import com.hd123.sardine.wms.service.ia.user.validator.UserInsertValidateHandler;
 import com.hd123.sardine.wms.service.ia.user.validator.UserRemoveValidateHandler;
 import com.hd123.sardine.wms.service.ia.user.validator.UserUpdateValidateHandler;
+import com.hd123.sardine.wms.service.log.EntityLogger;
 
 /**
  * 用户服务实现
@@ -65,6 +67,9 @@ public class UserServiceImpl extends BaseWMSService implements UserService {
 
     @Autowired
     private ResourceService resourceService;
+
+    @Autowired
+    private EntityLogger logger;
 
     @Override
     public User get(String uuid) {
@@ -115,6 +120,9 @@ public class UserServiceImpl extends BaseWMSService implements UserService {
         user.setCreateInfo(OperateInfo.newInstance(operCtx));
         user.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         userDao.insert(user);
+
+        logger.injectContext(this, user.getUuid(), User.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_ADDNEW, "新建用户");
         return user.getUuid();
     }
 
@@ -135,6 +143,9 @@ public class UserServiceImpl extends BaseWMSService implements UserService {
 
         user.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         userDao.update(user);
+
+        logger.injectContext(this, user.getUuid(), User.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_MODIFY, "修改用户");
     }
 
     @Override
@@ -151,6 +162,9 @@ public class UserServiceImpl extends BaseWMSService implements UserService {
         userDao.removeRolesByUser(uuid);
         resourceService.removeResourceByUser(uuid);
         userDao.remove(uuid, version);
+
+        logger.injectContext(this, uuid, User.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_REMOVE, "删除用户");
     }
 
     @Override
@@ -170,6 +184,9 @@ public class UserServiceImpl extends BaseWMSService implements UserService {
         onlineUser.setUserState(UserState.online);
         onlineUser.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         userDao.update(onlineUser);
+
+        logger.injectContext(this, uuid, User.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_MODIFY, "启用用户");
     }
 
     @Override
@@ -189,6 +206,9 @@ public class UserServiceImpl extends BaseWMSService implements UserService {
         offlineUser.setUserState(UserState.offline);
         offlineUser.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         userDao.update(offlineUser);
+
+        logger.injectContext(this, uuid, User.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_MODIFY, "停用用户");
     }
 
     @Override
@@ -211,5 +231,9 @@ public class UserServiceImpl extends BaseWMSService implements UserService {
         for (Resource resource : userResources)
             userResourcesList.add(resource.getUuid());
         resourceService.saveUserResource(userUuid, userResourcesList);
+
+        logger.injectContext(this, userUuid, User.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "保存用户资源");
     }
 }

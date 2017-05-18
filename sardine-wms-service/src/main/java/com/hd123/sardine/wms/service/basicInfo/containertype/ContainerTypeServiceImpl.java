@@ -31,6 +31,7 @@ import com.hd123.sardine.wms.common.validator.ValidateHandler;
 import com.hd123.sardine.wms.common.validator.ValidateResult;
 import com.hd123.sardine.wms.dao.basicInfo.containertype.ContainerTypeDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
+import com.hd123.sardine.wms.service.log.EntityLogger;
 
 /**
  * @author fanqingqing
@@ -49,6 +50,9 @@ public class ContainerTypeServiceImpl extends BaseWMSService implements Containe
 
     @Autowired
     private ValidateHandler<OperateContext> operateContextValidateHandler;
+
+    @Autowired
+    private EntityLogger logger;
 
     @Override
     public PageQueryResult<ContainerType> query(PageQueryDefinition definition)
@@ -85,6 +89,9 @@ public class ContainerTypeServiceImpl extends BaseWMSService implements Containe
         containerType.setCreateInfo(OperateInfo.newInstance(operCtx));
         containerType.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         dao.insert(containerType);
+
+        logger.injectContext(this, containerType.getUuid(), ContainerType.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_ADDNEW, "新增容器类型");
         return containerType.getUuid();
     }
 
@@ -112,6 +119,9 @@ public class ContainerTypeServiceImpl extends BaseWMSService implements Containe
 
         containerType.setLastModifyInfo(OperateInfo.newInstance(operCtx));
         dao.update(containerType);
+
+        logger.injectContext(this, containerType.getUuid(), ContainerType.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_MODIFY, "修改容器类型");
     }
 
     @Override
@@ -127,6 +137,9 @@ public class ContainerTypeServiceImpl extends BaseWMSService implements Containe
             throw EntityNotFoundException.create(ContainerType.class.getName(), "uuid", uuid);
         PersistenceUtils.checkVersion(version, containerType, "容器类型", uuid);
         dao.remove(uuid, version);
+
+        logger.injectContext(this, uuid, ContainerType.class.getName(), operCtx);
+        logger.log(EntityLogger.EVENT_REMOVE, "删除容器类型");
     }
 
 }

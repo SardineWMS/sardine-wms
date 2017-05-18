@@ -33,73 +33,85 @@ import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.basicInfo.container.ContainerDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
+import com.hd123.sardine.wms.service.log.EntityLogger;
 
 /**
  * @author Jing
  *
  */
 public class ContainerServiceImpl extends BaseWMSService implements ContainerService {
-  @Autowired
-  private ContainerDao dao;
-  @Autowired
-  private ContainerTypeService containerTypeService;
+    @Autowired
+    private ContainerDao dao;
+    @Autowired
+    private ContainerTypeService containerTypeService;
 
-  @Override
-  public void saveNew(String containerTypeUuid, OperateContext operateContext) throws WMSException {
-    Assert.assertArgumentNotNull(containerTypeUuid, "containerTypeUuid");
+    @Autowired
+    private EntityLogger logger;
 
-    ContainerType containerType = containerTypeService.get(containerTypeUuid);
-    if (containerType == null)
-      throw new WMSException("容器类型不存在。");
+    @Override
+    public void saveNew(String containerTypeUuid, OperateContext operateContext)
+            throws WMSException {
+        Assert.assertArgumentNotNull(containerTypeUuid, "containerTypeUuid");
 
-    Container container = new Container();
-    container.setUuid(UUIDGenerator.genUUID());
-    String flowCode = flowCodeGenerator.allocate(containerType.getBarCodePrefix(),
-        containerType.getCompanyUuid(), containerType.getBarCodeLength());
-    container.setBarcode(containerType.getBarCodePrefix() + flowCode);
-    container.setContainerType(
-        new UCN(containerTypeUuid, containerType.getCode(), containerType.getName()));
-    container.setCompanyUuid(containerType.getCompanyUuid());
-    container.setCreateInfo(OperateInfo.newInstance(operateContext));
-    container.setLastModifyInfo(OperateInfo.newInstance(operateContext));
-    dao.insert(container);
-  }
+        ContainerType containerType = containerTypeService.get(containerTypeUuid);
+        if (containerType == null)
+            throw new WMSException("容器类型不存在。");
 
-  @Override
-  public Container getByBarcode(String barcode, String companyUuid) {
-    Assert.assertArgumentNotNull(barcode, "barcode");
-    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+        Container container = new Container();
+        container.setUuid(UUIDGenerator.genUUID());
+        String flowCode = flowCodeGenerator.allocate(containerType.getBarCodePrefix(),
+                containerType.getCompanyUuid(), containerType.getBarCodeLength());
+        container.setBarcode(containerType.getBarCodePrefix() + flowCode);
+        container.setContainerType(
+                new UCN(containerTypeUuid, containerType.getCode(), containerType.getName()));
+        container.setCompanyUuid(containerType.getCompanyUuid());
+        container.setCreateInfo(OperateInfo.newInstance(operateContext));
+        container.setLastModifyInfo(OperateInfo.newInstance(operateContext));
+        dao.insert(container);
 
-    return dao.getByBarcode(barcode, companyUuid);
-  }
+        logger.injectContext(this, container.getUuid(), Container.class.getName(), operateContext);
+        logger.log(EntityLogger.EVENT_ADDNEW, "新增容器");
+    }
 
-  @Override
-  public PageQueryResult<Container> query(PageQueryDefinition definition) {
-    PageQueryResult<Container> pgr = new PageQueryResult<Container>();
-    List<Container> list = dao.query(definition);
-    PageQueryUtil.assignPageInfo(pgr, definition);
-    pgr.setRecords(list);
-    return pgr;
-  }
+    @Override
+    public Container getByBarcode(String barcode, String companyUuid) {
+        Assert.assertArgumentNotNull(barcode, "barcode");
+        Assert.assertArgumentNotNull(companyUuid, "companyUuid");
 
-  @Override
-  public void change(String uuid, long version, ContainerState state, String position)
-      throws IllegalArgumentException, VersionConflictException, WMSException {
-    Assert.assertArgumentNotNull(uuid, "uuid");
-    if (state == null && StringUtil.isNullOrBlank(position))
-      throw new IllegalArgumentException("修改容器的位置和状态不能同时为空！");
+        return dao.getByBarcode(barcode, companyUuid);
+    }
 
-    Container container = dao.get(uuid);
-    if (container == null)
-      throw new WMSException("指定的容器不存在！");
-    PersistenceUtils.checkVersion(version, container, "容器", container.getBarcode());
+    @Override
+    public PageQueryResult<Container> query(PageQueryDefinition definition) {
+        PageQueryResult<Container> pgr = new PageQueryResult<Container>();
+        List<Container> list = dao.query(definition);
+        PageQueryUtil.assignPageInfo(pgr, definition);
+        pgr.setRecords(list);
+        return pgr;
+    }
 
-    if (state != null)
-      container.setState(state);
-    if (StringUtil.isNullOrBlank(position) == false)
-      container.setPosition(position);
-    container.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    @Override
+    public void change(String uuid, long version, ContainerState state, String position)
+            throws IllegalArgumentException, VersionConflictException, WMSException {
+        Assert.assertArgumentNotNull(uuid, "uuid");
+        if (state == null && StringUtil.isNullOrBlank(position))
+            throw new IllegalArgumentException("修改容器的位置和状态不能同时为空！");
 
-    dao.update(container);
-  }
+        Container container = dao.get(uuid);
+        if (container == null)
+            throw new WMSException("指定的容器不存在！");
+        PersistenceUtils.checkVersion(version, container, "容器", container.getBarcode());
+
+        if (state != null)
+            container.setState(state);
+        if (StringUtil.isNullOrBlank(position) == false)
+            container.setPosition(position);
+        container.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+
+        dao.update(container);
+
+        logger.injectContext(this, uuid, Container.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "修改容器状态和目标位置");
+    }
 }
