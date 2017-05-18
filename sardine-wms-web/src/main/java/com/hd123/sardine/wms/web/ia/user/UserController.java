@@ -131,6 +131,7 @@ public class UserController extends BaseController {
             @RequestParam(value = "token", required = true) String token, @RequestBody User user) {
         RespObject resp = new RespObject();
         try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
             userService.update(user, getOperateContext(token));
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -146,6 +147,7 @@ public class UserController extends BaseController {
             @RequestParam(value = "version", required = true) long version) {
         RespObject resp = new RespObject();
         try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
             userService.remove(uuid, version, getOperateContext(token));
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -161,6 +163,7 @@ public class UserController extends BaseController {
             @RequestParam(value = "version", required = true) long version) {
         RespObject resp = new RespObject();
         try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
             userService.online(uuid, version, getOperateContext(token));
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -176,6 +179,7 @@ public class UserController extends BaseController {
             @RequestParam(value = "version", required = true) long version) {
         RespObject resp = new RespObject();
         try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
             userService.offline(uuid, version, getOperateContext(token));
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {

@@ -36,7 +36,6 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
-import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.BaseController;
 
 /**
@@ -101,8 +100,6 @@ public class BinController extends BaseController {
   public @ResponseBody RespObject queryWrhs(
       @RequestParam(value = "token", required = true) String token) {
     RespObject resp = new RespObject();
-    ApplicationContextUtil.setCompany(getLoginCompany(token));
-
     try {
       List<Wrh> result = binService.queryWrhs(getLoginCompany(token).getUuid());
       resp.setObj(result);
