@@ -48,10 +48,9 @@
 		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
 		<result column="qty" property="qty" jdbcType="DECIMAL" />
 		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
-		<result column="produceDate" property="produceDate" jdbcType="TIMESTAMP" />
+		<result column="expireDate" property="expireDate" jdbcType="TIMESTAMP" />
 		<result column="productionDate" property="productionDate"
 			jdbcType="TIMESTAMP" />
-		<result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
 		<result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
 		<result column="containerBarCode" property="containerBarCode"
 			jdbcType="VARCHAR" />
