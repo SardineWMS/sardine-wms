@@ -31,6 +31,7 @@
 		<result column="modifyTime" property="modifyTime" jdbcType="TIMESTAMP" />
 		<result column="onWayQty" property="onWayQty" jdbcType="DECIMAL" />
 		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
 	</resultMap>
 
 	<resultMap id="StockExtendInfoResultMap" type="StockExtendInfo">
@@ -66,6 +67,7 @@
 		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
 		<result column="measureUnit" property="measureUnit" jdbcType="VARCHAR" />
 		<result column="instockTime" property="instockTime" jdbcType="TIMESTAMP" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
 	</resultMap>
 
 	<resultMap id="OnWayStockMap" type="OnWayStock">
@@ -164,6 +166,9 @@
 			<if test="version != null">
 				version,
 			</if>
+			<if test="item.price != null">
+				price
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uuid != null">
@@ -228,6 +233,9 @@
 			</if>
 			<if test="version != null">
 				#{version,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="item.price != null">
+				#{item.price,jdbcType=DECIMAL}
 			</if>
 		</trim>
 	</insert>

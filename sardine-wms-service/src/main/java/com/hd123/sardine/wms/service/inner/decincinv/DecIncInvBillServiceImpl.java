@@ -53,6 +53,7 @@ import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.inner.decincinv.DecIncInvBillDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
+import com.hd123.sardine.wms.service.log.EntityLogger;
 
 /**
  * @author fanqingqing
@@ -70,6 +71,8 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
     private ArticleService articleService;
     @Autowired
     private ContainerService containerService;
+    @Autowired
+    private EntityLogger logger;
 
     @Override
     public DecIncInvBill get(String billUuid) {
@@ -118,11 +121,15 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
 
         for (DecIncInvBillItem item : bill.getItems()) {
             item.setUuid(UUIDGenerator.genUUID());
-            item.setBillBillUuid(bill.getUuid());
+            item.setDecIncInvBillUuid(bill.getUuid());
             item.setStockBatch(stockBatchUtils.genStockBatch());
         }
         billDao.insert(bill);
         billDao.insertItems(bill.getItems());
+
+        logger.injectContext(this, bill.getUuid(), DecIncInvBill.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "新建损溢单");
 
         return bill.getUuid();
     }
@@ -136,12 +143,16 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
         bill.setLastModifyInfo(OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
         for (DecIncInvBillItem item : bill.getItems()) {
             item.setUuid(UUIDGenerator.genUUID());
-            item.setBillBillUuid(bill.getUuid());
+            item.setDecIncInvBillUuid(bill.getUuid());
             item.setStockBatch(stockBatchUtils.genStockBatch());
         }
         billDao.update(bill);
         billDao.removeItems(bill.getUuid());
         billDao.insertItems(bill.getItems());
+
+        logger.injectContext(this, bill.getUuid(), DecIncInvBill.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "修改损溢单");
     }
 
     @Override
@@ -181,6 +192,10 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
         decIncInvBill.setLastModifyInfo(
                 OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
         billDao.update(decIncInvBill);
+
+        logger.injectContext(this, billUuid, DecIncInvBill.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "审核损溢单");
     }
 
     private void verifyDecIncInvBill(DecIncInvBill bill) throws WMSException {
@@ -342,13 +357,14 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
             stock.setQpcStr(item.getQpcStr());
             stock.setQty(item.getQty());
             stock.setSourceBillNumber(decIncInvBill.getBillNumber());
-            stock.setSourceBillType("收货单");
+            stock.setSourceBillType("损溢单");
             stock.setSourceBillUuid(decIncInvBill.getUuid());
             stock.setSourceLineNumber(item.getLine());
             stock.setSourceLineUuid(item.getUuid());
             stock.setStockBatch(item.getStockBatch());
             stock.setSupplierUuid(item.getSupplier().getUuid());
             stock.setValidDate(item.getExpireDate());
+            stock.setPrice(item.getPrice());
             shiftInStocks.add(stock);
 
             if (StringUtil.isNullOrBlank(item.getContainerBarCode()) == false

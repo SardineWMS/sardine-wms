@@ -316,7 +316,7 @@ public class ReceiveBillServiceImpl extends BaseWMSService implements ReceiveBil
                 stock.setStockBatch(item.getStockBatch());
                 stock.setSupplierUuid(bill.getSupplier().getUuid());
                 stock.setValidDate(item.getValidDate());
-                // stock.setQpc(item.getQpc());
+                stock.setPrice(item.getPrice());
                 stocks.add(stock);
             }
             stockService.shiftIn("收货单", bill.getBillNumber(), stocks);

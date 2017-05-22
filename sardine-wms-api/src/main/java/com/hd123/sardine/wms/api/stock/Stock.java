@@ -55,7 +55,7 @@ public class Stock extends VersionedEntity {
     private Date instockTime = new Date();
     private Date modifyTime = new Date();
     private BigDecimal onWayQty = BigDecimal.ZERO;
-//    private BigDecimal qpc;
+    private BigDecimal price;
 
     private List<OnWayStock> onWayStocks = new ArrayList<OnWayStock>();
 
@@ -249,14 +249,14 @@ public class Stock extends VersionedEntity {
         return qty.compareTo(qty.add(onWayQty)) >= 0 ? qty.add(onWayQty) : qty;
     }
 
-//    public void setQpc(BigDecimal qpc) {
-//        this.qpc = qpc;
-//    }
-//
-//  
-//    public BigDecimal getQpc() {
-//        return qpc;
-//    }
+    /** 商品单价 */
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 
     public void validate() {
         Assert.assertArgumentNotNull(binCode, "binCode");
