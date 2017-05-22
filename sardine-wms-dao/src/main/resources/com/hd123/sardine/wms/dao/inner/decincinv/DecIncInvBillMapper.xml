@@ -386,7 +386,7 @@
 		</trim>
 	</insert>
 
-	<select id="queryItems" resultMap="ReceiveBillItemMap"
+	<select id="queryItems" resultMap="DecIncInvBillItemMap"
 		parameterType="java.lang.String">
 		select t.*, a.code articleCode, a.name articleName, from
 		db_proxy.sardine_decIncInvBillItem t,
