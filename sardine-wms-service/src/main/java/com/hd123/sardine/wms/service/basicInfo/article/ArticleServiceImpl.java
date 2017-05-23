@@ -14,11 +14,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.article.Article;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleBarcode;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleQpc;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleService;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleSupplier;
+import com.hd123.sardine.wms.api.basicInfo.bin.Bin;
+import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
+import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.api.basicInfo.category.Category;
 import com.hd123.sardine.wms.api.basicInfo.category.CategoryService;
 import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
@@ -32,6 +36,7 @@ import com.hd123.sardine.wms.common.validator.ValidateHandler;
 import com.hd123.sardine.wms.common.validator.ValidateResult;
 import com.hd123.sardine.wms.dao.basicInfo.article.ArticleBarcodeDao;
 import com.hd123.sardine.wms.dao.basicInfo.article.ArticleDao;
+import com.hd123.sardine.wms.dao.basicInfo.article.ArticleFixedPickBinDao;
 import com.hd123.sardine.wms.dao.basicInfo.article.ArticleQpcDao;
 import com.hd123.sardine.wms.dao.basicInfo.article.ArticleSupplierDao;
 import com.hd123.sardine.wms.service.basicInfo.article.validator.ArticleInsertValidateHandler;
@@ -58,6 +63,9 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
     private ArticleSupplierDao articleSupplierDao;
 
     @Autowired
+    private ArticleFixedPickBinDao articleFixedPickBinDao;
+
+    @Autowired
     private ValidateHandler<Article> articleInsertValidateHandler;
 
     @Autowired
@@ -71,6 +79,9 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
 
     @Autowired
     private SupplierService supplierService;
+
+    @Autowired
+    private BinService binService;
 
     @Autowired
     private EntityLogger logger;
@@ -132,6 +143,7 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
             article.setQpcs(articleQpcDao.queryByList(uuid));
             article.setArticleSuppliers(articleSupplierDao.queryByList(uuid));
             article.setBarcodes(articleBarcodeDao.queryByList(uuid));
+            article.setFixedPickBin(articleFixedPickBinDao.getFixedPickBin(uuid));
         }
         return article;
     }
@@ -143,6 +155,7 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
             article.setQpcs(articleQpcDao.queryByList(article.getUuid()));
             article.setArticleSuppliers(articleSupplierDao.queryByList(article.getUuid()));
             article.setBarcodes(articleBarcodeDao.queryByList(article.getUuid()));
+            article.setFixedPickBin(articleFixedPickBinDao.getFixedPickBin(article.getUuid()));
         }
         return article;
     }
@@ -154,6 +167,7 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
             article.setQpcs(articleQpcDao.queryByList(article.getUuid()));
             article.setArticleSuppliers(articleSupplierDao.queryByList(article.getUuid()));
             article.setBarcodes(articleBarcodeDao.queryByList(article.getUuid()));
+            article.setFixedPickBin(articleFixedPickBinDao.getFixedPickBin(article.getUuid()));
         }
         return article;
     }
@@ -364,5 +378,34 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
         logger.injectContext(this, articleUuid, Article.class.getName(),
                 ApplicationContextUtil.getOperateContext());
         logger.log(EntityLogger.EVENT_MODIFY, "设置商品默认规格");
+    }
+
+    @Override
+    public void updateArticleFixedPickBin(String articleUuid, String fixedPickBin)
+            throws IllegalArgumentException, WMSException {
+        Assert.assertArgumentNotNull(articleUuid, "articleUuid");
+        Assert.assertArgumentNotNull(fixedPickBin, "fixedPickBin");
+
+        verifyArticleFixedPickBin(fixedPickBin);
+        articleFixedPickBinDao.removeByArticleCompany(articleUuid);
+        if (StringUtil.isNullOrBlank(fixedPickBin))
+            return;
+        articleFixedPickBinDao.insert(articleUuid, fixedPickBin);
+
+        logger.injectContext(this, articleUuid, Article.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "设置商品固定拣货位");
+    }
+
+    private void verifyArticleFixedPickBin(String fixedPickBin) throws WMSException {
+        if (StringUtil.isNullOrBlank(fixedPickBin))
+            return;
+        Bin bin = binService.getBinByCode(fixedPickBin);
+        if (bin == null)
+            throw new WMSException("商品固定拣货位" + fixedPickBin + "不存在");
+        if (BinUsage.PickUpBin.equals(bin.getUsage()) == false
+                && BinUsage.PickUpStorageBin.equals(bin.getUsage()) == false)
+            throw new WMSException("商品固定拣货位必须是" + BinUsage.PickUpBin.getCaption() + "或"
+                    + BinUsage.PickUpStorageBin.getCaption());
     }
 }

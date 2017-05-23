@@ -29,123 +29,133 @@ import com.hd123.sardine.wms.common.entity.UCN;
  *
  */
 public class Article extends StandardEntity {
-  private static final long serialVersionUID = 4329860271781901045L;
+    private static final long serialVersionUID = 4329860271781901045L;
 
-  private String companyUuid;
-  private String code;
-  private String name;
-  private String spec;
-  private ArticleState state = ArticleState.normal;
-  private int expDays;
-  private UCN category;
-  private boolean firstInFirstOut;
+    private String companyUuid;
+    private String code;
+    private String name;
+    private String spec;
+    private ArticleState state = ArticleState.normal;
+    private int expDays;
+    private UCN category;
+    private boolean firstInFirstOut;
+    private String fixedPickBin;
 
-  private List<ArticleSupplier> articleSuppliers = new ArrayList<ArticleSupplier>();
-  private List<ArticleBarcode> barcodes = new ArrayList<ArticleBarcode>();
-  private List<ArticleQpc> qpcs = new ArrayList<ArticleQpc>();
+    private List<ArticleSupplier> articleSuppliers = new ArrayList<ArticleSupplier>();
+    private List<ArticleBarcode> barcodes = new ArrayList<ArticleBarcode>();
+    private List<ArticleQpc> qpcs = new ArrayList<ArticleQpc>();
 
-  /** 组织uuid */
-  public String getCompanyUuid() {
-    return companyUuid;
-  }
+    /** 组织uuid */
+    public String getCompanyUuid() {
+        return companyUuid;
+    }
 
-  public void setCompanyUuid(String companyUuid) {
-    this.companyUuid = companyUuid;
-  }
+    public void setCompanyUuid(String companyUuid) {
+        this.companyUuid = companyUuid;
+    }
 
-  /** 商品代码，长度最大不超过30 */
-  public String getCode() {
-    return code;
-  }
+    /** 商品代码，长度最大不超过30 */
+    public String getCode() {
+        return code;
+    }
 
-  public void setCode(String code) {
-    this.code = code;
-  }
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-  /** 商品名称，长度最大不超过100 */
-  public String getName() {
-    return name;
-  }
+    /** 商品名称，长度最大不超过100 */
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  /** 商品包装规格 */
-  public String getSpec() {
-    return spec;
-  }
+    /** 商品包装规格 */
+    public String getSpec() {
+        return spec;
+    }
 
-  public void setSpec(String spec) {
-    this.spec = spec;
-  }
+    public void setSpec(String spec) {
+        this.spec = spec;
+    }
 
-  /** 商品状态 */
-  public ArticleState getState() {
-    return state;
-  }
+    /** 商品状态 */
+    public ArticleState getState() {
+        return state;
+    }
 
-  public void setState(ArticleState state) {
-    this.state = state;
-  }
+    public void setState(ArticleState state) {
+        this.state = state;
+    }
 
-  /** 商品保质期天数，0表示不管理保质期 */
-  public int getExpDays() {
-    return expDays;
-  }
+    /** 商品保质期天数，0表示不管理保质期 */
+    public int getExpDays() {
+        return expDays;
+    }
 
-  public void setExpDays(int expDays) {
-    this.expDays = expDays;
-  }
+    public void setExpDays(int expDays) {
+        this.expDays = expDays;
+    }
 
-  /** 商品所属类别 */
-  public UCN getCategory() {
-    return category;
-  }
+    /** 商品所属类别 */
+    public UCN getCategory() {
+        return category;
+    }
 
-  public void setCategory(UCN category) {
-    this.category = category;
-  }
+    public void setCategory(UCN category) {
+        this.category = category;
+    }
 
-  /** 商品出库时是否要遵守先进先出 */
-  public boolean isFirstInFirstOut() {
-    return firstInFirstOut;
-  }
+    /** 商品出库时是否要遵守先进先出 */
+    public boolean isFirstInFirstOut() {
+        return firstInFirstOut;
+    }
 
-  public void setFirstInFirstOut(boolean firstInFirstOut) {
-    this.firstInFirstOut = firstInFirstOut;
-  }
+    public void setFirstInFirstOut(boolean firstInFirstOut) {
+        this.firstInFirstOut = firstInFirstOut;
+    }
 
-  /** 提供该商品的供应商集合 */
-  public List<ArticleSupplier> getArticleSuppliers() {
-    return articleSuppliers;
-  }
+    /** 提供该商品的供应商集合 */
+    public List<ArticleSupplier> getArticleSuppliers() {
+        return articleSuppliers;
+    }
 
-  public void setArticleSuppliers(List<ArticleSupplier> articleSuppliers) {
-    this.articleSuppliers = articleSuppliers;
-  }
+    public void setArticleSuppliers(List<ArticleSupplier> articleSuppliers) {
+        this.articleSuppliers = articleSuppliers;
+    }
 
-  /** 该商品条码集合 */
-  public List<ArticleBarcode> getBarcodes() {
-    return barcodes;
-  }
+    /** 该商品条码集合 */
+    public List<ArticleBarcode> getBarcodes() {
+        return barcodes;
+    }
 
-  public void setBarcodes(List<ArticleBarcode> barcodes) {
-    this.barcodes = barcodes;
-  }
+    public void setBarcodes(List<ArticleBarcode> barcodes) {
+        this.barcodes = barcodes;
+    }
 
-  /** 商品规格集合 */
-  public List<ArticleQpc> getQpcs() {
-    return qpcs;
-  }
+    /** 商品规格集合 */
+    public List<ArticleQpc> getQpcs() {
+        return qpcs;
+    }
 
-  public void setQpcs(List<ArticleQpc> qpcs) {
-    this.qpcs = qpcs;
-  }
+    public void setQpcs(List<ArticleQpc> qpcs) {
+        this.qpcs = qpcs;
+    }
 
-  public Date calValidDate(Date produtionDate) {
-    Assert.assertArgumentNotNull(produtionDate, "productionDate");
+    /** 商品固定拣货位 */
+    public String getFixedPickBin() {
+        return fixedPickBin;
+    }
 
-    return DateUtils.addDays(produtionDate, expDays);
-  }
+    public void setFixedPickBin(String fixedPickBin) {
+        this.fixedPickBin = fixedPickBin;
+    }
+
+    public Date calValidDate(Date produtionDate) {
+        Assert.assertArgumentNotNull(produtionDate, "productionDate");
+
+        return DateUtils.addDays(produtionDate, expDays);
+    }
 }

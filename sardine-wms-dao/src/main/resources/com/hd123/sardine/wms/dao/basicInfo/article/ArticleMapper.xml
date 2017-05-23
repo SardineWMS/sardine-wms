@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hd123.sardine.wms.dao.basicInfo.article.impl.ArticleDaoImpl">
+<mapper
+	namespace="com.hd123.sardine.wms.dao.basicInfo.article.impl.ArticleDaoImpl">
 	<resultMap id="BaseResultMap" type="Article">
 		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
 		<result column="code" property="code" jdbcType="VARCHAR" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="spec" property="spec" jdbcType="VARCHAR" />
-		<result column="categoryuuid" property="category.uuid" jdbcType="VARCHAR" />
-		<result column="categorycode" property="category.code" jdbcType="VARCHAR" />
-		<result column="categoryname" property="category.name" jdbcType="VARCHAR" />
-		<result column="firstInFirstOut" property="firstInFirstOut" jdbcType="CHAR" />
+		<result column="categoryuuid" property="category.uuid"
+			jdbcType="VARCHAR" />
+		<result column="categorycode" property="category.code"
+			jdbcType="VARCHAR" />
+		<result column="categoryname" property="category.name"
+			jdbcType="VARCHAR" />
+		<result column="firstInFirstOut" property="firstInFirstOut"
+			jdbcType="CHAR" />
 		<result column="state" property="state" jdbcType="VARCHAR" />
 		<result column="expDays" property="expDays" jdbcType="INTEGER" />
 		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
@@ -45,14 +50,17 @@
 		where u.code = #{code,jdbcType=VARCHAR}
 		and u.companyuuid = #{companyUuid, jdbcType=VARCHAR}
 	</select>
-	
+
 	<select id="getByBarcode" parameterType="map" resultMap="BaseResultMap">
 		select
 		u.*
 		from db_proxy.sardine_article u
-		where u.companyuuid = #{companyUuid, jdbcType=VARCHAR}
-		and exists (select 1 from db_proxy.sardine_article_barcode b where u.uuid = b.articleuuid 
-		and b.barcode = #{barcode,jdbcType=VARCHAR})
+		where u.companyuuid = #{companyUuid,
+		jdbcType=VARCHAR}
+		and exists (select 1 from
+		db_proxy.sardine_article_barcode b where u.uuid = b.articleuuid
+		and
+		b.barcode = #{barcode,jdbcType=VARCHAR})
 	</select>
 
 	<insert id="insert" parameterType="Article">
@@ -117,9 +125,12 @@
 			#{firstInFirstOut,jdbcType=CHAR},
 			state =
 			#{state,jdbcType=CHAR},
-			categoryuuid = #{category.uuid,jdbcType=VARCHAR},
-		    categorycode = #{category.code,jdbcType=VARCHAR},
-		    categoryname = #{category.name,jdbcType=VARCHAR},
+			categoryuuid =
+			#{category.uuid,jdbcType=VARCHAR},
+			categorycode =
+			#{category.code,jdbcType=VARCHAR},
+			categoryname =
+			#{category.name,jdbcType=VARCHAR},
 			version =
 			#{version,jdbcType=LONGVARCHAR} +
 			1,

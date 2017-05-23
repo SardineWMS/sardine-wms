@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.hd123.sardine.wms.dao.basicInfo.article.impl.ArticleFixedPickBinDaoImpl">
+
+	<select id="getFixedPickBin" parameterType="Map" resultType="java.lang.String">
+		select u.fixedPickBin
+		from db_proxy.sardine_article_fixedPickBin u
+		where
+		u.articleuuid = #{articleUuid,jdbcType=VARCHAR}
+		and u.companyUuid
+		=
+		#{companyUuid,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insert" parameterType="ArticleBarcode">
+		insert into
+		db_proxy.sardine_article_fixedPickBin (
+		articleUuid,
+		fixedPickBin,
+		companyUuid
+		)
+		values (
+		#{articleUuid,jdbcType=VARCHAR},
+		#{fixedPickBin,jdbcType=VARCHAR},
+		#{companyUuid,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<delete id="removeByArticle" parameterType="java.lang.String">
+		delete from
+		db_proxy.sardine_article_fixedPickBin where articleUuid =
+		#{articleUuid,jdbcType=VARCHAR}
+	</delete>
+
+	<delete id="removeByFixedPickBin" parameterType="Map">
+		delete from
+		db_proxy.sardine_article_fixedPickBin where companyUuid =
+		#{companyUuid,jdbcType=VARCHAR}
+		and fixedPickBin= #{fixedPickBin,
+		jdbcType=VARCHAR}
+	</delete>
+	
+	<delete id="removeByArticleCompany" parameterType="Map">
+		delete from
+		db_proxy.sardine_article_fixedPickBin where articleUuid =
+		#{articleUuid,jdbcType=VARCHAR}
+		and companyUuid =
+		#{companyUuid,jdbcType=VARCHAR}
+	</delete>
+
+</mapper>
