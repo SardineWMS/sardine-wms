@@ -9,7 +9,6 @@
  */
 package com.hd123.sardine.wms.api.basicInfo.containertype;
 
-import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
@@ -19,73 +18,64 @@ import com.hd123.sardine.wms.common.query.PageQueryResult;
  *
  */
 public interface ContainerTypeService {
-    /** 代码 类似于 */
-    public static final String QUERY_CODE_FIELD = "code";
-    /** 名称 类似于 */
-    public static final String QUERY_NAME_FIELD = "name";
+  /** 代码 类似于 */
+  public static final String QUERY_CODE_FIELD = "code";
+  /** 名称 类似于 */
+  public static final String QUERY_NAME_FIELD = "name";
 
-    /**
-     * 分页查询容器类型
-     * 
-     * @param definition
-     *            搜索条件，not null。
-     * @return 分页结果
-     * @throws IllegalArgumentException
-     */
-    PageQueryResult<ContainerType> query(PageQueryDefinition definition)
-            throws IllegalArgumentException;
+  /**
+   * 分页查询容器类型
+   * 
+   * @param definition
+   *          搜索条件，not null。
+   * @return 分页结果
+   * @throws IllegalArgumentException
+   */
+  PageQueryResult<ContainerType> query(PageQueryDefinition definition)
+      throws IllegalArgumentException;
 
-    /**
-     * 根据uuid查询容器类型。
-     * 
-     * @param uuid
-     *            唯一标示，not null。
-     * @return 容器类型
-     */
-    ContainerType get(String uuid);
+  /**
+   * 根据uuid查询容器类型。
+   * 
+   * @param uuid
+   *          唯一标示，not null。
+   * @return 容器类型
+   */
+  ContainerType get(String uuid);
 
-    /**
-     * 新增容器类型
-     * 
-     * @param containerType
-     *            容器类型，not null。
-     * @param operCtx
-     *            操作信息，not null。
-     * @return 容器类型uuid
-     * @throws IllegalArgumentException
-     *             参数为空时抛出
-     * @throws WMSException
-     */
-    String saveNew(ContainerType containerType, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException;
+  /**
+   * 新增容器类型
+   * 
+   * @param containerType
+   *          容器类型，not null。
+   * @return 容器类型uuid
+   * @throws IllegalArgumentException
+   *           参数为空时抛出
+   * @throws WMSException
+   */
+  String saveNew(ContainerType containerType) throws IllegalArgumentException, WMSException;
 
-    /**
-     * 更新容器类型信息
-     * 
-     * @param supplier
-     *            容器类型，not null。
-     * @param operCtx
-     *            操作信息,not null。
-     * @throws IllegalArgumentException
-     *             参数为空
-     * @throws WMSException
-     */
-    void saveModify(ContainerType containerType, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException;
+  /**
+   * 更新容器类型信息
+   * 
+   * @param supplier
+   *          容器类型，not null。
+   * @throws IllegalArgumentException
+   *           参数为空
+   * @throws WMSException
+   */
+  void saveModify(ContainerType containerType) throws IllegalArgumentException, WMSException;
 
-    /**
-     * 删除供应商
-     * 
-     * @param uuid
-     *            容器类型uuid，not null。
-     * @param version
-     *            版本号，not null。
-     * @param operCtx
-     *            操作信息，not null。
-     * @throws IllegalArgumentException
-     *             参数为空
-     * @throws WMSException
-     */
-    void remove(String uuid, long version, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException;
+  /**
+   * 删除供应商
+   * 
+   * @param uuid
+   *          容器类型uuid，not null。
+   * @param version
+   *          版本号，not null。
+   * @throws IllegalArgumentException
+   *           参数为空
+   * @throws WMSException
+   */
+  void remove(String uuid, long version) throws IllegalArgumentException, WMSException;
 }

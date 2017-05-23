@@ -98,7 +98,7 @@ public class BinTypeController extends BaseController {
       @RequestParam(value = "token", required = true) String token, @RequestBody BinType binType) {
     RespObject resp = new RespObject();
     try {
-      String uuid = binTypeService.insert(binType, getOperateContext(token));
+      String uuid = binTypeService.insert(binType);
       resp.setObj(uuid);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (IllegalArgumentException e) {
@@ -114,7 +114,7 @@ public class BinTypeController extends BaseController {
       @RequestParam(value = "token", required = true) String token, @RequestBody BinType binType) {
     RespObject resp = new RespObject();
     try {
-      binTypeService.update(binType, getOperateContext(token));
+      binTypeService.update(binType);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (IllegalArgumentException e) {
       return new ErrorRespObject("参数异常", e.getMessage());
@@ -130,7 +130,7 @@ public class BinTypeController extends BaseController {
       @RequestParam(value = "version", required = true) long version) {
     RespObject resp = new RespObject();
     try {
-      binTypeService.remove(uuid, version, getOperateContext(token));
+      binTypeService.remove(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (IllegalArgumentException e) {
       return new ErrorRespObject("参数异常", e.getMessage());

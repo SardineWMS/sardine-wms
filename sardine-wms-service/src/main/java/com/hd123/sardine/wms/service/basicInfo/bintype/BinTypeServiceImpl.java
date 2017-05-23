@@ -17,12 +17,11 @@ import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.bintype.BinType;
 import com.hd123.sardine.wms.api.basicInfo.bintype.BinTypeService;
-import com.hd123.sardine.wms.common.entity.OperateContext;
-import com.hd123.sardine.wms.common.entity.OperateInfo;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.common.validator.ValidateHandler;
 import com.hd123.sardine.wms.common.validator.ValidateResult;
@@ -41,107 +40,101 @@ import com.hd123.sardine.wms.service.log.EntityLogger;
  */
 public class BinTypeServiceImpl extends BaseWMSService implements BinTypeService {
 
-    @Autowired
-    private BinTypeDao binTypeDao;
+  @Autowired
+  private BinTypeDao binTypeDao;
 
-    @Autowired
-    private ValidateHandler<BinType> binTypeInsertValidateHandler;
+  @Autowired
+  private ValidateHandler<BinType> binTypeInsertValidateHandler;
 
-    @Autowired
-    private ValidateHandler<OperateContext> operateContextValidateHandler;
+  @Autowired
+  private ValidateHandler<String> binTypeRemoveValidateHandler;
 
-    @Autowired
-    private ValidateHandler<String> binTypeRemoveValidateHandler;
+  @Autowired
+  private ValidateHandler<BinType> binTypeUpdateValidateHandler;
 
-    @Autowired
-    private ValidateHandler<BinType> binTypeUpdateValidateHandler;
+  @Autowired
+  private EntityLogger logger;
 
-    @Autowired
-    private EntityLogger logger;
+  @Override
+  public BinType get(String uuid) {
+    if (StringUtil.isNullOrBlank(uuid))
+      return null;
+    return binTypeDao.get(uuid);
+  }
 
-    @Override
-    public BinType get(String uuid) {
-        if (StringUtil.isNullOrBlank(uuid))
-            return null;
-        return binTypeDao.get(uuid);
-    }
+  @Override
+  public BinType getByCode(String code) {
+    if (StringUtil.isNullOrBlank(code))
+      return null;
+    return binTypeDao.getByCode(code);
+  }
 
-    @Override
-    public BinType getByCode(String code) {
-        if (StringUtil.isNullOrBlank(code))
-            return null;
-        return binTypeDao.getByCode(code);
-    }
+  @Override
+  public String insert(BinType binType) throws IllegalArgumentException, WMSException {
+    Assert.assertArgumentNotNull(binType, "binType");
 
-    @Override
-    public String insert(BinType binType, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException {
-        BinType dbBinType = binTypeDao.getByCode(binType == null ? null : binType.getCode());
-        ValidateResult insertResult = binTypeInsertValidateHandler
-                .putAttribute(BinTypeInsertValidateHandler.KEY_CODEEXISTS_BINTYPE, dbBinType)
-                .validate(binType);
-        checkValidateResult(insertResult);
-        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-        checkValidateResult(operCtxResult);
+    BinType dbBinType = binTypeDao.getByCode(binType.getCode());
+    ValidateResult insertResult = binTypeInsertValidateHandler
+        .putAttribute(BinTypeInsertValidateHandler.KEY_CODEEXISTS_BINTYPE, dbBinType)
+        .validate(binType);
+    checkValidateResult(insertResult);
 
-        binType.setUuid(UUIDGenerator.genUUID());
-        binType.setCreateInfo(OperateInfo.newInstance(operCtx));
-        binType.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-        binTypeDao.insert(binType);
+    binType.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    binType.setUuid(UUIDGenerator.genUUID());
+    binType.setCreateInfo(ApplicationContextUtil.getOperateInfo());
+    binType.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    binTypeDao.insert(binType);
 
-        logger.injectContext(this, binType.getUuid(), BinType.class.getName(), operCtx);
-        logger.log(EntityLogger.EVENT_ADDNEW, "新增货位类型");
-        return binType.getUuid();
-    }
+    logger.injectContext(this, binType.getUuid(), BinType.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_ADDNEW, "新增货位类型");
+    return binType.getUuid();
+  }
 
-    @Override
-    public void remove(String uuid, long version, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException {
-        BinType deleteBinType = binTypeDao.get(uuid);
-        ValidateResult removeResult = binTypeRemoveValidateHandler
-                .putAttribute(BinTypeRemoveValidateHandler.KEY_OPERATOR_BINTYPE, deleteBinType)
-                .putAttribute(VersionValidator.ATTR_KEY_VERSION, version).validate(uuid);
-        checkValidateResult(removeResult);
-        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-        checkValidateResult(operCtxResult);
-        binTypeDao.remove(uuid, version);
+  @Override
+  public void remove(String uuid, long version) throws IllegalArgumentException, WMSException {
+    BinType deleteBinType = binTypeDao.get(uuid);
+    ValidateResult removeResult = binTypeRemoveValidateHandler
+        .putAttribute(BinTypeRemoveValidateHandler.KEY_OPERATOR_BINTYPE, deleteBinType)
+        .putAttribute(VersionValidator.ATTR_KEY_VERSION, version).validate(uuid);
+    checkValidateResult(removeResult);
+    binTypeDao.remove(uuid, version);
 
-        logger.injectContext(this, uuid, BinType.class.getName(), operCtx);
-        logger.log(EntityLogger.EVENT_REMOVE, "删除货位类型");
-    }
+    logger.injectContext(this, uuid, BinType.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_REMOVE, "删除货位类型");
+  }
 
-    @Override
-    public void update(BinType binType, OperateContext operCtx)
-            throws IllegalArgumentException, WMSException {
-        BinType updateBinType = binTypeDao.get(binType == null ? null : binType.getUuid());
-        BinType existsBinType = binTypeDao.getByCode(binType == null ? null : binType.getCode());
-        ValidateResult updateResult = binTypeUpdateValidateHandler
-                .putAttribute(BinTypeUpdateValidateHandler.KEY_CODEEXISTS_BINTYPE, existsBinType)
-                .putAttribute(BinTypeUpdateValidateHandler.KEY_UPDATE_BINTYPE, updateBinType)
-                .putAttribute(NullValidator.KEY_CURRENTOPERATOR_UUID,
-                        binType == null ? null : binType.getUuid())
-                .putAttribute(VersionValidator.ATTR_KEY_VERSION, binType.getVersion())
-                .validate(binType);
-        checkValidateResult(updateResult);
-        ValidateResult operCtxResult = operateContextValidateHandler.validate(operCtx);
-        checkValidateResult(operCtxResult);
+  @Override
+  public void update(BinType binType) throws IllegalArgumentException, WMSException {
+    BinType updateBinType = binTypeDao.get(binType == null ? null : binType.getUuid());
+    BinType existsBinType = binTypeDao.getByCode(binType == null ? null : binType.getCode());
+    ValidateResult updateResult = binTypeUpdateValidateHandler
+        .putAttribute(BinTypeUpdateValidateHandler.KEY_CODEEXISTS_BINTYPE, existsBinType)
+        .putAttribute(BinTypeUpdateValidateHandler.KEY_UPDATE_BINTYPE, updateBinType)
+        .putAttribute(NullValidator.KEY_CURRENTOPERATOR_UUID,
+            binType == null ? null : binType.getUuid())
+        .putAttribute(VersionValidator.ATTR_KEY_VERSION, binType.getVersion()).validate(binType);
+    checkValidateResult(updateResult);
 
-        binType.setLastModifyInfo(OperateInfo.newInstance(operCtx));
-        binTypeDao.update(binType);
+    binType.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    binTypeDao.update(binType);
 
-        logger.injectContext(this, binType.getUuid(), BinType.class.getName(), operCtx);
-        logger.log(EntityLogger.EVENT_MODIFY, "修改货位类型");
-    }
+    logger.injectContext(this, binType.getUuid(), BinType.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_MODIFY, "修改货位类型");
+  }
 
-    @Override
-    public PageQueryResult<BinType> query(PageQueryDefinition definition) {
-        Assert.assertArgumentNotNull(definition, "definition");
+  @Override
+  public PageQueryResult<BinType> query(PageQueryDefinition definition) {
+    Assert.assertArgumentNotNull(definition, "definition");
 
-        PageQueryResult<BinType> pgr = new PageQueryResult<BinType>();
-        List<BinType> list = binTypeDao.query(definition);
-        PageQueryUtil.assignPageInfo(pgr, definition);
-        pgr.setRecords(list);
-        return pgr;
-    }
+    definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    PageQueryResult<BinType> pgr = new PageQueryResult<BinType>();
+    List<BinType> list = binTypeDao.query(definition);
+    PageQueryUtil.assignPageInfo(pgr, definition);
+    pgr.setRecords(list);
+    return pgr;
+  }
 
 }

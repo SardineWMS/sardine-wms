@@ -9,7 +9,6 @@
  */
 package com.hd123.sardine.wms.api.basicInfo.container;
 
-import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -25,20 +24,17 @@ public interface ContainerService {
    * 
    * @param containerTypeUuid
    *          not null
-   * @param operateContext
    */
-  void saveNew(String containerTypeUuid, OperateContext operateContext) throws WMSException;
+  void saveNew(String containerTypeUuid) throws WMSException;
 
   /***
    * 根据容器条码和组织查询容器
    * 
    * @param barcode
    *          容器条码
-   * @param orgId
-   *          组织
    * @return 容器
    */
-  Container getByBarcode(String barcode, String orgId);
+  Container getByBarcode(String barcode);
 
   /***
    * 分页查询容器列表

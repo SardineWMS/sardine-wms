@@ -32,82 +32,82 @@ import com.hd123.sardine.wms.service.test.BaseServiceTest;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class RoleServiceTest extends BaseServiceTest {
-    private static final String UUID = "89757";
-    private static final long VERSION = 0;
+  private static final String UUID = "89757";
+  private static final long VERSION = 0;
 
-    @InjectMocks
-    public RoleServiceImpl service;
-    @Mock
-    private RoleDao dao;
-    @Mock
-    private ResourceService resourceService;
+  @InjectMocks
+  public RoleServiceImpl service;
+  @Mock
+  private RoleDao dao;
+  @Mock
+  private ResourceService resourceService;
 
-    @Test
-    public void insert() throws Exception {
-        Role role = RoleBuilder.role().withUuid(null).build();
+  @Test
+  public void insert() throws Exception {
+    Role role = RoleBuilder.role().withUuid(null).build();
 
-        service.insert(role, defaultOperCtx());
+    service.insert(role);
 
-        verify(dao).insert(role);
-        Assertions.assertThat(role.getUuid()).isNotEmpty();
-        Assertions.assertThat(role.getCreateInfo().getOperator())
-                .isEqualTo(defaultOperCtx().getOperator());
-        Assertions.assertThat(role.getLastModifyInfo().getOperator())
-                .isEqualTo(defaultOperCtx().getOperator());
-    }
+    verify(dao).insert(role);
+    Assertions.assertThat(role.getUuid()).isNotEmpty();
+    Assertions.assertThat(role.getCreateInfo().getOperator())
+        .isEqualTo(defaultOperCtx().getOperator());
+    Assertions.assertThat(role.getLastModifyInfo().getOperator())
+        .isEqualTo(defaultOperCtx().getOperator());
+  }
 
-    @Test
-    public void update() throws Exception {
-        Role role = RoleBuilder.role().withUuid(UUID).withVersion(0).build();
-        when(dao.get(UUID)).thenReturn(role);
+  @Test
+  public void update() throws Exception {
+    Role role = RoleBuilder.role().withUuid(UUID).withVersion(0).build();
+    when(dao.get(UUID)).thenReturn(role);
 
-        service.update(role, defaultOperCtx());
+    service.update(role);
 
-        verify(dao).update(role);
-        Assertions.assertThat(role.getLastModifyInfo().getOperator())
-                .isEqualTo(defaultOperCtx().getOperator());
-    }
+    verify(dao).update(role);
+    Assertions.assertThat(role.getLastModifyInfo().getOperator())
+        .isEqualTo(defaultOperCtx().getOperator());
+  }
 
-    @Test
-    public void remove() throws Exception {
-        Role role = RoleBuilder.role().withUuid(UUID).withState(RoleState.online)
-                .withVersion(VERSION).build();
-        when(dao.get(UUID)).thenReturn(role);
+  @Test
+  public void remove() throws Exception {
+    Role role = RoleBuilder.role().withUuid(UUID).withState(RoleState.online).withVersion(VERSION)
+        .build();
+    when(dao.get(UUID)).thenReturn(role);
 
-        service.remove(UUID, VERSION, defaultOperCtx());
+    service.remove(UUID, VERSION);
 
-        verify(resourceService).removeResourceByRole(UUID);
-        verify(dao).remove(UUID, VERSION);
-    }
+    verify(resourceService).removeResourceByRole(UUID);
+    verify(dao).remove(UUID, VERSION);
+  }
 
-    @Test
-    public void offline() throws Exception {
-        Role role = RoleBuilder.role().withUuid(UUID).withState(RoleState.online)
-                .withVersion(VERSION).build();
-        when(dao.get(UUID)).thenReturn(role);
+  @Test
+  public void offline() throws Exception {
+    Role role = RoleBuilder.role().withUuid(UUID).withState(RoleState.online).withVersion(VERSION)
+        .build();
+    when(dao.get(UUID)).thenReturn(role);
 
-        service.offline(UUID, VERSION, defaultOperCtx());
+    service.offline(UUID, VERSION);
 
-        verify(dao).update(role);
+    verify(dao).update(role);
 
-        Assertions.assertThat(RoleState.offline).isEqualTo(role.getState());
-        Assertions.assertThat(role.getLastModifyInfo().getOperator())
-                .isEqualTo(defaultOperCtx().getOperator());
-    }
+    Assertions.assertThat(RoleState.offline).isEqualTo(role.getState());
+    Assertions.assertThat(role.getLastModifyInfo().getOperator())
+        .isEqualTo(defaultOperCtx().getOperator());
+  }
 
-    @Test
-    public void online() throws Exception {
-        Role role = RoleBuilder.role().withUuid(UUID).withState(RoleState.offline)
-                .withVersion(VERSION).build();
-        when(dao.get(UUID)).thenReturn(role);
+  @Test
+  public void online() throws Exception {
+    Role role = RoleBuilder.role().withUuid(UUID).withState(RoleState.offline).withVersion(VERSION)
+        .build();
+    when(dao.get(UUID)).thenReturn(role);
 
-        service.online(UUID, VERSION, defaultOperCtx());
+    service.online(UUID, VERSION);
 
-        verify(dao).update(role);
+    verify(dao).update(role);
 
-        Assertions.assertThat(RoleState.online).isEqualTo(role.getState());
-        Assertions.assertThat(role.getLastModifyInfo().getOperator())
-                .isEqualTo(defaultOperCtx().getOperator());
-    }
+    Assertions.assertThat(RoleState.online).isEqualTo(role.getState());
+    Assertions.assertThat(role.getLastModifyInfo().getOperator())
+        .isEqualTo(defaultOperCtx().getOperator());
+  }
 
 }

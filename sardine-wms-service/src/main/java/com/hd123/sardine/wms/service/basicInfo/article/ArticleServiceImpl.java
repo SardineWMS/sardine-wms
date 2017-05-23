@@ -163,6 +163,7 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
             throws IllegalArgumentException {
         Assert.assertArgumentNotNull(definition, "definition");
 
+        definition.setCompanyUuid(ApplicationContextUtil.getParentCompanyUuid());
         PageQueryResult<Article> pgr = new PageQueryResult<Article>();
         List<Article> list = articleDao.query(definition);
         PageQueryUtil.assignPageInfo(pgr, definition);

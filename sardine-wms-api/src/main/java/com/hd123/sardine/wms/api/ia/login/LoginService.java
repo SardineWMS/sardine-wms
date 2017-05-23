@@ -11,7 +11,6 @@ package com.hd123.sardine.wms.api.ia.login;
 
 import com.hd123.sardine.wms.api.ia.user.RegisterInfo;
 import com.hd123.sardine.wms.api.ia.user.RegisterUser;
-import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.exception.EntityNotFoundException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 
@@ -80,8 +79,6 @@ public interface LoginService {
    *          用户原密码，not null
    * @param newPasswd
    *          用户新密码，not null
-   * @param operCtx
-   *          操作信息，not null
    * @return 返回修改后的用户信息
    * @throws IllegalArgumentException
    *           参数为空
@@ -90,6 +87,6 @@ public interface LoginService {
    * @throws WMSException
    *           用户不存在、原密码不符合
    */
-  UserInfo updatePasswd(String userUuid, String oldPasswd, String newPasswd, OperateContext operCtx)
+  UserInfo updatePasswd(String userUuid, String oldPasswd, String newPasswd)
       throws IllegalArgumentException, EntityNotFoundException, WMSException;
 }

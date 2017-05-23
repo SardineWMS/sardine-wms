@@ -70,7 +70,7 @@ public class ContainerController extends BaseController {
         Assert.assertArgumentNotNull(token, "token");
         RespObject resp = new RespObject();
         try {
-            containerService.saveNew(containerTypeUuid, getOperateContext(token));
+            containerService.saveNew(containerTypeUuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             return new ErrorRespObject("新增容器失败", e.getMessage());

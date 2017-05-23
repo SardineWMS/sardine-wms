@@ -42,86 +42,86 @@ import com.hd123.sardine.wms.service.util.FlowCodeGenerator;
 @RunWith(MockitoJUnitRunner.class)
 public class LoginServiceTest extends BaseServiceTest {
 
-    private static final String LOGIN_CODE = "001";
-    private static final String LOGIN_PASSWD = "002";
+  private static final String LOGIN_CODE = "001";
+  private static final String LOGIN_PASSWD = "002";
 
-    private static final String UPDATEPASSWD_USERID = "000001";
-    private static final String UPDATEPASSWD_OLDPASSWD = "888888";
-    private static final String UPDATEPASSWD_NEWPASSWD = "666666";
+  private static final String UPDATEPASSWD_USERID = "000001";
+  private static final String UPDATEPASSWD_OLDPASSWD = "888888";
+  private static final String UPDATEPASSWD_NEWPASSWD = "666666";
 
-    private static final String REGISTER_USERNAME = "沙丁鱼";
-    private static final String REGISTER_PASSWD = "666666";
-    private static final String REGISTER_COMPANYNAME = "天堂伞";
-    private static final String REGISTER_COMPANYCODE = "10001";
-    private static final String ADDRESS = "九堡";
-    private static final String HOMEPAGE = "www.hd123.com";
-    private static final String COMPANYTYPE = "deliveryCenter";
+  private static final String REGISTER_USERNAME = "沙丁鱼";
+  private static final String REGISTER_PASSWD = "666666";
+  private static final String REGISTER_COMPANYNAME = "天堂伞";
+  private static final String REGISTER_COMPANYCODE = "10001";
+  private static final String ADDRESS = "九堡";
+  private static final String HOMEPAGE = "www.hd123.com";
+  private static final String COMPANYTYPE = "deliveryCenter";
 
-    @InjectMocks
-    public LoginServiceImpl service;
-    @Mock
-    private UserDao dao;
-    @Mock
-    private FlowCodeGenerator flowCodeGenerator;
-    @Mock
-    private CompanyService companyService;
+  @InjectMocks
+  public LoginServiceImpl service;
+  @Mock
+  private UserDao dao;
+  @Mock
+  private FlowCodeGenerator flowCodeGenerator;
+  @Mock
+  private CompanyService companyService;
 
-    @Captor
-    private ArgumentCaptor<User> userCaptor;
+  @Captor
+  private ArgumentCaptor<User> userCaptor;
 
-    @Test
-    public void login() throws Exception {
-        User user = UserBuilder.user().withUserState(UserState.online).build();
-        when(dao.login(anyString(), anyString())).thenReturn(user);
+  @Test
+  public void login() throws Exception {
+    User user = UserBuilder.user().withUserState(UserState.online).build();
+    when(dao.login(anyString(), anyString())).thenReturn(user);
 
-        UserInfo userInfo = service.login(LOGIN_CODE, LOGIN_PASSWD);
+    UserInfo userInfo = service.login(LOGIN_CODE, LOGIN_PASSWD);
 
-        assertThat(userInfo).isNotNull();
-        assertThat(userInfo.getUuid()).isEqualTo(user.getUuid());
-        assertThat(userInfo.getCode()).isEqualTo(user.getCode());
-        assertThat(userInfo.getName()).isEqualTo(user.getName());
-        assertThat(userInfo.getCompanyUuid()).isEqualTo(user.getCompanyUuid());
-        assertThat(userInfo.getCompanyCode()).isEqualTo(user.getCompanyCode());
-        assertThat(userInfo.getCompanyName()).isEqualTo(user.getCompanyName());
-    }
+    assertThat(userInfo).isNotNull();
+    assertThat(userInfo.getUuid()).isEqualTo(user.getUuid());
+    assertThat(userInfo.getCode()).isEqualTo(user.getCode());
+    assertThat(userInfo.getName()).isEqualTo(user.getName());
+    assertThat(userInfo.getCompanyUuid()).isEqualTo(user.getCompanyUuid());
+    assertThat(userInfo.getCompanyCode()).isEqualTo(user.getCompanyCode());
+    assertThat(userInfo.getCompanyName()).isEqualTo(user.getCompanyName());
+  }
 
-    @Test
-    public void updatePasswd() throws Exception {
-        OperateContext operCtx = defaultOperCtx();
-        User user = UserBuilder.user().withUserState(UserState.online).build();
-        when(dao.get(anyString())).thenReturn(user);
+  @Test
+  public void updatePasswd() throws Exception {
+    OperateContext operCtx = defaultOperCtx();
+    User user = UserBuilder.user().withUserState(UserState.online).build();
+    when(dao.get(anyString())).thenReturn(user);
 
-        UserInfo userInfo = service.updatePasswd(UPDATEPASSWD_USERID, UPDATEPASSWD_OLDPASSWD,
-                UPDATEPASSWD_NEWPASSWD, operCtx);
+    UserInfo userInfo = service.updatePasswd(UPDATEPASSWD_USERID, UPDATEPASSWD_OLDPASSWD,
+        UPDATEPASSWD_NEWPASSWD);
 
-        verify(dao).updatePasswd(UPDATEPASSWD_USERID, UPDATEPASSWD_OLDPASSWD,
-                UPDATEPASSWD_NEWPASSWD, operCtx);
-        assertThat(userInfo).isNotNull();
-        assertThat(userInfo.getUuid()).isEqualTo(user.getUuid());
-        assertThat(userInfo.getCode()).isEqualTo(user.getCode());
-        assertThat(userInfo.getName()).isEqualTo(user.getName());
-        assertThat(userInfo.getCompanyUuid()).isEqualTo(user.getCompanyUuid());
-        assertThat(userInfo.getCompanyCode()).isEqualTo(user.getCompanyCode());
-        assertThat(userInfo.getCompanyName()).isEqualTo(user.getCompanyName());
-    }
+    verify(dao).updatePasswd(UPDATEPASSWD_USERID, UPDATEPASSWD_OLDPASSWD, UPDATEPASSWD_NEWPASSWD,
+        operCtx);
+    assertThat(userInfo).isNotNull();
+    assertThat(userInfo.getUuid()).isEqualTo(user.getUuid());
+    assertThat(userInfo.getCode()).isEqualTo(user.getCode());
+    assertThat(userInfo.getName()).isEqualTo(user.getName());
+    assertThat(userInfo.getCompanyUuid()).isEqualTo(user.getCompanyUuid());
+    assertThat(userInfo.getCompanyCode()).isEqualTo(user.getCompanyCode());
+    assertThat(userInfo.getCompanyName()).isEqualTo(user.getCompanyName());
+  }
 
-    @Test
-    public void register() throws Exception {
-        RegisterUser registerUser = RegisterUserBuilder.registerUser().withName(REGISTER_USERNAME)
-                .withCompanyName(REGISTER_COMPANYNAME).withPasswd(REGISTER_PASSWD)
-                .withCompanyCode(REGISTER_COMPANYCODE).withAddress(ADDRESS).withHomePage(HOMEPAGE)
-                .withCompanyType(COMPANYTYPE).build();
-        when(dao.getByCode(anyString())).thenReturn(null);
-        when(flowCodeGenerator.allocate(anyString(), anyString(), 8)).thenReturn("800001");
+  @Test
+  public void register() throws Exception {
+    RegisterUser registerUser = RegisterUserBuilder.registerUser().withName(REGISTER_USERNAME)
+        .withCompanyName(REGISTER_COMPANYNAME).withPasswd(REGISTER_PASSWD)
+        .withCompanyCode(REGISTER_COMPANYCODE).withAddress(ADDRESS).withHomePage(HOMEPAGE)
+        .withCompanyType(COMPANYTYPE).build();
+    when(dao.getByCode(anyString())).thenReturn(null);
+    when(flowCodeGenerator.allocate(anyString(), anyString(), 8)).thenReturn("800001");
 
-        service.register(registerUser);
+    service.register(registerUser);
 
-        verify(dao).insert(userCaptor.capture());
-        assertThat(userCaptor.getValue().getUuid()).isNotNull();
-        assertThat(userCaptor.getValue().getCompanyUuid()).isNotNull();
-        assertThat(userCaptor.getValue().getCompanyCode()).isNotNull();
-        assertThat(userCaptor.getValue().getCompanyName()).isEqualTo(REGISTER_COMPANYNAME);
-        assertThat(userCaptor.getValue().getName()).isEqualTo(REGISTER_USERNAME);
-        assertThat(userCaptor.getValue().getPasswd()).isEqualTo(REGISTER_PASSWD);
-    }
+    verify(dao).insert(userCaptor.capture());
+    assertThat(userCaptor.getValue().getUuid()).isNotNull();
+    assertThat(userCaptor.getValue().getCompanyUuid()).isNotNull();
+    assertThat(userCaptor.getValue().getCompanyCode()).isNotNull();
+    assertThat(userCaptor.getValue().getCompanyName()).isEqualTo(REGISTER_COMPANYNAME);
+    assertThat(userCaptor.getValue().getName()).isEqualTo(REGISTER_USERNAME);
+    assertThat(userCaptor.getValue().getPasswd()).isEqualTo(REGISTER_PASSWD);
+  }
 }

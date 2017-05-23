@@ -82,7 +82,7 @@ public class AuthenticationController extends BaseController {
     RespObject resp = new RespObject();
     try {
       UserInfo userInfo = loginService.updatePasswd(getLoginUser(token).getUuid(), oldPasswd,
-          newPasswd, getOperateContext(token));
+          newPasswd);
       resp.setObj(userInfo);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
       resp.setToken(token);

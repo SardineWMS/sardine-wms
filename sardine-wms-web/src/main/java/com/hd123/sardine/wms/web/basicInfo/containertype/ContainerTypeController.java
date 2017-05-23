@@ -44,7 +44,7 @@ public class ContainerTypeController extends BaseController {
 
   @RequestMapping(value = "/get", method = RequestMethod.GET)
   public @ResponseBody RespObject get(@RequestParam(value = "uuid") String uuid,
-          @RequestParam(value = "token", required = true) String token) {
+      @RequestParam(value = "token", required = true) String token) {
     RespObject resp = new RespObject();
     try {
       ContainerType containerType = containerTypeService.get(uuid);
@@ -115,8 +115,7 @@ public class ContainerTypeController extends BaseController {
     RespObject resp = new RespObject();
     try {
       containerType.setCompanyUuid(getLoginCompany(token).getUuid());
-      String containerTypeUuid = containerTypeService.saveNew(containerType,
-          getOperateContext(token));
+      String containerTypeUuid = containerTypeService.saveNew(containerType);
       resp.setObj(containerTypeUuid);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
@@ -131,7 +130,7 @@ public class ContainerTypeController extends BaseController {
       @RequestBody ContainerType containerType) {
     RespObject resp = new RespObject();
     try {
-      containerTypeService.saveModify(containerType, getOperateContext(token));
+      containerTypeService.saveModify(containerType);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
       return new ErrorRespObject("编辑容器类型失败", e.getMessage());
@@ -146,7 +145,7 @@ public class ContainerTypeController extends BaseController {
       @RequestParam(value = "version", required = false) long version) {
     RespObject resp = new RespObject();
     try {
-      containerTypeService.remove(uuid, version, getOperateContext(token));
+      containerTypeService.remove(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
       return new ErrorRespObject("删除容器类型失败", e.getMessage());

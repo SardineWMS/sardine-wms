@@ -11,7 +11,6 @@ package com.hd123.sardine.wms.api.basicInfo.bin;
 
 import java.util.List;
 
-import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -61,14 +60,12 @@ public interface BinService {
    * 
    * @param wrh
    *          仓位，not null
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    *           参数为空
    * @throws WMSException
    *           代码重复
    */
-  void insertWrh(Wrh wrh, OperateContext operCtx) throws IllegalArgumentException, WMSException;
+  void insertWrh(Wrh wrh) throws IllegalArgumentException, WMSException;
 
   /**
    * 新增货区
@@ -78,13 +75,11 @@ public interface BinService {
    * 
    * @param zone
    *          货区，not null
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    *           参数为空
    * @throws WMSException
    */
-  void insertZone(Zone zone, OperateContext operCtx) throws IllegalArgumentException, WMSException;
+  void insertZone(Zone zone) throws IllegalArgumentException, WMSException;
 
   /**
    * 新增货道
@@ -94,13 +89,11 @@ public interface BinService {
    * 
    * @param path
    *          货道，not null
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    *           参数为空
    * @throws WMSException
    */
-  void insertPath(Path path, OperateContext operCtx) throws IllegalArgumentException, WMSException;
+  void insertPath(Path path) throws IllegalArgumentException, WMSException;
 
   /**
    * 新增货架
@@ -110,16 +103,11 @@ public interface BinService {
    * 
    * @param pathCode
    *          货道代码，not null
-   * @param companyUuid
-   *          组织ID，not null
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    *           参数为空
    * @throws WMSException
    */
-  void insertShelf(String pathCode, String companyUuid, OperateContext operCtx)
-      throws IllegalArgumentException, WMSException;
+  void insertShelf(String pathCode) throws IllegalArgumentException, WMSException;
 
   /**
    * 新增货位
@@ -135,7 +123,7 @@ public interface BinService {
    *           参数为空
    * @throws WMSException
    */
-  void insertBin(Bin bin, OperateContext operCtx) throws IllegalArgumentException, WMSException;
+  void insertBin(Bin bin) throws IllegalArgumentException, WMSException;
 
   /**
    * 分页查询货位信息
@@ -151,11 +139,9 @@ public interface BinService {
   /**
    * 查询仓位、货区、货道、货架的树形关系
    * 
-   * @param companyUuid
-   *          组织id
    * @return 组织为空返回空集合
    */
-  List<BinInfo> queryTreeData(String companyUuid);
+  List<BinInfo> queryTreeData();
 
   /**
    * 删除货位、货架、货道、货区、仓位
@@ -168,36 +154,28 @@ public interface BinService {
    *          uuid，not null
    * @param version
    *          版本号
-   * @param companyUuid
-   *          组织ID，not null
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    *           参数为空
    * @throws VersionConflictException
    *           货位版本号冲突
    * @throws WMSException
    */
-  void remove(String uuid, long version, String companyUuid, OperateContext operCtx)
+  void remove(String uuid, long version)
       throws IllegalArgumentException, VersionConflictException, WMSException;
 
   /**
    * 查询当前组织下的仓位
    * 
-   * @param companyUuid
-   *          组织ID
    * @return 组织为空时返回空集合
    */
-  List<Wrh> queryWrhs(String companyUuid);
+  List<Wrh> queryWrhs();
 
   /**
    * 查询当前组织下的货区
    * 
-   * @param companyUuid
-   *          组织ID
    * @return 组织为空时返回空集合
    */
-  List<Zone> queryZones(String companyUuid);
+  List<Zone> queryZones();
 
   /**
    * 查询仓位

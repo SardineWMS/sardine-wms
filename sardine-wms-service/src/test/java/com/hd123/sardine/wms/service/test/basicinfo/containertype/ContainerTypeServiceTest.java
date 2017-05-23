@@ -30,45 +30,45 @@ import com.hd123.sardine.wms.service.test.BaseServiceTest;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ContainerTypeServiceTest extends BaseServiceTest {
-    private static final String UUID = "89757";
-    private static final long VERSION = 0;
-    @InjectMocks
-    public ContainerTypeServiceImpl service;
-    @Mock
-    private ContainerTypeDao dao;
+  private static final String UUID = "89757";
+  private static final long VERSION = 0;
+  @InjectMocks
+  public ContainerTypeServiceImpl service;
+  @Mock
+  private ContainerTypeDao dao;
 
-    @Test
-    public void insert() throws Exception {
-        ContainerType containerType = ContainerTypeBuilder.containerType().withUuid(null).build();
+  @Test
+  public void insert() throws Exception {
+    ContainerType containerType = ContainerTypeBuilder.containerType().withUuid(null).build();
 
-        service.saveNew(containerType, defaultOperCtx());
+    service.saveNew(containerType);
 
-        verify(dao).insert(containerType);
-        Assertions.assertThat(containerType.getUuid()).isNotEmpty();
-    }
+    verify(dao).insert(containerType);
+    Assertions.assertThat(containerType.getUuid()).isNotEmpty();
+  }
 
-    @Test
-    public void update() throws Exception {
-        ContainerType containerType = ContainerTypeBuilder.containerType().withUuid(UUID)
-                .withVersion(0).build();
-        when(dao.get(UUID)).thenReturn(containerType);
+  @Test
+  public void update() throws Exception {
+    ContainerType containerType = ContainerTypeBuilder.containerType().withUuid(UUID).withVersion(0)
+        .build();
+    when(dao.get(UUID)).thenReturn(containerType);
 
-        service.saveModify(containerType, defaultOperCtx());
+    service.saveModify(containerType);
 
-        verify(dao).update(containerType);
-        Assertions.assertThat(containerType.getLastModifyInfo().getOperator())
-                .isEqualTo(defaultOperCtx().getOperator());
-    }
+    verify(dao).update(containerType);
+    Assertions.assertThat(containerType.getLastModifyInfo().getOperator())
+        .isEqualTo(defaultOperCtx().getOperator());
+  }
 
-    @Test
-    public void remove() throws Exception {
-        ContainerType containerType = ContainerTypeBuilder.containerType().withUuid(UUID)
-                .withVersion(VERSION).build();
-        when(dao.get(UUID)).thenReturn(containerType);
+  @Test
+  public void remove() throws Exception {
+    ContainerType containerType = ContainerTypeBuilder.containerType().withUuid(UUID)
+        .withVersion(VERSION).build();
+    when(dao.get(UUID)).thenReturn(containerType);
 
-        service.remove(UUID, VERSION, defaultOperCtx());
+    service.remove(UUID, VERSION);
 
-        verify(dao).remove(UUID, VERSION);
-    }
+    verify(dao).remove(UUID, VERSION);
+  }
 
 }

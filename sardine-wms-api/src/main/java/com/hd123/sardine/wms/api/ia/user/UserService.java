@@ -11,7 +11,6 @@ package com.hd123.sardine.wms.api.ia.user;
 
 import java.util.List;
 
-import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
@@ -90,29 +89,25 @@ public interface UserService {
    * 
    * @param user
    *          用户信息，not null
-   * @param operCtx
-   *          操作信息，not null
    * @return 新用户id
    * @throws IllegalArgumentException
    *           参数为空
    * @throws WMSException
    *           用户代码重复
    */
-  String insert(User user, OperateContext operCtx) throws IllegalArgumentException, WMSException;
+  String insert(User user) throws IllegalArgumentException, WMSException;
 
   /**
    * 更新用户信息，主要用户修改用户基本资料
    * 
    * @param user
    *          用户信息，not null
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    *           参数为空
    * @throws WMSException
    *           用户代码重复，版本冲突、实体不存在
    */
-  void update(User user, OperateContext operCtx) throws IllegalArgumentException, WMSException;
+  void update(User user) throws IllegalArgumentException, WMSException;
 
   /**
    * 删除用户
@@ -123,15 +118,12 @@ public interface UserService {
    *          要删除的用户uuid not null
    * @param version
    *          版本号
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    *           参数为空
    * @throws WMSException
    *           版本冲突
    */
-  void remove(String uuid, long version, OperateContext operCtx)
-      throws IllegalArgumentException, WMSException;
+  void remove(String uuid, long version) throws IllegalArgumentException, WMSException;
 
   /**
    * 启用用户
@@ -142,15 +134,12 @@ public interface UserService {
    *          要启用的用户uuid not null
    * @param version
    *          版本号
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    *           参数为空
    * @throws WMSException
    *           版本冲突
    */
-  void online(String uuid, long version, OperateContext operCtx)
-      throws IllegalArgumentException, WMSException;
+  void online(String uuid, long version) throws IllegalArgumentException, WMSException;
 
   /**
    * 禁用用户
@@ -161,15 +150,12 @@ public interface UserService {
    *          要禁用的用户uuid not null
    * @param version
    *          版本号
-   * @param operCtx
-   *          操作信息，not null
    * @throws IllegalArgumentException
    *           参数为空
    * @throws WMSException
    *           版本冲突
    */
-  void offline(String uuid, long version, OperateContext operCtx)
-      throws IllegalArgumentException, WMSException;
+  void offline(String uuid, long version) throws IllegalArgumentException, WMSException;
 
   /**
    * 给用户分配角色

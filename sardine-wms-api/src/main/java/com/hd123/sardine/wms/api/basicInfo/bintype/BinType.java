@@ -29,6 +29,15 @@ public class BinType extends StandardEntity {
     private BigDecimal height;
     private BigDecimal plotRatio;
     private BigDecimal bearing;
+    private String companyUuid;
+
+    public String getCompanyUuid() {
+      return companyUuid;
+    }
+
+    public void setCompanyUuid(String companyUuid) {
+      this.companyUuid = companyUuid;
+    }
 
     /** 货位类型 代码 */
     public String getCode() {
