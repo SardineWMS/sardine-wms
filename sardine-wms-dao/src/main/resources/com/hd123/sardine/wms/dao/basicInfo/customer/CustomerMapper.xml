@@ -95,6 +95,9 @@
 			and t.code like CONCAT(CONCAT('%', #{code}),
 			'%')
 		</if>
+		<if test="companyUuid != null">
+			and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+		</if>
 		<if test="name != null">
 			and t.name like CONCAT(CONCAT('%', #{name}),
 			'%')
