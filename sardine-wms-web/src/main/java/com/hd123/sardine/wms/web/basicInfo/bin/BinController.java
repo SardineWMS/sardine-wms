@@ -1,9 +1,9 @@
 /**
  * 版权所有(C)，上海海鼎信息工程股份有限公司，2016，所有权利保留。
  * 
- * 项目名：	sardine-wms-web
- * 文件名：	BinController.java
- * 模块说明：	
+ * 项目名： sardine-wms-web
+ * 文件名： BinController.java
+ * 模块说明：    
  * 修改历史：
  * 2016年12月12日 - zhangsai - 创建。
  */
@@ -89,7 +89,7 @@ public class BinController extends BaseController {
                     StringUtil.isNullOrBlank(usage) ? null : BinUsage.valueOf(usage));
 
             PageQueryResult<Bin> result = binService.queryBin(definition);
-            List<BinInfo> infos = binService.queryTreeData(getLoginCompany(token).getUuid());
+            List<BinInfo> infos = binService.queryTreeData();
             BinQueryResult resultData = new BinQueryResult();
             resultData.setPageData(result);
             resultData.setTreeData(infos);
@@ -106,8 +106,7 @@ public class BinController extends BaseController {
             @RequestParam(value = "token", required = true) String token) {
         RespObject resp = new RespObject();
         try {
-            ApplicationContextUtil.setCompany(getLoginCompany(token));
-            List<Wrh> result = binService.queryWrhs(getLoginCompany(token).getUuid());
+            List<Wrh> result = binService.queryWrhs();
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -121,7 +120,7 @@ public class BinController extends BaseController {
             @RequestParam(value = "token", required = true) String token) {
         RespObject resp = new RespObject();
         try {
-            List<Zone> result = binService.queryZones(getLoginCompany(token).getUuid());
+            List<Zone> result = binService.queryZones();
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -161,7 +160,7 @@ public class BinController extends BaseController {
             wrh.setName(name);
             wrh.setCompanyUuid(getLoginCompany(token).getUuid());
             wrh.setNote(note);
-            binService.insertWrh(wrh, getOperateContext(token));
+            binService.insertWrh(wrh);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             return new ErrorRespObject("保存仓位失败", e.getMessage());
@@ -184,7 +183,7 @@ public class BinController extends BaseController {
             zone.setCompanyUuid(getLoginCompany(token).getUuid());
             zone.setNote(note);
             zone.setWrh(new UCN(wrhUuid, null, null));
-            binService.insertZone(zone, getOperateContext(token));
+            binService.insertZone(zone);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
@@ -202,7 +201,7 @@ public class BinController extends BaseController {
             Path path = new Path();
             path.setCompanyUuid(getLoginCompany(token).getUuid());
             path.setZoneUuid(zoneUuid);
-            binService.insertPath(path, getOperateContext(token));
+            binService.insertPath(path);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
@@ -217,9 +216,7 @@ public class BinController extends BaseController {
             @RequestParam(value = "pathCode", required = true) String pathCode) {
         RespObject resp = new RespObject();
         try {
-            ApplicationContextUtil.setCompany(getLoginCompany(token));
-            binService.insertShelf(pathCode, getLoginCompany(token).getUuid(),
-                    getOperateContext(token));
+            binService.insertShelf(pathCode);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
@@ -241,7 +238,7 @@ public class BinController extends BaseController {
             bin.setCompanyUuid(getLoginCompany(token).getUuid());
             bin.setUsage(BinUsage.valueOf(binUsage));
             bin.setBinType(new UCN(binTypeUuid, null, null));
-            binService.insertBin(bin, getOperateContext(token));
+            binService.insertBin(bin);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
@@ -257,8 +254,7 @@ public class BinController extends BaseController {
             @RequestParam(value = "token", required = true) String token) {
         RespObject resp = new RespObject();
         try {
-            binService.remove(uuid, version, getLoginCompany(token).getUuid(),
-                    getOperateContext(token));
+            binService.remove(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             return new ErrorRespObject("删除货位失败", e.getMessage());
@@ -282,6 +278,5 @@ public class BinController extends BaseController {
             return new ErrorRespObject("根据代码查询货位失败!", e.getMessage());
         }
         return resp;
-
     }
 }
