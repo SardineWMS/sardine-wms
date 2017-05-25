@@ -9,8 +9,12 @@
  */
 package com.hd123.sardine.wms.dao.basicInfo.article;
 
+import java.util.List;
+
 import com.hd123.sardine.wms.api.basicInfo.article.Article;
 import com.hd123.sardine.wms.common.dao.BaseDao;
+import com.hd123.sardine.wms.common.entity.UCN;
+import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 
 /**
  * @author zhangsai
@@ -18,7 +22,9 @@ import com.hd123.sardine.wms.common.dao.BaseDao;
  */
 public interface ArticleDao extends BaseDao<Article> {
 
-  Article getByCode(String code);
+    Article getByCode(String code);
 
-  Article getByBarcode(String barcode);
+    Article getByBarcode(String barcode);
+
+    List<UCN> queryInStocks(PageQueryDefinition definition);
 }

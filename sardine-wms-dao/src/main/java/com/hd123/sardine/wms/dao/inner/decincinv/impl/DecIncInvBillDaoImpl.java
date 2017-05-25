@@ -9,6 +9,7 @@
  */
 package com.hd123.sardine.wms.dao.inner.decincinv.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -108,7 +109,9 @@ public class DecIncInvBillDaoImpl extends SqlSessionDaoSupport implements DecInc
         Assert.assertArgumentNotNull(items, "items");
 
         for (DecIncInvBillItem item : items) {
-            getSqlSession().insert(generateStatement(MAPPER_INSERTITEMS), item);
+            Map<String, Object> map = ApplicationContextUtil.map();
+            map.put("item", item);
+            getSqlSession().insert(generateStatement(MAPPER_INSERTITEMS), map);
         }
     }
 
@@ -116,7 +119,9 @@ public class DecIncInvBillDaoImpl extends SqlSessionDaoSupport implements DecInc
     public List<DecIncInvBillItem> queryItems(String billUuid) {
         if (StringUtil.isNullOrBlank(billUuid))
             return null;
-        return getSqlSession().selectList(generateStatement(MAPPER_QUERYITEMS), billUuid);
+        Map<String, Object> map= new HashMap<String, Object>();
+        map.put("decIncInvBillUuid", billUuid);
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYITEMS), map);
     }
 
 }

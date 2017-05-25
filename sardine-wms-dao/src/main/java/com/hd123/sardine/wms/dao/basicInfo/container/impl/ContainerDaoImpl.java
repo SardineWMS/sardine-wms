@@ -29,50 +29,50 @@ import com.hd123.sardine.wms.dao.basicInfo.container.ContainerDao;
  *
  */
 public class ContainerDaoImpl extends NameSpaceSupport implements ContainerDao {
-  public static final String GETBYBARCODE = "getByBarcode";
-  public static final String INSERTCONTAINER = "insertContainer";
-  public static final String QUERYCONTAINERS = "queryContainer";
+    public static final String GETBYBARCODE = "getByBarcode";
+    public static final String INSERTCONTAINER = "insertContainer";
+    public static final String QUERYCONTAINERS = "queryContainer";
 
-  @Override
-  public Container getByBarcode(String barcode, String companyUuid) {
-    Assert.assertArgumentNotNull(barcode, "barcode");
-    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+    @Override
+    public Container getByBarcode(String barcode, String companyUuid) {
+        Assert.assertArgumentNotNull(barcode, "barcode");
+        Assert.assertArgumentNotNull(companyUuid, "companyUuid");
 
-    Map<String, String> map = new HashMap<>();
-    map.put("barcode", barcode);
-    map.put("companyUuid", companyUuid);
+        Map<String, String> map = new HashMap<>();
+        map.put("barcode", barcode);
+        map.put("companyUuid", companyUuid);
 
-    return getSqlSession().selectOne(generateStatement(GETBYBARCODE), map);
-  }
+        return getSqlSession().selectOne(generateStatement(GETBYBARCODE), map);
+    }
 
-  @Override
-  public void insert(Container container) {
-    getSqlSession().insert(generateStatement(INSERTCONTAINER), container);
-  }
+    @Override
+    public void insert(Container container) {
+        getSqlSession().insert(generateStatement(INSERTCONTAINER), container);
+    }
 
-  @Override
-  public List<Container> query(PageQueryDefinition param) {
-    return getSqlSession().selectList(generateStatement(QUERYCONTAINERS), param);
-  }
+    @Override
+    public List<Container> query(PageQueryDefinition param) {
+        return getSqlSession().selectList(generateStatement(QUERYCONTAINERS), param);
+    }
 
-  @Override
-  public Container get(String uuid) {
-    if (StringUtil.isNullOrBlank(uuid))
-      return null;
+    @Override
+    public Container get(String uuid) {
+        if (StringUtil.isNullOrBlank(uuid))
+            return null;
 
-    Map<String, Object> map = ApplicationContextUtil.map();
-    map.put(uuid, "uuid");
-    List<Container> result = getSqlSession().selectList(generateStatement(MAPPER_GET), map);
-    if (CollectionUtils.isEmpty(result))
-      return null;
-    return result.get(0);
-  }
+        Map<String, Object> map = ApplicationContextUtil.map();
+        map.put("uuid", uuid);
+        List<Container> result = getSqlSession().selectList(generateStatement(MAPPER_GET), map);
+        if (CollectionUtils.isEmpty(result))
+            return null;
+        return result.get(0);
+    }
 
-  @Override
-  public void update(Container container) {
-    Assert.assertArgumentNotNull(container, "container");
+    @Override
+    public void update(Container container) {
+        Assert.assertArgumentNotNull(container, "container");
 
-    int updateRows = getSqlSession().update(generateStatement(MAPPER_UPDATE), container);
-    PersistenceUtils.optimisticVerify(updateRows);
-  }
+        int updateRows = getSqlSession().update(generateStatement(MAPPER_UPDATE), container);
+        PersistenceUtils.optimisticVerify(updateRows);
+    }
 }

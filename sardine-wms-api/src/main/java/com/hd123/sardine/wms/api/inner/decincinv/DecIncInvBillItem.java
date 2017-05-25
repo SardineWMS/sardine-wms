@@ -27,7 +27,7 @@ public class DecIncInvBillItem extends Entity {
     private static final long serialVersionUID = -5616582630608721471L;
 
     private int line;
-    private String billBillUuid;
+    private String decIncInvBillUuid;
     private String binCode;
     private String containerBarCode;
     private UCN article;
@@ -39,8 +39,11 @@ public class DecIncInvBillItem extends Entity {
     private Date productionDate;
     private Date expireDate;
     private String stockBatch;
+    private BigDecimal price;
+    private BigDecimal amount;
     private String reason;
 
+    /** 行号 */
     public int getLine() {
         return line;
     }
@@ -49,14 +52,7 @@ public class DecIncInvBillItem extends Entity {
         this.line = line;
     }
 
-    public String getBillBillUuid() {
-        return billBillUuid;
-    }
-
-    public void setBillBillUuid(String billBillUuid) {
-        this.billBillUuid = billBillUuid;
-    }
-
+    /** 损溢货位 */
     public String getBinCode() {
         return binCode;
     }
@@ -65,6 +61,7 @@ public class DecIncInvBillItem extends Entity {
         this.binCode = binCode;
     }
 
+    /** 损溢容器 */
     public String getContainerBarCode() {
         return containerBarCode;
     }
@@ -73,6 +70,7 @@ public class DecIncInvBillItem extends Entity {
         this.containerBarCode = containerBarCode;
     }
 
+    /** 商品 */
     public UCN getArticle() {
         return article;
     }
@@ -81,6 +79,7 @@ public class DecIncInvBillItem extends Entity {
         this.article = article;
     }
 
+    /** 商品规格 */
     public String getQpcStr() {
         return qpcStr;
     }
@@ -89,6 +88,7 @@ public class DecIncInvBillItem extends Entity {
         this.qpcStr = qpcStr;
     }
 
+    /** 损溢数量（损：负数 、溢：正数） */
     public BigDecimal getQty() {
         return qty;
     }
@@ -98,6 +98,7 @@ public class DecIncInvBillItem extends Entity {
         this.qty = qty;
     }
 
+    /** 损溢件数 */
     public String getCaseQtyStr() {
         return caseQtyStr;
     }
@@ -106,6 +107,7 @@ public class DecIncInvBillItem extends Entity {
         this.caseQtyStr = caseQtyStr;
     }
 
+    /** 商品生产日期 */
     public Date getProductionDate() {
         return productionDate;
     }
@@ -114,6 +116,7 @@ public class DecIncInvBillItem extends Entity {
         this.productionDate = productionDate;
     }
 
+    /** 商品到校日期 */
     public Date getExpireDate() {
         return expireDate;
     }
@@ -122,6 +125,7 @@ public class DecIncInvBillItem extends Entity {
         this.expireDate = expireDate;
     }
 
+    /** 批次 */
     public String getStockBatch() {
         return stockBatch;
     }
@@ -130,6 +134,7 @@ public class DecIncInvBillItem extends Entity {
         this.stockBatch = stockBatch;
     }
 
+    /** 原因 */
     public String getReason() {
         return reason;
     }
@@ -138,6 +143,7 @@ public class DecIncInvBillItem extends Entity {
         this.reason = reason;
     }
 
+    /** 供应商 */
     public UCN getSupplier() {
         return supplier;
     }
@@ -146,12 +152,40 @@ public class DecIncInvBillItem extends Entity {
         this.supplier = supplier;
     }
 
+    /** 商品计量单位 */
     public String getMeasureUnit() {
         return measureUnit;
     }
 
     public void setMeasureUnit(String measureUnit) {
         this.measureUnit = measureUnit;
+    }
+
+    /** 损溢单uuid */
+    public String getDecIncInvBillUuid() {
+        return decIncInvBillUuid;
+    }
+
+    public void setDecIncInvBillUuid(String decIncInvBillUuid) {
+        this.decIncInvBillUuid = decIncInvBillUuid;
+    }
+
+    /** 商品单价 */
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    /** 商品金额 */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     public void validate() {
@@ -162,6 +196,7 @@ public class DecIncInvBillItem extends Entity {
         Assert.assertArgumentNotNull(productionDate, "productionDate");
         Assert.assertArgumentNotNull(expireDate, "expireDate");
         Assert.assertArgumentNotNull(binCode, "binCode");
+        Assert.assertArgumentNotNull(price, "price");
     }
 
 }

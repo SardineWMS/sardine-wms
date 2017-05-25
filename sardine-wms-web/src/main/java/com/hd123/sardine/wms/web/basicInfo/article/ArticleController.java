@@ -31,6 +31,7 @@ import com.hd123.sardine.wms.api.basicInfo.category.CategoryService;
 import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
 import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierService;
 import com.hd123.sardine.wms.common.entity.UCN;
+import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -367,19 +368,36 @@ public class ArticleController extends BaseController {
         return resp;
     }
 
-    @RequestMapping(value = "/setArticleFixedPickBin", method = RequestMethod.PUT)
-    public @ResponseBody RespObject setArticleFixedPickBin(
-            @RequestParam(value = "articleUuid", required = true) String articleUuid,
-            @RequestParam(value = "fixedPickBin", required = true) String fixedPickBin,
-            @RequestParam(value = "token", required = true) String token) {
+    @RequestMapping(value = "/queryInStocks", method = RequestMethod.GET)
+    public @ResponseBody RespObject queryInStocks(
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
+            @RequestParam(value = "sort", required = false) String sort,
+            @RequestParam(value = "order", required = false,
+                    defaultValue = "asc") String sortDirection,
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "code", required = false) String code,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "wrh", required = false) String wrh) {
         RespObject resp = new RespObject();
         try {
-            articleService.updateArticleFixedPickBin(articleUuid, fixedPickBin);
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
+            PageQueryDefinition definition = new PageQueryDefinition();
+            definition.setPage(page);
+            definition.setPageSize(pageSize);
+            definition.setSortField(sort);
+            definition.setOrderDir(OrderDir.valueOf(sortDirection));
+            definition.put("wrh", wrh);
+            definition.put("companuUuid", getLoginCompany(token).getUuid());
+
+            PageQueryResult<UCN> results = articleService.queryInStocks(definition);
+            resp.setObj(results);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录。", e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("设置商品固定拣货位失败", e.getMessage());
+            return new ErrorRespObject("查询库存商品失败。", e.getMessage());
         }
         return resp;
     }
-
 }

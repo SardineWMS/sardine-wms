@@ -9,11 +9,15 @@
  */
 package com.hd123.sardine.wms.dao.basicInfo.article.impl;
 
+import java.util.List;
 import java.util.Map;
 
+import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.article.Article;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
+import com.hd123.sardine.wms.common.entity.UCN;
+import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.dao.basicInfo.article.ArticleDao;
 
@@ -23,26 +27,35 @@ import com.hd123.sardine.wms.dao.basicInfo.article.ArticleDao;
  */
 public class ArticleDaoImpl extends BaseDaoImpl<Article> implements ArticleDao {
 
-  public static final String MAPPER_GETBYCODE = "getByCode";
-  public static final String MAPPER_GETBYBARCODE = "getByBarcode";
+    public static final String MAPPER_GETBYCODE = "getByCode";
+    public static final String MAPPER_GETBYBARCODE = "getByBarcode";
+    public static final String QUERYINSTOCKS = "queryInStocks";
 
-  @Override
-  public Article getByCode(String code) {
-    if (StringUtil.isNullOrBlank(code))
-      return null;
+    @Override
+    public Article getByCode(String code) {
+        if (StringUtil.isNullOrBlank(code))
+            return null;
 
-    Map<String, Object> map = ApplicationContextUtil.mapWithParentCompanyUuid();
-    map.put("code", code);
-    return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE), map);
-  }
+        Map<String, Object> map = ApplicationContextUtil.mapWithParentCompanyUuid();
+        map.put("code", code);
+        return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE), map);
+    }
 
-  @Override
-  public Article getByBarcode(String barcode) {
-    if (StringUtil.isNullOrBlank(barcode))
-      return null;
+    @Override
+    public Article getByBarcode(String barcode) {
+        if (StringUtil.isNullOrBlank(barcode))
+            return null;
 
-    Map<String, Object> map = ApplicationContextUtil.mapWithParentCompanyUuid();
-    map.put("barcode", barcode);
-    return getSqlSession().selectOne(generateStatement(MAPPER_GETBYBARCODE), map);
-  }
+        Map<String, Object> map = ApplicationContextUtil.mapWithParentCompanyUuid();
+        map.put("barcode", barcode);
+        return getSqlSession().selectOne(generateStatement(MAPPER_GETBYBARCODE), map);
+    }
+
+    @Override
+    public List<UCN> queryInStocks(PageQueryDefinition definition) {
+        Assert.assertArgumentNotNull(definition, "definition");
+        List<UCN> result = getSqlSession().selectList(generateStatement(QUERYINSTOCKS), definition);
+
+        return result;
+    }
 }

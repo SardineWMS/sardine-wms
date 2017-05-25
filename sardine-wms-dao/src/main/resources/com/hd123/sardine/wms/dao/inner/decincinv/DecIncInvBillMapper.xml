@@ -9,8 +9,8 @@
 		<result column="version" property="version" jdbcType="LONGVARCHAR" />
 		<result column="billNumber" property="billNumber" jdbcType="VARCHAR" />
 		<result column="wrhuuid" property="wrh.uuid" jdbcType="VARCHAR" />
-		<result column="wrhcode" property="wrh.code" jdbcType="VARCHAR" />
-		<result column="wrhname" property="wrh.name" jdbcType="VARCHAR" />
+		<!-- <result column="wrhcode" property="wrh.code" jdbcType="VARCHAR" /> 
+			<result column="wrhname" property="wrh.name" jdbcType="VARCHAR" /> -->
 		<result column="operatoruuid" property="operator.uuid"
 			jdbcType="VARCHAR" />
 		<result column="operatorcode" property="operator.code"
@@ -20,6 +20,9 @@
 		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
 		<result column="state" property="state" jdbcType="VARCHAR" />
 		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="totalAmount" property="totalAmount" jdbcType="DECIMAL" />
+		<result column="totalCaseQtyStr" property="totalCaseQtyStr"
+			jdbcType="VARCHAR" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
 		<result column="createdtime " property="createInfo.time"
 			jdbcType="TIMESTAMP" />
@@ -42,17 +45,20 @@
 	<resultMap id="DecIncInvBillItemMap"
 		type="com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillItem">
 		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
-		<result column="billBillUuid" property="billBillUuid" jdbcType="VARCHAR" />
+		<result column="billBillUuid" property="decIncInvBillUuid"
+			jdbcType="VARCHAR" />
 		<result column="line" property="line" jdbcType="DECIMAL" />
 		<result column="binCode" property="binCode" jdbcType="VARCHAR" />
 		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
 		<result column="qty" property="qty" jdbcType="DECIMAL" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="amount" property="amount" jdbcType="DECIMAL" />
 		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
 		<result column="expireDate" property="expireDate" jdbcType="TIMESTAMP" />
 		<result column="productionDate" property="productionDate"
 			jdbcType="TIMESTAMP" />
 		<result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
-		<result column="containerBarCode" property="containerBarCode"
+		<result column="containerBarcode" property="containerBarCode"
 			jdbcType="VARCHAR" />
 		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
 		<result column="articleCode" property="article.code" jdbcType="VARCHAR" />
@@ -77,7 +83,6 @@
 			<if test="billNumber != null">
 				billNumber,
 			</if>
-
 			<if test="companyUuid != null">
 				companyUuid,
 			</if>
@@ -90,10 +95,16 @@
 			<if test="wrh != null and wrh.uuid != null">
 				wrhuuid,
 			</if>
+			<if test="totalAmount != null">
+				totalAmount,
+			</if>
+			<if test="totalCaseQtyStr != null">
+				totalCaseQtyStr,
+			</if>
 			<if test="remark != null">
 				remark,
 			</if>
-			<if test="operator != null and roperator.uuid != null">
+			<if test="operator != null and operator.uuid != null">
 				operatoruuid,
 			</if>
 			<if test="operator != null and operator.code != null">
@@ -119,7 +130,6 @@
 			<if test="billNumber != null">
 				#{billNumber,jdbcType=VARCHAR},
 			</if>
-
 			<if test="companyUuid != null">
 				#{companyUuid,jdbcType=VARCHAR},
 			</if>
@@ -131,6 +141,12 @@
 			</if>
 			<if test="wrh != null and wrh.uuid != null">
 				#{wrh.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="totalAmount != null">
+				#{totalAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="totalCaseQtyStr != null">
+				#{totalCaseQtyStr,jdbcType=VARCHAR},
 			</if>
 			<if test="remark != null">
 				#{remark,jdbcType=VARCHAR},
@@ -164,10 +180,13 @@
 				state = #{state,jdbcType=VARCHAR},
 			</if>
 			<if test="type != null">
-				state = #{state,jdbcType=VARCHAR},
+				type = #{type,jdbcType=VARCHAR},
 			</if>
 			<if test="wrh != null and wrh.uuid != null">
 				wrhuuid = #{wrh.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="totalAmount != null">
+				totalAmount= #{totalAmount,jdbcType=DECIMAL},
 			</if>
 			<if test="operator != null and operator.uuid != null">
 				operatoruuid = #{operator.uuid,jdbcType=VARCHAR},
@@ -176,7 +195,7 @@
 				operatorcode = #{operator.code,jdbcType=VARCHAR},
 			</if>
 			<if test="operator != null and operator.name != null">
-				operatorname = #{receiver.name,jdbcType=VARCHAR},
+				operatorname = #{operator.name,jdbcType=VARCHAR},
 			</if>
 			remark = #{remark,jdbcType=VARCHAR},
 			LASTMODIFYTIME =
@@ -198,32 +217,39 @@
 
 	<select id="get" resultMap="DecIncInvBillMap" parameterType="java.lang.String">
 		select t.*, w.code wrhcode, w.name wrhname
-		from db_proxy.sardine_decIncInvBill t,
+		from
+		db_proxy.sardine_decIncInvBill t,
 		db_proxy.sardine_wrh w
 		where
-		t.wrhuuid =w.uuid
+		t.wrhuuid
+		=w.uuid
 		and t.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="getByBillNumber" resultMap="DecIncInvBillMap"
 		parameterType="java.util.Map">
 		select t.*, w.code wrhcode, w.name wrhname
-		from db_proxy.sardine_decIncInvBill t,
+		from
+		db_proxy.sardine_decIncInvBill t,
 		db_proxy.sardine_wrh w
 		where
-		t.wrhuuid =w.uuid
+		t.wrhuuid
+		=w.uuid
 		and
 		t.billNumber =
-		#{billNumber,jdbcType=VARCHAR} and t.companyUuid =
+		#{billNumber,jdbcType=VARCHAR} and
+		t.companyUuid =
 		#{companyUuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="query" resultMap="DecIncInvBillMap" parameterType="PageQueryDefinition">
 		select t.*, w.code wrhcode, w.name wrhname
-		from db_proxy.sardine_decIncInvBill t,
+		from
+		db_proxy.sardine_decIncInvBill t,
 		db_proxy.sardine_wrh w
 		where
-		t.wrhuuid =w.uuid
+		t.wrhuuid
+		=w.uuid
 		<if test="billNumber != null and billNumber != ''">
 			and t.billNumber like CONCAT(CONCAT('%',
 			#{billNumber,jdbcType=VARCHAR}),
@@ -261,7 +287,7 @@
 			<if test="item.uuid != null">
 				uuid,
 			</if>
-			<if test="item.billBillUuid != null">
+			<if test="item.decIncInvBillUuid != null">
 				billBillUuid,
 			</if>
 			<if test="item.line != null">
@@ -288,17 +314,23 @@
 			<if test="item.stockBatch != null">
 				stockBatch,
 			</if>
-			<if test="item.containerBarcode != null">
+			<if test="item.containerBarCode != null">
 				containerBarcode,
 			</if>
 			<if test="item.article != null and item.article.uuid != null">
 				articleUuid,
 			</if>
-			<if test="supplier != null and supplier.uuid != null">
+			<if test="item.supplier != null and item.supplier.uuid != null">
 				supplieruuid,
 			</if>
 			<if test="item.measureUnit != null">
 				measureUnit,
+			</if>
+			<if test="item.price != null">
+				price,
+			</if>
+			<if test="item.amount != null">
+				amount,
 			</if>
 			<if test="item.reason != null">
 				reason
@@ -308,8 +340,8 @@
 			<if test="item.uuid != null">
 				#{item.uuid,jdbcType=VARCHAR},
 			</if>
-			<if test="item.billBillUuid!= null">
-				#{item.billBillUuid,jdbcType=VARCHAR},
+			<if test="item.decIncInvBillUuid!= null">
+				#{item.decIncInvBillUuid,jdbcType=VARCHAR},
 			</if>
 			<if test="item.line != null">
 				#{item.line,jdbcType=INTEGER},
@@ -335,17 +367,23 @@
 			<if test="item.stockBatch != null">
 				#{item.stockBatch,jdbcType=VARCHAR},
 			</if>
-			<if test="item.containerBarcode != null">
-				#{item.containerBarcode,jdbcType=VARCHAR},
+			<if test="item.containerBarCode != null">
+				#{item.containerBarCode,jdbcType=VARCHAR},
 			</if>
 			<if test="item.article != null and item.article.uuid != null">
 				#{item.article.uuid,jdbcType=VARCHAR},
 			</if>
-			<if test="supplier != null and supplier.uuid != null">
-				#{supplier.uuid,jdbcType=VARCHAR},
+			<if test="item.supplier != null and item.supplier.uuid != null">
+				#{item.supplier.uuid,jdbcType=VARCHAR},
 			</if>
 			<if test="item.measureUnit != null">
 				#{item.measureUnit,jdbcType=VARCHAR},
+			</if>
+			<if test="item.price != null">
+				#{item.price,jdbcType=DECIMAL},
+			</if>
+			<if test="item.amount != null">
+				#{item.amount,jdbcType=DECIMAL},
 			</if>
 			<if test="item.reason != null">
 				#{item.reason,jdbcType=VARCHAR},
@@ -355,21 +393,22 @@
 
 	<select id="queryItems" resultMap="DecIncInvBillItemMap"
 		parameterType="java.lang.String">
-		select t.*, a.code articleCode, a.name articleName, from
+		select t.*, a.code articleCode, a.name articleName from
 		db_proxy.sardine_decIncInvBillItem t,
 		db_proxy.sardine_article a,
 		db_proxy.sardine_supplier s
 		where
-		t.articleuuid = a.uuid 
-		and t.supplierUuid=s.uuid
+		t.articleuuid = a.uuid
+		and
+		t.supplierUuid=s.uuid
 		and t.billBillUuid =
-		#{billBillUuid,jdbcType=VARCHAR}
+		#{decIncInvBillUuid,jdbcType=VARCHAR}
 	</select>
 
-	<delete id="removeItems" parameterType="java.lang.String">
+	<delete id="removeItems" parameterType="java.util.Map">
 		delete from
 		db_proxy.sardine_decIncInvBillItem
 		where billBillUuid =
-		#{billBillUuid,jdbcType=VARCHAR}
+		#{decIncInvBillUuid,jdbcType=VARCHAR}
 	</delete>
 </mapper>

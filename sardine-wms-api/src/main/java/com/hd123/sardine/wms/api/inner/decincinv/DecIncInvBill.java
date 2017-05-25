@@ -33,7 +33,10 @@ public class DecIncInvBill extends StandardEntity {
     private DecIncInvBillState state;
     private UCN wrh;
     private UCN operator;
+    private BigDecimal totalAmount;
+    private String totalCaseQtyStr;
     private String remark;
+    private String companyUuid;
     private List<DecIncInvBillItem> items = new ArrayList<>();
 
     /** 单号 */
@@ -72,13 +75,22 @@ public class DecIncInvBill extends StandardEntity {
         this.wrh = wrh;
     }
 
-    /** 操作人 */
+    /** 损溢人 */
     public UCN getOperator() {
         return operator;
     }
 
     public void setOperator(UCN operator) {
         this.operator = operator;
+    }
+
+    /** 总金额 */
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     /** 备注 */
@@ -97,6 +109,22 @@ public class DecIncInvBill extends StandardEntity {
 
     public void setItems(List<DecIncInvBillItem> items) {
         this.items = items;
+    }
+
+    public String getCompanyUuid() {
+        return companyUuid;
+    }
+
+    public void setCompanyUuid(String companyUuid) {
+        this.companyUuid = companyUuid;
+    }
+
+    public String getTotalCaseQtyStr() {
+        return totalCaseQtyStr;
+    }
+
+    public void setTotalCaseQtyStr(String totalCaseQtyStr) {
+        this.totalCaseQtyStr = totalCaseQtyStr;
     }
 
     public void validate() {

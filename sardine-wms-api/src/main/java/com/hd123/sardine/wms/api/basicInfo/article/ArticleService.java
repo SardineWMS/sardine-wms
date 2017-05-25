@@ -9,6 +9,7 @@
  */
 package com.hd123.sardine.wms.api.basicInfo.article;
 
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
@@ -233,15 +234,14 @@ public interface ArticleService {
             throws IllegalArgumentException, WMSException;
 
     /**
-     * 设置商品固定拣货位
+     * 分页查询库存中的商品
      * 
-     * @param articleUuid
-     *            商品uuid，not null。
-     * @param fixedPickBin
-     *            拣货位或拣货存储位，not null。
+     * @param definition
+     *            查询条件
+     * @return 分页结果集
      * @throws IllegalArgumentException
-     * @throws WMSException
+     *             查询条件为空时抛出
      */
-    void updateArticleFixedPickBin(String articleUuid, String fixedPickBin)
-            throws IllegalArgumentException, WMSException;
+    PageQueryResult<UCN> queryInStocks(PageQueryDefinition definition)
+            throws IllegalArgumentException;
 }
