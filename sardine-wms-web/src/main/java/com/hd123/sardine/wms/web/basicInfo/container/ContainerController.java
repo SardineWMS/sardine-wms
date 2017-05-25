@@ -17,13 +17,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
+import com.hd123.sardine.wms.api.basicInfo.container.ContainerState;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
+import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.BaseController;
 
 /**
@@ -45,14 +49,22 @@ public class ContainerController extends BaseController {
                     defaultValue = "asc") String sortDirection,
             @RequestParam(value = "token", required = false) String token,
             @RequestParam(value = "barcode", required = false) String barcode,
-            @RequestParam(value = "state", required = false) String state) {
+            @RequestParam(value = "state", required = false) String state,
+            @RequestParam(value = "position", required = false) String position,
+            @RequestParam(value = "toPosition", required = false) String toPostion) {
         RespObject resp = new RespObject();
         try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
             PageQueryDefinition definition = new PageQueryDefinition();
             definition.setPage(page);
             definition.setPageSize(pageSize);
-            definition.put("barcode", barcode);
-            definition.put("state", state);
+            definition.setSortField(sort);
+            definition.setOrderDir(OrderDir.valueOf(sortDirection));
+            definition.put(ContainerService.QUERY_BARCODE_FIELD, barcode);
+            definition.put(ContainerService.QUERY_POSITION_FIELD, position);
+            definition.put(ContainerService.QUERY_STATE_FIELD,
+                    StringUtil.isNullOrBlank(state) ? null : ContainerState.valueOf(state));
+            definition.put(ContainerService.QUERY_TOPOSITION_FIELD, toPostion);
             PageQueryResult<Container> result = containerService.query(definition);
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

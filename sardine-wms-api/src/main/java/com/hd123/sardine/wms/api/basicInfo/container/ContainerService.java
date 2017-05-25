@@ -19,48 +19,53 @@ import com.hd123.sardine.wms.common.query.PageQueryResult;
  *
  */
 public interface ContainerService {
-  /***
-   * 新增容器
-   * 
-   * @param containerTypeUuid
-   *          not null
-   */
-  void saveNew(String containerTypeUuid) throws WMSException;
+    public static final String QUERY_BARCODE_FIELD = "barcode";
+    public static final String QUERY_STATE_FIELD = "state";
+    public static final String QUERY_POSITION_FIELD = "position";
+    public static final String QUERY_TOPOSITION_FIELD = "toPosition";
 
-  /***
-   * 根据容器条码和组织查询容器
-   * 
-   * @param barcode
-   *          容器条码
-   * @return 容器
-   */
-  Container getByBarcode(String barcode);
+    /***
+     * 新增容器
+     * 
+     * @param containerTypeUuid
+     *            not null
+     */
+    void saveNew(String containerTypeUuid) throws WMSException;
 
-  /***
-   * 分页查询容器列表
-   * 
-   * @param definition
-   * @return 容器列表
-   */
-  PageQueryResult<Container> query(PageQueryDefinition definition);
+    /***
+     * 根据容器条码和组织查询容器
+     * 
+     * @param barcode
+     *            容器条码
+     * @return 容器
+     */
+    Container getByBarcode(String barcode);
 
-  /**
-   * 修改容器状态和目标位置
-   * <p>
-   * 状态和目标位置不能同时为空
-   * 
-   * @param uuid
-   *          UUID，not null
-   * @param version
-   *          版本号
-   * @param state
-   *          状态
-   * @param position
-   *          目标位置
-   * @throws IllegalArgumentException
-   * @throws VersionConflictException
-   * @throws WMSException
-   */
-  void change(String uuid, long version, ContainerState state, String position)
-      throws IllegalArgumentException, VersionConflictException, WMSException;
+    /***
+     * 分页查询容器列表
+     * 
+     * @param definition
+     * @return 容器列表
+     */
+    PageQueryResult<Container> query(PageQueryDefinition definition);
+
+    /**
+     * 修改容器状态和目标位置
+     * <p>
+     * 状态和目标位置不能同时为空
+     * 
+     * @param uuid
+     *            UUID，not null
+     * @param version
+     *            版本号
+     * @param state
+     *            状态
+     * @param position
+     *            目标位置
+     * @throws IllegalArgumentException
+     * @throws VersionConflictException
+     * @throws WMSException
+     */
+    void change(String uuid, long version, ContainerState state, String position)
+            throws IllegalArgumentException, VersionConflictException, WMSException;
 }

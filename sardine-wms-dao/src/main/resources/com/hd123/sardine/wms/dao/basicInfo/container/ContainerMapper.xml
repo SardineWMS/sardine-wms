@@ -38,7 +38,8 @@
 	<select id="getByBarcode" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
 		select t.* from db_proxy.sardine_container t
-		where t.barcode =
+		where t.barcode
+		=
 		#{barcode,jdbcType=VARCHAR}
 		and t.companyUuid =
 		#{companyUuid,jdbcType=VARCHAR}
@@ -46,7 +47,8 @@
 
 	<select id="get" parameterType="java.util.Map" resultMap="BaseResultMap">
 		select
-		* from db_proxy.sardine_container where uuid = #{uuid, jdbcType=VARCHAR}
+		* from db_proxy.sardine_container where uuid = #{uuid,
+		jdbcType=VARCHAR}
 	</select>
 
 	<select id="queryContainer" parameterType="PageQueryDefinition"
@@ -67,7 +69,9 @@
 		<if test="state != null">
 			and t.state = #{state,jdbcType=VARCHAR}
 		</if>
-		order by t.barcode asc
+		<if test="sortField != null and sortField =='barcode'">
+			order by t.barcode ${orderDir}
+		</if>
 	</select>
 
 	<insert id="insertContainer"
