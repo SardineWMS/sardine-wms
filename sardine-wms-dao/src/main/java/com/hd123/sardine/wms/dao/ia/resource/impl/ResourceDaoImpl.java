@@ -73,47 +73,64 @@ public class ResourceDaoImpl extends SqlSessionDaoSupport implements ResourceDao
   }
 
   @Override
-  public List<Resource> queryAllTopMenuResource() {
-    return getSqlSession().selectList(generateStatement(MAPPER_QUERYALLTOPMENURESOURCE), null);
+  public List<Resource> queryAllTopMenuResource(UserType userType) {
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("userType", userType == null ? null : userType.name());
+    return getSqlSession().selectList(generateStatement(MAPPER_QUERYALLTOPMENURESOURCE), map);
   }
 
   @Override
-  public List<Resource> queryOwnedTopMenuResourceByRole(String roleUuid) {
+  public List<Resource> queryOwnedTopMenuResourceByRole(String roleUuid, UserType userType) {
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("roleUuid", roleUuid);
+    map.put("userType", userType == null ? null : userType.name());
     return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDTOPMENURESOURCEBYROLE),
-        roleUuid);
+        map);
   }
 
   @Override
-  public List<Resource> queryOwnedTopMenuResourceByUser(String userUuid) {
+  public List<Resource> queryOwnedTopMenuResourceByUser(String userUuid, UserType userType) {
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("userUuid", userUuid);
+    map.put("userType", userType == null ? null : userType.name());
     return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDTOPMENURESOURCEBYUSER),
-        userUuid);
+        map);
   }
 
   @Override
-  public List<Resource> queryAllChildResource(String resourceUuid) {
-    return getSqlSession().selectList(generateStatement(MAPPER_QUERYALLCHILDRESOURCE),
-        resourceUuid);
+  public List<Resource> queryAllChildResource(String resourceUuid, UserType userType) {
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("resourceUuid", resourceUuid);
+    map.put("userType", userType == null ? null : userType.name());
+    return getSqlSession().selectList(generateStatement(MAPPER_QUERYALLCHILDRESOURCE), map);
   }
 
   @Override
-  public List<Resource> queryOwnedChildResourceByRole(String roleUuid, String resourceUuid) {
+  public List<Resource> queryOwnedChildResourceByRole(String roleUuid, String resourceUuid,
+      UserType userType) {
     Map<String, String> map = new HashMap<>();
     map.put("roleUuid", roleUuid);
     map.put("resourceUuid", resourceUuid);
+    map.put("userType", userType == null ? null : userType.name());
     return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDCHILDRESOURCEBYROLE), map);
   }
 
   @Override
-  public List<Resource> queryOwnedChildResourceByUser(String userUuid, String resourceUuid) {
+  public List<Resource> queryOwnedChildResourceByUser(String userUuid, String resourceUuid,
+      UserType userType) {
     Map<String, String> map = new HashMap<>();
     map.put("userUuid", userUuid);
     map.put("resourceUuid", resourceUuid);
+    map.put("userType", userType == null ? null : userType.name());
     return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDCHILDRESOURCEBYUSER), map);
   }
 
   @Override
-  public List<Resource> queryOwnedOperateByUser(String userUuid) {
-    return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDOPERATEBYUSER), userUuid);
+  public List<Resource> queryOwnedOperateByUser(String userUuid, UserType userType) {
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("userUuid", userUuid);
+    map.put("userType", userType == null ? null : userType.name());
+    return getSqlSession().selectList(generateStatement(MAPPER_QUERYOWNEDOPERATEBYUSER), map);
   }
 
   @Override
@@ -143,9 +160,12 @@ public class ResourceDaoImpl extends SqlSessionDaoSupport implements ResourceDao
   }
 
   @Override
-  public Resource getParentResourceByResource(String resourceUuid) {
+  public Resource getParentResourceByResource(String resourceUuid, UserType userType) {
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("resourceUuid", resourceUuid);
+    map.put("userType", userType.name());
     List<Resource> list = getSqlSession()
-        .selectList(generateStatement(MAPPER_GETPARENTRESOURCEBYRESOURCEUUID), resourceUuid);
+        .selectList(generateStatement(MAPPER_GETPARENTRESOURCEBYRESOURCEUUID), map);
     if (list != null && list.size() > 0)
       return list.get(0);
     return null;

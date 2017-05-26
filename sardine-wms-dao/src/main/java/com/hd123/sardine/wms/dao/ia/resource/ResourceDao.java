@@ -24,31 +24,33 @@ public interface ResourceDao {
 
   void saveUserResource(String userUuid, String resourceUUuid);
 
-  List<Resource> queryAllTopMenuResource();
+  List<Resource> queryAllTopMenuResource(UserType userType);
 
-  List<Resource> queryOwnedTopMenuResourceByRole(String roleUuid);
+  List<Resource> queryOwnedTopMenuResourceByRole(String roleUuid, UserType userType);
 
-  List<Resource> queryOwnedTopMenuResourceByUser(String userUuid);
+  List<Resource> queryOwnedTopMenuResourceByUser(String userUuid, UserType userType);
 
   List<Resource> queryOwnedTopMenuResourceByUserType(UserType userType);
 
-  List<Resource> queryAllChildResource(String resourceUuid);
+  List<Resource> queryAllChildResource(String resourceUuid, UserType userType);
 
   List<Resource> queryAllChildResourceByUserType(String resourceUuid, UserType userType);
 
-  List<Resource> queryOwnedChildResourceByRole(String roleUuid, String resourceUuid);
+  List<Resource> queryOwnedChildResourceByRole(String roleUuid, String resourceUuid,
+      UserType userType);
 
-  List<Resource> queryOwnedChildResourceByUser(String userUuid, String resourceUuid);
+  List<Resource> queryOwnedChildResourceByUser(String userUuid, String resourceUuid,
+      UserType userType);
 
   void removeResourceByUser(String userUuid);
 
   void removeResourceByRole(String roleUuid);
 
-  List<Resource> queryOwnedOperateByUser(String userUuid);
+  List<Resource> queryOwnedOperateByUser(String userUuid, UserType userType);
 
   List<Resource> queryOwnedOperateByUserType(UserType userType);
 
   List<Resource> queryOwnedResourceByUserType(UserType userType);
 
-  Resource getParentResourceByResource(String resourceUuid);
+  Resource getParentResourceByResource(String resourceUuid, UserType userType);
 }
