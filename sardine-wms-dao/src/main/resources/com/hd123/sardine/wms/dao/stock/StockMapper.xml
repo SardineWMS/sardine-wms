@@ -43,7 +43,7 @@
 		<result column="suppliername" property="supplier.name"
 			jdbcType="VARCHAR" />
 		<result column="binCode" property="binCode" jdbcType="VARCHAR" />
-		<result column="containerBarcode" property="containerBarCode"
+		<result column="containerBarcode" property="containerBarcode"
 			jdbcType="VARCHAR" />
 		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
 		<result column="articlecode" property="article.code" jdbcType="VARCHAR" />
@@ -262,9 +262,11 @@
 	</update>
 
 	<delete id="remove" parameterType="java.util.Map">
-		delete from db_proxy.sardine_stock
+		delete from
+		db_proxy.sardine_stock
 		where uuid = #{uuid, jdbcType=VARCHAR}
-		and version = #{version,
+		and
+		version = #{version,
 		jdbcType=LONGVARCHAR}
 	</delete>
 
@@ -348,8 +350,8 @@
 		<if test="binCode != null and binCode != ''">
 			and t.bincode = #{binCode, jdbcType=VARCHAR}
 		</if>
-		<if test="containerBarCode != null and containerBarCode != ''">
-			and t.containerBarcode = #{containerBarCode,
+		<if test="containerBarcode != null and containerBarcode != ''">
+			and t.containerBarcode = #{containerBarcode,
 			jdbcType=VARCHAR}
 		</if>
 		<if test="articleUuid != null and articleUuid != ''">

@@ -55,7 +55,7 @@ public class Stock extends VersionedEntity {
     private Date instockTime = new Date();
     private Date modifyTime = new Date();
     private BigDecimal onWayQty = BigDecimal.ZERO;
-    private BigDecimal price;
+    private BigDecimal price = BigDecimal.ZERO;
     // private BigDecimal qpc;
 
     private List<OnWayStock> onWayStocks = new ArrayList<OnWayStock>();

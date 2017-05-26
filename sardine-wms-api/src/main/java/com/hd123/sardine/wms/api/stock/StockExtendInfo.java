@@ -29,7 +29,7 @@ public class StockExtendInfo implements Serializable {
     private String companyUuid;
     private UCN supplier;
     private String binCode;
-    private String containerBarCode;
+    private String containerBarcode;
     private UCN article;
     private String articleSpec;
     private String stockBatch;
@@ -71,12 +71,12 @@ public class StockExtendInfo implements Serializable {
         this.binCode = binCode;
     }
 
-    public String getContainerBarCode() {
-        return containerBarCode;
+    public String getContainerBarcode() {
+        return containerBarcode;
     }
 
-    public void setContainerBarCode(String containerBarCode) {
-        this.containerBarCode = containerBarCode;
+    public void setContainerBarcode(String containerBarCode) {
+        this.containerBarcode = containerBarCode;
     }
 
     public UCN getArticle() {

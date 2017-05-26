@@ -9,6 +9,8 @@
  */
 package com.hd123.sardine.wms.web.basicInfo.container;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +23,10 @@ import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerState;
+import com.hd123.sardine.wms.api.stock.StockExtendInfo;
+import com.hd123.sardine.wms.api.stock.StockFilter;
+import com.hd123.sardine.wms.api.stock.StockService;
+import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -39,6 +45,8 @@ import com.hd123.sardine.wms.web.BaseController;
 public class ContainerController extends BaseController {
     @Autowired
     private ContainerService containerService;
+    @Autowired
+    private StockService stockService;
 
     @RequestMapping(value = "/querybypage", method = RequestMethod.GET)
     public @ResponseBody RespObject query(
@@ -88,5 +96,28 @@ public class ContainerController extends BaseController {
             return new ErrorRespObject("新增容器失败", e.getMessage());
         }
         return resp;
+    }
+
+    @RequestMapping(value = "/queryContainerStockInfo", method = RequestMethod.GET)
+    public @ResponseBody RespObject queryContainerStockInfo(
+            @RequestParam(value = "containerBarcode", required = true) String containerBarcode,
+            @RequestParam(value = "token", required = true) String token) {
+        RespObject resp = new RespObject();
+        try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
+            StockFilter filter = new StockFilter();
+            filter.setContainerBarcode(containerBarcode);
+            filter.setCompanyUuid(getLoginCompany(token).getUuid());
+            filter.setPageSize(0);
+            List<StockExtendInfo> stocks = stockService.queryStocks(filter);
+            resp.setObj(stocks);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("查询容器库存信息失败！", e.getMessage());
+        }
+        return resp;
+
     }
 }
