@@ -184,7 +184,7 @@
 	<select id="queryByPage" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
 		select u.*
-		from sardine_user u
+		from sardine_user u,db_proxy.sardine_role_user ur
 		where 1=1
 		<if test="code != null">
 			and u.code like CONCAT(CONCAT('%', #{code}),
@@ -203,6 +203,10 @@
 		<if test="phone != null">
 			and u.phone like CONCAT(CONCAT('%', #{phone}),
 			'%')
+		</if>
+		<if test="roleUuid != null and roleUuid != ''">
+			and u.uuid=ur.useruuid and
+			ur.roleuuid=#{roleUuid,jdbcType=VARCHAR}
 		</if>
 		<if test="sortField != null and sortField == 'code'">
 			order by t.code ${orderDir}
