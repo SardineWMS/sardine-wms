@@ -40,9 +40,7 @@ public class SupplierSaveModifyValidateHandler extends GenericValidateHandler<Su
         on("供应商代码", bean.getCode(), length30Validator);
         on("供应商名称", bean.getName(), notNullValidator);
         on("供应商名称", bean.getName(), length100Validator);
-        on("供应商电话", bean.getPhone(), notNullValidator);
         on("供应商电话", bean.getPhone(), length30Validator);
-        on("供应商地址", bean.getAddress(), notNullValidator);
         on("供应商地址", bean.getAddress(), length100Validator);
     }
 }
