@@ -149,13 +149,15 @@
 		#{version,jdbcType=LONGVARCHAR}
 	</delete>
 
-	<select id="queryRolesByUser" parameterType="java.lang.String"
+	<select id="queryRolesByUser" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
-		select * from db_proxy.sardine_role
+		select r.* from db_proxy.sardine_role
 		r,db_proxy.sardine_role_user ru
 		where r.uuid=ru.roleuuid
-		and
-		ru.useruuid=#{userUuid,jdbcType=VARCHAR}
+		<if test="userUuid != null and userUuid != ''">
+			and
+			ru.useruuid=#{userUuid,jdbcType=VARCHAR}
+		</if>
 	</select>
 
 	<delete id="removeRelationRoleAndUserByRole" parameterType="java.lang.String">

@@ -42,7 +42,9 @@ public class RoleDaoImpl extends BaseDaoImpl<Role> implements RoleDao {
     @Override
     public List<Role> queryRolesByUser(String userUuid) {
         Assert.assertArgumentNotNull(userUuid, "userUuid");
-        return getSqlSession().selectList(generateStatement(MAPPER_QUERYROLESBYUSER), userUuid);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("userUuid", userUuid);
+        return getSqlSession().selectList(generateStatement(MAPPER_QUERYROLESBYUSER), map);
     }
 
     @Override
