@@ -184,7 +184,10 @@
 	<select id="queryByPage" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
 		select u.*
-		from sardine_user u,db_proxy.sardine_role_user ur
+		from sardine_user u
+		<if test="roleUuid != null and roleUuid != ''">
+			,db_proxy.sardine_role_user ur
+		</if>
 		where 1=1
 		<if test="code != null">
 			and u.code like CONCAT(CONCAT('%', #{code}),
