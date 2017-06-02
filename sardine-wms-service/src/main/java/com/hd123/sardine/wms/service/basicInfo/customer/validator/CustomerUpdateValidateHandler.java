@@ -9,6 +9,7 @@
  */
 package com.hd123.sardine.wms.service.basicInfo.customer.validator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.baidu.unbiz.fluentvalidator.Validator;
@@ -52,6 +53,8 @@ public class CustomerUpdateValidateHandler extends GenericValidateHandler<Custom
         on("组织ID", bean.getCompanyUuid(), length30Validator);
 
         Customer customer = (Customer) getAttribute(KEY_CODEEXISTS_CUSTOMER);
+        if (customer != null && StringUtils.equals(customer.getUuid(), bean.getUuid()))
+            return;
         on("客户代码" + bean.getCode(), customer, nullValidator);
 
     }

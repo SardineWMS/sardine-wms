@@ -97,7 +97,7 @@ public class CustomerServiceImpl extends BaseWMSService implements CustomerServi
 
     @Override
     public void update(Customer customer) throws IllegalArgumentException, WMSException {
-        Customer dbCustomer = customerDao.get(customer == null ? null : customer.getCode());
+        Customer dbCustomer = customerDao.getByCode(customer == null ? null : customer.getCode());
         ValidateResult updateResult = customerUpdateValidateHandler
                 .putAttribute(CustomerUpdateValidateHandler.KEY_CODEEXISTS_CUSTOMER, dbCustomer)
                 .validate(customer);
