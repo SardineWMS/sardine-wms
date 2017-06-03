@@ -244,4 +244,17 @@ public interface ArticleService {
      */
     PageQueryResult<UCN> queryInStocks(PageQueryDefinition definition)
             throws IllegalArgumentException;
+    
+    /**
+     * 设置商品固定拣货位
+     * 
+     * @param articleUuid
+     *            商品uuid，not null。
+     * @param fixedPickBin
+     *            拣货位或拣货存储位，not null。
+     * @throws IllegalArgumentException
+     * @throws WMSException
+     */
+    void updateArticleFixedPickBin(String articleUuid, String fixedPickBin)
+            throws IllegalArgumentException, WMSException;
 }

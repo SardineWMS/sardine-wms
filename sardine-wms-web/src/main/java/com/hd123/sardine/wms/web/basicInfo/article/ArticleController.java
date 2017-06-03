@@ -400,4 +400,19 @@ public class ArticleController extends BaseController {
         }
         return resp;
     }
+    
+    @RequestMapping(value = "/setArticleFixedPickBin", method = RequestMethod.PUT)
+    public @ResponseBody RespObject setArticleFixedPickBin(
+            @RequestParam(value = "articleUuid", required = true) String articleUuid,
+            @RequestParam(value = "fixedPickBin", required = true) String fixedPickBin,
+            @RequestParam(value = "token", required = true) String token) {
+        RespObject resp = new RespObject();
+        try {
+            articleService.updateArticleFixedPickBin(articleUuid, fixedPickBin);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (Exception e) {
+            return new ErrorRespObject("设置商品固定拣货位失败", e.getMessage());
+        }
+        return resp;
+    }
 }
