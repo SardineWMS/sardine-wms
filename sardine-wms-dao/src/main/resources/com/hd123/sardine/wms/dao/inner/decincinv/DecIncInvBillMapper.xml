@@ -266,6 +266,9 @@
 			#{wrhCode,jdbcType=VARCHAR}),
 			'%')
 		</if>
+		<if test="companyUuid != null">
+			and t.companyuuid=#{companyUuid,jdbcType=VARCHAR}
+		</if>
 		<if test="sortField != null and sortField == 'billNumber'">
 			order by t.billNumber ${orderDir}
 		</if>
