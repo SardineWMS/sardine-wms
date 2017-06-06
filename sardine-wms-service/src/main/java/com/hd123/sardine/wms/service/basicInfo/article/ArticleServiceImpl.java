@@ -9,6 +9,7 @@
  */
 package com.hd123.sardine.wms.service.basicInfo.article;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -418,5 +419,13 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
                 && BinUsage.PickUpStorageBin.equals(bin.getUsage()) == false)
             throw new WMSException("商品固定拣货位必须是" + BinUsage.PickUpBin.getCaption() + "或"
                     + BinUsage.PickUpStorageBin.getCaption());
+    }
+
+    @Override
+    public List<ArticleQpc> queryArticleQpcs(String articleUuid) throws IllegalArgumentException {
+        if (StringUtil.isNullOrBlank(articleUuid))
+            return new ArrayList<ArticleQpc>();
+        List<ArticleQpc> list = articleQpcDao.queryByList(articleUuid);
+        return list;
     }
 }

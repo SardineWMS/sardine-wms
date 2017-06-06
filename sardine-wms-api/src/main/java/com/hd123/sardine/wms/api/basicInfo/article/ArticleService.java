@@ -9,6 +9,8 @@
  */
 package com.hd123.sardine.wms.api.basicInfo.article;
 
+import java.util.List;
+
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -244,7 +246,7 @@ public interface ArticleService {
      */
     PageQueryResult<UCN> queryInStocks(PageQueryDefinition definition)
             throws IllegalArgumentException;
-    
+
     /**
      * 设置商品固定拣货位
      * 
@@ -257,4 +259,14 @@ public interface ArticleService {
      */
     void updateArticleFixedPickBin(String articleUuid, String fixedPickBin)
             throws IllegalArgumentException, WMSException;
+
+    /**
+     * 查询商品规格
+     * 
+     * @param articleUuid
+     *            商品uuid
+     * @return 商品规格集合
+     * @throws IllegalArgumentException
+     */
+    List<ArticleQpc> queryArticleQpcs(String articleUuid) throws IllegalArgumentException;
 }

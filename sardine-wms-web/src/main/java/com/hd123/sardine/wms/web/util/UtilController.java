@@ -29,6 +29,7 @@ import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.web.BaseController;
 
@@ -76,10 +77,11 @@ public class UtilController extends BaseController {
     @RequestMapping(value = "/queryStock", method = RequestMethod.GET)
     public @ResponseBody RespObject queryStock(
             @RequestParam(value = "articleUuid") String articleUuid,
-            @RequestParam(value = "qpcStr") String qpcStr,
-            @RequestParam(value = "supplierUuid") String supplierUuid,
+            @RequestParam(value = "qpcStr", required = false) String qpcStr,
+            @RequestParam(value = "supplierUuid", required = false) String supplierUuid,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize) {
+            @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
+            @RequestParam(value = "token", required = true) String token) {
         RespObject resp = new RespObject();
         try {
             StockFilter filter = new StockFilter();
@@ -89,6 +91,7 @@ public class UtilController extends BaseController {
             filter.setPage(page);
             filter.setPageSize(pageSize);
             BigDecimal totalQty = BigDecimal.ZERO;
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
             List<StockExtendInfo> stocks = stockService.queryStocks(filter);
             List<Date> productionDates = new ArrayList<Date>();
             for (StockExtendInfo stockExtendInfo : stocks) {
@@ -105,6 +108,22 @@ public class UtilController extends BaseController {
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             return new ErrorRespObject("查询库存信息失败", e.getMessage());
+        }
+        return resp;
+
+    }
+
+    @RequestMapping(value = "/caseQtyStrSubtract", method = RequestMethod.PUT)
+    public @ResponseBody RespObject caseQtyStrSubtract(
+            @RequestParam(value = "subStr", required = true) String subStr,
+            @RequestParam(value = "subedStr", required = true) String subedStr) {
+        RespObject resp = new RespObject();
+        try {
+            String result = QpcHelper.subtract(subStr, subedStr);
+            resp.setObj(result);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (Exception e) {
+            return new ErrorRespObject("件数相减出错！", e.getMessage());
         }
         return resp;
 

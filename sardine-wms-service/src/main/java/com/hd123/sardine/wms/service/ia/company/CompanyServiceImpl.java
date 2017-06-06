@@ -39,88 +39,96 @@ import com.hd123.sardine.wms.service.log.EntityLogger;
  */
 public class CompanyServiceImpl extends BaseWMSService implements CompanyService {
 
-  @Autowired
-  private CompanyDao companyDao;
+    @Autowired
+    private CompanyDao companyDao;
 
-  @Autowired
-  private UserDao userDao;
+    @Autowired
+    private UserDao userDao;
 
-  @Autowired
-  private ResourceService resourceService;
+    @Autowired
+    private ResourceService resourceService;
 
-  @Autowired
-  private EntityLogger logger;
+    @Autowired
+    private EntityLogger logger;
 
-  @Override
-  public String insert(Company company) throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(company, "company");
-    Assert.assertArgumentNotNull(company.getName(), "company.name");
-    Assert.assertArgumentNotNull(company.getAddress(), "company.address");
+    @Override
+    public String insert(Company company) throws IllegalArgumentException, WMSException {
+        Assert.assertArgumentNotNull(company, "company");
+        Assert.assertArgumentNotNull(company.getName(), "company.name");
+        Assert.assertArgumentNotNull(company.getAddress(), "company.address");
 
-    String flowCode = flowCodeGenerator.allocate(
-        ApplicationContextUtil.getCompanyUuid().concat(Constants.DC_PREFIX),
-        Constants.VIRTUAL_COMPANYUUID, 2);
-    company.setUuid(
-        ApplicationContextUtil.getCompanyUuid().concat(Constants.DC_PREFIX).concat(flowCode));
-    company.setParentUuid(ApplicationContextUtil.getParentCompanyUuid());
-    company.setCode(
-        Constants.DC_CODE_PREFIX.concat(ApplicationContextUtil.getCompanyCode()).concat(flowCode));
-    company.setCreateInfo(ApplicationContextUtil.getOperateInfo());
-    company.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
-    companyDao.insert(company);
+        String flowCode = flowCodeGenerator.allocate(
+                ApplicationContextUtil.getCompanyUuid().concat(Constants.DC_PREFIX),
+                Constants.VIRTUAL_COMPANYUUID, 2);
+        company.setUuid(ApplicationContextUtil.getCompanyUuid().concat(Constants.DC_PREFIX)
+                .concat(flowCode));
+        company.setParentUuid(ApplicationContextUtil.getParentCompanyUuid());
+        company.setCode(Constants.DC_CODE_PREFIX.concat(ApplicationContextUtil.getCompanyCode())
+                .concat(flowCode));
+        company.setCreateInfo(ApplicationContextUtil.getOperateInfo());
+        company.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+        companyDao.insert(company);
 
-    String dbName = DBUtils.fetchDbName(company.getUuid());
-    companyDao.insertDBMap(company.getUuid(), dbName);
+        String dbName = DBUtils.fetchDbName(company.getUuid());
+        companyDao.insertDBMap(company.getUuid(), dbName);
 
-    User user = new User();
-    user.setUuid(UUIDGenerator.genUUID());
-    user.setCode(company.getAdminCode());
-    user.setCompanyUuid(company.getUuid());
-    user.setCompanyCode(company.getCode());
-    user.setCompanyName(company.getName());
-    user.setName(company.getAdminName());
-    user.setPasswd(User.DEFAULT_ADMIN_PASSWD);
-    user.setAdministrator(true);
-    user.setPhone(null);
-    user.setUserState(UserState.online);
-    user.setCreateInfo(ApplicationContextUtil.getOperateInfo());
-    user.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
-    userDao.insert(user);
+        User user = new User();
+        user.setUuid(UUIDGenerator.genUUID());
+        user.setCode(company.getAdminCode());
+        user.setCompanyUuid(company.getUuid());
+        user.setCompanyCode(company.getCode());
+        user.setCompanyName(company.getName());
+        user.setName(company.getAdminName());
+        user.setPasswd(User.DEFAULT_ADMIN_PASSWD);
+        user.setAdministrator(true);
+        user.setPhone(null);
+        user.setUserState(UserState.online);
+        user.setCreateInfo(ApplicationContextUtil.getOperateInfo());
+        user.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+        userDao.insert(user);
 
-    List<String> resourceUuids = new ArrayList<String>();
-    resourceUuids.add(ResourceConstants.DC_BASIC_UUID);
-    List<Resource> basicResources = resourceService
-        .queryByUpperResource(ResourceConstants.DC_BASIC_UUID);
-    for (Resource r : basicResources) {
-      resourceUuids.add(r.getUuid());
+        List<String> resourceUuids = new ArrayList<String>();
+        resourceUuids.add(ResourceConstants.DC_BASIC_UUID);
+        List<Resource> basicResources = resourceService
+                .queryByUpperResource(ResourceConstants.DC_BASIC_UUID);
+        for (Resource r : basicResources) {
+            resourceUuids.add(r.getUuid());
+        }
+        List<Resource> forwardResources = resourceService
+                .queryByUpperResource(ResourceConstants.FORWARD_UUID);
+        resourceUuids.add(ResourceConstants.FORWARD_UUID);
+        for (Resource resource : forwardResources) {
+            resourceUuids.add(resource.getUuid());
+        }
+        resourceUuids.remove(ResourceConstants.DC_BASIC_ARTICLE_DELETE_UUID);
+        resourceUuids.remove(ResourceConstants.DC_BASIC_ARTICLE_EDIT_UUID);
+        resourceUuids.remove(ResourceConstants.DC_BASIC_SUPPLIER_DELETE_UUID);
+        resourceUuids.remove(ResourceConstants.DC_BASIC_SUPPLIER_EDIT_UUID);
+        resourceUuids.remove(ResourceConstants.DC_BASIC_CUSTOMER_DELETE_UUID);
+        resourceUuids.remove(ResourceConstants.DC_BASIC_CUSTOMER_EDIT_UUID);
+        resourceUuids.remove(ResourceConstants.DC_BASIC_CATEGORY_DELETE_UUID);
+        resourceUuids.remove(ResourceConstants.DC_BASIC_CATEGORY_EDIT_UUID);
+        resourceService.saveUserResource(user.getUuid(), resourceUuids);
+
+        logger.injectContext(this, company.getUuid(), Company.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "新建公司");
+        return company.getUuid();
     }
-    List<Resource> forwardResources = resourceService
-        .queryByUpperResource(ResourceConstants.FORWARD_UUID);
-    resourceUuids.add(ResourceConstants.FORWARD_UUID);
-    for (Resource resource : forwardResources) {
-      resourceUuids.add(resource.getUuid());
+
+    @Override
+    public Company getByName(String name) {
+        if (StringUtil.isNullOrBlank(name))
+            return null;
+        return companyDao.getByName(name);
     }
-    resourceUuids.remove(ResourceConstants.DC_BASIC_ARTICLE_DELETE_UUID);
-    resourceUuids.remove(ResourceConstants.DC_BASIC_ARTICLE_EDIT_UUID);
-    resourceUuids.remove(ResourceConstants.DC_BASIC_SUPPLIER_DELETE_UUID);
-    resourceUuids.remove(ResourceConstants.DC_BASIC_SUPPLIER_EDIT_UUID);
-    resourceUuids.remove(ResourceConstants.DC_BASIC_CUSTOMER_DELETE_UUID);
-    resourceUuids.remove(ResourceConstants.DC_BASIC_CUSTOMER_EDIT_UUID);
-    resourceUuids.remove(ResourceConstants.DC_BASIC_CATEGORY_DELETE_UUID);
-    resourceUuids.remove(ResourceConstants.DC_BASIC_CATEGORY_EDIT_UUID);
-    resourceService.saveUserResource(user.getUuid(), resourceUuids);
 
-    logger.injectContext(this, company.getUuid(), Company.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ADDNEW, "新建公司");
-    return company.getUuid();
-  }
-
-  @Override
-  public Company getByName(String name) {
-    if (StringUtil.isNullOrBlank(name))
-      return null;
-    return companyDao.getByName(name);
-  }
+    @Override
+    public Company get(String uuid) throws IllegalArgumentException {
+        if (StringUtil.isNullOrBlank(uuid))
+            return null;
+        Company company = companyDao.get(uuid);
+        return company;
+    }
 
 }

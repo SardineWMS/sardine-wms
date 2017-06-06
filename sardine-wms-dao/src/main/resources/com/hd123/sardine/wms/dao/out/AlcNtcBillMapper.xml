@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd123.sardine.wms.dao.out.alcntc.impl.AlcNtcBillDaoImpl">
+	<resultMap type="com.hd123.sardine.wms.api.out.alcntc.AlcNtcBill"
+		id="AlcNtcBillMap">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="billnumber" property="billNumber" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="deliveryReason" property="deliveryReason"
+			jdbcType="VARCHAR" />
+		<result column="deliverysystem" property="deliverySystem"
+			jdbcType="VARCHAR" />
+		<result column="deliverymode" property="deliveryMode" jdbcType="VARCHAR" />
+		<result column="sourcebillnumber" property="sourceBillNumber"
+			jdbcType="VARCHAR" />
+		<result column="sourcebilltype" property="sourceBillType"
+			jdbcType="VARCHAR" />
+		<result column="wrhuuid" property="wrh.uuid" jdbcType="VARCHAR" />
+		<result column="companyuuid" property="company.uuid" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+		<result column="customeruuid" property="customer.uuid"
+			jdbcType="VARCHAR" />
+		<result column="customercode" property="customer.code"
+			jdbcType="VARCHAR" />
+		<result column="customername" property="customer.name"
+			jdbcType="VARCHAR" />
+		<result column="taksbillnumber" property="taksBillNumber"
+			jdbcType="VARCHAR" />
+		<result column="totalcaseqtystr" property="totalCaseQtyStr"
+			jdbcType="VARCHAR" />
+		<result column="totalAmount" property="totalAmount" jdbcType="DECIMAL" />
+		<result column="plantotalcaseqtystr" property="planTotalCaseQtyStr"
+			jdbcType="VARCHAR" />
+		<result column="realtotalcaseqtystr" property="realTotalCaseQtyStr"
+			jdbcType="VARCHAR" />
+		<result column="createdtime " property="createInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="createdID" property="createInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="createdcode" property="createInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="createdName" property="createInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="lastModifytime" property="lastModifyInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="lastModifyid" property="lastModifyInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="lastModifycode" property="lastModifyInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap type="com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillItem"
+		id="AlcNtcBillItemMap">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="alcntcbilluuid" property="alcNtcBillUuid"
+			jdbcType="VARCHAR" />
+		<result column="line" property="line" jdbcType="DECIMAL" />
+		<result column="articleuuid" property="article.uuid" jdbcType="VARCHAR" />
+		<result column="qpcstr" property="qpcStr" jdbcType="VARCHAR" />
+		<result column="munit" property="munit" jdbcType="VARCHAR" />
+		<result column="qty" property="qty" jdbcType="DECIMAL" />
+		<result column="caseqtystr" property="caseQtyStr" jdbcType="VARCHAR" />
+		<result column="planqty" property="planQty" jdbcType="DECIMAL" />
+		<result column="planCaseQtyStr" property="planCaseQtyStr"
+			jdbcType="VARCHAR" />
+		<result column="realqty" property="realQty" jdbcType="DECIMAL" />
+		<result column="realcaseqtystr" property="realCaseQtyStr"
+			jdbcType="VARCHAR" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="amount" property="amount" jdbcType="DECIMAL" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getByBillNumber" parameterType="java.util.Map"
+		resultMap="AlcNtcBillMap">
+		select * from db_proxy.sardine_alcntcbill
+		sa where
+		sa.billnumber=#{billNumber,jdbcType=VARCHAR}
+		and
+		sa.companyuuid=#{companyUuid,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insertItems" parameterType="com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillItem">
+		insert into db_proxy.sardine_alcntcbillitem
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null and uuid != ''">
+				uuid,
+			</if>
+			<if test="alcNtcBillUuid != null">
+				alcntcbilluuid,
+			</if>
+			<if test="line != null">
+				line,
+			</if>
+			<if test="article != null and article.uuid != null">
+				articleUuid,
+			</if>
+			<if test="qpcStr != null">
+				qpcStr,
+			</if>
+			<if test="munit != null">
+				munit,
+			</if>
+			<if test="qty!= null">
+				qty,
+			</if>
+			<if test="caseQtyStr != null">
+				caseqtystr,
+			</if>
+			<if test="planQty != null">
+				planQty,
+			</if>
+			<if test="planCaseQtyStr != null">
+				planCaseQtyStr,
+			</if>
+			<if test="realQty != null">
+				realQty,
+			</if>
+			<if test="realCaseQtyStr != null">
+				realCaseQtyStr,
+			</if>
+			<if test="price != null">
+				price,
+			</if>
+			<if test="amount != null">
+				amount,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null and uuid != ''">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="alcNtcBillUuid != null">
+				#{alcNtcBillUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="line != null">
+				#{line,jdbcType=DECIMAL},
+			</if>
+			<if test="article != null and article.uuid != null">
+				#{article.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="qpcStr != null">
+				#{qpcStr,jdbcType=VARCHAR},
+			</if>
+			<if test="munit != null">
+				#{munit,jdbcType=VARCHAR},
+			</if>
+			<if test="qty!= null">
+				#{qty,jdbcType=DECIMAL},
+			</if>
+			<if test="caseQtyStr != null">
+				#{caseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="planQty != null">
+				#{planQty,jdbcType=DECIMAL},
+			</if>
+			<if test="planCaseQtyStr != null">
+				#{planCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="realQty != null">
+				#{realQty,jdbcType=DECIMAL},
+			</if>
+			<if test="realCaseQtyStr != null">
+				#{realCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=DECIMAL},
+			</if>
+			<if test="amount != null">
+				#{amount,jdbcType=DECIMAL},
+			</if>
+		</trim>
+	</insert>
+
+	<delete id="removeItemsByAlcNtcUuid" parameterType="java.lang.String">
+		delete from
+		db_proxy.sardine_alcntcbillitem
+		where
+		alcntcbilluuid=#{alcNtcBillUuid,jdbcType=VARCHAR}
+	</delete>
+
+	<select id="queryItemsByAlcNtcUuid" parameterType="java.lang.String"
+		resultMap="AlcNtcBillItemMap">
+		select t.* from db_proxy.sardine_alcntcbillitem
+		t where
+		t.alcntcbilluuid=#{alcNtcBillUuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getItemByUuid" parameterType="java.lang.String"
+		resultMap="AlcNtcBillItemMap">
+		select * from db_proxy.sardine_alcntcbillitem t where
+		t.uuid=#{uuid,jdbcType=VARCHAR}
+	</select>
+
+	<update id="updateItem" parameterType="com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillItem">
+		update db_proxy.sardine_alcntcbillitem
+		<set>
+			<if test="realQty != null">
+				realQty=#{realQty,jdbcType=DECIMAL},
+			</if>
+			<if test="realCaseQtyStr != null">
+				realCaseQtyStr=#{realCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<where>
+			uuid=#{uuid,jdbcType=VARCHAR}
+		</where>
+	</update>
+
+	<select id="getByItemUuid" parameterType="java.lang.String"
+		resultMap="AlcNtcBillMap">
+		select t.* from db_proxy.sardine_alcntcbill
+		t,db_proxy.sardine_alcntcbillitem t1 where t1.alcntcbilluuid = t.uuid
+		and t1.uuid=#{itemUuid,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insert" parameterType="com.hd123.sardine.wms.api.out.alcntc.AlcNtcBill">
+		insert into db_proxy.sardine_alcntcbill
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="billNumber != null">
+				billNumber,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="deliveryReason != null">
+				deliveryReason,
+			</if>
+			<if test="deliverySystem != null">
+				deliverySystem,
+			</if>
+			<if test="deliveryMode != null">
+				deliveryMode,
+			</if>
+			<if test="sourceBillNumber != null">
+				sourceBillNumber,
+			</if>
+			<if test="sourceBillType != null">
+				sourceBillType,
+			</if>
+			<if test="wrh != null and wrh.uuid != null">
+				wrhUuid,
+			</if>
+			<if test="company != null and company.uuid != null">
+				companyUuid,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="version != null">
+				version,
+			</if>
+			<if test="customer != null and customer.uuid != null">
+				customerUuid,
+			</if>
+			<if test="customer != null and customer.code != null">
+				customerCode,
+			</if>
+			<if test="customer != null and customer.name != null">
+				customerName,
+			</if>
+			<if test="taskBillNumber != null">
+				taskBillNumber,
+			</if>
+			<if test="totalCaseQtyStr != null">
+				totalCaseQtyStr,
+			</if>
+			<if test="totalAmount != null">
+				totalAmount,
+			</if>
+			<if test="planTotalCaseQtyStr != null">
+				planTotalCaseQtyStr,
+			</if>
+			<if test="realTotalCaseQtyStr != null">
+				realTotalCaseQtyStr,
+			</if>
+			<if test="createInfo != null  and createInfo.time != null">
+				CREATEDTIME,
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.id != null">
+				CREATEDID,
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.code != null">
+				CREATEDCode,
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.fullName != null">
+				CREATEDName,
+			</if>
+			<if test="lastModifyInfo != null  and lastModifyInfo.time != null">
+				LASTMODIFYTIME,
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				LASTMODIFYID,
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				LASTMODIFYCode,
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				LASTMODIFYName,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="billNumber != null">
+				#{billNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=VARCHAR},
+			</if>
+			<if test="deliveryReason != null">
+				#{deliveryReason,jdbcType=VARCHAR},
+			</if>
+			<if test="deliverySystem != null">
+				#{deliverySystem,jdbcType=VARCHAR},
+			</if>
+			<if test="deliveryMode != null">
+				#{deliveryMode,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillNumber != null">
+				#{sourceBillNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillType != null">
+				#{sourceBillType,jdbcType=VARCHAR},
+			</if>
+			<if test="wrh != null and wrh.uuid != null">
+				#{wrh.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="company != null and company.uuid != null">
+				#{company.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="customer != null and customer.uuid != null">
+				#{customer.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="customer != null and customer.code != null">
+				#{customer.code,jdbcType=VARCHAR},
+			</if>
+			<if test="customer != null and customer.name != null">
+				#{customer.name,jdbcType=VARCHAR},
+			</if>
+			<if test="taskBillNumber != null">
+				#{taskBillNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="totalCaseQtyStr != null">
+				#{totalCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="totalAmount != null">
+				#{totalAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="planTotalCaseQtyStr != null">
+				#{planTotalCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="realTotalCaseQtyStr != null">
+				#{realTotalCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="createInfo != null  and createInfo.time != null">
+				#{createInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.id != null">
+				#{createInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.code != null">
+				#{createInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.fullName != null">
+				#{createInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+			<if test="lastModifyInfo != null  and lastModifyInfo.time != null">
+				#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="com.hd123.sardine.wms.api.out.alcntc.AlcNtcBill">
+		update db_proxy.sardine_alcntcbill
+		<set>
+			<if test="state != null">
+				state=#{state,jdbcType=VARCHAR},
+			</if>
+			<if test="deliveryReason != null">
+				deliveryReason=#{deliveryReason,jdbcType=VARCHAR},
+			</if>
+			<if test="deliverySystem != null">
+				deliverySystem=#{deliverySystem,jdbcType=VARCHAR},
+			</if>
+			<if test="deliveryMode != null">
+				deliveryMode=#{deliveryMode,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillNumber != null">
+				sourceBillNumber=#{sourceBillNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillType != null">
+				sourceBillType=#{sourceBillType,jdbcType=VARCHAR},
+			</if>
+			<if test="wrh != null and wrh.uuid != null">
+				wrhUuid=#{wrh.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="company != null and company.uuid != null">
+				companyUuid=#{company.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark=#{remark,jdbcType=VARCHAR},
+			</if>
+			version=#{version,jdbcType=LONGVARCHAR}+1,
+			<if test="customer != null and customer.uuid != null">
+				customerUuid=#{customer.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="customer != null and customer.code != null">
+				customerCode = #{customer.code,jdbcType=VARCHAR},
+			</if>
+			<if test="customer != null and customer.name != null">
+				customerName=#{customer.name,jdbcType=VARCHAR},
+			</if>
+			<if test="totalCaseQtyStr != null">
+				totalCaseQtyStr=#{totalCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="totalAmount != null">
+				totalAmount =#{totalAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="planTotalCaseQtyStr != null">
+				planTotalCaseQtyStr=#{planTotalCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="realTotalCaseQtyStr != null">
+				realTotalCaseQtyStr=#{realTotalCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
+				LASTMODIFYTIME =
+				#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				LASTMODIFYID =
+				#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				LASTMODIFYCODE =
+				#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				LASTMODIFYNAME =
+				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<where>
+			uuid=#{uuid,jdbcType=VARCHAR}
+			and
+			version=#{version,jdbcType=LONGVARCHAR}
+		</where>
+	</update>
+
+	<select id="queryByPage" parameterType="PageQueryDefinition"
+		resultMap="AlcNtcBillMap">
+		select * from db_proxy.sardine_alcntcbill t where 1=1
+		<if test="companyUuid != null">
+			and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+		</if>
+		<if test="billNumber != null">
+			and t.billNumber like
+			CONCAT(CONCAT('%',#{billNumber}),'%')
+		</if>
+		<if test="state != null">
+			and t.state = #{state}
+		</if>
+		<if test="customerCode != null">
+			and t.customerCode like
+			CONCAT(CONCAT('%',#{customerCode,jdbcType=VARCHAR}),'%')
+		</if>
+		<if test="taskBillNumber != null">
+			and t.taskBillNumber like
+			CONCAT(CONCAT('%',#{taskBillNumber}),'%')
+		</if>
+		<if test="sourceBillNumber != null">
+			and t.sourceBillNumber like
+			CONCAT(CONCAT('%',#{sourceBillNumber}),'%')
+		</if>
+		<if test="wrhUuid != null">
+			and t.wrhUuid = #{wrhUuid}
+		</if>
+		<if test="deliverySystem != null">
+			and t.deliverySystem=#{deliverySystem}
+		</if>
+		<if test="deliveryMode != null">
+			and t.deliveryMode=#{deliveryMode}
+		</if>
+	</select>
+
+	<delete id="remove" parameterType="java.util.Map">
+		delete from
+		db_proxy.sardine_alcntcbill
+		where uuid=#{uuid,jdbcType=VARCHAR}
+		and
+		version=#{version,jdbcType=LONGVARCHAR}
+	</delete>
+
+	<select id="get" parameterType="java.lang.String" resultMap="AlcNtcBillMap">
+		select * from db_proxy.sardine_alcntcbill t where
+		t.uuid=#{uuid,jdbcType=VARCHAR}
+	</select>
+</mapper>

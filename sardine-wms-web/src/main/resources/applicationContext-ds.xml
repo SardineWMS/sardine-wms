@@ -78,6 +78,10 @@
 				rollback-for="Exception" />
 			<tx:method name="offline*" propagation="REQUIRED"
 				rollback-for="Exception" />
+			<tx:method name="finish*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="abort*" propagation="REQUIRED"
+				rollback-for="Exception" />
 			<tx:method name="*" read-only="true" />
 		</tx:attributes>
 	</tx:advice>
