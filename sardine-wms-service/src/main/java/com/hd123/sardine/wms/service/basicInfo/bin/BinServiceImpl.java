@@ -38,7 +38,6 @@ import com.hd123.sardine.wms.common.query.PageQueryUtil;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
-import com.hd123.sardine.wms.dao.basicInfo.article.ArticleFixedPickBinDao;
 import com.hd123.sardine.wms.dao.basicInfo.bin.BinDao;
 import com.hd123.sardine.wms.dao.basicInfo.bin.PathDao;
 import com.hd123.sardine.wms.dao.basicInfo.bin.ShelfDao;
@@ -72,9 +71,6 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
 
     @Autowired
     private BinTypeService binTypeService;
-
-    @Autowired
-    private ArticleFixedPickBinDao articleFixedPickBinDao;
 
     @Autowired
     private EntityLogger logger;
@@ -291,7 +287,6 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
 
         PersistenceUtils.checkVersion(version, bin, "货位", bin.getCode());
         binDao.remove(uuid, version);
-        articleFixedPickBinDao.removeByFixedPickBin(uuid);
 
         logger.injectContext(this, uuid, Bin.class.getName(),
                 ApplicationContextUtil.getOperateContext());
