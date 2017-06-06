@@ -338,7 +338,10 @@
 
 	<select id="queryStockExtendInfo" parameterType="StockFilter"
 		resultMap="StockExtendInfoResultMap">
-		select t.*, a.code articleCode, a.name articleName,
+		select t.companyUuid, t.supplieruuid, t.binCode, t.containerBarcode,
+		t.articleuuid, t.stockBatch, t.productionDate, t.validDate, t.sourceBillUuid,
+		t.sourceBillNumber, t.sourceBillType, t.sourceLineNumber, t.sourceLineUuid,
+		if((t.qty+t.onwayqty)>t.qty, t.qty, (t.qty+t.onwayqty)) qty, t.qpcStr, t.measureUnit, t.instockTime, t.price, a.code articleCode, a.name articleName, a.spec articlespec,
 		s.code
 		supplierCode, s.name supplierName from
 		db_proxy.sardine_stock t,
