@@ -13,8 +13,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,9 +25,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.stock.StockExtendInfo;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
+import com.hd123.sardine.wms.common.entity.UCN;
+import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -81,7 +86,9 @@ public class UtilController extends BaseController {
             @RequestParam(value = "supplierUuid", required = false) String supplierUuid,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
-            @RequestParam(value = "token", required = true) String token) {
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "binCode", required = false) String binCode,
+            @RequestParam(value = "containerBarcode", required = false) String containerBarcode) {
         RespObject resp = new RespObject();
         try {
             StockFilter filter = new StockFilter();
@@ -90,20 +97,27 @@ public class UtilController extends BaseController {
             filter.setSupplierUuid(supplierUuid);
             filter.setPage(page);
             filter.setPageSize(pageSize);
+            filter.setContainerBarcode(containerBarcode);
+            filter.setBinCode(binCode);
             BigDecimal totalQty = BigDecimal.ZERO;
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             List<StockExtendInfo> stocks = stockService.queryStocks(filter);
             List<Date> productionDates = new ArrayList<Date>();
+            List<String> qpcStrs = new ArrayList<>();
             for (StockExtendInfo stockExtendInfo : stocks) {
                 totalQty = stockExtendInfo.getQty().add(totalQty);
                 productionDates.add(stockExtendInfo.getProductionDate());
+                qpcStrs.add(stockExtendInfo.getQpcStr());
             }
-            String caseQtyStr = QpcHelper.qtyToCaseQtyStr(totalQty, qpcStr);
+            String caseQtyStr = null;
+            if (StringUtil.isNullOrBlank(qpcStr) == false)
+                caseQtyStr = QpcHelper.qtyToCaseQtyStr(totalQty, qpcStr);
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("totalQty", totalQty);
             map.put("caseQtyStr", caseQtyStr);
             map.put("price", stocks.size() > 0 ? stocks.get(0).getPrice() : 0);
             map.put("productionDates", productionDates);
+            map.put("qpcStrs", qpcStrs);
             resp.setObj(map);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -125,6 +139,40 @@ public class UtilController extends BaseController {
         } catch (Exception e) {
             return new ErrorRespObject("件数相减出错！", e.getMessage());
         }
+        return resp;
+
+    }
+
+    @RequestMapping(value = "/queryStockExtendInfo", method = RequestMethod.GET)
+    public @ResponseBody RespObject queryStockExtendInfo(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "binCode", required = false) String binCode,
+            @RequestParam(value = "containerBarcode", required = false) String containerBarcode,
+            @RequestParam(value = "articleUuid", required = false) String articleUuid,
+            @RequestParam(value = "qpcStr", required = false) String qpcStr) {
+        RespObject resp = new RespObject();
+        try {
+            StockFilter filter = new StockFilter();
+            filter.setArticleUuid(articleUuid);
+            filter.setBinCode(binCode);
+            filter.setCompanyUuid(getLoginCompany(token).getUuid());
+            filter.setContainerBarcode(containerBarcode);
+            filter.setQpcStr(qpcStr);
+            filter.setPageSize(0);
+            List<StockExtendInfo> stocks = stockService.queryStocks(filter);
+
+            Set<UCN> suppliers = new HashSet<>();
+            for (StockExtendInfo info : stocks) {
+                suppliers.add(info.getSupplier());
+            }
+            resp.setObj(suppliers);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("查询库存信息失败", e.getMessage());
+        }
+
         return resp;
 
     }
