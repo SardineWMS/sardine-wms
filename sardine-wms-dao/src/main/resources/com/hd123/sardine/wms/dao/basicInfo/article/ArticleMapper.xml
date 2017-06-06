@@ -77,6 +77,7 @@
 		categoryname,
 		firstInFirstOut,
 		version,
+		remark,
 		CREATEDTIME,
 		CREATEDID,
 		CREATEDCODE,
@@ -99,6 +100,7 @@
 		#{category.name,jdbcType=VARCHAR},
 		#{firstInFirstOut,jdbcType=CHAR},
 		#{version,jdbcType=LONGVARCHAR},
+		#{remark,jdbcType=VARCHAR},
 		#{createInfo.time,jdbcType=TIMESTAMP},
 		#{createInfo.operator.id,jdbcType=VARCHAR},
 		#{createInfo.operator.code,jdbcType=VARCHAR},
@@ -134,6 +136,8 @@
 			version =
 			#{version,jdbcType=LONGVARCHAR} +
 			1,
+			remark =
+			#{remark,jdbcType=VARCHAR},
 			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
 				LASTMODIFYTIME =
 				#{lastModifyInfo.time,jdbcType=TIMESTAMP},

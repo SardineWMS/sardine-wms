@@ -40,10 +40,37 @@ public class Article extends StandardEntity {
     private UCN category;
     private boolean firstInFirstOut;
     private String fixedPickBin;
+    private ArticlePutawayBin putawayBin;
+    private String storageArea;
+    private String remark;
 
     private List<ArticleSupplier> articleSuppliers = new ArrayList<ArticleSupplier>();
     private List<ArticleBarcode> barcodes = new ArrayList<ArticleBarcode>();
     private List<ArticleQpc> qpcs = new ArrayList<ArticleQpc>();
+
+    public ArticlePutawayBin getPutawayBin() {
+      return putawayBin;
+    }
+
+    public void setPutawayBin(ArticlePutawayBin putawayBin) {
+      this.putawayBin = putawayBin;
+    }
+
+    public String getStorageArea() {
+      return storageArea;
+    }
+
+    public void setStorageArea(String storageArea) {
+      this.storageArea = storageArea;
+    }
+
+    public String getRemark() {
+      return remark;
+    }
+
+    public void setRemark(String remark) {
+      this.remark = remark;
+    }
 
     /** 组织uuid */
     public String getCompanyUuid() {

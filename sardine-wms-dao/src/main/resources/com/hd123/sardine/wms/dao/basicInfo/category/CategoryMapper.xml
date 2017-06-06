@@ -58,6 +58,18 @@
 		select t.* from db_proxy.sardine_category t
 		where t.upperCategory = #{categoryUuid,jdbcType=VARCHAR}
 	</select>
+	
+    <select id="queryLastLower" parameterType="com.hd123.sardine.wms.common.query.PageQueryDefinition" resultMap="BaseResultMap">
+		select c.* from db_proxy.sardine_category c where c.uuid not in (
+           select cc.uppercategory from db_proxy.sardine_category cc)
+           and c.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+           <if test="code != null and code != ''">
+             and c.code = #{code, jdbcType=VARCHAR}
+           </if>
+           <if test="name != null and name != ''">
+             and c.name = #{name, jdbcType=VARCHAR}
+           </if>
+	</select>
 
 	<insert id="insert" parameterType="com.hd123.sardine.wms.api.basicInfo.category.Category">
 		insert into db_proxy.sardine_category

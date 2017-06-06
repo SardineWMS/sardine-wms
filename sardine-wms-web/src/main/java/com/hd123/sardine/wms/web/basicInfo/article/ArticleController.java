@@ -26,8 +26,6 @@ import com.hd123.sardine.wms.api.basicInfo.article.ArticleQpc;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleService;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleState;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleSupplier;
-import com.hd123.sardine.wms.api.basicInfo.category.Category;
-import com.hd123.sardine.wms.api.basicInfo.category.CategoryService;
 import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
 import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierService;
 import com.hd123.sardine.wms.common.entity.UCN;
@@ -56,9 +54,6 @@ public class ArticleController extends BaseController {
 
     @Autowired
     private SupplierService supplierService;
-
-    @Autowired
-    private CategoryService categoryService;
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public @ResponseBody RespObject get(@RequestParam(value = "articleUuid") String articleUuid,
@@ -128,8 +123,6 @@ public class ArticleController extends BaseController {
             @RequestBody Article article) {
         RespObject resp = new RespObject();
         try {
-            Category c = categoryService.getByCode(article.getCategory().getCode());
-            article.setCategory(new UCN(c.getUuid(), c.getCode(), c.getName()));
             article.setCompanyUuid(getLoginCompany(token).getUuid());
             String articleUuid = article.getUuid();
             if (StringUtil.isNullOrBlank(article.getUuid()))

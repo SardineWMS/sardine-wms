@@ -16,6 +16,7 @@ import java.util.Map;
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.api.basicInfo.category.Category;
 import com.hd123.sardine.wms.common.dao.NameSpaceSupport;
+import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.dao.basicInfo.category.CategoryDao;
 
@@ -28,6 +29,7 @@ public class CategoryDaoImpl extends NameSpaceSupport implements CategoryDao {
   public static final String GETROOTCATEGORYS = "getRootCategorys";
   public static final String GETLOWERCATEGORYS = "getLowerCategorys";
   public static final String REMOVECATEGORY = "removeCategory";
+  public static final String QUERYLASTLOWER = "queryLastLower";
 
   @Override
   public Category getByCode(String code) {
@@ -77,4 +79,10 @@ public class CategoryDaoImpl extends NameSpaceSupport implements CategoryDao {
     getSqlSession().delete(REMOVECATEGORY, map);
   }
 
+  @Override
+  public List<Category> queryLastLower(PageQueryDefinition definition) {
+    Assert.assertArgumentNotNull(definition, "definition");
+
+    return getSqlSession().selectList(generateStatement(QUERYLASTLOWER), definition);
+  }
 }

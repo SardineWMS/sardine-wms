@@ -12,23 +12,26 @@ package com.hd123.sardine.wms.dao.basicInfo.category;
 import java.util.List;
 
 import com.hd123.sardine.wms.api.basicInfo.category.Category;
+import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 
 /**
  * @author Jing
  *
  */
 public interface CategoryDao {
-    Category getByCode(String code);
+  Category getByCode(String code);
 
-    Category get(String uuid);
+  Category get(String uuid);
 
-    List<Category> getRootCategorys();
+  List<Category> getRootCategorys();
 
-    List<Category> getLowerCategorys(String categoryUuid);
+  List<Category> getLowerCategorys(String categoryUuid);
 
-    void insert(Category category);
+  void insert(Category category);
 
-    void update(Category category);
+  void update(Category category);
 
-    void remove(String categoryUuid, long version);
+  void remove(String categoryUuid, long version);
+
+  List<Category> queryLastLower(PageQueryDefinition definition);
 }

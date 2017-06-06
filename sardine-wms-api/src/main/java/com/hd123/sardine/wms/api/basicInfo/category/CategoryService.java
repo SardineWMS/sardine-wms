@@ -12,6 +12,8 @@ package com.hd123.sardine.wms.api.basicInfo.category;
 import java.util.List;
 
 import com.hd123.sardine.wms.common.exception.WMSException;
+import com.hd123.sardine.wms.common.query.PageQueryDefinition;
+import com.hd123.sardine.wms.common.query.PageQueryResult;
 
 /**
  * 商品类别
@@ -78,4 +80,11 @@ public interface CategoryService {
    *          not null
    */
   void remove(String uuid, long verison);
+
+  /**
+   * 分页查询所有叶子节点
+   * 
+   * @return 分页数据
+   */
+  PageQueryResult<Category> queryLastLower(PageQueryDefinition definition);
 }

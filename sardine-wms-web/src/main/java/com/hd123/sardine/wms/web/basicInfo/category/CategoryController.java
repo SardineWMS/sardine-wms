@@ -24,6 +24,9 @@ import com.hd123.sardine.wms.api.basicInfo.category.CategoryService;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
+import com.hd123.sardine.wms.common.query.OrderDir;
+import com.hd123.sardine.wms.common.query.PageQueryDefinition;
+import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.web.BaseController;
 
 /**
@@ -56,6 +59,20 @@ public class CategoryController extends BaseController {
     try {
       RespObject resp = new RespObject();
       Category category = categoryService.get(uuid);
+      resp.setObj(category);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+      return resp;
+    } catch (Exception e) {
+      return new ErrorRespObject("查询失败", e.getMessage());
+    }
+  }
+  
+  @RequestMapping(value = "/getByCode", method = RequestMethod.GET)
+  public @ResponseBody RespObject getByCode(@RequestParam(value = "code") String code, 
+      @RequestParam(value = "token") String token) {
+    try {
+      RespObject resp = new RespObject();
+      Category category = categoryService.getByCode(code);
       resp.setObj(category);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
       return resp;
@@ -102,6 +119,33 @@ public class CategoryController extends BaseController {
       RespObject resp = new RespObject();
       categoryService.remove(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+      return resp;
+    } catch (Exception e) {
+      return new ErrorRespObject("删除商品类别失败", e.getMessage());
+    }
+  }
+
+  @RequestMapping(value = "/queryLastLower", method = RequestMethod.GET)
+  public @ResponseBody RespObject queryLastLower(
+      @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+      @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
+      @RequestParam(value = "sort", required = false) String sort,
+      @RequestParam(value = "order", required = false, defaultValue = "asc") String sortDirection,
+      @RequestParam(value = "code", required = false) String code,
+      @RequestParam(value = "name", required = false) String name,
+      @RequestParam(value = "token", required = true) String token) {
+    try {
+      RespObject resp = new RespObject();
+      PageQueryDefinition definition = new PageQueryDefinition();
+      definition.setCompanyUuid(getLoginCompany(token).getUuid());
+      definition.setPage(page);
+      definition.setPageSize(pageSize);
+      definition.setOrderDir(OrderDir.valueOf(sortDirection));
+      definition.setSortField(sort);
+      definition.put("code", code);
+      definition.put("name", name);
+      PageQueryResult<Category> result = categoryService.queryLastLower(definition);
+      resp.setObj(result);
       return resp;
     } catch (Exception e) {
       return new ErrorRespObject("删除商品类别失败", e.getMessage());
