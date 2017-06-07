@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd123.sardine.wms.dao.tms.carrier.impl.CarrierDaoImpl">
+	<resultMap type="com.hd123.sardine.wms.api.tms.carrier.Carrier"
+		id="CarrierMap">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="contactphone" property="contactPhone" jdbcType="VARCHAR" />
+		<result column="contact" property="contact" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="createdtime " property="createInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="createdID" property="createInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="createdcode" property="createInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="createdName" property="createInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="lastModifytime" property="lastModifyInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="lastModifyid" property="lastModifyInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="lastModifycode" property="lastModifyInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getByCode" parameterType="java.util.Map" resultMap="CarrierMap">
+		select * from db_proxy.sardine_carrier t where
+		t.code=#{code,jdbcType=VARCHAR} and
+		t.companyuuid=#{companyUuid,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insert" parameterType="com.hd123.sardine.wms.api.tms.carrier.Carrier">
+		insert into db_proxy.sardine_carrier
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="code != null">
+				code,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="address != null">
+				address,
+			</if>
+			<if test="contactPhone != null">
+				contactPhone,
+			</if>
+			<if test="contact != null">
+				contact,
+			</if>
+			<if test="companyUuid != null">
+				companyUuid,
+			</if>
+			version,
+			CREATEDTIME,
+			CREATEDID,
+			CREATEDCODE,
+			CREATEDNAME,
+			LASTMODIFYTIME,
+			LASTMODIFYID,
+			LASTMODIFYCODE,
+			LASTMODIFYNAME,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="contactPhone != null">
+				#{contactPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="contact != null">
+				#{contact,jdbcType=VARCHAR},
+			</if>
+			<if test="companyUuid != null">
+				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			#{version,jdbcType=LONGVARCHAR},
+			#{createInfo.time,jdbcType=TIMESTAMP},
+			#{createInfo.operator.id,jdbcType=VARCHAR},
+			#{createInfo.operator.code,jdbcType=VARCHAR},
+			#{createInfo.operator.fullName,jdbcType=VARCHAR},
+			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<select id="get" parameterType="java.lang.String" resultMap="CarrierMap">
+		select * from db_proxy.sardine_carrier t where
+		t.uuid=#{uuid,jdbcType=VARCHAR}
+	</select>
+
+	<update id="update" parameterType="com.hd123.sardine.wms.api.tms.carrier.Carrier">
+		update db_proxy.sardine_carrier
+		<set>
+			<if test="code != null">
+				code=#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				name=#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="contact != null">
+				contact=#{contact,jdbcType=VARCHAR},
+			</if>
+			<if test="contactPhone != null">
+				contactPhone=#{contactPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				address=#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				state=#{state,jdbcType=VARCHAR},
+			</if>
+			LASTMODIFYTIME =
+			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			LASTMODIFYID =
+			#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			LASTMODIFYCODE =
+			#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			LASTMODIFYNAME =
+			#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			version =
+			#{version, jdbcType=LONGVARCHAR} + 1
+		</set>
+		<where>
+			uuid = #{uuid,jdbcType=VARCHAR} and version =
+			#{version,jdbcType=LONGVARCHAR}
+		</where>
+	</update>
+
+	<delete id="remove" parameterType="java.util.Map">
+		delete from
+		db_proxy.sardine_carrier where uuid=#{uuid,jdbcType=VARCHAR} and
+		version=#{version,jdbcType=LONGVARCHAR}
+	</delete>
+
+	<select id="queryByPage" parameterType="PageQueryDefinition"
+		resultMap="CarrierMap">
+		select * from db_proxy.sardine_carrier t where 1=1
+		<if test="code != null">
+			and t.code like
+			CONCAT(CONCAT('%',#{code,jdbcType=VARCHAR}),'%')
+		</if>
+		<if test="name != null">
+			and t.name=#{name,jdbcType=VARCHAR}
+		</if>
+		<if test="companyUuid != null">
+			and t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
+		</if>
+		<if test="sortField != null and sortField == code">
+			order by (t.code+0) ${orderDir}
+		</if>
+	</select>
+</mapper>
