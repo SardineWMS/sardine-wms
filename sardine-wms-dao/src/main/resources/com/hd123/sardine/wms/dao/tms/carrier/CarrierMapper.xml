@@ -27,6 +27,7 @@
 		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
 			jdbcType="VARCHAR" />
 		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<select id="getByCode" parameterType="java.util.Map" resultMap="CarrierMap">
@@ -59,6 +60,9 @@
 			<if test="companyUuid != null">
 				companyUuid,
 			</if>
+			<if test="state != null">
+				state,
+			</if>
 			version,
 			CREATEDTIME,
 			CREATEDID,
@@ -90,6 +94,9 @@
 			</if>
 			<if test="companyUuid != null">
 				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=VARCHAR},
 			</if>
 			#{version,jdbcType=LONGVARCHAR},
 			#{createInfo.time,jdbcType=TIMESTAMP},
