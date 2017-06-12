@@ -7,7 +7,6 @@ import com.hd123.rumba.commons.lang.StringUtil;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * Redis 工具类
@@ -27,15 +26,15 @@ public class RedisUtil {
   // 访问密码
   private String auth = "sardine";
 
-  // 可用连接实例的最大数目，默认值为8；
-  // 如果赋值为-1，则表示不限制；如果pool已经分配了maxActive个jedis实例，则此时pool的状态为exhausted(耗尽)。
-  private int maxActive = 100;
-
-  // 控制一个pool最多有多少个状态为idle(空闲的)的jedis实例，默认值也是8。
-  private int maxIdle = 50;
-
-  // 等待可用连接的最大时间，单位毫秒，默认值为-1，表示永不超时。如果超过等待时间，则直接抛出JedisConnectionException；
-  private int maxWait = 10;
+//  // 可用连接实例的最大数目，默认值为8；
+//  // 如果赋值为-1，则表示不限制；如果pool已经分配了maxActive个jedis实例，则此时pool的状态为exhausted(耗尽)。
+//  private int maxActive = 100;
+//
+//  // 控制一个pool最多有多少个状态为idle(空闲的)的jedis实例，默认值也是8。
+//  private int maxIdle = 50;
+//
+//  // 等待可用连接的最大时间，单位毫秒，默认值为-1，表示永不超时。如果超过等待时间，则直接抛出JedisConnectionException；
+//  private int maxWait = 10;
 
   // 超时时间
   private int timeout = 60000;
@@ -52,17 +51,17 @@ public class RedisUtil {
     this.auth = auth;
   }
 
-  public void setMaxActive(int maxActive) {
-    this.maxActive = maxActive;
-  }
-
-  public void setMaxIdle(int maxIdle) {
-    this.maxIdle = maxIdle;
-  }
-
-  public void setMaxWait(int maxWait) {
-    this.maxWait = maxWait;
-  }
+//  public void setMaxActive(int maxActive) {
+//    this.maxActive = maxActive;
+//  }
+//
+//  public void setMaxIdle(int maxIdle) {
+//    this.maxIdle = maxIdle;
+//  }
+//
+//  public void setMaxWait(int maxWait) {
+//    this.maxWait = maxWait;
+//  }
 
   public void setTimeout(int timeout) {
     this.timeout = timeout;
@@ -80,7 +79,7 @@ public class RedisUtil {
   /**
    * 初始化Redis连接池
    */
-  private void initialPool() {
+/*  private void initialPool() {
     try {
       JedisPoolConfig config = new JedisPoolConfig();
       config.setMaxActive(maxActive);
@@ -93,15 +92,15 @@ public class RedisUtil {
       LOGGER.error("Jedis连接池创建失败！" + e);
     }
   }
-
+*/
   /**
    * 在多线程环境同步初始化
    */
-  private synchronized void poolInit() {
-    if (jedisPool == null) {
-      initialPool();
-    }
-  }
+  // private synchronized void poolInit() {
+  // if (jedisPool == null) {
+  // initialPool();
+  // }
+  // }
 
   /**
    * 同步获取Jedis实例
@@ -109,18 +108,19 @@ public class RedisUtil {
    * @return Jedis
    */
   public synchronized Jedis getJedis() {
-    if (jedisPool == null) {
-      poolInit();
-    }
+    // if (jedisPool == null) {
+    // poolInit();
+    // }
     Jedis jedis = null;
     try {
-      if (jedisPool != null) {
-        jedis = jedisPool.getResource();
-      }
+      jedis = new Jedis(address, port, timeout);
+      jedis.auth(auth);
+      jedis.connect();
+      // if (jedisPool != null) {
+      // jedis = jedisPool.getResource();
+      // }
     } catch (Exception e) {
       LOGGER.error("Get jedis error : " + e);
-    } finally {
-      returnResource(jedis);
     }
     return jedis;
   }
@@ -160,11 +160,18 @@ public class RedisUtil {
    * @param value
    */
   public void setString(String key, int seconds, String value) {
+    Jedis jedis = null;
     try {
+      jedis = getJedis();
       value = StringUtil.isNullOrBlank(value) ? "" : value;
-      getJedis().setex(key, seconds, value);
+      jedis.setex(key, seconds, value);
     } catch (Exception e) {
       LOGGER.error("Set keyex error : " + e);
+    } finally {
+      if (jedis != null) {
+        jedis.disconnect();
+        jedis = null;
+      }
     }
   }
 
@@ -175,20 +182,42 @@ public class RedisUtil {
    * @return value
    */
   public String getString(String key) {
-    Jedis jedis = getJedis();
-    if (jedis == null || !jedis.exists(key)) {
+    Jedis jedis = null;
+    try {
+      jedis = getJedis();
+      if (jedis == null || !jedis.exists(key)) {
+        return null;
+      }
+      return jedis.get(key);
+    } catch (Exception e) {
+      e.printStackTrace();
       return null;
+    } finally {
+      if (jedis != null) {
+        jedis.disconnect();
+        jedis = null;
+      }
     }
-    return jedis.get(key);
   }
 
   public String deleteString(String key) {
-    Jedis jedis = getJedis();
-    if (jedis == null || !jedis.exists(key)) {
+    Jedis jedis = null;
+    try {
+      jedis = getJedis();
+      if (jedis == null || !jedis.exists(key)) {
+        return null;
+      }
+      String value = jedis.get(key);
+      jedis.del(key);
+      return value;
+    } catch (Exception e) {
+      e.printStackTrace();
       return null;
+    } finally {
+      if (jedis != null) {
+        jedis.disconnect();
+        jedis = null;
+      }
     }
-    String value = jedis.get(key);
-    jedis.del(key);
-    return value;
   }
 }
