@@ -188,6 +188,9 @@
 			<if test="totalAmount != null">
 				totalAmount= #{totalAmount,jdbcType=DECIMAL},
 			</if>
+			<if test="totalCaseQtyStr != null">
+				totalCaseQtyStr= #{totalCaseQtyStr,jdbcType=DECIMAL},
+			</if>
 			<if test="operator != null and operator.uuid != null">
 				operatoruuid = #{operator.uuid,jdbcType=VARCHAR},
 			</if>
