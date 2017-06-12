@@ -252,9 +252,9 @@ public class AcceptanceBillServiceImpl extends BaseWMSService implements Accepta
             onWayStock.setContainerBarcode(item.getContainerBarCode() == null
                     ? Container.VIRTUALITY_CONTAINER : item.getContainerBarCode());
             onWayStock.setStockBatch(item.getStockBatch());
-            onWayStock.setQty(item.getQty());
+            onWayStock.setQty(item.getQty().multiply(BigDecimal.valueOf(-1)));
             onWayStock.setTaskNo(billNumber);
-            onWayStock.setTaskType(TaskType.Pickup);// TODO
+            onWayStock.setTaskType(TaskType.Pickup);
             onWayStocks.add(onWayStock);
         }
         return onWayStocks;
@@ -278,9 +278,9 @@ public class AcceptanceBillServiceImpl extends BaseWMSService implements Accepta
 
         List<Task> tasks = generatePickUpTasks(acceptanceBill);
         if (CollectionUtils.isEmpty(tasks) == false)
-          //  taskService.insert(tasks);
+            // taskService.insert(tasks);
 
-        acceptanceBill.setState(AcceptanceBillState.InAlc);
+            acceptanceBill.setState(AcceptanceBillState.InAlc);
         billDao.update(acceptanceBill);
 
         logger.injectContext(this, uuid, AcceptanceBill.class.getName(),
@@ -410,7 +410,7 @@ public class AcceptanceBillServiceImpl extends BaseWMSService implements Accepta
             onWayStock.setStockBatch(item.getStockBatch());
             onWayStock.setQty(item.getQty());
             onWayStock.setTaskNo(billNumber);
-            onWayStock.setTaskType(TaskType.Pickup);// TODO
+            onWayStock.setTaskType(TaskType.Pickup);
             onWayStocks.add(onWayStock);
         }
         return onWayStocks;
