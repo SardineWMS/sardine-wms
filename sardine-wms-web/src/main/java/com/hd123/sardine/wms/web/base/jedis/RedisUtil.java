@@ -1,6 +1,7 @@
 package com.hd123.sardine.wms.web.base.jedis;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.hd123.rumba.commons.lang.StringUtil;
 
@@ -15,8 +16,8 @@ import redis.clients.jedis.JedisPoolConfig;
  */
 public class RedisUtil {
 
-  protected Logger logger = Logger.getLogger(RedisUtil.class);
-
+  private static final Logger LOGGER = LoggerFactory.getLogger(RedisUtil.class);
+  
   // Redis服务器IP
   private String address = "";
 
@@ -91,7 +92,7 @@ public class RedisUtil {
       config.setTestOnBorrow(TEST_ON_BORROW);
       jedisPool = new JedisPool(config, address, port, timeout, auth);
     } catch (Exception e) {
-      logger.error("Jedis连接池创建失败！" + e);
+      LOGGER.error("Jedis连接池创建失败！" + e);
     }
   }
 
@@ -119,7 +120,7 @@ public class RedisUtil {
         jedis = jedisPool.getResource();
       }
     } catch (Exception e) {
-      logger.error("Get jedis error : " + e);
+      LOGGER.error("Get jedis error : " + e);
     } finally {
       returnResource(jedis);
     }
@@ -148,7 +149,7 @@ public class RedisUtil {
       value = StringUtil.isNullOrBlank(value) ? "" : value;
       getJedis().set(key, value);
     } catch (Exception e) {
-      logger.error("Set key error : " + e);
+      LOGGER.error("Set key error : " + e);
     }
   }
 
@@ -165,7 +166,7 @@ public class RedisUtil {
       value = StringUtil.isNullOrBlank(value) ? "" : value;
       getJedis().setex(key, seconds, value);
     } catch (Exception e) {
-      logger.error("Set keyex error : " + e);
+      LOGGER.error("Set keyex error : " + e);
     }
   }
 
