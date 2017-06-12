@@ -17,7 +17,7 @@ import redis.clients.jedis.JedisPoolConfig;
 public class RedisUtil {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RedisUtil.class);
-  
+
   // Redis服务器IP
   private String address = "";
 
@@ -68,9 +68,6 @@ public class RedisUtil {
     this.timeout = timeout;
   }
 
-  // 在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；
-  private boolean TEST_ON_BORROW = true;
-
   private JedisPool jedisPool = null;
 
   /**
@@ -89,7 +86,8 @@ public class RedisUtil {
       config.setMaxActive(maxActive);
       config.setMaxIdle(maxIdle);
       config.setMaxWait(maxWait);
-      config.setTestOnBorrow(TEST_ON_BORROW);
+      config.setTestOnBorrow(true);
+      config.setTestOnReturn(true);
       jedisPool = new JedisPool(config, address, port, timeout, auth);
     } catch (Exception e) {
       LOGGER.error("Jedis连接池创建失败！" + e);
