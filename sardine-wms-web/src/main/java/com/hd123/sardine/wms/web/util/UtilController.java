@@ -161,11 +161,7 @@ public class UtilController extends BaseController {
             filter.setPageSize(0);
             List<StockExtendInfo> stocks = stockService.queryStocks(filter);
 
-            Set<UCN> suppliers = new HashSet<>();
-            for (StockExtendInfo info : stocks) {
-                suppliers.add(info.getSupplier());
-            }
-            resp.setObj(suppliers);
+            resp.setObj(stocks);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
             return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());

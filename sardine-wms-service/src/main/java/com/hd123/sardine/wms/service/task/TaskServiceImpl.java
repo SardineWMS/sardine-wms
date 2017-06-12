@@ -39,6 +39,7 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
+import com.hd123.sardine.wms.common.utils.Constants;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.task.TaskDao;
@@ -78,9 +79,10 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
     for (Task task : tasks) {
       task.validate();
       task.setUuid(UUIDGenerator.genUUID());
-      task.setTaskNo(null);
+      task.setTaskNo(billNumberGenerator.allocate(Constants.PICKUPTASK_NUMBER_TYPE));
       task.setCreator(ApplicationContextUtil.getLoginUser());
       task.setCreateTime(new Date());
+      task.setState(TaskState.Initial);
       taskDao.insert(task);
 
       OnWayStock fromOnWayStock = new OnWayStock();
@@ -90,6 +92,8 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
       fromOnWayStock.setStockBatch(task.getStockBatch());
       fromOnWayStock.setTaskNo(task.getTaskNo());
       fromOnWayStock.setTaskType(task.getTaskType());
+      fromOnWayStock.setArticleUuid(task.getArticle().getUuid());
+      fromOnWayStock.setStockBatch(task.getStockBatch());
       onWayStocks.add(fromOnWayStock);
 
       OnWayStock toOnWayStock = new OnWayStock();
@@ -99,6 +103,8 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
       toOnWayStock.setStockBatch(task.getStockBatch());
       toOnWayStock.setTaskNo(task.getTaskNo());
       toOnWayStock.setTaskType(task.getTaskType());
+      toOnWayStock.setArticleUuid(task.getArticle().getUuid());
+      toOnWayStock.setStockBatch(task.getStockBatch());
       onWayStocks.add(toOnWayStock);
 
       logger.injectContext(this, task.getUuid(), Task.class.getName(),

@@ -82,6 +82,10 @@
 				rollback-for="Exception" />
 			<tx:method name="abort*" propagation="REQUIRED"
 				rollback-for="Exception" />
+			<tx:method name="approve*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="begin*" propagation="REQUIRED"
+				rollback-for="Exception" />
 			<tx:method name="*" read-only="true" />
 		</tx:attributes>
 	</tx:advice>

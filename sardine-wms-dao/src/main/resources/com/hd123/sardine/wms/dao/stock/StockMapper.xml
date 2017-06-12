@@ -361,13 +361,13 @@
 			and t.articleUuid = #{articleUuid, jdbcType=VARCHAR}
 		</if>
 		<if test="articleCode != null and articleCode != ''">
-			and t.articleCode = #{articleCode, jdbcType=VARCHAR}
+			and a.code = #{articleCode, jdbcType=VARCHAR}
 		</if>
 		<if test="supplierUuid != null and supplierUuid != ''">
 			and t.supplierUuid = #{supplierUuid, jdbcType=VARCHAR}
 		</if>
 		<if test="supplierCode != null and supplierCode != ''">
-			and t.supplierCode = #{supplierCode, jdbcType=VARCHAR}
+			and s.code = #{supplierCode, jdbcType=VARCHAR}
 		</if>
 		<if test="qpcStr != null and qpcStr != ''">
 			and t.qpcStr = #{qpcStr, jdbcType=VARCHAR}

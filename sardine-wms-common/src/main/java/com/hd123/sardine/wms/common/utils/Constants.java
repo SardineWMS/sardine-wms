@@ -94,4 +94,7 @@ public class Constants {
 
   /** 退仓单号类型，退仓单号=5位组织代码+7+6位日期+6位流水 */
   public static final String RTN_NUMBER_TYPE = "7";
+  
+  /** 领用单号类型，领用单号=5位组织代码+7+6位日期+6位流水 */
+  public static final String ACCEPTANCE_NUMBER_TYPE = "7";
 }

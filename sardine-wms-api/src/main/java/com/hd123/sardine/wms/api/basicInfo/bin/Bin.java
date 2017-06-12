@@ -24,6 +24,8 @@ public class Bin extends VersionedEntity {
   private static final long serialVersionUID = -5349677209950897452L;
   public static final int LENGTH_CODE = 8;
   public static final int LENGTH_LEVEL = 1;
+  public static final String VIRTUALITY_BIN = "-";
+
 
   private String code;
   private UCN binType;
