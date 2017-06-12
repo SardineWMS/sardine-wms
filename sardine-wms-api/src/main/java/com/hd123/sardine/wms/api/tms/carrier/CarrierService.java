@@ -124,4 +124,15 @@ public interface CarrierService {
      */
     PageQueryResult<Carrier> query(PageQueryDefinition definition);
 
+    /**
+     * 根据UUID获取承运商
+     * 
+     * @param uuid
+     *            uuid,为空则返回空
+     * @return 承运商
+     * @throws IllegalArgumentException
+     * @throws WMSException
+     */
+    Carrier get(String uuid) throws IllegalArgumentException, WMSException;
+
 }

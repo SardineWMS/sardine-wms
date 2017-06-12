@@ -180,4 +180,11 @@ public class CarrierServiceImpl extends BaseWMSService implements CarrierService
         return qpr;
     }
 
+    @Override
+    public Carrier get(String uuid) throws IllegalArgumentException, WMSException {
+        if (StringUtil.isNullOrBlank(uuid))
+            return null;
+        return dao.get(uuid);
+    }
+
 }

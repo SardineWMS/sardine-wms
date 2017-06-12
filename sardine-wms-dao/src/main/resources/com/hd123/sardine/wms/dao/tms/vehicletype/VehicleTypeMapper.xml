@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hd123.sardine.wms.dao.tms.carrier.impl.CarrierDaoImpl">
-	<resultMap type="com.hd123.sardine.wms.api.tms.carrier.Carrier"
-		id="CarrierMap">
+<mapper
+	namespace="com.hd123.sardine.wms.dao.tms.vehicletype.impl.VehicleTypeDaoImpl">
+	<resultMap type="com.hd123.sardine.wms.api.tms.vehicletype.VehicleType"
+		id="BaseResultMap">
 		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
 		<result column="code" property="code" jdbcType="VARCHAR" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
-		<result column="address" property="address" jdbcType="VARCHAR" />
-		<result column="contactphone" property="contactPhone" jdbcType="VARCHAR" />
-		<result column="contact" property="contact" jdbcType="VARCHAR" />
+		<result column="bearWeight" property="bearWeight" jdbcType="DECIMAL" />
+		<result column="weight" property="weight" jdbcType="DECIMAL" />
+		<result column="length" property="length" jdbcType="DECIMAL" />
+		<result column="width" property="width" jdbcType="DECIMAL" />
+		<result column="height" property="height" jdbcType="DECIMAL" />
+		<result column="volume" property="volume" jdbcType="DECIMAL" />
+		<result column="bearVolume" property="bearVolume" jdbcType="DECIMAL" />
 		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
 		<result column="createdtime " property="createInfo.time"
 			jdbcType="TIMESTAMP" />
 		<result column="createdID" property="createInfo.operator.id"
@@ -26,17 +32,17 @@
 			jdbcType="VARCHAR" />
 		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
 			jdbcType="VARCHAR" />
-		<result column="version" property="version" jdbcType="LONGVARCHAR" />
 	</resultMap>
 
-	<select id="getByCode" parameterType="java.util.Map" resultMap="CarrierMap">
-		select * from db_proxy.sardine_carrier t where
+	<select id="getByCode" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select t.* from db_proxy.sardine_vehicletype t where
 		t.code=#{code,jdbcType=VARCHAR} and
-		t.companyuuid=#{companyUuid,jdbcType=VARCHAR}
+		t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
 	</select>
 
-	<insert id="insert" parameterType="com.hd123.sardine.wms.api.tms.carrier.Carrier">
-		insert into db_proxy.sardine_carrier
+	<insert id="insert"
+		parameterType="com.hd123.sardine.wms.api.tms.vehicletype.VehicleType">
+		insert into db_proxy.sardine_vehicletype
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="uuid != null">
 				uuid,
@@ -47,14 +53,26 @@
 			<if test="name != null">
 				name,
 			</if>
-			<if test="address != null">
-				address,
+			<if test="bearWeight != null">
+				bearWeight,
 			</if>
-			<if test="contactPhone != null">
-				contactPhone,
+			<if test="weight != null">
+				weight,
 			</if>
-			<if test="contact != null">
-				contact,
+			<if test="length != null">
+				length,
+			</if>
+			<if test="width != null">
+				width,
+			</if>
+			<if test="height != null">
+				height,
+			</if>
+			<if test="volume != null">
+				volume,
+			</if>
+			<if test="bearVolume != null">
+				bearVolume,
 			</if>
 			<if test="companyUuid != null">
 				companyUuid,
@@ -79,14 +97,26 @@
 			<if test="name != null">
 				#{name,jdbcType=VARCHAR},
 			</if>
-			<if test="address != null">
-				#{address,jdbcType=VARCHAR},
+			<if test="bearWeight != null">
+				#{bearWeight,jdbcType=DECIMAL},
 			</if>
-			<if test="contactPhone != null">
-				#{contactPhone,jdbcType=VARCHAR},
+			<if test="weight != null">
+				#{weight,jdbcType=DECIMAL},
 			</if>
-			<if test="contact != null">
-				#{contact,jdbcType=VARCHAR},
+			<if test="length != null">
+				#{length,jdbcType=DECIMAL},
+			</if>
+			<if test="width != null">
+				#{width,jdbcType=DECIMAL},
+			</if>
+			<if test="height != null">
+				#{height,jdbcType=DECIMAL},
+			</if>
+			<if test="volume != null">
+				#{volume,jdbcType=DECIMAL},
+			</if>
+			<if test="bearVolume != null">
+				#{bearVolume,jdbcType=DECIMAL},
 			</if>
 			<if test="companyUuid != null">
 				#{companyUuid,jdbcType=VARCHAR},
@@ -103,13 +133,14 @@
 		</trim>
 	</insert>
 
-	<select id="get" parameterType="java.lang.String" resultMap="CarrierMap">
-		select * from db_proxy.sardine_carrier t where
+	<select id="get" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select t.* from db_proxy.sardine_vehicletype t where
 		t.uuid=#{uuid,jdbcType=VARCHAR}
 	</select>
 
-	<update id="update" parameterType="com.hd123.sardine.wms.api.tms.carrier.Carrier">
-		update db_proxy.sardine_carrier
+	<update id="update"
+		parameterType="com.hd123.sardine.wms.api.tms.vehicletype.VehicleType">
+		update db_proxy.sardine_vehicletype
 		<set>
 			<if test="code != null">
 				code=#{code,jdbcType=VARCHAR},
@@ -117,17 +148,26 @@
 			<if test="name != null">
 				name=#{name,jdbcType=VARCHAR},
 			</if>
-			<if test="contact != null">
-				contact=#{contact,jdbcType=VARCHAR},
+			<if test="bearWeight != null">
+				bearWeight=#{bearWeight,jdbcType=DECIMAL},
 			</if>
-			<if test="contactPhone != null">
-				contactPhone=#{contactPhone,jdbcType=VARCHAR},
+			<if test="weight != null">
+				weight=#{weight,jdbcType=DECIMAL},
 			</if>
-			<if test="address != null">
-				address=#{address,jdbcType=VARCHAR},
+			<if test="length != null">
+				length=#{length,jdbcType=DECIMAL},
 			</if>
-			<if test="state != null">
-				state=#{state,jdbcType=VARCHAR},
+			<if test="width != null">
+				width=#{width,jdbcType=DECIMAL},
+			</if>
+			<if test="height != null">
+				height=#{height,jdbcType=DECIMAL},
+			</if>
+			<if test="volume != null">
+				volume=#{volume,jdbcType=DECIMAL},
+			</if>
+			<if test="bearVolume != null">
+				bearVolume=#{bearVolume,jdbcType=DECIMAL},
 			</if>
 			LASTMODIFYTIME =
 			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
@@ -148,25 +188,15 @@
 
 	<delete id="remove" parameterType="java.util.Map">
 		delete from
-		db_proxy.sardine_carrier where uuid=#{uuid,jdbcType=VARCHAR} and
+		db_proxy.sardine_vehicletype where uuid=#{uuid,jdbcType=VARCHAR} and
 		version=#{version,jdbcType=LONGVARCHAR}
 	</delete>
 
 	<select id="queryByPage" parameterType="PageQueryDefinition"
-		resultMap="CarrierMap">
-		select * from db_proxy.sardine_carrier t where 1=1
-		<if test="code != null">
-			and t.code like
-			CONCAT(CONCAT('%',#{code,jdbcType=VARCHAR}),'%')
-		</if>
-		<if test="name != null">
-			and t.name=#{name,jdbcType=VARCHAR}
-		</if>
+		resultMap="BaseResultMap">
+		select * from db_proxy.sardine_vehicletype t where 1
 		<if test="companyUuid != null">
 			and t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
-		</if>
-		<if test="sortField != null and sortField == code">
-			order by (t.code+0) ${orderDir}
 		</if>
 	</select>
 </mapper>
