@@ -24,7 +24,7 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
-import com.hd123.sardine.wms.web.BaseController;
+import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
  * 实体日志控制管理层

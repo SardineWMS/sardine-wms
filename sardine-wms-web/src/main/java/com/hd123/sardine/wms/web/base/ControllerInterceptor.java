@@ -7,7 +7,7 @@
  * 修改历史：
  * 2017年2月17日 - zhangsai - 创建。
  */
-package com.hd123.sardine.wms.web;
+package com.hd123.sardine.wms.web.base;
 
 import java.util.List;
 

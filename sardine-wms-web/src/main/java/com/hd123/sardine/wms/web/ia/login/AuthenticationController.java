@@ -23,7 +23,7 @@ import com.hd123.sardine.wms.api.ia.user.RegisterInfo;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
-import com.hd123.sardine.wms.web.BaseController;
+import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
  * 认证管理控制层

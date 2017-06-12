@@ -38,7 +38,7 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
-import com.hd123.sardine.wms.web.BaseController;
+import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
  * 商品管理控制层

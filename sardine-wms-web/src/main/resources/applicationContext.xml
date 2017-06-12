@@ -19,7 +19,16 @@
 	<context:component-scan base-package="com.hd123.sardine.wms.web">
 	</context:component-scan>
 
-	<!-- 请求的文本编码转为utf-8 -->
+	<bean name="redisUtil" class="com.hd123.sardine.wms.web.base.jedis.RedisUtil">
+		<property name="address" value="${jedis.address:172.17.1.54}" />
+		<property name="port" value="${jedis.port:6379}" />
+		<property name="auth" value="${jedis.auth:sardine}" />
+		<property name="maxActive" value="${jedis.maxActive:100}" />
+		<property name="maxIdle" value="${jedis.maxIdle:20}" />
+		<property name="maxWait" value="${jedis.maxWait:10}" />
+		<property name="timeout" value="${jedis.timeout:60000}" />
+	</bean>
+
 	<mvc:annotation-driven>
 		<mvc:message-converters register-defaults="true">
 			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
@@ -40,7 +49,7 @@
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
-			<bean class="com.hd123.sardine.wms.web.ControllerInterceptor">
+			<bean class="com.hd123.sardine.wms.web.base.ControllerInterceptor">
 				<property name="uncheckUrls">
 					<list>
 						<value>/ia/authen/login</value>

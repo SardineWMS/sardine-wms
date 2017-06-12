@@ -36,7 +36,7 @@ import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
-import com.hd123.sardine.wms.web.BaseController;
+import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
  * @author yangwenzhu

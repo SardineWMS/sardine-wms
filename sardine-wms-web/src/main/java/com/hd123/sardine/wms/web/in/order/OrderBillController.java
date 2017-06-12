@@ -40,7 +40,7 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
-import com.hd123.sardine.wms.web.BaseController;
+import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
  * 入库订单控制管理层
