@@ -10,7 +10,9 @@
 package com.hd123.sardine.wms.api.task;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.common.entity.UCN;
@@ -256,6 +258,14 @@ public class Task extends VersionedEntity {
   public void setCompanyUuid(String companyUuid) {
     this.companyUuid = companyUuid;
   }
+  
+  public List<TaskStockItem> getItems() {
+    return items;
+  }
+
+  public void setItems(List<TaskStockItem> items) {
+    this.items = items;
+  }
 
   private String taskNo;
   private TaskType taskType;
@@ -286,6 +296,8 @@ public class Task extends VersionedEntity {
   private Date beginOperateTime;
   private Date endOperateTime;
   private String companyUuid;
+
+  private List<TaskStockItem> items = new ArrayList<TaskStockItem>();
 
   public void validate() {
     Assert.assertArgumentNotNull(taskType, "taskType");

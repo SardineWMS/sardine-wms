@@ -56,7 +56,8 @@ public interface StockService {
       throws IllegalArgumentException, VersionConflictException, WMSException;
 
   /**
-   * 根据指定条件查询库存信息
+   * 根据指定条件查询库存信息 <br>
+   * 数量=可用库存数量
    * 
    * @param stockFilter
    *          库存查询条件，not null
@@ -113,4 +114,6 @@ public interface StockService {
    * @return 有库存返回true，否则返回false
    */
   boolean containerHasStock(String containerBarcode);
+
+  List<Stock> query(StockFilter stockFilter);
 }

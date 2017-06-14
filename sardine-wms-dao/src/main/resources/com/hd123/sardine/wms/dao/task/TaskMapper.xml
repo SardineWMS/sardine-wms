@@ -277,6 +277,92 @@
 			</if>
 		</trim>
 	</insert>
+	
+	<insert id="insertItem" parameterType="TaskStockItem">
+		insert into db_proxy.sardine_taskItem
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="taskUuid != null">
+				taskUuid,
+			</if>
+			<if test="supplierUuid != null">
+				supplierUuid,
+			</if>
+			<if test="binCode != null">
+				binCode,
+			</if>
+			<if test="containerBarcode != null">
+				containerBarcode,
+			</if>
+			<if test="articleUuid != null">
+				articleUuid,
+			</if>
+			<if test="stockBatch != null">
+				stockBatch,
+			</if>
+			<if test="productionDate != null">
+				productionDate,
+			</if>
+			<if test="validDate != null">
+				validDate,
+			</if>
+			<if test="qty != null">
+				qty,
+			</if>
+			<if test="qpcStr != null">
+				qpcStr,
+			</if>
+			<if test="measureUnit != null">
+				measureUnit,
+			</if>
+			<if test="price != null">
+				price,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="taskUuid != null">
+				#{taskUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="supplierUuid != null">
+				#{supplierUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="binCode != null">
+				#{binCode,jdbcType=VARCHAR},
+			</if>
+			<if test="containerBarcode != null">
+				#{containerBarcode,jdbcType=VARCHAR},
+			</if>
+			<if test="articleUuid != null">
+				#{articleUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="stockBatch != null">
+				#{stockBatch,jdbcType=VARCHAR},
+			</if>
+			<if test="productionDate != null">
+				#{productionDate,jdbcType=DATE},
+			</if>
+			<if test="validDate != null">
+				#{validDate,jdbcType=DATE},
+			</if>
+			<if test="qty != null">
+				#{qty,jdbcType=DECIMAL},
+			</if>
+			<if test="qpcStr != null">
+				#{qpcStr,jdbcType=VARCHAR},
+			</if>
+			<if test="measureUnit != null">
+				#{measureUnit,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=DECIMAL},
+			</if>
+		</trim>
+	</insert>
 
 	<update id="update" parameterType="Task">
 		update db_proxy.sardine_task t

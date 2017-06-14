@@ -16,117 +16,127 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
  *
  */
 public class StockFilter extends PageQueryDefinition {
-    private static final long serialVersionUID = -3011733549963203907L;
+  private static final long serialVersionUID = -3011733549963203907L;
 
-    private String binCode;
-    private String containerBarcode;
-    private String articleUuid;
-    private String articleCode;
-    private String supplierUuid;
-    private String supplierCode;
-    private String qpcStr;
-    private String stockBatch;
-    private String sourceBillUuid;
-    private String sourcebillNumber;
+  private String binCode;
+  private String containerBarcode;
+  private String articleUuid;
+  private String articleCode;
+  private String supplierUuid;
+  private String supplierCode;
+  private String qpcStr;
+  private String stockBatch;
+  private String sourceBillUuid;
+  private String sourcebillNumber;
+  private String productDate;
 
-    private String stockUuid;
+  private String stockUuid;
 
-    public String getStockUuid() {
-        return stockUuid;
-    }
+  public String getStockUuid() {
+    return stockUuid;
+  }
 
-    public void setStockUuid(String stockUuid) {
-        this.stockUuid = stockUuid;
-        put("stockUuid", stockUuid);
-    }
+  public void setStockUuid(String stockUuid) {
+    this.stockUuid = stockUuid;
+    put("stockUuid", stockUuid);
+  }
 
-    public String getBinCode() {
-        return binCode;
-    }
+  public String getBinCode() {
+    return binCode;
+  }
 
-    public void setBinCode(String binCode) {
-        this.binCode = binCode;
-        put("binCode", binCode);
-    }
+  public void setBinCode(String binCode) {
+    this.binCode = binCode;
+    put("binCode", binCode);
+  }
 
-    public String getContainerBarcode() {
-        return containerBarcode;
-    }
+  public String getContainerBarcode() {
+    return containerBarcode;
+  }
 
-    public void setContainerBarcode(String containerBarcode) {
-        this.containerBarcode = containerBarcode;
-        put("containerBarcode", containerBarcode);
-    }
+  public void setContainerBarcode(String containerBarcode) {
+    this.containerBarcode = containerBarcode;
+    put("containerBarcode", containerBarcode);
+  }
 
-    public String getArticleUuid() {
-        return articleUuid;
-    }
+  public String getArticleUuid() {
+    return articleUuid;
+  }
 
-    public void setArticleUuid(String articleUuid) {
-        this.articleUuid = articleUuid;
-        put("articleUuid", articleUuid);
-    }
+  public void setArticleUuid(String articleUuid) {
+    this.articleUuid = articleUuid;
+    put("articleUuid", articleUuid);
+  }
 
-    public String getArticleCode() {
-        return articleCode;
-    }
+  public String getArticleCode() {
+    return articleCode;
+  }
 
-    public void setArticleCode(String articleCode) {
-        this.articleCode = articleCode;
-        put("articleCode", articleCode);
-    }
+  public void setArticleCode(String articleCode) {
+    this.articleCode = articleCode;
+    put("articleCode", articleCode);
+  }
 
-    public String getSupplierUuid() {
-        return supplierUuid;
-    }
+  public String getSupplierUuid() {
+    return supplierUuid;
+  }
 
-    public void setSupplierUuid(String supplierUuid) {
-        this.supplierUuid = supplierUuid;
-        put("supplierUuid", supplierUuid);
-    }
+  public void setSupplierUuid(String supplierUuid) {
+    this.supplierUuid = supplierUuid;
+    put("supplierUuid", supplierUuid);
+  }
 
-    public String getSupplierCode() {
-        return supplierCode;
-    }
+  public String getSupplierCode() {
+    return supplierCode;
+  }
 
-    public void setSupplierCode(String supplierCode) {
-        this.supplierCode = supplierCode;
-        put("supplierCode", supplierCode);
-    }
+  public void setSupplierCode(String supplierCode) {
+    this.supplierCode = supplierCode;
+    put("supplierCode", supplierCode);
+  }
 
-    public String getQpcStr() {
-        return qpcStr;
-    }
+  public String getQpcStr() {
+    return qpcStr;
+  }
 
-    public void setQpcStr(String qpcStr) {
-        this.qpcStr = qpcStr;
-        put("qpcStr", qpcStr);
-    }
+  public void setQpcStr(String qpcStr) {
+    this.qpcStr = qpcStr;
+    put("qpcStr", qpcStr);
+  }
 
-    public String getStockBatch() {
-        return stockBatch;
-    }
+  public String getStockBatch() {
+    return stockBatch;
+  }
 
-    public void setStockBatch(String stockBatch) {
-        this.stockBatch = stockBatch;
-        put("stockBatch", stockBatch);
-    }
+  public void setStockBatch(String stockBatch) {
+    this.stockBatch = stockBatch;
+    put("stockBatch", stockBatch);
+  }
 
-    public String getSourceBillUuid() {
-        return sourceBillUuid;
-    }
+  public String getSourceBillUuid() {
+    return sourceBillUuid;
+  }
 
-    public void setSourceBillUuid(String sourceBillUuid) {
-        this.sourceBillUuid = sourceBillUuid;
-        put("sourceBillUuid", sourceBillUuid);
-    }
+  public void setSourceBillUuid(String sourceBillUuid) {
+    this.sourceBillUuid = sourceBillUuid;
+    put("sourceBillUuid", sourceBillUuid);
+  }
 
-    public String getSourcebillNumber() {
-        return sourcebillNumber;
-    }
+  public String getSourcebillNumber() {
+    return sourcebillNumber;
+  }
 
-    public void setSourcebillNumber(String sourcebillNumber) {
-        this.sourcebillNumber = sourcebillNumber;
-        put("sourcebillNumber", sourcebillNumber);
-    }
+  public void setSourcebillNumber(String sourcebillNumber) {
+    this.sourcebillNumber = sourcebillNumber;
+    put("sourcebillNumber", sourcebillNumber);
+  }
+
+  public String getProductDate() {
+    return productDate;
+  }
+
+  public void setProductDate(String productDate) {
+    this.productDate = productDate;
+    put("productDate", productDate);
+  }
 }

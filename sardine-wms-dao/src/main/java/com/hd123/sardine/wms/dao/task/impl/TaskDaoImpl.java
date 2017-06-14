@@ -14,6 +14,7 @@ import java.util.Map;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.api.task.Task;
+import com.hd123.sardine.wms.api.task.TaskStockItem;
 import com.hd123.sardine.wms.common.dao.NameSpaceSupport;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
@@ -52,5 +53,12 @@ public class TaskDaoImpl extends NameSpaceSupport implements TaskDao {
   public List<Task> query(PageQueryDefinition definition) {
     Assert.assertArgumentNotNull(definition, "definition");
     return selectList(MAPPER_QUERY_BYLIST, definition);
+  }
+
+  @Override
+  public void insertItem(TaskStockItem stockItem) {
+    Assert.assertArgumentNotNull(stockItem, "stockItem");
+
+    insert(MAPPER_INSERT_ITEM, stockItem);
   }
 }

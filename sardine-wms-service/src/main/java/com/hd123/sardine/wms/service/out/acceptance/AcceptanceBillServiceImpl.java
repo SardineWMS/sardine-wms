@@ -33,7 +33,6 @@ import com.hd123.sardine.wms.api.stock.StockExtendInfo;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.api.task.Task;
-import com.hd123.sardine.wms.api.task.TaskService;
 import com.hd123.sardine.wms.api.task.TaskType;
 import com.hd123.sardine.wms.common.entity.OperateInfo;
 import com.hd123.sardine.wms.common.entity.UCN;
@@ -68,8 +67,6 @@ public class AcceptanceBillServiceImpl extends BaseWMSService implements Accepta
     private StockService stockService;
     @Autowired
     private StockDao stockDao;
-    @Autowired
-    private TaskService taskService;
 
     @Override
     public AcceptanceBill get(String uuid) {
