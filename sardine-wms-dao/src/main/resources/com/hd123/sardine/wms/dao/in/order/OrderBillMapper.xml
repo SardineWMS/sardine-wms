@@ -62,6 +62,7 @@
 		<result column="receivedCaseQtyStr" property="receivedCaseQtyStr"
 			jdbcType="VARCHAR" />
 		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="amount" property="amount" jdbcType="DECIMAL" />
 	</resultMap>
 
 	<insert id="insert" parameterType="OrderBill">
@@ -260,7 +261,7 @@
 	</delete>
 	
 	<select id="queryItems" parameterType="java.util.Map" resultMap="OrderBillItemMap">
-	    select t.*, a.code articlecode, a.name articlename
+	    select t.*, a.code articlecode, a.name articlename,(t.price * t.qty) amount
 	           from db_proxy.sardine_OrderBillItem t,
 	                db_proxy.sardine_article a
 	          where t.articleuuid = a.uuid 
