@@ -10,6 +10,9 @@
 package com.hd123.sardine.wms.web.inner.decinc;
 
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +31,10 @@ import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillItem;
 import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillService;
 import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillState;
 import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillType;
+import com.hd123.sardine.wms.api.stock.StockExtendInfo;
+import com.hd123.sardine.wms.api.stock.StockFilter;
+import com.hd123.sardine.wms.api.stock.StockService;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
@@ -52,6 +59,9 @@ public class DecIncController extends BaseController {
 
     @Autowired
     private ArticleService articleService;
+
+    @Autowired
+    private StockService stockService;
 
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     public @ResponseBody RespObject insert(
@@ -204,6 +214,40 @@ public class DecIncController extends BaseController {
             e.printStackTrace();
             return new ErrorRespObject("审核损溢单失败！", e.getMessage());
         }
+        return resp;
+
+    }
+
+    @RequestMapping(value = "/queryStockExtendInfo", method = RequestMethod.GET)
+    public @ResponseBody RespObject queryStockExtendInfo(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "binCode", required = false) String binCode,
+            @RequestParam(value = "containerBarcode", required = false) String containerBarcode,
+            @RequestParam(value = "articleUuid", required = false) String articleUuid,
+            @RequestParam(value = "qpcStr", required = false) String qpcStr) {
+        RespObject resp = new RespObject();
+        try {
+            StockFilter filter = new StockFilter();
+            filter.setArticleUuid(articleUuid);
+            filter.setBinCode(binCode);
+            filter.setCompanyUuid(getLoginCompany(token).getUuid());
+            filter.setContainerBarcode(containerBarcode);
+            filter.setQpcStr(qpcStr);
+            filter.setPageSize(0);
+            List<StockExtendInfo> stocks = stockService.queryStocks(filter);
+
+            Set<UCN> suppliers = new HashSet<>();
+            for (StockExtendInfo info : stocks) {
+                suppliers.add(info.getSupplier());
+            }
+            resp.setObj(suppliers);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("查询库存信息失败", e.getMessage());
+        }
+
         return resp;
 
     }
