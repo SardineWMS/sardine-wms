@@ -20,6 +20,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.hd123.sardine.wms.common.dao.datasource.DatabaseContextHolder;
 import com.hd123.sardine.wms.common.utils.SerializationUtils;
 
 /**
@@ -71,6 +72,7 @@ public class ControllerInterceptor implements HandlerInterceptor {
       LOGGER.info(method.getBeanType().getSimpleName() + "--->" + method.getMethod().getName()
           + "开始执行，参数：" + SerializationUtils.serialize(request.getParameterMap()));
 
+      DatabaseContextHolder.setCustomerType("dataSource");
       String requestUrl = request.getRequestURI();
       if (uncheckUrls.contains(requestUrl.substring(url_prefix.length())))
         return true;

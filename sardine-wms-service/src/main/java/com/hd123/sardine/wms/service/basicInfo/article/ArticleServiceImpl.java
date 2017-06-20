@@ -26,8 +26,8 @@ import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.api.basicInfo.category.Category;
 import com.hd123.sardine.wms.api.basicInfo.category.CategoryService;
-import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.ArticleConfig;
-import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.ArticleConfigService;
+import com.hd123.sardine.wms.api.basicInfo.config.ArticleConfig;
+import com.hd123.sardine.wms.api.basicInfo.config.SystemConfigService;
 import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
 import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierService;
 import com.hd123.sardine.wms.common.entity.UCN;
@@ -85,7 +85,7 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
     private BinService binService;
 
     @Autowired
-    private ArticleConfigService systemConfigService;
+    private SystemConfigService systemConfigService;
 
     @Autowired
     private ArticleFixedPickBinDao articleFixedPickBinDao;
@@ -114,7 +114,7 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
         articleDao.insert(article);
 
         ArticleConfig articleConfig = new ArticleConfig();
-        articleConfig.setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
+        articleConfig.setArticleUuid(article.getUuid());
         articleConfig.setPutawayBin(article.getPutawayBin());
         systemConfigService.saveArticleConfig(articleConfig);
 
@@ -144,7 +144,7 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
         articleDao.update(article);
 
         ArticleConfig articleConfig = new ArticleConfig();
-        articleConfig.setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
+        articleConfig.setArticleUuid(article.getUuid());
         articleConfig.setPutawayBin(article.getPutawayBin());
         systemConfigService.saveArticleConfig(articleConfig);
 

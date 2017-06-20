@@ -13,7 +13,6 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
 
-import org.aspectj.weaver.BindingScope;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
@@ -37,96 +36,95 @@ import com.hd123.sardine.wms.service.log.EntityLogger;
  */
 public class PickAreaServiceImpl extends BaseWMSService implements PickAreaService {
 
-    @Autowired
-    private PickAreaDao dao;
-    @Autowired
-    private EntityLogger logger;
+  @Autowired
+  private PickAreaDao dao;
+  @Autowired
+  private EntityLogger logger;
 
-    @Override
-    public String saveNew(PickArea area) throws WMSException {
-        Assert.assertArgumentNotNull(area, "area");
-        area.validate();
+  @Override
+  public String saveNew(PickArea area) throws WMSException {
+    Assert.assertArgumentNotNull(area, "area");
+    area.validate();
 
-        PickArea p = dao.getByCode(area.getCode());
-        if (p != null)
-            throw new WMSException(MessageFormat.format("已存在代码为{0}的拣货分区", area.getCode()));
+    PickArea p = dao.getByCode(area.getCode());
+    if (p != null)
+      throw new WMSException(MessageFormat.format("已存在代码为{0}的拣货分区", area.getCode()));
 
-        area.setUuid(UUIDGenerator.genUUID());
-        area.setCreateInfo(ApplicationContextUtil.getOperateInfo());
-        area.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
-        dao.insert(area);
+    insertValidate();
 
-        logger.injectContext(this, area.getUuid(), PickArea.class.getName(),
-                ApplicationContextUtil.getOperateContext());
-        logger.log(EntityLogger.EVENT_ADDNEW, "新增拣货分区");
-        return area.getUuid();
-    }
+    area.setUuid(UUIDGenerator.genUUID());
+    area.setCreateInfo(ApplicationContextUtil.getOperateInfo());
+    area.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.insert(area);
 
-    @Override
-    public void saveModify(PickArea area) throws WMSException {
-        Assert.assertArgumentNotNull(area, "area");
+    logger.injectContext(this, area.getUuid(), PickArea.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_ADDNEW, "新增拣货分区");
+    return area.getUuid();
+  }
 
-        area.validate();
-        PickArea pa = dao.get(area.getUuid());
-        if (pa == null)
-            throw new WMSException("要修改的拣货分区不存在");
-        PickArea a = dao.getByCode(area.getCode());
-        if (a != null && Objects.equals(a.getUuid(), area.getUuid()) == false)
-            throw new WMSException(MessageFormat.format("已存在代码为{0}的拣货分区，不能重复使用", area.getCode()));
-        area.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+  @Override
+  public void saveModify(PickArea area) throws WMSException {
+    Assert.assertArgumentNotNull(area, "area");
 
-        dao.update(area);
-        logger.injectContext(this, area.getUuid(), PickArea.class.getName(),
-                ApplicationContextUtil.getOperateContext());
-        logger.log(EntityLogger.EVENT_MODIFY, "修改拣货分区");
+    area.validate();
+    PickArea pa = dao.get(area.getUuid());
+    if (pa == null)
+      throw new WMSException("要修改的拣货分区不存在");
+    PickArea a = dao.getByCode(area.getCode());
+    if (a != null && Objects.equals(a.getUuid(), area.getUuid()) == false)
+      throw new WMSException(MessageFormat.format("已存在代码为{0}的拣货分区，不能重复使用", area.getCode()));
+    area.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
 
-    }
+    dao.update(area);
+    logger.injectContext(this, area.getUuid(), PickArea.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_MODIFY, "修改拣货分区");
 
-    @Override
-    public void remove(String uuid, long version) throws WMSException {
-        Assert.assertArgumentNotNull(uuid, "uuid");
-        Assert.assertArgumentNotNull(version, "version");
+  }
 
-        PickArea p = dao.get(uuid);
-        if (p == null)
-            throw new WMSException(MessageFormat.format("要删除的拣货分区{0}不存在", uuid));
-        PersistenceUtils.checkVersion(version, p, PickArea.CAPTION, uuid);
+  @Override
+  public void remove(String uuid, long version) throws WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+    Assert.assertArgumentNotNull(version, "version");
 
-        dao.remove(uuid, version);
+    PickArea p = dao.get(uuid);
+    if (p == null)
+      throw new WMSException(MessageFormat.format("要删除的拣货分区{0}不存在", uuid));
+    PersistenceUtils.checkVersion(version, p, PickArea.CAPTION, uuid);
 
-        logger.injectContext(this, uuid, PickArea.class.getName(),
-                ApplicationContextUtil.getOperateContext());
-        logger.log(EntityLogger.EVENT_REMOVE, "删除拣货分区");
-    }
+    dao.remove(uuid, version);
 
-    @Override
-    public PickArea get(String uuid) {
-        if (StringUtil.isNullOrBlank(uuid))
-            return null;
-        return dao.get(uuid);
-    }
+    logger.injectContext(this, uuid, PickArea.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_REMOVE, "删除拣货分区");
+  }
 
-    @Override
-    public PickArea getByCode(String code) {
-        if (StringUtil.isNullOrBlank(code))
-            return null;
-        return dao.getByCode(code);
-    }
+  @Override
+  public PickArea get(String uuid) {
+    if (StringUtil.isNullOrBlank(uuid))
+      return null;
+    return dao.get(uuid);
+  }
 
-    @Override
-    public PageQueryResult<PickArea> query(PageQueryDefinition definition) {
-        Assert.assertArgumentNotNull(definition, "definition");
-        PageQueryResult<PickArea> qpr = new PageQueryResult<>();
-        List<PickArea> list = dao.query(definition);
-        PageQueryUtil.assignPageInfo(qpr, definition);
-        qpr.setRecords(list);
-        return qpr;
-    }
+  @Override
+  public PickArea getByCode(String code) {
+    if (StringUtil.isNullOrBlank(code))
+      return null;
+    return dao.getByCode(code);
+  }
 
-    private boolean insertValidate(String binScope, List<String> binScopes) {
-        // TODO 校验拣货分区对应的货位范围不能交叉
-        return false;
+  @Override
+  public PageQueryResult<PickArea> query(PageQueryDefinition definition) {
+    Assert.assertArgumentNotNull(definition, "definition");
+    PageQueryResult<PickArea> qpr = new PageQueryResult<>();
+    List<PickArea> list = dao.query(definition);
+    PageQueryUtil.assignPageInfo(qpr, definition);
+    qpr.setRecords(list);
+    return qpr;
+  }
 
-    }
-
+  private void insertValidate() throws WMSException {
+    // TODO 校验拣货分区对应的货位范围不能交叉
+  }
 }

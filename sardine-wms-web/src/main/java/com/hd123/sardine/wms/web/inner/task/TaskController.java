@@ -95,6 +95,7 @@ public class TaskController extends BaseController {
 
     try {
       StockFilter stockFilter = new StockFilter();
+      stockFilter.setPageSize(0);
       stockFilter.setArticleCode(articleCode);
       List<StockExtendInfo> infos = stockService.queryStocks(stockFilter);
       resp.setObj(infos);

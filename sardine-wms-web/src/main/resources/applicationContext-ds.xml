@@ -21,10 +21,30 @@
 		<property name="password" value="${jdbc.password}" />
 	</bean>
 
+	<bean id="dataSource1"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.driverUrl}" />
+		<property name="username" value="xxxx" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
+	<bean id="dynamicDataSource"
+		class="com.hd123.sardine.wms.common.dao.datasource.DynamicDataSource">
+		<property name="targetDataSources">
+			<map key-type="java.lang.String">
+				<entry value-ref="dataSource" key="dataSource"></entry>
+				<entry value-ref="dataSource1" key="dataSource1"></entry>
+			</map>
+		</property>
+		<property name="defaultTargetDataSource" ref="dataSource">
+		</property>
+	</bean>
+
 	<!-- define the SqlSessionFactory -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="configLocation" value="classpath:mybatisConfig-sardine-wms.xml" />
-		<property name="dataSource" ref="dataSource" />
+		<property name="dataSource" ref="dynamicDataSource" />
 		<property name="typeAliasesPackage" value="com.hd123.sardine" />
 		<property name="mapperLocations"
 			value="classpath*:com/hd123/sardine/wms/dao/**/*Mapper.xml" />
@@ -35,7 +55,7 @@
 	<!-- ======================================================================== -->
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource" />
+		<property name="dataSource" ref="dynamicDataSource" />
 	</bean>
 
 	<!-- 支持 @AspectJ 标记 -->
@@ -43,57 +63,9 @@
 
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
-			<tx:method name="register*" propagation="REQUIRED"
-				rollback-for="java.lang.Exception" no-rollback-for="java.lang.RuntimeException" />
-			<tx:method name="save*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="insert*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="create*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="del*" propagation="REQUIRED" rollback-for="Exception" />
-			<tx:method name="remove*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="update*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="modify*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="receive*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="audit*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="generate*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="distribute*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="effective*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="upload*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="recover*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="setDefault*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="online*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="offline*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="finish*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="abort*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="approve*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="begin*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="up*" propagation="REQUIRED" rollback-for="Exception" />
-			<tx:method name="down*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="stick*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="postpone*" propagation="REQUIRED"
-				rollback-for="Exception" />
-			<tx:method name="*" read-only="true" />
+			<tx:method name="get*" read-only="true" />
+			<tx:method name="query*" read-only="true" />
+			<tx:method name="*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
 		</tx:attributes>
 	</tx:advice>
 
