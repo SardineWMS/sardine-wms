@@ -195,7 +195,7 @@ public class DecIncController extends BaseController {
         } catch (WMSException e) {
             return new ErrorRespObject("删除损溢单失败！", e.getMessage());
         }
-        return null;
+        return resp;
 
     }
 
