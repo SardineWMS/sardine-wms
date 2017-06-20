@@ -72,6 +72,7 @@ public class ControllerInterceptor implements HandlerInterceptor {
       LOGGER.info(method.getBeanType().getSimpleName() + "--->" + method.getMethod().getName()
           + "开始执行，参数：" + SerializationUtils.serialize(request.getParameterMap()));
 
+      // 后续将根据token对应公司uuid的前缀确定数据源，并将数据源key存储到jedis中
       DatabaseContextHolder.setCustomerType("dataSource");
       String requestUrl = request.getRequestURI();
       if (uncheckUrls.contains(requestUrl.substring(url_prefix.length())))

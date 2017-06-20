@@ -11,7 +11,6 @@ import redis.clients.jedis.JedisPool;
 /**
  * Redis 工具类
  * 
- * @author caspar http://blog.csdn.net/tuposky
  */
 public class RedisUtil {
 
@@ -25,16 +24,6 @@ public class RedisUtil {
 
   // 访问密码
   private String auth = "sardine";
-
-  // // 可用连接实例的最大数目，默认值为8；
-  // // 如果赋值为-1，则表示不限制；如果pool已经分配了maxActive个jedis实例，则此时pool的状态为exhausted(耗尽)。
-  // private int maxActive = 100;
-  //
-  // // 控制一个pool最多有多少个状态为idle(空闲的)的jedis实例，默认值也是8。
-  // private int maxIdle = 50;
-  //
-  // // 等待可用连接的最大时间，单位毫秒，默认值为-1，表示永不超时。如果超过等待时间，则直接抛出JedisConnectionException；
-  // private int maxWait = 10;
 
   // 超时时间
   private int timeout = 60000;
@@ -51,18 +40,6 @@ public class RedisUtil {
     this.auth = auth;
   }
 
-  // public void setMaxActive(int maxActive) {
-  // this.maxActive = maxActive;
-  // }
-  //
-  // public void setMaxIdle(int maxIdle) {
-  // this.maxIdle = maxIdle;
-  // }
-  //
-  // public void setMaxWait(int maxWait) {
-  // this.maxWait = maxWait;
-  // }
-
   public void setTimeout(int timeout) {
     this.timeout = timeout;
   }
@@ -77,44 +54,18 @@ public class RedisUtil {
   public final int EXRP_MONTH = 60 * 60 * 24 * 30; // 一个月
 
   /**
-   * 初始化Redis连接池
-   */
-  /*
-   * private void initialPool() { try { JedisPoolConfig config = new
-   * JedisPoolConfig(); config.setMaxActive(maxActive);
-   * config.setMaxIdle(maxIdle); config.setMaxWait(maxWait);
-   * config.setTestOnBorrow(true); config.setTestOnReturn(true); jedisPool = new
-   * JedisPool(config, address, port, timeout, auth); } catch (Exception e) {
-   * LOGGER.error("Jedis连接池创建失败！" + e); } }
-   */
-  /**
-   * 在多线程环境同步初始化
-   */
-  // private synchronized void poolInit() {
-  // if (jedisPool == null) {
-  // initialPool();
-  // }
-  // }
-
-  /**
    * 同步获取Jedis实例
    * 
    * @return Jedis
    */
   public synchronized Jedis getJedis() {
-    // if (jedisPool == null) {
-    // poolInit();
-    // }
     Jedis jedis = null;
     try {
       jedis = new Jedis(address, port, timeout);
       jedis.auth(auth);
       jedis.connect();
-      // if (jedisPool != null) {
-      // jedis = jedisPool.getResource();
-      // }
     } catch (Exception e) {
-      LOGGER.error("Get jedis error : " + e);
+      LOGGER.error("获取缓存服务器客户端失败！ " + e.getMessage());
     }
     return jedis;
   }
@@ -143,7 +94,7 @@ public class RedisUtil {
       value = StringUtil.isNullOrBlank(value) ? "" : value;
       jedis.set(key, value);
     } catch (Exception e) {
-      LOGGER.error("Set keyex error : " + e);
+      LOGGER.error("缓存信息存储失败！ " + e.getMessage());
     } finally {
       if (jedis != null) {
         jedis.disconnect();
@@ -167,7 +118,7 @@ public class RedisUtil {
       value = StringUtil.isNullOrBlank(value) ? "" : value;
       jedis.setex(key, seconds, value);
     } catch (Exception e) {
-      LOGGER.error("Set keyex error : " + e);
+      LOGGER.error("缓存信息存储失败！ " + e.getMessage());
     } finally {
       if (jedis != null) {
         jedis.disconnect();
