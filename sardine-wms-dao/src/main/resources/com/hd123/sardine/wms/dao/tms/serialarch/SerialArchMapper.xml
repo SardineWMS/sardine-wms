@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.hd123.sardine.wms.dao.tms.serialarch.impl.SerialArchDaoImpl">
+	<resultMap type="com.hd123.sardine.wms.api.tms.serialarch.SerialArch"
+		id="SerialArchMap">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="createdtime " property="createInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="createdID" property="createInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="createdcode" property="createInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="createdName" property="createInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="lastModifytime" property="lastModifyInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="lastModifyid" property="lastModifyInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="lastModifycode" property="lastModifyInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<resultMap type="com.hd123.sardine.wms.api.tms.serialarch.SerialArchLine"
+		id="SerialArchLineMap">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="serialArchUuid" property="serialArch.uuid"
+			jdbcType="VARCHAR" />
+		<result column="createdtime " property="createInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="createdID" property="createInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="createdcode" property="createInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="createdName" property="createInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="lastModifytime" property="lastModifyInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="lastModifyid" property="lastModifyInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="lastModifycode" property="lastModifyInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<resultMap
+		type="com.hd123.sardine.wms.api.tms.serialarch.SerialArchLineCustomer"
+		id="SerialArchLineCustomerMap">
+		<id column="customerUuid" property="customer.uuid" jdbcType="VARCHAR" />
+		<result column="lineOrder" property="order" jdbcType="INTEGER" />
+		<result column="serialArchLineUuid" property="serialArchLineUuid"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<insert id="insert" parameterType="com.hd123.sardine.wms.api.tms.serialarch.SerialArch">
+		insert into db_proxy.sardine_serialarch
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="code != null">
+				code,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="companyUuid != null">
+				companyUuid,
+			</if>
+			version,
+			CREATEDTIME,
+			CREATEDID,
+			CREATEDCODE,
+			CREATEDNAME,
+			LASTMODIFYTIME,
+			LASTMODIFYID,
+			LASTMODIFYCODE,
+			LASTMODIFYNAME,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="companyUuid != null">
+				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			#{version,jdbcType=LONGVARCHAR},
+			#{createInfo.time,jdbcType=TIMESTAMP},
+			#{createInfo.operator.id,jdbcType=VARCHAR},
+			#{createInfo.operator.code,jdbcType=VARCHAR},
+			#{createInfo.operator.fullName,jdbcType=VARCHAR},
+			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<select id="getByCode" parameterType="java.util.Map" resultMap="SerialArchMap">
+		select * from db_proxy.sardine_serialarch t where
+		t.code=#{code,jdbcType=VARCHAR} and
+		t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="queryByPage" parameterType="PageQueryDefinition"
+		resultMap="SerialArchMap">
+		select * from db_proxy.sardine_serialarch t where 1=1
+		<if test="code != null">
+			and t.code like
+			CONCAT(CONCAT('%',#{code,jdbcType=VARCHAR}),'%')
+		</if>
+		<if test="name != null">
+			and t.name=#{name,jdbcType=VARCHAR}
+		</if>
+		<if test="companyUuid != null">
+			and t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
+		</if>
+		<if test="sortField != null and sortField == code">
+			order by (t.code+0) ${orderDir}
+		</if>
+	</select>
+
+	<select id="getLineByArchUuid" parameterType="java.lang.String"
+		resultMap="SerialArchLineMap">
+		select * from db_proxy.sardine_serialarchline where
+		serialarchuuid=#{serialArchUuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getLineByCode" parameterType="java.util.Map"
+		resultMap="SerialArchLineMap">
+		select t.* from db_proxy.sardine_serialarchline t where
+		t.code=#{code,jdbcType=VARCHAR} and
+		t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getLine" parameterType="java.lang.String" resultMap="SerialArchLineMap">
+		select t.* from db_proxy.sardine_serialarchline t where
+		t.uuid=#{uuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getLineByCustomerUuid" parameterType="java.lang.String"
+		resultMap="SerialArchLineMap">
+		select t.* from db_proxy.sardine_serialarchline
+		t,db_proxy.sardine_serialarchlinecustomer c where
+		t.uuid=c.serialarchlineuuid and
+		c.uuid=#{customerUuid,jdbcType=VARCHAR}
+	</select>
+
+	<insert id="insertSerialArchLine"
+		parameterType="com.hd123.sardine.wms.api.tms.serialarch.SerialArchLine">
+		insert into db_proxy.sardine_serialarchline
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="code != null">
+				code,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="companyUuid != null">
+				companyUuid,
+			</if>
+			<if test="serialArch != null and serialArch.uuid != null">
+				serialArchUuid,
+			</if>
+			version,
+			CREATEDTIME,
+			CREATEDID,
+			CREATEDCODE,
+			CREATEDNAME,
+			LASTMODIFYTIME,
+			LASTMODIFYID,
+			LASTMODIFYCODE,
+			LASTMODIFYNAME,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="companyUuid != null">
+				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="serialArch != null and serialArch.uuid != null">
+				#{serialArch.uuid,jdbcType=VARCHAR},
+			</if>
+			#{version,jdbcType=LONGVARCHAR},
+			#{createInfo.time,jdbcType=TIMESTAMP},
+			#{createInfo.operator.id,jdbcType=VARCHAR},
+			#{createInfo.operator.code,jdbcType=VARCHAR},
+			#{createInfo.operator.fullName,jdbcType=VARCHAR},
+			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<insert id="saveLineCustomer"
+		parameterType="com.hd123.sardine.wms.api.tms.serialarch.SerialArchLineCustomer">
+		insert into db_proxy.sardine_serialarchlinecustomer
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="customer != null and customer.uuid">
+				customerUuid,
+			</if>
+			<if test="serialArchLineUuid != null">
+				serialarchlineuuid,
+			</if>
+			<if test="order != null">
+				lineOrder,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="customer != null and customer.uuid != null">
+				#{customer.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="serialArchLineUuid != null">
+				#{serialArchLineUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="order != null">
+				#{order,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+
+	<select id="getCustomerByLine" parameterType="java.lang.String"
+		resultMap="SerialArchLineCustomerMap">
+		select t.* from db_proxy.sardine_serialarchlinecustomer t
+		where t.serialarchlineuuid=#{serialArchLineUuid,jdbcType=VARCHAR}
+		order by lineorder
+	</select>
+	<select id="getCustomer" parameterType="java.util.Map"
+		resultMap="SerialArchLineCustomerMap">
+		select t.* from db_proxy.sardine_serialarchlinecustomer t
+		where t.serialarchlineuuid=#{lineUuid,jdbcType=VARCHAR}
+		and
+		t.customerUuid=#{customerUuid,jdbcType=VARCHAR}
+	</select>
+	<delete id="removeCustomer" parameterType="java.util.Map">
+		delete from
+		db_proxy.sardine_serialarchlinecustomer where
+		serialarchlineuuid=#{lineUuid,jdbcType=VARCHAR}
+		and
+		customerUuid=#{customerUuid,jdbcType=VARCHAR}
+	</delete>
+	<update id="updateLineCustomer"
+		parameterType="com.hd123.sardine.wms.api.tms.serialarch.SerialArchLineCustomer">
+		update db_proxy.sardine_serialarchlinecustomer
+		<set>
+			lineorder=#{order,jdbcType=INTEGER}
+		</set>
+		<where>
+			customeruuid=#{customer.uuid,jdbcType=VARCHAR}
+			and
+			serialarchlineuuid=#{serialArchLineUuid,jdbcType=VARCHAR}
+		</where>
+	</update>
+	<select id="getCustomerByLineAndOrder" parameterType="java.util.Map"
+		resultMap="SerialArchLineCustomerMap">
+		select t.* from db_proxy.sardine_serialarchlinecustomer t
+		where t.serialarchlineuuid=#{lineUuid,jdbcType=VARCHAR} and
+		t.lineorder=#{order,jdbcType=INTEGER}
+	</select>
+
+	<select id="queryCustomerOrderLess" parameterType="java.util.Map"
+		resultMap="SerialArchLineCustomerMap">
+		select t.* from db_proxy.sardine_serialarchlinecustomer t
+		where
+		t.serialarchlineuuid=#{lineUuid,jdbcType=VARCHAR} and lineorder
+		<![CDATA[>]]>
+		#{order,jdbcType=INTEGER}
+	</select>
+	<select id="queryCustomerOrderMore" parameterType="java.util.Map"
+		resultMap="SerialArchLineCustomerMap">
+		select t.* from db_proxy.sardine_serialarchlinecustomer t
+		where
+		t.serialarchlineuuid=#{lineUuid,jdbcType=VARCHAR} and lineorder
+		<![CDATA[<]]>
+		#{order,jdbcType=INTEGER}
+	</select>
+	<select id="queryCustomerByLine" parameterType="PageQueryDefinition"
+		resultMap="SerialArchLineCustomerMap">
+		select t.* from db_proxy.sardine_serialarchlinecustomer t
+		where
+		t.serialarchlineuuid=#{lineUuid,jdbcType=VARCHAR}
+		order by
+		lineorder
+	</select>
+</mapper>

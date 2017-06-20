@@ -18,6 +18,7 @@ import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.customer.Customer;
 import com.hd123.sardine.wms.api.basicInfo.customer.CustomerService;
 import com.hd123.sardine.wms.api.basicInfo.customer.CustomerState;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
@@ -152,6 +153,12 @@ public class CustomerServiceImpl extends BaseWMSService implements CustomerServi
         if (StringUtil.isNullOrBlank(uuid))
             return null;
         return customerDao.get(uuid);
+    }
+
+    @Override
+    public List<UCN> queryAllCustomer() {
+
+        return customerDao.queryAllCustomer();
     }
 
 }

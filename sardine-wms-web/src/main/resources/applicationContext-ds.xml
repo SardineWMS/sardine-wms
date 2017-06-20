@@ -86,6 +86,13 @@
 				rollback-for="Exception" />
 			<tx:method name="begin*" propagation="REQUIRED"
 				rollback-for="Exception" />
+			<tx:method name="up*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="down*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="stick*" propagation="REQUIRED"
+				rollback-for="Exception" />
+			<tx:method name="postpone*" propagation="REQUIRED"
+				rollback-for="Exception" />
 			<tx:method name="*" read-only="true" />
 		</tx:attributes>
 	</tx:advice>

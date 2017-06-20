@@ -32,7 +32,8 @@
 	</resultMap>
 
 	<insert id="insert" parameterType="Customer">
-		insert into db_proxy.sardine_customer (
+		insert into
+		db_proxy.sardine_customer (
 		uuid,
 		code,
 		name,
@@ -72,18 +73,19 @@
 		#{address,jdbcType=VARCHAR}
 		)
 	</insert>
-	
+
 	<select id="get" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select * from db_proxy.sardine_customer t
-		where t.uuid=#{uuid,jdbcType=VARCHAR}
+		where
+		t.uuid=#{uuid,jdbcType=VARCHAR}
 	</select>
 
-	<select id="getByCode" parameterType="java.util.Map"
-		resultMap="BaseResultMap">
+	<select id="getByCode" parameterType="java.util.Map" resultMap="BaseResultMap">
 		select * from db_proxy.sardine_customer t
 		where
 		t.code=#{code,jdbcType=VARCHAR}
-		and t.companyUuid = #{companyUuid,jdbcType=VARCHAR}
+		and t.companyUuid =
+		#{companyUuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="queryByPage" parameterType="PageQueryDefinition"
@@ -191,4 +193,12 @@
 		and version =
 		#{version,jdbcType=LONGVARCHAR}
 	</update>
+
+	<select id="queryAllCustomer" parameterType="java.util.Map"
+		resultType="com.hd123.sardine.wms.common.entity.UCN">
+		select t.uuid,t.code,t.name from db_proxy.sardine_customer
+		t where
+		t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
+	</select>
+
 </mapper>

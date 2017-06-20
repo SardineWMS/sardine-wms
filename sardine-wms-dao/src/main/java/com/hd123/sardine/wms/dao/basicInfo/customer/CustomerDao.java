@@ -9,8 +9,11 @@
  */
 package com.hd123.sardine.wms.dao.basicInfo.customer;
 
+import java.util.List;
+
 import com.hd123.sardine.wms.api.basicInfo.customer.Customer;
 import com.hd123.sardine.wms.common.dao.BaseDao;
+import com.hd123.sardine.wms.common.entity.UCN;
 
 /**
  * @author yangwenzhu
@@ -20,5 +23,7 @@ public interface CustomerDao extends BaseDao<Customer> {
     Customer getByCode(String code);
 
     int updateState(Customer customer);
+
+    List<UCN> queryAllCustomer();
 
 }
