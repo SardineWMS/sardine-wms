@@ -38,7 +38,7 @@ public class Article extends StandardEntity {
     private ArticleState state = ArticleState.normal;
     private int expDays;
     private UCN category;
-    private boolean firstInFirstOut;
+    private DateCheckStandard expflag;
     private String fixedPickBin;
     private ArticlePutawayBin putawayBin;
     private String storageArea;
@@ -135,13 +135,13 @@ public class Article extends StandardEntity {
         this.category = category;
     }
 
-    /** 商品出库时是否要遵守先进先出 */
-    public boolean isFirstInFirstOut() {
-        return firstInFirstOut;
+    /** 商品保质期管理类型 */
+    public DateCheckStandard getExpflag() {
+      return expflag;
     }
 
-    public void setFirstInFirstOut(boolean firstInFirstOut) {
-        this.firstInFirstOut = firstInFirstOut;
+    public void setExpflag(DateCheckStandard expflag) {
+      this.expflag = expflag;
     }
 
     /** 提供该商品的供应商集合 */

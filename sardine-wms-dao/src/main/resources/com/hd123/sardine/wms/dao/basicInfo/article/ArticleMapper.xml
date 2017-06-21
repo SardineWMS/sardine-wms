@@ -13,8 +13,8 @@
 			jdbcType="VARCHAR" />
 		<result column="categoryname" property="category.name"
 			jdbcType="VARCHAR" />
-		<result column="firstInFirstOut" property="firstInFirstOut"
-			jdbcType="CHAR" />
+		<result column="expflag" property="expflag"
+			jdbcType="VARCHAR" />
 		<result column="state" property="state" jdbcType="VARCHAR" />
 		<result column="expDays" property="expDays" jdbcType="INTEGER" />
 		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
@@ -75,7 +75,7 @@
 		categoryuuid,
 		categorycode,
 		categoryname,
-		firstInFirstOut,
+		expflag,
 		version,
 		remark,
 		CREATEDTIME,
@@ -98,7 +98,7 @@
 		#{category.uuid,jdbcType=VARCHAR},
 		#{category.code,jdbcType=VARCHAR},
 		#{category.name,jdbcType=VARCHAR},
-		#{firstInFirstOut,jdbcType=CHAR},
+		#{expflag,jdbcType=VARCHAR},
 		#{version,jdbcType=LONGVARCHAR},
 		#{remark,jdbcType=VARCHAR},
 		#{createInfo.time,jdbcType=TIMESTAMP},
@@ -123,10 +123,10 @@
 			spec =
 			#{spec,jdbcType=VARCHAR},
 			expdays = #{expDays,jdbcType=INTEGER},
-			firstInFirstOut =
-			#{firstInFirstOut,jdbcType=CHAR},
+			expflag =
+			#{expflag,jdbcType=VARCHAR},
 			state =
-			#{state,jdbcType=CHAR},
+			#{state,jdbcType=VARCHAR},
 			categoryuuid =
 			#{category.uuid,jdbcType=VARCHAR},
 			categorycode =
