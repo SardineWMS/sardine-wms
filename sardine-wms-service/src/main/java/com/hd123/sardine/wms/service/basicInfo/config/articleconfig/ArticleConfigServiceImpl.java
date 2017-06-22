@@ -40,149 +40,143 @@ import com.hd123.sardine.wms.dao.basicInfo.config.articleconfig.ArticleConfigDao
  */
 public class ArticleConfigServiceImpl implements ArticleConfigService {
 
-    @Autowired
-    private ArticleConfigDao articleConfigDao;
-    @Autowired
-    private ArticleService articleService;
-    @Autowired
-    private BinService binService;
+  @Autowired
+  private ArticleConfigDao articleConfigDao;
+  @Autowired
+  private ArticleService articleService;
+  @Autowired
+  private BinService binService;
 
-    @Override
-    public void saveArticleConfig(ArticleConfig articleConfig) {
-        Assert.assertArgumentNotNull(articleConfig, "articleConfig");
+  @Override
+  public void saveArticleConfig(ArticleConfig articleConfig) {
+    Assert.assertArgumentNotNull(articleConfig, "articleConfig");
 
-        articleConfig.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-        ArticleConfig config = articleConfigDao
-                .getArticleConfig(articleConfig.getArticle().getUuid());
-        if (config != null)
-            articleConfigDao.updateArticleConfig(articleConfig);
-        else
-            articleConfigDao.insertArticleConfig(articleConfig);
+    articleConfig.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    ArticleConfig config = articleConfigDao.getArticleConfig(articleConfig.getArticle().getUuid());
+    if (config != null)
+      articleConfigDao.updateArticleConfig(articleConfig);
+    else
+      articleConfigDao.insertArticleConfig(articleConfig);
+  }
+
+  @Override
+  public ArticleConfig getArticleConfig(String articleUuid) {
+    if (StringUtil.isNullOrBlank(articleUuid))
+      return null;
+    return articleConfigDao.getArticleConfig(articleUuid);
+  }
+
+  @Override
+  public void setArticleFixedPickBin(String articleUuid, String fixedPickBin, long version)
+      throws IllegalArgumentException, VersionConflictException, WMSException {
+    Assert.assertArgumentNotNull(articleUuid, "articleUuid");
+
+    if (StringUtil.isNullOrBlank(fixedPickBin) == false) {
+      Bin bin = binService.getBinByCode(fixedPickBin);
+      if (bin == null)
+        throw new WMSException("固定拣货位" + fixedPickBin + "不存在");
+      if (BinUsage.PickUpStorageBin.equals(bin.getUsage()) == false)
+        throw new WMSException("固定拣货位只能是" + BinUsage.PickUpStorageBin.getCaption());
     }
 
-    @Override
-    public ArticleConfig getArticleConfig(String articleUuid) {
-        if (StringUtil.isNullOrBlank(articleUuid))
-            return null;
-        return articleConfigDao.getArticleConfig(articleUuid);
+    ArticleConfig articleConfig = articleConfigDao.getArticleConfig(articleUuid);
+    if (articleConfig == null) {
+      if (StringUtil.isNullOrBlank(fixedPickBin))
+        return;
+      Article article = articleService.get(articleUuid);
+      if (article == null)
+        throw new WMSException("商品不存在");
+      ArticleConfig newArticleConfig = new ArticleConfig();
+      newArticleConfig.setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
+      newArticleConfig.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+      newArticleConfig.setFixedPickBin(fixedPickBin);
+      articleConfigDao.insertArticleConfig(newArticleConfig);
+      return;
     }
 
-    @Override
-    public void setArticleFixedPickBin(String articleUuid, String fixedPickBin, long version)
-            throws IllegalArgumentException, VersionConflictException, WMSException {
-        Assert.assertArgumentNotNull(articleUuid, "articleUuid");
+    PersistenceUtils.checkVersion(version, articleConfig, "商品配置",
+        articleConfig.getArticle().getCode());
+    articleConfig.setFixedPickBin(fixedPickBin);
+    articleConfigDao.updateArticleConfig(articleConfig);
+  }
 
-        if (StringUtil.isNullOrBlank(fixedPickBin) == false) {
-            Bin bin = binService.getBinByCode(fixedPickBin);
-            if (bin == null)
-                throw new WMSException("固定拣货位" + fixedPickBin + "不存在");
-            if (BinUsage.PickUpBin.equals(bin.getUsage()) == false
-                    && BinUsage.PickUpStorageBin.equals(bin.getUsage()) == false)
-                throw new WMSException("固定拣货位只能是" + BinUsage.PickUpBin.getCaption() + "或"
-                        + BinUsage.PickUpStorageBin.getCaption());
-        }
+  @Override
+  public void setArticleStorageArea(String articleUuid, String storageArea, long version)
+      throws IllegalArgumentException, VersionConflictException, WMSException {
+    Assert.assertArgumentNotNull(articleUuid, "articleUuid");
 
-        ArticleConfig articleConfig = articleConfigDao.getArticleConfig(articleUuid);
-        if (articleConfig == null) {
-            if (StringUtil.isNullOrBlank(fixedPickBin))
-                return;
-            Article article = articleService.get(articleUuid);
-            if (article == null)
-                throw new WMSException("商品不存在");
-            ArticleConfig newArticleConfig = new ArticleConfig();
-            newArticleConfig
-                    .setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
-            newArticleConfig.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-            newArticleConfig.setFixedPickBin(fixedPickBin);
-            articleConfigDao.insertArticleConfig(newArticleConfig);
-            return;
-        }
-
-        PersistenceUtils.checkVersion(version, articleConfig, "商品配置",
-                articleConfig.getArticle().getCode());
-        articleConfig.setFixedPickBin(fixedPickBin);
-        articleConfigDao.updateArticleConfig(articleConfig);
+    ArticleConfig articleConfig = articleConfigDao.getArticleConfig(articleUuid);
+    if (articleConfig == null) {
+      if (StringUtil.isNullOrBlank(storageArea))
+        return;
+      Article article = articleService.get(articleUuid);
+      if (article == null)
+        throw new WMSException("商品不存在");
+      ArticleConfig newArticleConfig = new ArticleConfig();
+      newArticleConfig.setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
+      newArticleConfig.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+      newArticleConfig.setStorageArea(storageArea);
+      articleConfigDao.insertArticleConfig(newArticleConfig);
+      return;
     }
 
-    @Override
-    public void setArticleStorageArea(String articleUuid, String storageArea, long version)
-            throws IllegalArgumentException, VersionConflictException, WMSException {
-        Assert.assertArgumentNotNull(articleUuid, "articleUuid");
+    PersistenceUtils.checkVersion(version, articleConfig, "商品配置",
+        articleConfig.getArticle().getCode());
+    articleConfig.setStorageArea(storageArea);
+    articleConfigDao.updateArticleConfig(articleConfig);
+  }
 
-        ArticleConfig articleConfig = articleConfigDao.getArticleConfig(articleUuid);
-        if (articleConfig == null) {
-            if (StringUtil.isNullOrBlank(storageArea))
-                return;
-            Article article = articleService.get(articleUuid);
-            if (article == null)
-                throw new WMSException("商品不存在");
-            ArticleConfig newArticleConfig = new ArticleConfig();
-            newArticleConfig
-                    .setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
-            newArticleConfig.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-            newArticleConfig.setStorageArea(storageArea);
-            articleConfigDao.insertArticleConfig(newArticleConfig);
-            return;
-        }
+  @Override
+  public void setPickBinStockLimit(String articleUuid, PickBinStockLimit pickBinStockLimit,
+      long version) throws IllegalArgumentException, VersionConflictException, WMSException {
+    Assert.assertArgumentNotNull(articleUuid, "articleUuid");
 
-        PersistenceUtils.checkVersion(version, articleConfig, "商品配置",
-                articleConfig.getArticle().getCode());
-        articleConfig.setStorageArea(storageArea);
-        articleConfigDao.updateArticleConfig(articleConfig);
+    verifyPickBinStockLimit(pickBinStockLimit);
+    ArticleConfig articleConfig = articleConfigDao.getArticleConfig(articleUuid);
+    if (articleConfig == null) {
+      if (pickBinStockLimit == null)
+        return;
+      Article article = articleService.get(articleUuid);
+      if (article == null)
+        throw new WMSException("商品不存在");
+      ArticleConfig newArticleConfig = new ArticleConfig();
+      newArticleConfig.setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
+      newArticleConfig.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+      newArticleConfig.setPickBinStockLimit(pickBinStockLimit);
+      articleConfigDao.insertArticleConfig(newArticleConfig);
+      return;
     }
 
-    @Override
-    public void setPickBinStockLimit(String articleUuid, PickBinStockLimit pickBinStockLimit,
-            long version) throws IllegalArgumentException, VersionConflictException, WMSException {
-        Assert.assertArgumentNotNull(articleUuid, "articleUuid");
+    PersistenceUtils.checkVersion(version, articleConfig, "商品配置",
+        articleConfig.getArticle().getCode());
+    articleConfig.setPickBinStockLimit(pickBinStockLimit);
+    articleConfigDao.updateArticleConfig(articleConfig);
+  }
 
-        verifyPickBinStockLimit(pickBinStockLimit);
-        ArticleConfig articleConfig = articleConfigDao.getArticleConfig(articleUuid);
-        if (articleConfig == null) {
-            if (pickBinStockLimit == null)
-                return;
-            Article article = articleService.get(articleUuid);
-            if (article == null)
-                throw new WMSException("商品不存在");
-            ArticleConfig newArticleConfig = new ArticleConfig();
-            newArticleConfig
-                    .setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
-            newArticleConfig.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-            newArticleConfig.setPickBinStockLimit(pickBinStockLimit);
-            articleConfigDao.insertArticleConfig(newArticleConfig);
-            return;
-        }
+  private void verifyPickBinStockLimit(PickBinStockLimit pickBinStockLimit) throws WMSException {
+    if (pickBinStockLimit == null)
+      return;
+    if (BigDecimal.ZERO.compareTo(pickBinStockLimit.getHighQty()) < 0
+        && BigDecimal.ZERO.compareTo(pickBinStockLimit.getLowQty()) < 0
+        && pickBinStockLimit.getHighQty().compareTo(pickBinStockLimit.getLowQty()) <= 0)
+      throw new WMSException("最高库存必须大于最低库存");
+    if (StringUtil.isNullOrBlank(pickBinStockLimit.getPickUpQpcStr()))
+      return;
 
-        PersistenceUtils.checkVersion(version, articleConfig, "商品配置",
-                articleConfig.getArticle().getCode());
-        articleConfig.setPickBinStockLimit(pickBinStockLimit);
-        articleConfigDao.updateArticleConfig(articleConfig);
-    }
+    if (pickBinStockLimit.getPickUpQpcStr()
+        .matches("^1\\*\\d+(\\.\\d+)?\\*\\d+(\\.\\d+)?$") == false)
+      throw new WMSException("拣货规格格式错误");
+  }
 
-    private void verifyPickBinStockLimit(PickBinStockLimit pickBinStockLimit) throws WMSException {
-        if (pickBinStockLimit == null)
-            return;
-        if (BigDecimal.ZERO.compareTo(pickBinStockLimit.getHighQty()) < 0
-                && BigDecimal.ZERO.compareTo(pickBinStockLimit.getLowQty()) < 0
-                && pickBinStockLimit.getHighQty().compareTo(pickBinStockLimit.getLowQty()) <= 0)
-            throw new WMSException("最高库存必须大于最低库存");
-        if (StringUtil.isNullOrBlank(pickBinStockLimit.getPickUpQpcStr()))
-            return;
+  @Override
+  public PageQueryResult<ArticleConfig> queryArticleConfigquery(PageQueryDefinition definition)
+      throws IllegalArgumentException {
+    Assert.assertArgumentNotNull(definition, "definition");
 
-        if (pickBinStockLimit.getPickUpQpcStr()
-                .matches("^1\\*\\d+(\\.\\d+)?\\*\\d+(\\.\\d+)?$") == false)
-            throw new WMSException("拣货规格格式错误");
-    }
-
-    @Override
-    public PageQueryResult<ArticleConfig> queryArticleConfigquery(PageQueryDefinition definition)
-            throws IllegalArgumentException {
-        Assert.assertArgumentNotNull(definition, "definition");
-
-        PageQueryResult<ArticleConfig> pgr = new PageQueryResult<ArticleConfig>();
-        List<ArticleConfig> list = articleConfigDao.query(definition);
-        PageQueryUtil.assignPageInfo(pgr, definition);
-        pgr.setRecords(list);
-        return pgr;
-    }
+    PageQueryResult<ArticleConfig> pgr = new PageQueryResult<ArticleConfig>();
+    List<ArticleConfig> list = articleConfigDao.query(definition);
+    PageQueryUtil.assignPageInfo(pgr, definition);
+    pgr.setRecords(list);
+    return pgr;
+  }
 }

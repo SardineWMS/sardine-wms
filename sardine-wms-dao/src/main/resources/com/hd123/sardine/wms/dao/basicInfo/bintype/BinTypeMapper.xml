@@ -48,6 +48,7 @@
 		lastModifyId,
 		lastModifyCode,
 		lastModifyName,
+		companyuuid,
 		version
 		) values(
 		#{uuid,jdbcType=VARCHAR},
@@ -66,6 +67,7 @@
 		#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
 		#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
 		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		#{companyUuid,jdbcType=VARCHAR},
 		#{version,jdbcType=LONGVARCHAR}
 		)
 	</insert>
@@ -79,7 +81,7 @@
 		resultMap="BaseResultMap">
 		select * from db_proxy.sardine_bintype t
 		where
-		t.code=#{code,jdbcType=VARCHAR}
+		t.code=#{code,jdbcType=VARCHAR} and t.companyUuid = #{companyUuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="queryByPage" parameterType="PageQueryDefinition"
@@ -87,6 +89,9 @@
 		select t.*
 		from db_proxy.sardine_bintype t
 		where 1=1
+		<if test="companyUuid != null">
+			and t.companyUuid = #{companyUuid}
+		</if>
 		<if test="code != null">
 			and t.code like CONCAT(CONCAT('%', #{code}),
 			'%')

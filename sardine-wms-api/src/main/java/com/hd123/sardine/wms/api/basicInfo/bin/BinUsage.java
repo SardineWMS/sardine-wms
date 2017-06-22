@@ -20,8 +20,6 @@ public enum BinUsage {
   StorageBin("存储位"),
   /** 拣货存储位 */
   PickUpStorageBin("拣货存储位"),
-  /** 拣货位 */
-  PickUpBin("拣货位"),
   /** 收货暂存位 */
   ReceiveStorageBin("收货暂存位"),
   /** 集货位 */
