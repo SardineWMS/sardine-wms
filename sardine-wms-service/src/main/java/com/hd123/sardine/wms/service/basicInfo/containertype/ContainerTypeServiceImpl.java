@@ -54,6 +54,8 @@ public class ContainerTypeServiceImpl extends BaseWMSService implements Containe
   public PageQueryResult<ContainerType> query(PageQueryDefinition definition)
       throws IllegalArgumentException {
     Assert.assertArgumentNotNull(definition, "definition");
+    
+    definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     PageQueryResult<ContainerType> pgr = new PageQueryResult<ContainerType>();
     List<ContainerType> list = dao.query(definition);
     PageQueryUtil.assignPageInfo(pgr, definition);
