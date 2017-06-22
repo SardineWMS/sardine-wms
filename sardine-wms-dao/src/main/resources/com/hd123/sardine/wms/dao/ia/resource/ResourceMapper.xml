@@ -142,7 +142,7 @@
 	<delete id="removeResourceByRole" parameterType="java.lang.String">
 		delete from
 		db_proxy.sardine_role_resource where
-		roleuuid=#{useruuid,jdbcType=VARCHAR}
+		roleuuid=#{roleUuid,jdbcType=VARCHAR}
 	</delete>
 
 	<select id="getParentResourceByResourceUuid" parameterType="map"

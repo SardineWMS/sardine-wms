@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.hd123.sardine.wms.dao.basicInfo.config.articleconfig.impl.ArticleConfigDaoImpl">
+	<resultMap id="BaseResultMap" type="ArticleConfig">
+		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
+		<result column="articleCode" property="article.code" jdbcType="VARCHAR" />
+		<result column="articleName" property="article.name" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="putawayBin" property="putawayBin" jdbcType="VARCHAR" />
+		<result column="fixedPickBin" property="fixedPickBin" jdbcType="VARCHAR" />
+		<result column="lowQty" property="pickBinStockLimit.lowQty" jdbcType="DECIMAL" />
+		<result column="highQty" property="pickBinStockLimit.highQty" jdbcType="DECIMAL" />
+		<result column="pickUpQpcStr" property="pickBinStockLimit.pickUpQpcStr" jdbcType="VARCHAR" />
+		<result column="storageArea" property="storageArea" jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<insert id="insert" parameterType="ArticleConfig">
+		insert into
+		db_proxy.sardine_article_config (
+		<if test="article != null and article.uuid != null">		
+			articleUuid,
+		</if>
+		companyUuid,
+		<if test="putawayBin != null">
+			putawayBin,
+		</if>
+		fixedPickBin,
+		<if test="pickBinStockLimit != null ">		
+			lowQty,
+			highQty,
+			pickUpQpcStr,
+		</if>
+		storageArea,
+		version
+		) values(
+		<if test="article != null and article.uuid != null">		
+			#{article.uuid,jdbcType=VARCHAR},
+		</if>
+		#{companyUuid,jdbcType=VARCHAR},
+		<if test="putawayBin != null">
+			#{putawayBin,jdbcType=VARCHAR},
+		</if>
+		#{fixedPickBin,jdbcType=VARCHAR},
+		<if test="pickBinStockLimit != null ">		
+			#{pickBinStockLimit.lowQty,jdbcType=DECIMAL},
+			#{pickBinStockLimit.highQty,jdbcType=DECIMAL},
+			#{pickBinStockLimit.pickUpQpcStr,jdbcType=VARCHAR},
+		</if>
+		#{storageArea,jdbcType=VARCHAR},
+		#{version,jdbcType=LONGVARCHAR}
+		)
+	</insert>
+
+	<select id="get" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select t.* from db_proxy.sardine_article_config t
+		where
+		t.articleUuid = #{articleUuid,jdbcType=VARCHAR}
+		and t.companyUuid =
+		#{companyUuid,jdbcType=VARCHAR}
+	</select>
+
+	<update id="update" parameterType="ArticleConfig">
+		update db_proxy.sardine_article_config
+		<set>
+			<if test="putawayBin != null">
+				putawayBin = #{putawayBin,jdbcType=VARCHAR},
+			</if>
+			fixedPickBin = #{fixedPickBin,jdbcType=VARCHAR},
+			storageArea = #{storageArea,jdbcType=VARCHAR},
+			<if test="pickBinStockLimit != null ">		
+				pickUpQpcStr = #{pickBinStockLimit.pickUpQpcStr,jdbcType=VARCHAR},
+				lowQty = #{pickBinStockLimit.lowQty,jdbcType=DECIMAL},
+				highQty = #{pickBinStockLimit.highQty,jdbcType=DECIMAL},
+			</if>
+			version = #{version, jdbcType=LONGVARCHAR} + 1
+		</set>
+		where articleUuid = #{article.uuid,jdbcType=VARCHAR}
+		and companyUuid =
+		#{companyUuid,jdbcType=VARCHAR}
+		and version = #{version,
+		jdbcType=LONGVARCHAR}
+	</update>
+
+	<select id="queryByPage" parameterType="PageQueryDefinition"
+		resultMap="BaseResultMap">
+		select t.companyUuid,t.putawayBin,t.storagearea,t.fixedPickBin,t.pickUpQpcStr,t.lowqty,t.highqty,t.version,a.uuid articleUuid, a.code  articleCode, a.name  articleName from
+		db_proxy.sardine_article_config t right join 
+		db_proxy.sardine_article a
+		on
+		t.articleUuid=a.uuid
+		where a.companyUuid=#{parentCompanyUuid,
+		jdbcType=VARCHAR}
+		and (t.companyUuid is null or t.companyUuid= #{companyUuid,
+		jdbcType=VARCHAR} )
+		<if test="articleCode != null and articleCode != ''">
+			and a.code = #{articleCode, jdbcType=VARCHAR}
+		</if>
+		<if test="fixedPickBin != null and fixedPickBin != ''">
+			and t.fixedPickBin = #{fixedPickBin, jdbcType=VARCHAR}
+		</if>
+		<if test="sortField != null and sortField == 'articleCode'">
+			order by a.code ${orderDir}
+		</if>
+	</select>
+</mapper>

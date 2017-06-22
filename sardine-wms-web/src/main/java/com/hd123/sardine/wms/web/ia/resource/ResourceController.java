@@ -39,12 +39,12 @@ public class ResourceController extends BaseController {
 
     @RequestMapping(value = "/queryOwnedMenuResourceByUser", method = RequestMethod.GET)
     public @ResponseBody RespObject queryOwnedAllResourceByUser(
-            @RequestParam(value = "userUuid") String userUuid,
             @RequestParam(value = "token") String token) {
         RespObject resp = new RespObject();
         try {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
-            List<Resource> resources = resourceService.queryOwnedMenuResourceByUser(userUuid);
+            List<Resource> resources = resourceService
+                    .queryOwnedMenuResourceByUser(getLoginUser(token).getUuid());
             resp.setObj(resources);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -127,6 +127,22 @@ public class ResourceController extends BaseController {
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             return new ErrorRespObject("新增角色资源权限", e.getMessage());
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/queryOwnedMenuByUpper", method = RequestMethod.GET)
+    public @ResponseBody RespObject queryOwnedMenuByUpper(
+            @RequestParam(value = "token") String token) {
+        RespObject resp = new RespObject();
+        try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
+            List<Resource> resources = resourceService
+                    .queryOwnedMenuByUpper(getLoginUser(token).getUuid(), "000208");
+            resp.setObj(resources);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (Exception e) {
+            return new ErrorRespObject("查询失败", e.getMessage());
         }
         return resp;
     }

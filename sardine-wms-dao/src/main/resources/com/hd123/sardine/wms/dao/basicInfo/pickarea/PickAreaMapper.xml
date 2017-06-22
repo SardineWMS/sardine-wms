@@ -8,6 +8,7 @@
 		<result column="code" property="code" jdbcType="VARCHAR" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="binScope" property="binScope" jdbcType="VARCHAR" />
+		<result column="storageArea" property="storageArea" jdbcType="VARCHAR" />
 		<result column="pickMode" property="pickMode" jdbcType="VARCHAR" />
 		<result column="pickVolume" property="pickVolume" jdbcType="DECIMAL" />
 		<result column="rplMode" property="rplMode" jdbcType="VARCHAR" />
@@ -49,6 +50,9 @@
 			<if test="binScope != null">
 				binScope,
 			</if>
+			<if test="storageArea != null">
+				storageArea,
+			</if>
 			<if test="pickMode != null">
 				pickMode,
 			</if>
@@ -89,6 +93,9 @@
 			</if>
 			<if test="binScope != null">
 				#{binScope,jdbcType=VARCHAR},
+			</if>
+			<if test="storageArea != null">
+				#{storageArea,jdbcType=VARCHAR},
 			</if>
 			<if test="pickMode != null">
 				#{pickMode,jdbcType=VARCHAR},
@@ -145,6 +152,7 @@
 			<if test="remark != null">
 				remark=#{remark,jdbcType=VARCHAR},
 			</if>
+			storageArea=#{storageArea,jdbcType=VARCHAR},
 			LASTMODIFYTIME =
 			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
 			LASTMODIFYID =

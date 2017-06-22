@@ -21,6 +21,7 @@ import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.ia.resource.Resource;
 import com.hd123.sardine.wms.api.ia.resource.ResourceService;
+import com.hd123.sardine.wms.api.ia.resource.ResourceType;
 import com.hd123.sardine.wms.api.ia.role.Role;
 import com.hd123.sardine.wms.api.ia.user.User;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
@@ -36,259 +37,278 @@ import com.hd123.sardine.wms.service.log.EntityLogger;
  */
 public class ResourceServiceImpl implements ResourceService {
 
-  @Autowired
-  private ResourceDao dao;
+    @Autowired
+    private ResourceDao dao;
 
-  @Autowired
-  private EntityLogger logger;
+    @Autowired
+    private EntityLogger logger;
 
-  @Override
-  public List<Resource> queryOwnedMenuResourceByUser(String userUuid)
-      throws IllegalArgumentException {
-    Assert.assertArgumentNotNull(userUuid, "userUuid");
+    @Override
+    public List<Resource> queryOwnedMenuResourceByUser(String userUuid)
+            throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(userUuid, "userUuid");
 
-    List<Resource> topMule = dao.queryOwnedTopMenuResourceByUser(userUuid,
-        ApplicationContextUtil.getUserType());
-    for (Resource t : topMule) {
-      List<Resource> moduleMenus = dao.queryOwnedChildResourceByUser(userUuid, t.getUuid(),
-          ApplicationContextUtil.getUserType());
-      t.getChildren().addAll(moduleMenus);
-    }
-    return topMule;
-  }
-
-  @Override
-  public List<Resource> queryAllResourceByUser(String userUuid) throws IllegalArgumentException {
-    Assert.assertArgumentNotNull(userUuid, "userUuid");
-
-    List<Resource> allTopMules = dao.queryAllTopMenuResource(ApplicationContextUtil.getUserType());
-    List<Resource> owmTopMules = dao.queryOwnedTopMenuResourceByUser(userUuid,
-        ApplicationContextUtil.getUserType());
-    for (Resource t : allTopMules) {
-      if (owmTopMules.contains(t))
-        t.setOwned(true);
-      List<Resource> allModuleMenus = dao.queryAllChildResource(t.getUuid(),
-          ApplicationContextUtil.getUserType());
-      List<Resource> ownModuleMenus = dao.queryOwnedChildResourceByUser(userUuid, t.getUuid(),
-          ApplicationContextUtil.getUserType());
-      for (Resource m : allModuleMenus) {
-        if (ownModuleMenus.contains(m))
-          m.setOwned(true);
-        List<Resource> allOperates = dao.queryAllChildResource(m.getUuid(),
-            ApplicationContextUtil.getUserType());
-        List<Resource> ownOperates = dao.queryOwnedChildResourceByUser(userUuid, m.getUuid(),
-            ApplicationContextUtil.getUserType());
-        for (Resource o : allOperates) {
-          if (ownOperates.contains(o))
-            o.setOwned(true);
+        List<Resource> topMule = dao.queryOwnedTopMenuResourceByUser(userUuid,
+                ApplicationContextUtil.getUserType());
+        for (Resource t : topMule) {
+            List<Resource> moduleMenus = dao.queryOwnedChildResourceByUser(userUuid, t.getUuid(),
+                    ApplicationContextUtil.getUserType());
+            t.getChildren().addAll(moduleMenus);
         }
-        m.getChildren().addAll(allOperates);
-      }
-      t.getChildren().addAll(allModuleMenus);
+        return topMule;
     }
 
-    return allTopMules;
-  }
+    @Override
+    public List<Resource> queryAllResourceByUser(String userUuid) throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(userUuid, "userUuid");
 
-  @Override
-  public List<Resource> queryAllResourceByRole(String roleUuid) throws IllegalArgumentException {
-    Assert.assertArgumentNotNull(roleUuid, "roleUuid");
-
-    List<Resource> allTopMules = dao.queryAllTopMenuResource(ApplicationContextUtil.getUserType());
-    List<Resource> owmTopMules = dao.queryOwnedTopMenuResourceByRole(roleUuid,
-        ApplicationContextUtil.getUserType());
-    for (Resource t : allTopMules) {
-      if (owmTopMules.contains(t))
-        t.setOwned(true);
-      List<Resource> allModuleMenus = dao.queryAllChildResource(t.getUuid(),
-          ApplicationContextUtil.getUserType());
-      List<Resource> ownModuleMenus = dao.queryOwnedChildResourceByRole(roleUuid, t.getUuid(),
-          ApplicationContextUtil.getUserType());
-      for (Resource m : allModuleMenus) {
-        if (ownModuleMenus.contains(m))
-          m.setOwned(true);
-        List<Resource> allOperates = dao.queryAllChildResource(m.getUuid(),
-            ApplicationContextUtil.getUserType());
-        List<Resource> ownOperates = dao.queryOwnedChildResourceByRole(roleUuid, m.getUuid(),
-            ApplicationContextUtil.getUserType());
-        for (Resource o : allOperates) {
-          if (ownOperates.contains(o))
-            o.setOwned(true);
+        List<Resource> allTopMules = dao
+                .queryAllTopMenuResource(ApplicationContextUtil.getUserType());
+        List<Resource> owmTopMules = dao.queryOwnedTopMenuResourceByUser(userUuid,
+                ApplicationContextUtil.getUserType());
+        for (Resource t : allTopMules) {
+            if (owmTopMules.contains(t))
+                t.setOwned(true);
+            List<Resource> allModuleMenus = dao.queryAllChildResource(t.getUuid(),
+                    ApplicationContextUtil.getUserType());
+            List<Resource> ownModuleMenus = dao.queryOwnedChildResourceByUser(userUuid, t.getUuid(),
+                    ApplicationContextUtil.getUserType());
+            for (Resource m : allModuleMenus) {
+                if (ownModuleMenus.contains(m))
+                    m.setOwned(true);
+                List<Resource> allOperates = dao.queryAllChildResource(m.getUuid(),
+                        ApplicationContextUtil.getUserType());
+                List<Resource> ownOperates = dao.queryOwnedChildResourceByUser(userUuid,
+                        m.getUuid(), ApplicationContextUtil.getUserType());
+                for (Resource o : allOperates) {
+                    if (ownOperates.contains(o))
+                        o.setOwned(true);
+                }
+                m.getChildren().addAll(allOperates);
+            }
+            t.getChildren().addAll(allModuleMenus);
         }
-        m.getChildren().addAll(allOperates);
-      }
-      t.getChildren().addAll(allModuleMenus);
+
+        return allTopMules;
     }
 
-    return allTopMules;
-  }
+    @Override
+    public List<Resource> queryAllResourceByRole(String roleUuid) throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(roleUuid, "roleUuid");
 
-  @Override
-  public void saveUserResource(String userUuid, List<String> resourceUuids)
-      throws IllegalArgumentException {
-    Assert.assertArgumentNotNull(userUuid, "userUuid");
+        List<Resource> allTopMules = dao
+                .queryAllTopMenuResource(ApplicationContextUtil.getUserType());
+        List<Resource> owmTopMules = dao.queryOwnedTopMenuResourceByRole(roleUuid,
+                ApplicationContextUtil.getUserType());
+        for (Resource t : allTopMules) {
+            if (owmTopMules.contains(t))
+                t.setOwned(true);
+            List<Resource> allModuleMenus = dao.queryAllChildResource(t.getUuid(),
+                    ApplicationContextUtil.getUserType());
+            List<Resource> ownModuleMenus = dao.queryOwnedChildResourceByRole(roleUuid, t.getUuid(),
+                    ApplicationContextUtil.getUserType());
+            for (Resource m : allModuleMenus) {
+                if (ownModuleMenus.contains(m))
+                    m.setOwned(true);
+                List<Resource> allOperates = dao.queryAllChildResource(m.getUuid(),
+                        ApplicationContextUtil.getUserType());
+                List<Resource> ownOperates = dao.queryOwnedChildResourceByRole(roleUuid,
+                        m.getUuid(), ApplicationContextUtil.getUserType());
+                for (Resource o : allOperates) {
+                    if (ownOperates.contains(o))
+                        o.setOwned(true);
+                }
+                m.getChildren().addAll(allOperates);
+            }
+            t.getChildren().addAll(allModuleMenus);
+        }
 
-    dao.removeResourceByUser(userUuid);
-    if (CollectionUtils.isEmpty(resourceUuids))
-      return;
-    Set<String> results = new HashSet<String>();
-
-    for (String rUuids : resourceUuids) {
-      Set<String> parentResources = queryResourceAllParentResource(rUuids);
-      results.addAll(parentResources);
+        return allTopMules;
     }
-    for (String resourceUuid : results)
-      dao.saveUserResource(userUuid, resourceUuid);
 
-    logger.injectContext(this, userUuid, User.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ADDNEW, "保存用户资源");
-  }
+    @Override
+    public void saveUserResource(String userUuid, List<String> resourceUuids)
+            throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(userUuid, "userUuid");
 
-  @Override
-  public void saveRoleResource(String roleUuid, List<String> resourceUuids)
-      throws IllegalArgumentException {
-    Assert.assertArgumentNotNull(roleUuid, "roleUuid");
+        dao.removeResourceByUser(userUuid);
+        if (CollectionUtils.isEmpty(resourceUuids))
+            return;
+        Set<String> results = new HashSet<String>();
 
-    dao.removeResourceByRole(roleUuid);
-    if (CollectionUtils.isEmpty(resourceUuids))
-      return;
-    for (String resourceUuid : resourceUuids)
-      dao.saveRoleResource(roleUuid, resourceUuid);
+        for (String rUuids : resourceUuids) {
+            Set<String> parentResources = queryResourceAllParentResource(rUuids);
+            results.addAll(parentResources);
+        }
+        for (String resourceUuid : results)
+            dao.saveUserResource(userUuid, resourceUuid);
 
-    logger.injectContext(this, roleUuid, Role.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ADDNEW, "保存角色资源");
-  }
-
-  @Override
-  public void removeResourceByUser(String userUuid) throws IllegalArgumentException {
-    Assert.assertArgumentNotNull(userUuid, "userUuid");
-
-    dao.removeResourceByUser(userUuid);
-
-    logger.injectContext(this, userUuid, User.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_REMOVE, "根据用户删除资源");
-  }
-
-  @Override
-  public void removeResourceByRole(String roleUuid) throws IllegalArgumentException {
-    Assert.assertArgumentNotNull(roleUuid, "roleUuid");
-
-    dao.removeResourceByRole(roleUuid);
-
-    logger.injectContext(this, roleUuid, Role.class.getTypeName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_REMOVE, "根据角色删除资源");
-  }
-
-  @Override
-  public List<Resource> queryOwnedResourceByUuser(String userUuid) throws IllegalArgumentException {
-    Assert.assertArgumentNotNull(userUuid, "userUuid");
-    List<Resource> allOwnedResources = new ArrayList<Resource>();
-    List<Resource> topMenuResources = dao.queryOwnedTopMenuResourceByUser(userUuid,
-        ApplicationContextUtil.getUserType());
-    allOwnedResources.addAll(topMenuResources);
-    for (Resource t : topMenuResources) {
-      List<Resource> moduleMenuResources = dao.queryOwnedChildResourceByUser(userUuid, t.getUuid(),
-          ApplicationContextUtil.getUserType());
-      allOwnedResources.addAll(moduleMenuResources);
-      for (Resource m : moduleMenuResources) {
-        List<Resource> operatesResources = dao.queryOwnedChildResourceByUser(userUuid, m.getUuid(),
-            ApplicationContextUtil.getUserType());
-        allOwnedResources.addAll(operatesResources);
-      }
+        logger.injectContext(this, userUuid, User.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "保存用户资源");
     }
-    return allOwnedResources;
-  }
 
-  @Override
-  public List<Resource> queryOwnedResourceByRole(String roleUuid) throws IllegalArgumentException {
-    Assert.assertArgumentNotNull(roleUuid, "roleUuid");
-    List<Resource> allOwnedResources = new ArrayList<Resource>();
-    List<Resource> topMenuResources = dao.queryOwnedTopMenuResourceByRole(roleUuid,
-        ApplicationContextUtil.getUserType());
-    allOwnedResources.addAll(topMenuResources);
-    for (Resource t : topMenuResources) {
-      List<Resource> moduleMenuResources = dao.queryOwnedChildResourceByRole(roleUuid, t.getUuid(),
-          ApplicationContextUtil.getUserType());
-      allOwnedResources.addAll(moduleMenuResources);
-      for (Resource m : moduleMenuResources) {
-        List<Resource> operatesResources = dao.queryOwnedChildResourceByRole(roleUuid, m.getUuid(),
-            ApplicationContextUtil.getUserType());
-        allOwnedResources.addAll(operatesResources);
-      }
+    @Override
+    public void saveRoleResource(String roleUuid, List<String> resourceUuids)
+            throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(roleUuid, "roleUuid");
+
+        dao.removeResourceByRole(roleUuid);
+        if (CollectionUtils.isEmpty(resourceUuids))
+            return;
+        for (String resourceUuid : resourceUuids)
+            dao.saveRoleResource(roleUuid, resourceUuid);
+
+        logger.injectContext(this, roleUuid, Role.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "保存角色资源");
     }
-    return allOwnedResources;
-  }
 
-  @Override
-  public List<Resource> queryByUpperResource(String upperUuid) {
-    if (StringUtil.isNullOrBlank(upperUuid))
-      return new ArrayList<Resource>();
+    @Override
+    public void removeResourceByUser(String userUuid) throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(userUuid, "userUuid");
 
-    List<Resource> result = new ArrayList<Resource>();
-    List<Resource> firstResources = dao.queryAllChildResource(upperUuid,
-        ApplicationContextUtil.getUserType());
-    result.addAll(firstResources);
-    for (Resource resource : firstResources) {
-      List<Resource> secondResources = dao.queryAllChildResource(resource.getUuid(),
-          ApplicationContextUtil.getUserType());
-      result.addAll(secondResources);
-      for (Resource secondResource : secondResources) {
-        result.addAll(dao.queryAllChildResource(secondResource.getUuid(),
-            ApplicationContextUtil.getUserType()));
-      }
+        dao.removeResourceByUser(userUuid);
+
+        logger.injectContext(this, userUuid, User.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_REMOVE, "根据用户删除资源");
     }
-    return result;
-  }
 
-  @Override
-  public List<Resource> queryOwnedOperateByUser(String userUuid) {
-    return dao.queryOwnedOperateByUser(userUuid, ApplicationContextUtil.getUserType());
-  }
+    @Override
+    public void removeResourceByRole(String roleUuid) throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(roleUuid, "roleUuid");
 
-  @Override
-  public List<Resource> queryOwnedOperateByUserType(UserType userType) {
-    Assert.assertArgumentNotNull(userType, "userType");
+        dao.removeResourceByRole(roleUuid);
 
-    return dao.queryOwnedOperateByUserType(userType);
-  }
-
-  @Override
-  public List<Resource> queryOwnedMenuByUserType(UserType userType) {
-    Assert.assertArgumentNotNull(userType, "userType");
-
-    List<Resource> topMule = dao.queryOwnedTopMenuResourceByUserType(userType);
-    for (Resource t : topMule) {
-      List<Resource> moduleMenus = dao.queryAllChildResourceByUserType(t.getUuid(), userType);
-      t.getChildren().addAll(moduleMenus);
+        logger.injectContext(this, roleUuid, Role.class.getTypeName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_REMOVE, "根据角色删除资源");
     }
-    return topMule;
-  }
 
-  @Override
-  public Set<String> queryResourceAllParentResource(String resourceUuid) {
-    if (StringUtil.isNullOrBlank(resourceUuid))
-      return null;
-    Set<String> parentUuids = new HashSet<String>();
-    Set<String> results = getParentResource(resourceUuid, parentUuids);
-    return results;
-
-  }
-
-  private Set<String> getParentResource(String resourceUuid, Set<String> parentUuids) {
-    parentUuids.add(resourceUuid);
-    Resource parentResource = dao.getParentResourceByResource(resourceUuid,
-        ApplicationContextUtil.getUserType());
-    if (parentResource == null)
-      return parentUuids;
-    if (StringUtil.isNullOrBlank(parentResource.getUpperUuid())) {
-      parentUuids.add(parentResource.getUuid());
-      return parentUuids;
+    @Override
+    public List<Resource> queryOwnedResourceByUuser(String userUuid)
+            throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(userUuid, "userUuid");
+        List<Resource> allOwnedResources = new ArrayList<Resource>();
+        List<Resource> topMenuResources = dao.queryOwnedTopMenuResourceByUser(userUuid,
+                ApplicationContextUtil.getUserType());
+        allOwnedResources.addAll(topMenuResources);
+        for (Resource t : topMenuResources) {
+            List<Resource> moduleMenuResources = dao.queryOwnedChildResourceByUser(userUuid,
+                    t.getUuid(), ApplicationContextUtil.getUserType());
+            allOwnedResources.addAll(moduleMenuResources);
+            for (Resource m : moduleMenuResources) {
+                List<Resource> operatesResources = dao.queryOwnedChildResourceByUser(userUuid,
+                        m.getUuid(), ApplicationContextUtil.getUserType());
+                allOwnedResources.addAll(operatesResources);
+            }
+        }
+        return allOwnedResources;
     }
-    Set<String> results = getParentResource(parentResource.getUuid(), parentUuids);
-    return results;
-  }
+
+    @Override
+    public List<Resource> queryOwnedResourceByRole(String roleUuid)
+            throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(roleUuid, "roleUuid");
+        List<Resource> allOwnedResources = new ArrayList<Resource>();
+        List<Resource> topMenuResources = dao.queryOwnedTopMenuResourceByRole(roleUuid,
+                ApplicationContextUtil.getUserType());
+        allOwnedResources.addAll(topMenuResources);
+        for (Resource t : topMenuResources) {
+            List<Resource> moduleMenuResources = dao.queryOwnedChildResourceByRole(roleUuid,
+                    t.getUuid(), ApplicationContextUtil.getUserType());
+            allOwnedResources.addAll(moduleMenuResources);
+            for (Resource m : moduleMenuResources) {
+                List<Resource> operatesResources = dao.queryOwnedChildResourceByRole(roleUuid,
+                        m.getUuid(), ApplicationContextUtil.getUserType());
+                allOwnedResources.addAll(operatesResources);
+            }
+        }
+        return allOwnedResources;
+    }
+
+    @Override
+    public List<Resource> queryByUpperResource(String upperUuid) {
+        if (StringUtil.isNullOrBlank(upperUuid))
+            return new ArrayList<Resource>();
+
+        List<Resource> result = new ArrayList<Resource>();
+        List<Resource> firstResources = dao.queryAllChildResource(upperUuid,
+                ApplicationContextUtil.getUserType());
+        result.addAll(firstResources);
+        for (Resource resource : firstResources) {
+            List<Resource> secondResources = dao.queryAllChildResource(resource.getUuid(),
+                    ApplicationContextUtil.getUserType());
+            result.addAll(secondResources);
+            for (Resource secondResource : secondResources) {
+                result.addAll(dao.queryAllChildResource(secondResource.getUuid(),
+                        ApplicationContextUtil.getUserType()));
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<Resource> queryOwnedOperateByUser(String userUuid) {
+        return dao.queryOwnedOperateByUser(userUuid, ApplicationContextUtil.getUserType());
+    }
+
+    @Override
+    public List<Resource> queryOwnedOperateByUserType(UserType userType) {
+        Assert.assertArgumentNotNull(userType, "userType");
+
+        return dao.queryOwnedOperateByUserType(userType);
+    }
+
+    @Override
+    public List<Resource> queryOwnedMenuByUserType(UserType userType) {
+        Assert.assertArgumentNotNull(userType, "userType");
+
+        List<Resource> topMule = dao.queryOwnedTopMenuResourceByUserType(userType);
+        for (Resource t : topMule) {
+            List<Resource> moduleMenus = dao.queryAllChildResourceByUserType(t.getUuid(), userType);
+            t.getChildren().addAll(moduleMenus);
+        }
+        return topMule;
+    }
+
+    @Override
+    public Set<String> queryResourceAllParentResource(String resourceUuid) {
+        if (StringUtil.isNullOrBlank(resourceUuid))
+            return null;
+        Set<String> parentUuids = new HashSet<String>();
+        Set<String> results = getParentResource(resourceUuid, parentUuids);
+        return results;
+
+    }
+
+    private Set<String> getParentResource(String resourceUuid, Set<String> parentUuids) {
+        parentUuids.add(resourceUuid);
+        Resource parentResource = dao.getParentResourceByResource(resourceUuid,
+                ApplicationContextUtil.getUserType());
+        if (parentResource == null)
+            return parentUuids;
+        if (StringUtil.isNullOrBlank(parentResource.getUpperUuid())) {
+            parentUuids.add(parentResource.getUuid());
+            return parentUuids;
+        }
+        Set<String> results = getParentResource(parentResource.getUuid(), parentUuids);
+        return results;
+    }
+
+    @Override
+    public List<Resource> queryOwnedMenuByUpper(String userUuid, String upperUuid) {
+        if (StringUtil.isNullOrBlank(upperUuid))
+            return null;
+        List<Resource> childResources = dao.queryAllChildResource(upperUuid, ApplicationContextUtil.getUserType());
+//                (userUuid, upperUuid,
+//                ApplicationContextUtil.getUserType());
+        for (Resource childResource : childResources) {
+            if (ResourceType.operate.name().equals(childResource.getType()))
+                continue;
+            childResource.setChildren(queryOwnedMenuByUpper(userUuid, childResource.getUuid()));
+        }
+        return childResources;
+    }
 }

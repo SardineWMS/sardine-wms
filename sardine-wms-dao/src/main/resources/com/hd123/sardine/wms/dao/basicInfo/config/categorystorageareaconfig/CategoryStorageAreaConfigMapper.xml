@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.hd123.sardine.wms.dao.basicInfo.config.categorystorageareaconfig.impl.CategoryStorageAreaConfigDaoImpl">
+	<resultMap id="BaseResultMap" type="CategoryStorageAreaConfig">
+		<result column="categoryUuid" property="category.uuid"
+			jdbcType="VARCHAR" />
+		<result column="categoryCode" property="category.code"
+			jdbcType="VARCHAR" />
+		<result column="categoryName" property="category.name"
+			jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="storageArea" property="storageArea" jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<insert id="insert" parameterType="CategoryStorageAreaConfig">
+		insert into
+		db_proxy.sardine_categorystoragearea_config (
+		<if test="category != null and category.uuid != null">
+			categoryUuid,
+		</if>
+		companyUuid,
+		storageArea,
+		version
+		) values(
+		<if test="category != null and category.uuid != null">
+			#{category.uuid,jdbcType=VARCHAR},
+		</if>
+		#{companyUuid,jdbcType=VARCHAR},
+		#{storageArea,jdbcType=VARCHAR},
+		#{version,jdbcType=LONGVARCHAR}
+		)
+	</insert>
+
+	<select id="get" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select t.* from db_proxy.sardine_categorystoragearea_config
+		t
+		where
+		t.categoryUuid = #{categoryUuid,jdbcType=VARCHAR}
+		and
+		t.companyUuid =
+		#{companyUuid,jdbcType=VARCHAR}
+	</select>
+
+	<update id="update" parameterType="CategoryStorageAreaConfig">
+		update db_proxy.sardine_categorystoragearea_config
+		<set>
+			storageArea = #{storageArea,jdbcType=VARCHAR},
+			version =
+			#{version, jdbcType=LONGVARCHAR} + 1
+		</set>
+		where categoryUuid = #{category.uuid,jdbcType=VARCHAR}
+		and companyUuid =
+		#{companyUuid,jdbcType=VARCHAR}
+		and version = #{version,
+		jdbcType=LONGVARCHAR}
+	</update>
+
+	<select id="queryByPage" parameterType="PageQueryDefinition"
+		resultMap="BaseResultMap">
+		select t.companyUuid,t.storageArea,t.version,c.uuid categoryUuid, c.code categoryCode, c.name categoryName from
+		db_proxy.sardine_categorystoragearea_config t right join
+		db_proxy.sardine_category c
+		on
+		t.categoryUuid=c.uuid
+		where
+		c.companyUuid=#{parentCompanyUuid,jdbcType=VARCHAR}
+		and (t.companyUuid
+		is null or t.companyUuid= #{companyUuid,
+		jdbcType=VARCHAR} )
+		<if test="categoryCode != null and categoryCode != ''">
+			and c.code = #{categoryCode, jdbcType=VARCHAR}
+		</if>
+		<if test="categoryName != null and categoryName != ''">
+			and c.name = #{categoryName, jdbcType=VARCHAR}
+		</if>
+		<if test="categoryUpperCode != null and categoryUpperCode != ''">
+			and c.upperCategory = (select uuid from db_proxy.sardine_category where code = #{categoryUpperCode, jdbcType=VARCHAR})
+		</if>
+		<if test="sortField != null and sortField == 'categoryCode'">
+			order by c.code ${orderDir}
+		</if>
+	</select>
+	
+	<delete id="remove" parameterType="java.util.Map">
+		delete from
+		db_proxy.sardine_categorystoragearea_config
+		where categoryUuid = #{categoryUuid, jdbcType=VARCHAR}
+		and
+		version = #{version, jdbcType=LONGVARCHAR}
+	</delete>
+</mapper>

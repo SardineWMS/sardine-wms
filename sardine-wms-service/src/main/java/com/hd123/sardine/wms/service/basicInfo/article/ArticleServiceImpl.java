@@ -26,8 +26,7 @@ import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.api.basicInfo.category.Category;
 import com.hd123.sardine.wms.api.basicInfo.category.CategoryService;
-import com.hd123.sardine.wms.api.basicInfo.config.ArticleConfig;
-import com.hd123.sardine.wms.api.basicInfo.config.SystemConfigService;
+import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.ArticleConfigService;
 import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
 import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierService;
 import com.hd123.sardine.wms.common.entity.UCN;
@@ -85,7 +84,7 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
     private BinService binService;
 
     @Autowired
-    private SystemConfigService systemConfigService;
+    private ArticleConfigService systemConfigService;
 
     @Autowired
     private ArticleFixedPickBinDao articleFixedPickBinDao;
@@ -113,10 +112,10 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
         article.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
         articleDao.insert(article);
 
-        ArticleConfig articleConfig = new ArticleConfig();
-        articleConfig.setArticleUuid(article.getUuid());
-        articleConfig.setPutawayBin(article.getPutawayBin());
-        systemConfigService.saveArticleConfig(articleConfig);
+        // ArticleConfig articleConfig = new ArticleConfig();
+        // articleConfig.setArticleUuid(article.getUuid());
+        // articleConfig.setPutawayBin(article.getPutawayBin());
+        // systemConfigService.saveArticleConfig(articleConfig);
 
         logger.injectContext(this, article.getUuid(), Article.class.getName(),
                 ApplicationContextUtil.getOperateContext());
@@ -143,10 +142,10 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
         article.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
         articleDao.update(article);
 
-        ArticleConfig articleConfig = new ArticleConfig();
-        articleConfig.setArticleUuid(article.getUuid());
-        articleConfig.setPutawayBin(article.getPutawayBin());
-        systemConfigService.saveArticleConfig(articleConfig);
+        // ArticleConfig articleConfig = new ArticleConfig();
+        // articleConfig.setArticleUuid(article.getUuid());
+        // articleConfig.setPutawayBin(article.getPutawayBin());
+        // systemConfigService.saveArticleConfig(articleConfig);
 
         logger.injectContext(this, article.getUuid(), Article.class.getName(),
                 ApplicationContextUtil.getOperateContext());
@@ -161,12 +160,13 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
             article.setArticleSuppliers(articleSupplierDao.queryByList(uuid));
             article.setBarcodes(articleBarcodeDao.queryByList(uuid));
             // article.setFixedPickBin(articleFixedPickBinDao.getFixedPickBin(uuid));
-            ArticleConfig articleConfig = systemConfigService.getArticleConfig(uuid);
-            if (articleConfig != null) {
-                article.setFixedPickBin(articleConfig.getFixedPickBin());
-                article.setPutawayBin(articleConfig.getPutawayBin());
-                article.setStorageArea(articleConfig.getStorageArea());
-            }
+            // ArticleConfig articleConfig =
+            // systemConfigService.getArticleConfig(uuid);
+            // if (articleConfig != null) {
+            // article.setFixedPickBin(articleConfig.getFixedPickBin());
+            // article.setPutawayBin(articleConfig.getPutawayBin());
+            // article.setStorageArea(articleConfig.getStorageArea());
+            // }
         }
         return article;
     }
@@ -179,12 +179,13 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
             article.setArticleSuppliers(articleSupplierDao.queryByList(article.getUuid()));
             article.setBarcodes(articleBarcodeDao.queryByList(article.getUuid()));
             // article.setFixedPickBin(articleFixedPickBinDao.getFixedPickBin(article.getUuid()));
-//            ArticleConfig articleConfig = systemConfigService.getArticleConfig(article.getUuid());
-//            if (articleConfig != null) {
-//                article.setFixedPickBin(articleConfig.getFixedPickBin());
-//                article.setPutawayBin(articleConfig.getPutawayBin());
-//                article.setStorageArea(articleConfig.getStorageArea());
-//            }
+            // ArticleConfig articleConfig =
+            // systemConfigService.getArticleConfig(article.getUuid());
+            // if (articleConfig != null) {
+            // article.setFixedPickBin(articleConfig.getFixedPickBin());
+            // article.setPutawayBin(articleConfig.getPutawayBin());
+            // article.setStorageArea(articleConfig.getStorageArea());
+            // }
         }
         return article;
     }
@@ -197,12 +198,13 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
             article.setArticleSuppliers(articleSupplierDao.queryByList(article.getUuid()));
             article.setBarcodes(articleBarcodeDao.queryByList(article.getUuid()));
             // article.setFixedPickBin(articleFixedPickBinDao.getFixedPickBin(article.getUuid()));
-            ArticleConfig articleConfig = systemConfigService.getArticleConfig(article.getUuid());
-            if (articleConfig != null) {
-                article.setFixedPickBin(articleConfig.getFixedPickBin());
-                article.setPutawayBin(articleConfig.getPutawayBin());
-                article.setStorageArea(articleConfig.getStorageArea());
-            }
+            // ArticleConfig articleConfig =
+            // systemConfigService.getArticleConfig(article.getUuid());
+            // if (articleConfig != null) {
+            // article.setFixedPickBin(articleConfig.getFixedPickBin());
+            // article.setPutawayBin(articleConfig.getPutawayBin());
+            // article.setStorageArea(articleConfig.getStorageArea());
+            // }
         }
         return article;
     }
