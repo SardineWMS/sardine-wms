@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.ArticleConfig;
 import com.hd123.sardine.wms.api.basicInfo.config.pickareastorageareaconfig.PickAreaStorageAreaConfig;
 import com.hd123.sardine.wms.api.basicInfo.config.pickareastorageareaconfig.PickAreaStorageAreaConfigService;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
@@ -56,6 +55,7 @@ public class PickAreaStorageAreaConfigController extends BaseController {
             definition.setOrderDir(OrderDir.valueOf(sortDirection));
             definition.put(PickAreaStorageAreaConfigService.QUERY_PICKAREACODE_FIELD, pickAreaCode);
             definition.put(PickAreaStorageAreaConfigService.QUERY_PICKAREANAME_FIELD, pickAreaName);
+            definition.setCompanyUuid(getLoginCompany(token).getUuid());
             PageQueryResult<PickAreaStorageAreaConfig> result = service.query(definition);
 
             resp.setObj(result);
@@ -65,21 +65,7 @@ public class PickAreaStorageAreaConfigController extends BaseController {
         }
         return resp;
     }
-    
-//    @RequestMapping(value = "/get", method = RequestMethod.GET)
-//    public @ResponseBody RespObject get(@RequestParam(value = "articleUuid") String articleUuid,
-//            @RequestParam(value = "token", required = true) String token) {
-//        RespObject resp = new RespObject();
-//        try {
-//            PickAreaStorageAreaConfig pickAreaStorageAreaConfig = service.getStorageAreaByPickArea(pickAreaUuid);
-//            resp.setObj(pickAreaStorageAreaConfig);
-//            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-//        } catch (Exception e) {
-//            return new ErrorRespObject("查询失败", e.getMessage());
-//        }
-//        return resp;
-//    }
-    
+
     @RequestMapping(value = "/setpickareastorageareaconfig", method = RequestMethod.PUT)
     public @ResponseBody RespObject setPickAreaStorageAreaConfig(
             @RequestParam(value = "token", required = true) String token,
