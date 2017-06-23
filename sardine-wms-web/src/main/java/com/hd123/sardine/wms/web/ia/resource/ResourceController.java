@@ -131,20 +131,4 @@ public class ResourceController extends BaseController {
         return resp;
     }
 
-    @RequestMapping(value = "/queryOwnedMenuByUpper", method = RequestMethod.GET)
-    public @ResponseBody RespObject queryOwnedMenuByUpper(
-            @RequestParam(value = "token") String token) {
-        RespObject resp = new RespObject();
-        try {
-            ApplicationContextUtil.setCompany(getLoginCompany(token));
-            List<Resource> resources = resourceService
-                    .queryOwnedMenuByUpper(getLoginUser(token).getUuid(), "000208");
-            resp.setObj(resources);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("查询失败", e.getMessage());
-        }
-        return resp;
-    }
-
 }

@@ -158,11 +158,4 @@ public interface ResourceService {
      */
     Set<String> queryResourceAllParentResource(String resourceUuid);
 
-    /**
-     * 根据父资源ID查询所拥有的下级菜单资源
-     * @param upperUuid
-     * @return
-     */
-    List<Resource> queryOwnedMenuByUpper(String userUuid,String upperUuid);
-
 }

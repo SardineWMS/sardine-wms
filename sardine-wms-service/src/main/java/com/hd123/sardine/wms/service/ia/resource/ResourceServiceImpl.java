@@ -21,7 +21,6 @@ import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.ia.resource.Resource;
 import com.hd123.sardine.wms.api.ia.resource.ResourceService;
-import com.hd123.sardine.wms.api.ia.resource.ResourceType;
 import com.hd123.sardine.wms.api.ia.role.Role;
 import com.hd123.sardine.wms.api.ia.user.User;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
@@ -295,20 +294,5 @@ public class ResourceServiceImpl implements ResourceService {
         }
         Set<String> results = getParentResource(parentResource.getUuid(), parentUuids);
         return results;
-    }
-
-    @Override
-    public List<Resource> queryOwnedMenuByUpper(String userUuid, String upperUuid) {
-        if (StringUtil.isNullOrBlank(upperUuid))
-            return null;
-        List<Resource> childResources = dao.queryAllChildResource(upperUuid, ApplicationContextUtil.getUserType());
-//                (userUuid, upperUuid,
-//                ApplicationContextUtil.getUserType());
-        for (Resource childResource : childResources) {
-            if (ResourceType.operate.name().equals(childResource.getType()))
-                continue;
-            childResource.setChildren(queryOwnedMenuByUpper(userUuid, childResource.getUuid()));
-        }
-        return childResources;
     }
 }
