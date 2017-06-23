@@ -211,7 +211,6 @@ public class DecIncController extends BaseController {
             service.audit(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
             return new ErrorRespObject("审核损溢单失败！", e.getMessage());
         }
         return resp;
