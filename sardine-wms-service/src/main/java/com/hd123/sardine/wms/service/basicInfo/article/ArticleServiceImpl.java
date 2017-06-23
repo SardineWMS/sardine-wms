@@ -26,6 +26,7 @@ import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.api.basicInfo.category.Category;
 import com.hd123.sardine.wms.api.basicInfo.category.CategoryService;
+import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.ArticleConfig;
 import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.ArticleConfigService;
 import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
 import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierService;
@@ -53,410 +54,406 @@ import com.hd123.sardine.wms.service.log.EntityLogger;
  */
 public class ArticleServiceImpl extends BaseWMSService implements ArticleService {
 
-  @Autowired
-  private ArticleDao articleDao;
+    @Autowired
+    private ArticleDao articleDao;
 
-  @Autowired
-  private ArticleQpcDao articleQpcDao;
+    @Autowired
+    private ArticleQpcDao articleQpcDao;
 
-  @Autowired
-  private ArticleBarcodeDao articleBarcodeDao;
+    @Autowired
+    private ArticleBarcodeDao articleBarcodeDao;
 
-  @Autowired
-  private ArticleSupplierDao articleSupplierDao;
+    @Autowired
+    private ArticleSupplierDao articleSupplierDao;
 
-  @Autowired
-  private ValidateHandler<Article> articleInsertValidateHandler;
+    @Autowired
+    private ValidateHandler<Article> articleInsertValidateHandler;
 
-  @Autowired
-  private ValidateHandler<Article> articleUpdateValidateHandler;
+    @Autowired
+    private ValidateHandler<Article> articleUpdateValidateHandler;
 
-  @Autowired
-  private ValidateHandler<ArticleQpc> articleQpcInsertValidateHandler;
+    @Autowired
+    private ValidateHandler<ArticleQpc> articleQpcInsertValidateHandler;
 
-  @Autowired
-  private CategoryService categoryService;
+    @Autowired
+    private CategoryService categoryService;
 
-  @Autowired
-  private SupplierService supplierService;
+    @Autowired
+    private SupplierService supplierService;
 
-  @Autowired
-  private BinService binService;
+    @Autowired
+    private BinService binService;
 
-  @Autowired
-  private ArticleConfigService systemConfigService;
+    @Autowired
+    private ArticleConfigService articleConfigService;
 
-  @Autowired
-  private ArticleFixedPickBinDao articleFixedPickBinDao;
+    @Autowired
+    private ArticleFixedPickBinDao articleFixedPickBinDao;
 
-  @Autowired
-  private EntityLogger logger;
+    @Autowired
+    private EntityLogger logger;
 
-  @Override
-  public String insert(Article article) throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(article, "article");
+    @Override
+    public String insert(Article article) throws IllegalArgumentException, WMSException {
+        Assert.assertArgumentNotNull(article, "article");
 
-    Article existsArticle = articleDao.getByCode(article.getCode());
-    Category category = categoryService
-        .get(article.getCategory() == null ? null : article.getCategory().getUuid());
+        Article existsArticle = articleDao.getByCode(article.getCode());
+        Category category = categoryService
+                .get(article.getCategory() == null ? null : article.getCategory().getUuid());
 
-    ValidateResult insertResult = articleInsertValidateHandler
-        .putAttribute(ArticleInsertValidateHandler.KEY_CODEEXISTS_ARTICLE, existsArticle)
-        .putAttribute(ArticleInsertValidateHandler.KEY_CATEGORY, category).validate(article);
-    checkValidateResult(insertResult);
+        ValidateResult insertResult = articleInsertValidateHandler
+                .putAttribute(ArticleInsertValidateHandler.KEY_CODEEXISTS_ARTICLE, existsArticle)
+                .putAttribute(ArticleInsertValidateHandler.KEY_CATEGORY, category)
+                .validate(article);
+        checkValidateResult(insertResult);
 
-    article.setCompanyUuid(ApplicationContextUtil.getParentCompanyUuid());
-    article.setUuid(article.getCompanyUuid() + article.getCode());
-    article.setCreateInfo(ApplicationContextUtil.getOperateInfo());
-    article.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
-    articleDao.insert(article);
+        article.setCompanyUuid(ApplicationContextUtil.getParentCompanyUuid());
+        article.setUuid(article.getCompanyUuid() + article.getCode());
+        article.setCreateInfo(ApplicationContextUtil.getOperateInfo());
+        article.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+        articleDao.insert(article);
 
-    // ArticleConfig articleConfig = new ArticleConfig();
-    // articleConfig.setArticleUuid(article.getUuid());
-    // articleConfig.setPutawayBin(article.getPutawayBin());
-    // systemConfigService.saveArticleConfig(articleConfig);
+        ArticleConfig articleConfig = new ArticleConfig();
+        articleConfig.setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
+        articleConfig.setPutawayBin(article.getPutawayBin());
+        articleConfigService.saveArticleConfig(articleConfig);
 
-    logger.injectContext(this, article.getUuid(), Article.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ADDNEW, "新增商品");
-    return article.getUuid();
-  }
-
-  @Override
-  public void update(Article article) throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(article, "article");
-
-    Article existsArticle = articleDao.getByCode(article.getCode());
-    Article updateArticle = articleDao.get(article.getUuid());
-    Category category = categoryService
-        .get(article.getCategory() == null ? null : article.getCategory().getUuid());
-
-    ValidateResult insertResult = articleUpdateValidateHandler
-        .putAttribute(ArticleUpdateValidateHandler.KEY_CODEEXISTS_ARTICLE, existsArticle)
-        .putAttribute(ArticleUpdateValidateHandler.KEY_UPDATE_ARTICLE, updateArticle)
-        .putAttribute(ArticleUpdateValidateHandler.KEY_CATEGORY, category).validate(article);
-    checkValidateResult(insertResult);
-
-    article.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
-    articleDao.update(article);
-
-    // ArticleConfig articleConfig = new ArticleConfig();
-    // articleConfig.setArticleUuid(article.getUuid());
-    // articleConfig.setPutawayBin(article.getPutawayBin());
-    // systemConfigService.saveArticleConfig(articleConfig);
-
-    logger.injectContext(this, article.getUuid(), Article.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_MODIFY, "修改商品");
-  }
-
-  @Override
-  public Article get(String uuid) {
-    Article article = articleDao.get(uuid);
-    if (article != null) {
-      article.setQpcs(articleQpcDao.queryByList(uuid));
-      article.setArticleSuppliers(articleSupplierDao.queryByList(uuid));
-      article.setBarcodes(articleBarcodeDao.queryByList(uuid));
-      // article.setFixedPickBin(articleFixedPickBinDao.getFixedPickBin(uuid));
-      // ArticleConfig articleConfig =
-      // systemConfigService.getArticleConfig(uuid);
-      // if (articleConfig != null) {
-      // article.setFixedPickBin(articleConfig.getFixedPickBin());
-      // article.setPutawayBin(articleConfig.getPutawayBin());
-      // article.setStorageArea(articleConfig.getStorageArea());
-      // }
-    }
-    return article;
-  }
-
-  @Override
-  public Article getByCode(String code) {
-    Article article = articleDao.getByCode(code);
-    if (article != null) {
-      article.setQpcs(articleQpcDao.queryByList(article.getUuid()));
-      article.setArticleSuppliers(articleSupplierDao.queryByList(article.getUuid()));
-      article.setBarcodes(articleBarcodeDao.queryByList(article.getUuid()));
-      // article.setFixedPickBin(articleFixedPickBinDao.getFixedPickBin(article.getUuid()));
-      // ArticleConfig articleConfig =
-      // systemConfigService.getArticleConfig(article.getUuid());
-      // if (articleConfig != null) {
-      // article.setFixedPickBin(articleConfig.getFixedPickBin());
-      // article.setPutawayBin(articleConfig.getPutawayBin());
-      // article.setStorageArea(articleConfig.getStorageArea());
-      // }
-    }
-    return article;
-  }
-
-  @Override
-  public Article getByBarcode(String barcode) {
-    Article article = articleDao.getByBarcode(barcode);
-    if (article != null) {
-      article.setQpcs(articleQpcDao.queryByList(article.getUuid()));
-      article.setArticleSuppliers(articleSupplierDao.queryByList(article.getUuid()));
-      article.setBarcodes(articleBarcodeDao.queryByList(article.getUuid()));
-      // article.setFixedPickBin(articleFixedPickBinDao.getFixedPickBin(article.getUuid()));
-      // ArticleConfig articleConfig =
-      // systemConfigService.getArticleConfig(article.getUuid());
-      // if (articleConfig != null) {
-      // article.setFixedPickBin(articleConfig.getFixedPickBin());
-      // article.setPutawayBin(articleConfig.getPutawayBin());
-      // article.setStorageArea(articleConfig.getStorageArea());
-      // }
-    }
-    return article;
-  }
-
-  @Override
-  public PageQueryResult<Article> query(PageQueryDefinition definition)
-      throws IllegalArgumentException {
-    Assert.assertArgumentNotNull(definition, "definition");
-
-    PageQueryResult<Article> pgr = new PageQueryResult<Article>();
-    List<Article> list = articleDao.query(definition);
-    PageQueryUtil.assignPageInfo(pgr, definition);
-    pgr.setRecords(list);
-    return pgr;
-  }
-
-  @Override
-  public void insertArticleQpc(ArticleQpc qpc) throws IllegalArgumentException, WMSException {
-    ValidateResult insertResult = articleQpcInsertValidateHandler.validate(qpc);
-    checkValidateResult(insertResult);
-
-    Article article = articleDao.get(qpc.getArticleUuid());
-    if (article == null)
-      throw new WMSException("商品" + qpc.getArticleUuid() + "不存在。");
-
-    List<ArticleQpc> qpcs = articleQpcDao.queryByList(qpc.getArticleUuid());
-    ArticleQpc oldQpc = null;
-    for (ArticleQpc qpcc : qpcs) {
-      if (qpcc.getUuid().equals(qpc.getUuid()))
-        oldQpc = qpcc;
-      else {
-        if (qpcc.getQpcStr().equals(qpc.getQpcStr()))
-          throw new WMSException("同一商品不能存在相同的规格。");
-      }
-    }
-    if (oldQpc == null) {
-      articleQpcDao.insert(qpc);
-    } else {
-      articleQpcDao.remove(qpc.getUuid());
-      articleQpcDao.insert(qpc);
+        logger.injectContext(this, article.getUuid(), Article.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "新增商品");
+        return article.getUuid();
     }
 
-    logger.injectContext(this, qpc.getUuid(), ArticleQpc.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ADDNEW, "新增商品规格");
-  }
+    @Override
+    public void update(Article article) throws IllegalArgumentException, WMSException {
+        Assert.assertArgumentNotNull(article, "article");
 
-  @Override
-  public void insertArticleBarcode(ArticleBarcode barcode)
-      throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(barcode, "barcode");
+        Article existsArticle = articleDao.getByCode(article.getCode());
+        Article updateArticle = articleDao.get(article.getUuid());
+        Category category = categoryService
+                .get(article.getCategory() == null ? null : article.getCategory().getUuid());
 
-    ArticleQpc qpc = articleQpcDao.getByQpcStr(barcode.getArticleUuid(), barcode.getQpcStr());
-    if (qpc == null)
-      throw new WMSException("规格" + barcode.getQpcStr() + "不存在。");
-    Article article = articleDao.get(barcode.getArticleUuid());
-    if (article == null)
-      throw new WMSException("商品" + barcode.getArticleUuid() + "不存在。");
-    Article articleByBarcode = articleDao.getByBarcode(barcode.getBarcode());
-    if (articleByBarcode != null
-        && articleByBarcode.getUuid().equals(barcode.getArticleUuid()) == false)
-      throw new WMSException("商品条码" + barcode.getBarcode() + "已被其他商品占用。");
+        ValidateResult insertResult = articleUpdateValidateHandler
+                .putAttribute(ArticleUpdateValidateHandler.KEY_CODEEXISTS_ARTICLE, existsArticle)
+                .putAttribute(ArticleUpdateValidateHandler.KEY_UPDATE_ARTICLE, updateArticle)
+                .putAttribute(ArticleUpdateValidateHandler.KEY_CATEGORY, category)
+                .validate(article);
+        checkValidateResult(insertResult);
 
-    List<ArticleBarcode> barcodes = articleBarcodeDao.queryByList(barcode.getArticleUuid());
-    ArticleBarcode oldAb = null;
-    for (ArticleBarcode ab : barcodes) {
-      if (ab.getUuid().equals(barcode.getUuid()))
-        oldAb = ab;
-      else {
-        if (ab.getBarcode().equals(barcode.getBarcode()))
-          throw new WMSException("同一商品不能存在相同的规格。");
-      }
-    }
-    if (oldAb == null) {
-      articleBarcodeDao.insert(barcode);
-    } else {
-      articleBarcodeDao.remove(barcode.getUuid());
-      articleBarcodeDao.insert(barcode);
+        article.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+        articleDao.update(article);
+
+        ArticleConfig articleConfig = new ArticleConfig();
+        articleConfig.setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
+        articleConfig.setPutawayBin(article.getPutawayBin());
+        articleConfigService.saveArticleConfig(articleConfig);
+
+        logger.injectContext(this, article.getUuid(), Article.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "修改商品");
     }
 
-    logger.injectContext(this, barcode.getUuid(), ArticleBarcode.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ADDNEW, "新增商品规格");
-  }
-
-  @Override
-  public void insertArticleSupplier(ArticleSupplier supplier)
-      throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(supplier, "supplier");
-
-    Supplier sup = supplierService.get(supplier.getSupplierUuid());
-    if (sup == null)
-      throw new WMSException("供应商" + supplier.getSupplierCode() + "不存在。");
-    Article article = articleDao.get(supplier.getArticleUuid());
-    if (article == null)
-      throw new WMSException("商品" + supplier.getArticleUuid() + "不存在。");
-
-    List<ArticleSupplier> ass = articleSupplierDao.queryByList(supplier.getArticleUuid());
-    ArticleSupplier as = null;
-    for (ArticleSupplier aas : ass) {
-      if (aas.getUuid().equals(supplier.getUuid()))
-        as = aas;
-      else if (aas.getSupplierUuid().equals(supplier.getSupplierUuid()))
-        throw new WMSException("同一商品不能存在相同的供应商。");
+    @Override
+    public Article get(String uuid) {
+        Article article = articleDao.get(uuid);
+        if (article != null) {
+            article.setQpcs(articleQpcDao.queryByList(uuid));
+            article.setArticleSuppliers(articleSupplierDao.queryByList(uuid));
+            article.setBarcodes(articleBarcodeDao.queryByList(uuid));
+            ArticleConfig articleConfig = articleConfigService.getArticleConfig(uuid);
+            if (articleConfig != null) {
+                article.setFixedPickBin(articleConfig.getFixedPickBin());
+                article.setPutawayBin(articleConfig.getPutawayBin());
+                article.setStorageArea(articleConfig.getStorageArea());
+            }
+        }
+        return article;
     }
 
-    if (as == null) {
-      as = new ArticleSupplier();
-      as.setUuid(supplier.getUuid());
-      as.setArticleUuid(supplier.getArticleUuid());
-      as.setSupplierUuid(sup.getUuid());
-      as.setSupplierCode(sup.getCode());
-      as.setSupplierName(sup.getName());
-      as.setDefault_(false);
-      articleSupplierDao.insert(as);
-    } else {
-      as.setSupplierUuid(sup.getUuid());
-      as.setSupplierCode(sup.getCode());
-      as.setSupplierName(sup.getName());
-      as.setDefault_(false);
-      articleSupplierDao.remove(supplier.getUuid());
-      articleSupplierDao.insert(as);
+    @Override
+    public Article getByCode(String code) {
+        Article article = articleDao.getByCode(code);
+        if (article != null) {
+            article.setQpcs(articleQpcDao.queryByList(article.getUuid()));
+            article.setArticleSuppliers(articleSupplierDao.queryByList(article.getUuid()));
+            article.setBarcodes(articleBarcodeDao.queryByList(article.getUuid()));
+            ArticleConfig articleConfig = articleConfigService.getArticleConfig(article.getUuid());
+            if (articleConfig != null) {
+                article.setFixedPickBin(articleConfig.getFixedPickBin());
+                article.setPutawayBin(articleConfig.getPutawayBin());
+                article.setStorageArea(articleConfig.getStorageArea());
+            }
+        }
+        return article;
     }
 
-    logger.injectContext(this, supplier.getUuid(), ArticleSupplier.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ADDNEW, "新增商品供应商");
-  }
+    @Override
+    public Article getByBarcode(String barcode) {
+        Article article = articleDao.getByBarcode(barcode);
+        if (article != null) {
+            article.setQpcs(articleQpcDao.queryByList(article.getUuid()));
+            article.setArticleSuppliers(articleSupplierDao.queryByList(article.getUuid()));
+            article.setBarcodes(articleBarcodeDao.queryByList(article.getUuid()));
+            ArticleConfig articleConfig = articleConfigService.getArticleConfig(article.getUuid());
+            if (articleConfig != null) {
+                article.setFixedPickBin(articleConfig.getFixedPickBin());
+                article.setPutawayBin(articleConfig.getPutawayBin());
+                article.setStorageArea(articleConfig.getStorageArea());
+            }
+        }
+        return article;
+    }
 
-  @Override
-  public void deleteArticleQpc(String articleUuid, String qpcUuid)
-      throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(articleUuid, "articleUuid");
-    Assert.assertArgumentNotNull(qpcUuid, "qpcUuid");
+    @Override
+    public PageQueryResult<Article> query(PageQueryDefinition definition)
+            throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(definition, "definition");
 
-    Article article = articleDao.get(articleUuid);
-    if (article == null)
-      throw new WMSException("商品" + articleUuid + "不存在。");
-    articleQpcDao.remove(qpcUuid);
+        PageQueryResult<Article> pgr = new PageQueryResult<Article>();
+        List<Article> list = articleDao.query(definition);
+        PageQueryUtil.assignPageInfo(pgr, definition);
+        pgr.setRecords(list);
+        return pgr;
+    }
 
-    logger.injectContext(this, qpcUuid, ArticleQpc.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_REMOVE, "删除商品规格");
-  }
+    @Override
+    public void insertArticleQpc(ArticleQpc qpc) throws IllegalArgumentException, WMSException {
+        ValidateResult insertResult = articleQpcInsertValidateHandler.validate(qpc);
+        checkValidateResult(insertResult);
 
-  @Override
-  public void deleteArticleBarcode(String articleUuid, String barcodeUuid)
-      throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(articleUuid, "articleUuid");
-    Assert.assertArgumentNotNull(barcodeUuid, "barcodeUuid");
+        Article article = articleDao.get(qpc.getArticleUuid());
+        if (article == null)
+            throw new WMSException("商品" + qpc.getArticleUuid() + "不存在。");
 
-    Article article = articleDao.get(articleUuid);
-    if (article == null)
-      throw new WMSException("商品" + articleUuid + "不存在。");
-    articleBarcodeDao.remove(barcodeUuid);
+        List<ArticleQpc> qpcs = articleQpcDao.queryByList(qpc.getArticleUuid());
+        ArticleQpc oldQpc = null;
+        for (ArticleQpc qpcc : qpcs) {
+            if (qpcc.getUuid().equals(qpc.getUuid()))
+                oldQpc = qpcc;
+            else {
+                if (qpcc.getQpcStr().equals(qpc.getQpcStr()))
+                    throw new WMSException("同一商品不能存在相同的规格。");
+            }
+        }
+        if (oldQpc == null) {
+            articleQpcDao.insert(qpc);
+        } else {
+            articleQpcDao.remove(qpc.getUuid());
+            articleQpcDao.insert(qpc);
+        }
 
-    logger.injectContext(this, barcodeUuid, ArticleBarcode.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_REMOVE, "删除商品条码");
-  }
+        logger.injectContext(this, qpc.getUuid(), ArticleQpc.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "新增商品规格");
+    }
 
-  @Override
-  public void deleteArticleSupplier(String articleUuid, String articleSupplierUuid)
-      throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(articleUuid, "articleUuid");
-    Assert.assertArgumentNotNull(articleSupplierUuid, "articleSupplierUuid");
+    @Override
+    public void insertArticleBarcode(ArticleBarcode barcode)
+            throws IllegalArgumentException, WMSException {
+        Assert.assertArgumentNotNull(barcode, "barcode");
 
-    Article article = articleDao.get(articleUuid);
-    if (article == null)
-      throw new WMSException("商品" + articleUuid + "不存在。");
-    articleSupplierDao.remove(articleSupplierUuid);
+        ArticleQpc qpc = articleQpcDao.getByQpcStr(barcode.getArticleUuid(), barcode.getQpcStr());
+        if (qpc == null)
+            throw new WMSException("规格" + barcode.getQpcStr() + "不存在。");
+        Article article = articleDao.get(barcode.getArticleUuid());
+        if (article == null)
+            throw new WMSException("商品" + barcode.getArticleUuid() + "不存在。");
+        Article articleByBarcode = articleDao.getByBarcode(barcode.getBarcode());
+        if (articleByBarcode != null
+                && articleByBarcode.getUuid().equals(barcode.getArticleUuid()) == false)
+            throw new WMSException("商品条码" + barcode.getBarcode() + "已被其他商品占用。");
 
-    logger.injectContext(this, articleSupplierUuid, ArticleSupplier.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_REMOVE, "删除商品供应商");
-  }
+        List<ArticleBarcode> barcodes = articleBarcodeDao.queryByList(barcode.getArticleUuid());
+        ArticleBarcode oldAb = null;
+        for (ArticleBarcode ab : barcodes) {
+            if (ab.getUuid().equals(barcode.getUuid()))
+                oldAb = ab;
+            else {
+                if (ab.getBarcode().equals(barcode.getBarcode()))
+                    throw new WMSException("同一商品不能存在相同的规格。");
+            }
+        }
+        if (oldAb == null) {
+            articleBarcodeDao.insert(barcode);
+        } else {
+            articleBarcodeDao.remove(barcode.getUuid());
+            articleBarcodeDao.insert(barcode);
+        }
 
-  @Override
-  public void setDefaultArticleSupplier(String articleUuid, String articleSupplierUuid)
-      throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(articleUuid, "articleUuid");
-    Assert.assertArgumentNotNull(articleSupplierUuid, "articleSupplierUuid");
+        logger.injectContext(this, barcode.getUuid(), ArticleBarcode.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "新增商品规格");
+    }
 
-    Article article = articleDao.get(articleUuid);
-    if (article == null)
-      throw new WMSException("商品" + articleUuid + "不存在。");
-    articleSupplierDao.setUnDefault(articleUuid);
-    articleSupplierDao.setDefault(articleSupplierUuid);
+    @Override
+    public void insertArticleSupplier(ArticleSupplier supplier)
+            throws IllegalArgumentException, WMSException {
+        Assert.assertArgumentNotNull(supplier, "supplier");
 
-    logger.injectContext(this, articleUuid, Article.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_MODIFY, "设置商品默认供应商");
-  }
+        Supplier sup = supplierService.get(supplier.getSupplierUuid());
+        if (sup == null)
+            throw new WMSException("供应商" + supplier.getSupplierCode() + "不存在。");
+        Article article = articleDao.get(supplier.getArticleUuid());
+        if (article == null)
+            throw new WMSException("商品" + supplier.getArticleUuid() + "不存在。");
 
-  @Override
-  public void setDefaultArticleQpc(String articleUuid, String qpcUuid)
-      throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(articleUuid, "articleUuid");
-    Assert.assertArgumentNotNull(qpcUuid, "qpcUuid");
+        List<ArticleSupplier> ass = articleSupplierDao.queryByList(supplier.getArticleUuid());
+        ArticleSupplier as = null;
+        for (ArticleSupplier aas : ass) {
+            if (aas.getUuid().equals(supplier.getUuid()))
+                as = aas;
+            else if (aas.getSupplierUuid().equals(supplier.getSupplierUuid()))
+                throw new WMSException("同一商品不能存在相同的供应商。");
+        }
 
-    Article article = articleDao.get(articleUuid);
-    if (article == null)
-      throw new WMSException("商品" + articleUuid + "不存在。");
-    articleQpcDao.setUnDefault(articleUuid);
-    articleQpcDao.setDefault(qpcUuid);
+        if (as == null) {
+            as = new ArticleSupplier();
+            as.setUuid(supplier.getUuid());
+            as.setArticleUuid(supplier.getArticleUuid());
+            as.setSupplierUuid(sup.getUuid());
+            as.setSupplierCode(sup.getCode());
+            as.setSupplierName(sup.getName());
+            as.setDefault_(false);
+            articleSupplierDao.insert(as);
+        } else {
+            as.setSupplierUuid(sup.getUuid());
+            as.setSupplierCode(sup.getCode());
+            as.setSupplierName(sup.getName());
+            as.setDefault_(false);
+            articleSupplierDao.remove(supplier.getUuid());
+            articleSupplierDao.insert(as);
+        }
 
-    logger.injectContext(this, articleUuid, Article.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_MODIFY, "设置商品默认规格");
-  }
+        logger.injectContext(this, supplier.getUuid(), ArticleSupplier.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "新增商品供应商");
+    }
 
-  @Override
-  public PageQueryResult<UCN> queryInStocks(PageQueryDefinition definition)
-      throws IllegalArgumentException {
-    Assert.assertArgumentNotNull(definition, "definition");
-    PageQueryResult<UCN> pgr = new PageQueryResult<>();
-    List<UCN> list = articleDao.queryInStocks(definition);
-    PageQueryUtil.assignPageInfo(pgr, definition);
-    pgr.setRecords(list);
-    return pgr;
-  }
+    @Override
+    public void deleteArticleQpc(String articleUuid, String qpcUuid)
+            throws IllegalArgumentException, WMSException {
+        Assert.assertArgumentNotNull(articleUuid, "articleUuid");
+        Assert.assertArgumentNotNull(qpcUuid, "qpcUuid");
 
-  @Override
-  public void updateArticleFixedPickBin(String articleUuid, String fixedPickBin)
-      throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(articleUuid, "articleUuid");
-    Assert.assertArgumentNotNull(fixedPickBin, "fixedPickBin");
+        Article article = articleDao.get(articleUuid);
+        if (article == null)
+            throw new WMSException("商品" + articleUuid + "不存在。");
+        articleQpcDao.remove(qpcUuid);
 
-    verifyArticleFixedPickBin(fixedPickBin);
-    articleFixedPickBinDao.removeByArticleCompany(articleUuid);
-    if (StringUtil.isNullOrBlank(fixedPickBin))
-      return;
-    articleFixedPickBinDao.insert(articleUuid, fixedPickBin);
+        logger.injectContext(this, qpcUuid, ArticleQpc.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_REMOVE, "删除商品规格");
+    }
 
-    logger.injectContext(this, articleUuid, Article.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_MODIFY, "设置商品固定拣货位");
-  }
+    @Override
+    public void deleteArticleBarcode(String articleUuid, String barcodeUuid)
+            throws IllegalArgumentException, WMSException {
+        Assert.assertArgumentNotNull(articleUuid, "articleUuid");
+        Assert.assertArgumentNotNull(barcodeUuid, "barcodeUuid");
 
-  private void verifyArticleFixedPickBin(String fixedPickBin) throws WMSException {
-    if (StringUtil.isNullOrBlank(fixedPickBin))
-      return;
-    Bin bin = binService.getBinByCode(fixedPickBin);
-    if (bin == null)
-      throw new WMSException("商品固定拣货位" + fixedPickBin + "不存在");
-    if (BinUsage.PickUpStorageBin.equals(bin.getUsage()) == false)
-      throw new WMSException("商品固定拣货位必须是" + BinUsage.PickUpStorageBin.getCaption());
-  }
+        Article article = articleDao.get(articleUuid);
+        if (article == null)
+            throw new WMSException("商品" + articleUuid + "不存在。");
+        articleBarcodeDao.remove(barcodeUuid);
 
-  @Override
-  public List<ArticleQpc> queryArticleQpcs(String articleUuid) throws IllegalArgumentException {
-    if (StringUtil.isNullOrBlank(articleUuid))
-      return new ArrayList<ArticleQpc>();
-    List<ArticleQpc> list = articleQpcDao.queryByList(articleUuid);
-    return list;
-  }
+        logger.injectContext(this, barcodeUuid, ArticleBarcode.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_REMOVE, "删除商品条码");
+    }
+
+    @Override
+    public void deleteArticleSupplier(String articleUuid, String articleSupplierUuid)
+            throws IllegalArgumentException, WMSException {
+        Assert.assertArgumentNotNull(articleUuid, "articleUuid");
+        Assert.assertArgumentNotNull(articleSupplierUuid, "articleSupplierUuid");
+
+        Article article = articleDao.get(articleUuid);
+        if (article == null)
+            throw new WMSException("商品" + articleUuid + "不存在。");
+        articleSupplierDao.remove(articleSupplierUuid);
+
+        logger.injectContext(this, articleSupplierUuid, ArticleSupplier.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_REMOVE, "删除商品供应商");
+    }
+
+    @Override
+    public void setDefaultArticleSupplier(String articleUuid, String articleSupplierUuid)
+            throws IllegalArgumentException, WMSException {
+        Assert.assertArgumentNotNull(articleUuid, "articleUuid");
+        Assert.assertArgumentNotNull(articleSupplierUuid, "articleSupplierUuid");
+
+        Article article = articleDao.get(articleUuid);
+        if (article == null)
+            throw new WMSException("商品" + articleUuid + "不存在。");
+        articleSupplierDao.setUnDefault(articleUuid);
+        articleSupplierDao.setDefault(articleSupplierUuid);
+
+        logger.injectContext(this, articleUuid, Article.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "设置商品默认供应商");
+    }
+
+    @Override
+    public void setDefaultArticleQpc(String articleUuid, String qpcUuid)
+            throws IllegalArgumentException, WMSException {
+        Assert.assertArgumentNotNull(articleUuid, "articleUuid");
+        Assert.assertArgumentNotNull(qpcUuid, "qpcUuid");
+
+        Article article = articleDao.get(articleUuid);
+        if (article == null)
+            throw new WMSException("商品" + articleUuid + "不存在。");
+        articleQpcDao.setUnDefault(articleUuid);
+        articleQpcDao.setDefault(qpcUuid);
+
+        logger.injectContext(this, articleUuid, Article.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "设置商品默认规格");
+    }
+
+    @Override
+    public PageQueryResult<UCN> queryInStocks(PageQueryDefinition definition)
+            throws IllegalArgumentException {
+        Assert.assertArgumentNotNull(definition, "definition");
+        PageQueryResult<UCN> pgr = new PageQueryResult<>();
+        List<UCN> list = articleDao.queryInStocks(definition);
+        PageQueryUtil.assignPageInfo(pgr, definition);
+        pgr.setRecords(list);
+        return pgr;
+    }
+
+    @Override
+    public void updateArticleFixedPickBin(String articleUuid, String fixedPickBin)
+            throws IllegalArgumentException, WMSException {
+        Assert.assertArgumentNotNull(articleUuid, "articleUuid");
+        Assert.assertArgumentNotNull(fixedPickBin, "fixedPickBin");
+
+        verifyArticleFixedPickBin(fixedPickBin);
+        articleFixedPickBinDao.removeByArticleCompany(articleUuid);
+        if (StringUtil.isNullOrBlank(fixedPickBin))
+            return;
+        articleFixedPickBinDao.insert(articleUuid, fixedPickBin);
+
+        logger.injectContext(this, articleUuid, Article.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_MODIFY, "设置商品固定拣货位");
+    }
+
+    private void verifyArticleFixedPickBin(String fixedPickBin) throws WMSException {
+        if (StringUtil.isNullOrBlank(fixedPickBin))
+            return;
+        Bin bin = binService.getBinByCode(fixedPickBin);
+        if (bin == null)
+            throw new WMSException("商品固定拣货位" + fixedPickBin + "不存在");
+        if (BinUsage.PickUpStorageBin.equals(bin.getUsage()) == false)
+            throw new WMSException("商品固定拣货位必须是" + BinUsage.PickUpStorageBin.getCaption());
+    }
+
+    @Override
+    public List<ArticleQpc> queryArticleQpcs(String articleUuid) throws IllegalArgumentException {
+        if (StringUtil.isNullOrBlank(articleUuid))
+            return new ArrayList<ArticleQpc>();
+        List<ArticleQpc> list = articleQpcDao.queryByList(articleUuid);
+        return list;
+    }
 }
