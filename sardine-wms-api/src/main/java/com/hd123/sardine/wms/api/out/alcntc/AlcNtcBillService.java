@@ -190,4 +190,13 @@ public interface AlcNtcBillService {
      */
     void pickUp(List<DeliveryArticleInfo> infos) throws IllegalArgumentException, WMSException;
 
+    /**
+     * 根据任务单号获取通知单
+     * 
+     * @param taskBillNumber
+     *            波次单号，为空返回空集合
+     * @return 通知单集合
+     */
+    List<AlcNtcBill> getByTaskBillNumber(String taskBillNumber);
+
 }

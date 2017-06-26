@@ -435,4 +435,11 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
         return result;
     }
 
+    @Override
+    public List<AlcNtcBill> getByTaskBillNumber(String taskBillNumber) {
+        if (StringUtil.isNullOrBlank(taskBillNumber))
+            return new ArrayList<>();
+        return dao.getByTaskBillNumber(taskBillNumber);
+    }
+
 }

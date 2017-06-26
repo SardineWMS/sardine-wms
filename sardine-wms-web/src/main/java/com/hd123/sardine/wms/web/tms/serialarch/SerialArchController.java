@@ -355,4 +355,25 @@ public class SerialArchController extends BaseController {
         return resp;
     }
 
+    @RequestMapping(value = "/querySerialArch", method = RequestMethod.GET)
+    public @ResponseBody RespObject querySerialArch(
+            @RequestParam(value = "token", required = true) String token) {
+        RespObject resp = new RespObject();
+        try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
+            ApplicationContextUtil.setOperateContext(getOperateContext(token));
+            PageQueryDefinition definition = new PageQueryDefinition();
+            definition.setCompanyUuid(getLoginCompany(token).getUuid());
+            definition.setPageSize(0);
+            PageQueryResult<SerialArch> result = service.query(definition);
+            resp.setObj(result.getRecords());
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("查询线路体系失败", e.getMessage());
+        }
+        return resp;
+    }
+
 }

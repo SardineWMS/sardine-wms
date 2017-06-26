@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd123.sardine.wms.dao.out.wave.impl.WaveBillDaoImpl">
+	<resultMap type="com.hd123.sardine.wms.api.out.wave.WaveBill"
+		id="WaveBillMap">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="billNumber" property="billNumber" jdbcType="VARCHAR" />
+		<result column="serialArchUuid" property="serialArch.uuid"
+			jdbcType="VARCHAR" />
+		<result column="serialArchCode" property="serialArch.code"
+			jdbcType="VARCHAR" />
+		<result column="serialArchName" property="serialArch.name"
+			jdbcType="VARCHAR" />
+		<result column="waveType" property="waveType" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+		<result column="createdtime " property="createInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="createdID" property="createInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="createdcode" property="createInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="createdName" property="createInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="lastModifytime" property="lastModifyInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="lastModifyid" property="lastModifyInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="lastModifycode" property="lastModifyInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap type="com.hd123.sardine.wms.api.out.wave.WaveBillItem"
+		id="WaveBillItemMap">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="waveBillUuid" property="waveBillUuid" jdbcType="VARCHAR" />
+		<result column="line" property="line" jdbcType="INTEGER" />
+		<result column="alcNtcBillNumber" property="alcNtcBillNumber"
+			jdbcType="VARCHAR" />
+		<result column="alcNtcBillState" property="alcNtcBillState"
+			jdbcType="VARCHAR" />
+		<result column="customerUuid" property="customer.uuid"
+			jdbcType="VARCHAR" />
+		<result column="customerCode" property="customer.code"
+			jdbcType="VARCHAR" />
+		<result column="customerName" property="customer.name"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<insert id="insert" parameterType="com.hd123.sardine.wms.api.out.wave.WaveBill">
+		insert into db_proxy.sardine_wavebill
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="billNumber != null">
+				billNumber,
+			</if>
+			<if test="serialArch != null and serialArch.uuid != null">
+				serialArchUuid,
+			</if>
+			<if test="serialArch != null and serialArch.code != null">
+				serialArchCode,
+			</if>
+			<if test="serialArch != null and serialArch.name != null">
+				serialArchName,
+			</if>
+			<if test="waveType != null">
+				waveType,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="companyUuid != null">
+				companyUuid,
+			</if>
+			<if test="version != null">
+				version,
+			</if>
+			<if test="createInfo != null  and createInfo.time != null">
+				CREATEDTIME,
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.id != null">
+				CREATEDID,
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.code != null">
+				CREATEDCode,
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.fullName != null">
+				CREATEDName,
+			</if>
+			<if test="lastModifyInfo != null  and lastModifyInfo.time != null">
+				LASTMODIFYTIME,
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				LASTMODIFYID,
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				LASTMODIFYCode,
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				LASTMODIFYName,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="billNumber != null">
+				#{billNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="serialArch != null and serialArch.uuid != null">
+				#{serialArch.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="serialArch != null and serialArch.code != null">
+				#{serialArch.code,jdbcType=VARCHAR},
+			</if>
+			<if test="serialArch != null and serialArch.name != null">
+				#{serialArch.name,jdbcType=VARCHAR},
+			</if>
+			<if test="waveType != null">
+				#{waveType,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=VARCHAR},
+			</if>
+			<if test="companyUuid != null">
+				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=VARCHAR},
+			</if>
+			<if test="createInfo != null  and createInfo.time != null">
+				#{createInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.id != null">
+				#{createInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.code != null">
+				#{createInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.fullName != null">
+				#{createInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+			<if test="lastModifyInfo != null  and lastModifyInfo.time != null">
+				#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<delete id="remove" parameterType="java.util.Map">
+		delete from
+		db_proxy.sardine_wavebill where
+		uuid=#{uuid,jdbcType=VARCHAR} and
+		version=#{version,jdbcType=LONGVARCHAR}
+	</delete>
+
+	<update id="update" parameterType="com.hd123.sardine.wms.api.out.wave.WaveBill">
+		update db_proxy.sardine_wavebill
+		<set>
+			<if test="serialArch != null and serialArch.uuid != null">
+				serialArchUuid=#{serialArch.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="serialArch != null and serialArch.code != null">
+				serialArchCode=#{serialArch.code,jdbcType=VARCHAR},
+			</if>
+			<if test="serialArch != null and serialArch.name != null">
+				serialArchName=#{serialArch.name,jdbcType=VARCHAR},
+			</if>
+			<if test="waveType != null">
+				waveType=#{waveType,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark=#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				state=#{state,jdbcType=VARCHAR},
+			</if>
+			version=#{version,jdbcType=LONGVARCHAR}+1,
+			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
+				LASTMODIFYTIME =
+				#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				LASTMODIFYID =
+				#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.code != null">
+				LASTMODIFYCODE =
+				#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				LASTMODIFYNAME =
+				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<where>
+			uuid=#{uuid,jdbcType=VARCHAR}
+			and
+			version=#{version,jdbcType=LONGVARCHAR}
+		</where>
+	</update>
+
+	<select id="get" parameterType="java.lang.String" resultMap="WaveBillMap">
+		select * from db_proxy.sardine_wavebill t where
+		t.uuid=#{uuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="queryByPage" parameterType="PageQueryDefinition"
+		resultMap="WaveBillMap">
+		select * from db_proxy.sardine_wavebill t where 1=1
+		<if test="companyUuid != null">
+			and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+		</if>
+		<if test="billNumber != null">
+			and t.billNumber like
+			CONCAT(CONCAT('%',#{billNumber}),'%')
+		</if>
+		<if test="state != null">
+			and t.state = #{state}
+		</if>
+		<if test="type != null">
+			and t.wavetype =#{type}
+		</if>
+	</select>
+
+	<insert id="insertItem" parameterType="com.hd123.sardine.wms.api.out.wave.WaveBillItem">
+		insert into db_proxy.sardine_wavebillitem
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null and uuid != ''">
+				uuid,
+			</if>
+			<if test="waveBillUuid != null">
+				waveBillUuid,
+			</if>
+			<if test="line != null">
+				line,
+			</if>
+			<if test="alcNtcBillNumber != null">
+				alcNtcBillNumber,
+			</if>
+			<if test="alcNtcBillState != null">
+				alcNtcBillState,
+			</if>
+			<if test="customer != null and customer.uuid != null">
+				customeruuid,
+			</if>
+			<if test="customer != null and customer.code != null">
+				customercode,
+			</if>
+			<if test="customer != null and customer.name != null">
+				customername
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null and uuid != ''">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="waveBillUuid != null">
+				#{waveBillUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="line != null">
+				#{line,jdbcType=INTEGER},
+			</if>
+			<if test="alcNtcBillNumber != null">
+				#{alcNtcBillNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="alcNtcBillState != null">
+				#{alcNtcBillState,jdbcType=VARCHAR},
+			</if>
+			<if test="customer != null and customer.uuid != null">
+				#{customer.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="customer != null and customer.code != null">
+				#{customer.code,jdbcType=VARCHAR},
+			</if>
+			<if test="customer != null and customer.name != null">
+				#{customer.name,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+
+	<select id="getItemsByWaveBillUuid" parameterType="java.lang.String"
+		resultMap="WaveBillItemMap">
+		select t.* from db_proxy.sardine_wavebillitem t where
+		t.wavebilluuid=#{waveBillUuid,jdbcType=VARCHAR}
+		order by line
+	</select>
+
+	<delete id="removeItems" parameterType="java.lang.String">
+		delete from
+		db_proxy.sardine_wavebillitem where
+		waveBilluuid=#{waveBillUuid,jdbcType=VARCHAR}
+	</delete>
+</mapper>

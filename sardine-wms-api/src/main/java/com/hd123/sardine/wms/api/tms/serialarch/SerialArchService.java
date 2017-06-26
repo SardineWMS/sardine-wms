@@ -183,4 +183,13 @@ public interface SerialArchService {
      */
     PageQueryResult<SerialArchLineCustomer> queryCustomerByLine(PageQueryDefinition definition)
             throws WMSException;
+
+    /**
+     * 根据UUID获取线路体系
+     * 
+     * @param uuid
+     *            uuid,为空则返回null
+     * @return 线路体系
+     */
+    SerialArch get(String uuid);
 }

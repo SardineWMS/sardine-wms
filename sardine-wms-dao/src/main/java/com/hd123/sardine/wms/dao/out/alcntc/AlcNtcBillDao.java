@@ -33,4 +33,6 @@ public interface AlcNtcBillDao extends BaseDao<AlcNtcBill> {
     void updateItem(AlcNtcBillItem item);
 
     AlcNtcBill getByItemUuid(String itemUuid);
+
+    List<AlcNtcBill> getByTaskBillNumber(String taskBillNumber);
 }

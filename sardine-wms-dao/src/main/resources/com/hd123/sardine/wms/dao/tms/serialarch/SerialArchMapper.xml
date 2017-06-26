@@ -310,4 +310,9 @@
 		order by
 		lineorder
 	</select>
+
+	<select id="get" parameterType="java.lang.String" resultMap="SerialArchMap">
+		select t.* from db_proxy.sardine_serialarch t where
+		t.uuid=#{uuid,jdbcType=VARCHAR}
+	</select>
 </mapper>

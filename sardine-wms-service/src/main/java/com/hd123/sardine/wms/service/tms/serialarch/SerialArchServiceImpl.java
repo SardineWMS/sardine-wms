@@ -427,4 +427,11 @@ public class SerialArchServiceImpl extends BaseWMSService implements SerialArchS
         return pqr;
     }
 
+    @Override
+    public SerialArch get(String uuid) {
+        if (StringUtil.isNullOrBlank(uuid))
+            return null;
+        return dao.get(uuid);
+    }
+
 }

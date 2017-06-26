@@ -25,7 +25,7 @@
 			jdbcType="VARCHAR" />
 		<result column="customername" property="customer.name"
 			jdbcType="VARCHAR" />
-		<result column="taksbillnumber" property="taksBillNumber"
+		<result column="taskBillNumber" property="taskBillNumber"
 			jdbcType="VARCHAR" />
 		<result column="totalcaseqtystr" property="totalCaseQtyStr"
 			jdbcType="VARCHAR" />
@@ -531,5 +531,11 @@
 	<select id="get" parameterType="java.lang.String" resultMap="AlcNtcBillMap">
 		select * from db_proxy.sardine_alcntcbill t where
 		t.uuid=#{uuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getByTaskBillNumber" parameterType="java.util.Map"
+		resultMap="AlcNtcBillMap">
+		select t.* from db_proxy.sardine_alcntcbill t where
+		t.taskbillnumber=#{taskBillNumber,jdbcType=VARCHAR}
 	</select>
 </mapper>

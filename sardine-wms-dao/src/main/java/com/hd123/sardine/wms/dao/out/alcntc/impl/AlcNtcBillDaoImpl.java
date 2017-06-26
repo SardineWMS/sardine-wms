@@ -33,6 +33,7 @@ public class AlcNtcBillDaoImpl extends BaseDaoImpl<AlcNtcBill> implements AlcNtc
     public static final String MAPPER_GETITEMBYUUID = "getItemByUuid";
     public static final String MAPPER_UPDATEITEM = "updateItem";
     public static final String MAPPER_GETBYITEMUUID = "getByItemUuid";
+    public static final String MAPPER_GETBYTASKBILLNUMBER = "getByTaskBillNumber";
 
     @Override
     public AlcNtcBill getByBillNumber(String billNumber) {
@@ -88,6 +89,15 @@ public class AlcNtcBillDaoImpl extends BaseDaoImpl<AlcNtcBill> implements AlcNtc
         if (StringUtil.isNullOrBlank(itemUuid))
             return null;
         return getSqlSession().selectOne(generateStatement(MAPPER_GETBYITEMUUID), itemUuid);
+    }
+
+    @Override
+    public List<AlcNtcBill> getByTaskBillNumber(String taskBillNumber) {
+        if (StringUtil.isNullOrBlank(taskBillNumber))
+            return new ArrayList<>();
+        Map<String, Object> map = ApplicationContextUtil.map();
+        map.put("taskBillNumber", taskBillNumber);
+        return getSqlSession().selectList(generateStatement(MAPPER_GETBYTASKBILLNUMBER), map);
     }
 
 }

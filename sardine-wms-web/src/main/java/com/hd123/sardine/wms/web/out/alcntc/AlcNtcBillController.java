@@ -37,7 +37,7 @@ import com.hd123.sardine.wms.web.base.BaseController;
  *
  */
 @RestController
-@RequestMapping("/out/alcntc")
+@RequestMapping("/out/alcNtc")
 public class AlcNtcBillController extends BaseController {
 
     @Autowired
