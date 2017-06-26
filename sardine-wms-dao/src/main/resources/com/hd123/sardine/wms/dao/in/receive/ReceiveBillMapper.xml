@@ -105,15 +105,9 @@
 			<if test="orderBillNumber != null">
 				orderBillNumber,
 			</if>
-			<if test="wrh != null and wrh.uuid != null">
-				wrhuuid,
-			</if>
-			<if test="wrh != null and wrh.code != null">
-				wrhcode,
-			</if>
-			<if test="wrh != null and wrh.name != null">
-				wrhname,
-			</if>
+			<if test="wrh != null and wrh.uuid != null"> wrhuuid, </if>
+			<!-- <if test="wrh != null and wrh.code != null"> wrhcode, </if> <if test="wrh 
+				!= null and wrh.name != null"> wrhname, </if> -->
 			<if test="method != null">
 				method,
 			</if>
@@ -173,12 +167,9 @@
 			<if test="wrh != null and wrh.uuid != null">
 				#{wrh.uuid,jdbcType=VARCHAR},
 			</if>
-			<if test="wrh != null and wrh.code != null">
-				#{wrh.code,jdbcType=VARCHAR},
-			</if>
-			<if test="wrh != null and wrh.name != null">
-				#{wrh.name,jdbcType=VARCHAR},
-			</if>
+			<!-- <if test="wrh != null and wrh.code != null"> #{wrh.code,jdbcType=VARCHAR}, 
+				</if> <if test="wrh != null and wrh.name != null"> #{wrh.name,jdbcType=VARCHAR}, 
+				</if> -->
 			<if test="method != null">
 				#{method,jdbcType=VARCHAR},
 			</if>
@@ -296,9 +287,10 @@
 	</select>
 
 	<select id="query" resultMap="ReceiveBillMap" parameterType="PageQueryDefinition">
-		select t.*
+		select t.*,w.code wrhCode,w.name wrhName
 		from db_proxy.sardine_receivebill
-		t,db_proxy.sardine_orderbill o where t.orderBillNumber=o.billNumber
+		t,db_proxy.sardine_orderbill o,db_proxy.sardine_wrh w where
+		t.orderBillNumber=o.billNumber and w.uuid=t.wrhuuid
 		<if test="billNumber != null and billNumber != ''">
 			and t.billNumber like CONCAT(CONCAT('%',
 			#{billNumber,jdbcType=VARCHAR}),
