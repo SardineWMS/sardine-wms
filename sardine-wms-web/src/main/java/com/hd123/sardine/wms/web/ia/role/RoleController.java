@@ -74,7 +74,7 @@ public class RoleController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询失败", e.getMessage());
+            return new ErrorRespObject("分页查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -88,7 +88,7 @@ public class RoleController extends BaseController {
             resp.setObj(roleUuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("新增角色失败", e.getMessage());
+            return new ErrorRespObject("新增角色失败：" + e.getMessage());
         }
         return resp;
     }
@@ -101,7 +101,7 @@ public class RoleController extends BaseController {
             roleService.update(role);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("编辑角色失败", e.getMessage());
+            return new ErrorRespObject("编辑角色失败：" + e.getMessage());
         }
         return resp;
     }
@@ -116,7 +116,7 @@ public class RoleController extends BaseController {
             roleService.remove(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("删除角色失败", e.getMessage());
+            return new ErrorRespObject("删除角色失败：" + e.getMessage());
         }
         return resp;
     }
@@ -131,7 +131,7 @@ public class RoleController extends BaseController {
             roleService.online(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("启用角色失败", e.getMessage());
+            return new ErrorRespObject("启用角色失败：" + e.getMessage());
         }
         return resp;
     }
@@ -146,7 +146,7 @@ public class RoleController extends BaseController {
             roleService.offline(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("禁用角色失败", e.getMessage());
+            return new ErrorRespObject("禁用角色失败：" + e.getMessage());
         }
         return resp;
     }
@@ -162,7 +162,7 @@ public class RoleController extends BaseController {
             resp.setObj(list);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询角色失败", e.getMessage());
+            return new ErrorRespObject("查询角色失败：" + e.getMessage());
         }
         return resp;
 
@@ -181,9 +181,9 @@ public class RoleController extends BaseController {
             resp.setObj(result.getRecords());
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("查询角色失败！", e.getMessage());
+            return new ErrorRespObject("查询角色失败：" + e.getMessage());
         }
         return resp;
 

@@ -56,9 +56,9 @@ public class WaveBillController extends BaseController {
             resp.setObj(uuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("新建波次单失败", e.getMessage());
+            return new ErrorRespObject("新建波次单失败》：" + e.getMessage());
         }
         return resp;
     }
@@ -74,9 +74,9 @@ public class WaveBillController extends BaseController {
             service.saveModify(bill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("修改波次单失败", e.getMessage());
+            return new ErrorRespObject("修改波次单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -93,9 +93,9 @@ public class WaveBillController extends BaseController {
             service.remove(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("删除波次单失败", e.getMessage());
+            return new ErrorRespObject("删除波次单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -130,7 +130,7 @@ public class WaveBillController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询波次单失败", e.getMessage());
+            return new ErrorRespObject("分页查询波次单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -147,9 +147,9 @@ public class WaveBillController extends BaseController {
             resp.setObj(bill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("获取波次单失败", e.getMessage());
+            return new ErrorRespObject("获取波次单失败：" + e.getMessage());
         }
         return resp;
 

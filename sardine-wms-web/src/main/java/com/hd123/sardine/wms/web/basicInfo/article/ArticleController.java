@@ -64,7 +64,7 @@ public class ArticleController extends BaseController {
             resp.setObj(article);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询失败", e.getMessage());
+            return new ErrorRespObject("查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -79,7 +79,7 @@ public class ArticleController extends BaseController {
             resp.setObj(article);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询失败", e.getMessage());
+            return new ErrorRespObject("查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -112,7 +112,7 @@ public class ArticleController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询失败", e.getMessage());
+            return new ErrorRespObject("分页查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -132,7 +132,7 @@ public class ArticleController extends BaseController {
             resp.setObj(articleService.get(articleUuid));
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("新增商品失败", e.getMessage());
+            return new ErrorRespObject("新增商品失败：" + e.getMessage());
         }
         return resp;
     }
@@ -160,7 +160,7 @@ public class ArticleController extends BaseController {
             resp.setObj(article);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("保存商品供应商失败", e.getMessage());
+            return new ErrorRespObject("保存商品供应商失败：" + e.getMessage());
         }
         return resp;
     }
@@ -178,7 +178,7 @@ public class ArticleController extends BaseController {
             resp.setObj(article);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("新增商品供应商失败", e.getMessage());
+            return new ErrorRespObject("新增商品供应商失败：" + e.getMessage());
         }
         return resp;
     }
@@ -195,7 +195,7 @@ public class ArticleController extends BaseController {
             resp.setObj(article);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("删除商品供应商失败", e.getMessage());
+            return new ErrorRespObject("删除商品供应商失败：" + e.getMessage());
         }
         return resp;
     }
@@ -212,7 +212,7 @@ public class ArticleController extends BaseController {
             resp.setObj(article);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("设置默认商品供应商失败", e.getMessage());
+            return new ErrorRespObject("设置默认商品供应商失败：" + e.getMessage());
         }
         return resp;
     }
@@ -229,7 +229,7 @@ public class ArticleController extends BaseController {
             resp.setObj(article);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("设置默认规格失败", e.getMessage());
+            return new ErrorRespObject("设置默认规格失败：" + e.getMessage());
         }
         return resp;
     }
@@ -246,7 +246,7 @@ public class ArticleController extends BaseController {
             resp.setObj(article);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("编辑用户失败", e.getMessage());
+            return new ErrorRespObject("编辑用户失败：" + e.getMessage());
         }
         return resp;
     }
@@ -279,7 +279,7 @@ public class ArticleController extends BaseController {
             resp.setObj(article);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("保存商品规格失败", e.getMessage());
+            return new ErrorRespObject("保存商品规格失败：" + e.getMessage());
         }
         return resp;
     }
@@ -297,7 +297,7 @@ public class ArticleController extends BaseController {
             resp.setObj(article);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("新增商品规格失败", e.getMessage());
+            return new ErrorRespObject("新增商品规格失败：" + e.getMessage());
         }
         return resp;
     }
@@ -314,7 +314,7 @@ public class ArticleController extends BaseController {
             resp.setObj(article);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("删除商品条码失败", e.getMessage());
+            return new ErrorRespObject("删除商品条码失败：" + e.getMessage());
         }
         return resp;
     }
@@ -338,7 +338,7 @@ public class ArticleController extends BaseController {
             resp.setObj(article);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("保存商品条码失败", e.getMessage());
+            return new ErrorRespObject("保存商品条码失败：" + e.getMessage());
         }
         return resp;
     }
@@ -356,7 +356,7 @@ public class ArticleController extends BaseController {
             resp.setObj(article);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("增加商品条码失败", e.getMessage());
+            return new ErrorRespObject("增加商品条码失败：" + e.getMessage());
         }
         return resp;
     }
@@ -387,13 +387,13 @@ public class ArticleController extends BaseController {
             resp.setObj(results);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录。", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("查询库存商品失败。", e.getMessage());
+            return new ErrorRespObject("查询库存商品失败：" + e.getMessage());
         }
         return resp;
     }
-    
+
     @RequestMapping(value = "/setArticleFixedPickBin", method = RequestMethod.PUT)
     public @ResponseBody RespObject setArticleFixedPickBin(
             @RequestParam(value = "articleUuid", required = true) String articleUuid,
@@ -404,7 +404,7 @@ public class ArticleController extends BaseController {
             articleService.updateArticleFixedPickBin(articleUuid, fixedPickBin);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("设置商品固定拣货位失败", e.getMessage());
+            return new ErrorRespObject("设置商品固定拣货位失败：" + e.getMessage());
         }
         return resp;
     }

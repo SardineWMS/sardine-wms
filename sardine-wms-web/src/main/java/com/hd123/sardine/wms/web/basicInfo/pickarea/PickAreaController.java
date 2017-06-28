@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hd123.sardine.wms.api.basicInfo.pickarea.PickArea;
 import com.hd123.sardine.wms.api.basicInfo.pickarea.PickAreaService;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
-import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -66,9 +65,9 @@ public class PickAreaController extends BaseController {
             resp.setObj(qpr);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询拣货分区失败", e.getMessage());
+            return new ErrorRespObject("分页查询拣货分区失败：" + e.getMessage());
         }
         return resp;
     }
@@ -86,9 +85,9 @@ public class PickAreaController extends BaseController {
             resp.setObj(uuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
-        } catch (WMSException e) {
-            return new ErrorRespObject("新增拣货分区失败", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("新增拣货分区失败：" + e.getMessage());
         }
         return resp;
     }
@@ -104,9 +103,9 @@ public class PickAreaController extends BaseController {
             service.saveModify(area);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
-        } catch (WMSException e) {
-            return new ErrorRespObject("修改拣货分区失败", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("修改拣货分区失败：" + e.getMessage());
         }
         return resp;
     }
@@ -123,9 +122,9 @@ public class PickAreaController extends BaseController {
             service.remove(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
-        } catch (WMSException e) {
-            return new ErrorRespObject("删除拣货分区失败", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("删除拣货分区失败：" + e.getMessage());
         }
         return resp;
     }
@@ -140,7 +139,7 @@ public class PickAreaController extends BaseController {
             resp.setObj(area);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("获取拣货分区失败", e.getMessage());
+            return new ErrorRespObject("获取拣货分区失败：" + e.getMessage());
         }
         return resp;
     }

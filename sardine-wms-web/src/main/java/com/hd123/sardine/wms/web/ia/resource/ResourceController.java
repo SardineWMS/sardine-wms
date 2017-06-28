@@ -48,7 +48,7 @@ public class ResourceController extends BaseController {
             resp.setObj(resources);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询失败", e.getMessage());
+            return new ErrorRespObject("查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -64,7 +64,7 @@ public class ResourceController extends BaseController {
             resp.setObj(resources);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询失败", e.getMessage());
+            return new ErrorRespObject("查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -79,7 +79,7 @@ public class ResourceController extends BaseController {
             resp.setObj(resources);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询失败", e.getMessage());
+            return new ErrorRespObject("查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -94,7 +94,7 @@ public class ResourceController extends BaseController {
             resp.setObj(resources);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询失败", e.getMessage());
+            return new ErrorRespObject("查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -110,7 +110,7 @@ public class ResourceController extends BaseController {
             resourceService.saveUserResource(userUuid, resourceUuids);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("新增用户资源权限", e.getMessage());
+            return new ErrorRespObject("新增用户资源权限：" + e.getMessage());
         }
         return resp;
     }
@@ -126,7 +126,7 @@ public class ResourceController extends BaseController {
             resourceService.saveRoleResource(roleUuid, resourceUuids);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("新增角色资源权限", e.getMessage());
+            return new ErrorRespObject("新增角色资源权限：" + e.getMessage());
         }
         return resp;
     }

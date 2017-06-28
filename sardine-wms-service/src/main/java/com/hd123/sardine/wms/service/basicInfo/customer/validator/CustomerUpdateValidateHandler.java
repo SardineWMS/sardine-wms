@@ -44,10 +44,10 @@ public class CustomerUpdateValidateHandler extends GenericValidateHandler<Custom
         on("客户代码", bean.getCode(), length30Validator);
         on("客户名称", bean.getName(), notNullValidator);
         on("客户名称", bean.getName(), length100Validator);
-        on("联系方式", bean.getPhone(), notNullValidator);
-        on("联系方式", bean.getPhone(), length100Validator);
-        on("地址", bean.getAddress(), notNullValidator);
-        on("地址", bean.getAddress(), length100Validator);
+//        on("联系方式", bean.getPhone(), notNullValidator);
+//        on("联系方式", bean.getPhone(), length100Validator);
+//        on("地址", bean.getAddress(), notNullValidator);
+//        on("地址", bean.getAddress(), length100Validator);
         on("状态", bean.getState(), notNullValidator);
         on("组织ID", bean.getCompanyUuid(), notNullValidator);
         on("组织ID", bean.getCompanyUuid(), length30Validator);

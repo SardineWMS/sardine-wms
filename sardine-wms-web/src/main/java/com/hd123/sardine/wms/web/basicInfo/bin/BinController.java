@@ -96,7 +96,7 @@ public class BinController extends BaseController {
             resp.setObj(resultData);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询失败", e.getMessage());
+            return new ErrorRespObject("分页查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -110,7 +110,7 @@ public class BinController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询仓位信息失败", e.getMessage());
+            return new ErrorRespObject("查询仓位信息失败：" + e.getMessage());
         }
         return resp;
     }
@@ -124,7 +124,7 @@ public class BinController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询货区信息失败", e.getMessage());
+            return new ErrorRespObject("查询货区信息失败：" + e.getMessage());
         }
         return resp;
     }
@@ -142,7 +142,7 @@ public class BinController extends BaseController {
             resp.setObj(binTypes.getRecords());
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询货位类型失败", e.getMessage());
+            return new ErrorRespObject("查询货位类型失败：" + e.getMessage());
         }
         return resp;
     }
@@ -163,7 +163,7 @@ public class BinController extends BaseController {
             binService.insertWrh(wrh);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("保存仓位失败", e.getMessage());
+            return new ErrorRespObject("保存仓位失败：" + e.getMessage());
         }
         return resp;
     }
@@ -187,7 +187,7 @@ public class BinController extends BaseController {
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ErrorRespObject("保存货区失败", e.getMessage());
+            return new ErrorRespObject("保存货区失败：" + e.getMessage());
         }
         return resp;
     }
@@ -204,8 +204,7 @@ public class BinController extends BaseController {
             binService.insertPath(path);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ErrorRespObject("保存货道失败", e.getMessage());
+            return new ErrorRespObject("保存货道失败：" + e.getMessage());
         }
         return resp;
     }
@@ -219,8 +218,7 @@ public class BinController extends BaseController {
             binService.insertShelf(pathCode);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ErrorRespObject("保存货架失败", e.getMessage());
+            return new ErrorRespObject("保存货架失败：" + e.getMessage());
         }
         return resp;
     }
@@ -241,8 +239,7 @@ public class BinController extends BaseController {
             binService.insertBin(bin);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ErrorRespObject("保存货位失败", e.getMessage());
+            return new ErrorRespObject("保存货位失败：" + e.getMessage());
         }
         return resp;
     }
@@ -257,7 +254,7 @@ public class BinController extends BaseController {
             binService.remove(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("删除货位失败", e.getMessage());
+            return new ErrorRespObject("删除货位失败：" + e.getMessage());
         }
         return resp;
     }
@@ -273,9 +270,9 @@ public class BinController extends BaseController {
             resp.setObj(bin);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登陆信息为空，请重新登陆", e.getMessage());
+            return new ErrorRespObject("登陆信息为空，请重新登陆：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("根据代码查询货位失败!", e.getMessage());
+            return new ErrorRespObject("根据代码查询货位失败：" + e.getMessage());
         }
         return resp;
     }

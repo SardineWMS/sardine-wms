@@ -47,10 +47,10 @@ public class CustomerInsertValidateHandler extends GenericValidateHandler<Custom
         on("客户名称", bean.getName(), notNullValidator);
         on("客户名称", bean.getName(), length100Validator);
         on("客户类型", bean.getType(), notNullValidator);
-        on("联系方式", bean.getPhone(), notNullValidator);
-        on("联系方式", bean.getPhone(), length100Validator);
-        on("地址", bean.getAddress(), notNullValidator);
-        on("地址", bean.getAddress(), length100Validator);
+//        on("联系方式", bean.getPhone(), notNullValidator);
+//        on("联系方式", bean.getPhone(), length100Validator);
+//        on("地址", bean.getAddress(), notNullValidator);
+//        on("地址", bean.getAddress(), length100Validator);
 
         Customer customer = (Customer) getAttribute(KEY_CODEEXISTS_CUSTOMER);
         on("客户代码" + bean.getCode(), customer, nullValidator);

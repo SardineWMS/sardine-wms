@@ -54,9 +54,9 @@ public class CarrierController extends BaseController {
             resp.setObj(uuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (IllegalArgumentException e) {
-            return new ErrorRespObject("参数异常", e.getMessage());
+            return new ErrorRespObject("参数异常：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("新增承运商失败", e.getMessage());
+            return new ErrorRespObject("新增承运商失败：" + e.getMessage());
         }
         return resp;
     }
@@ -72,9 +72,9 @@ public class CarrierController extends BaseController {
             service.saveModify(carrier);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (IllegalArgumentException e) {
-            return new ErrorRespObject("参数异常", e.getMessage());
+            return new ErrorRespObject("参数异常：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("修改承运商失败", e.getMessage());
+            return new ErrorRespObject("修改承运商失败：" + e.getMessage());
         }
         return resp;
     }
@@ -91,13 +91,13 @@ public class CarrierController extends BaseController {
             service.remove(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (VersionConflictException e) {
-            return new ErrorRespObject("该承运商已被其他用户修改", e.getMessage());
+            return new ErrorRespObject("该承运商已被其他用户修改：" + e.getMessage());
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (IllegalArgumentException e) {
-            return new ErrorRespObject("参数异常", e.getMessage());
+            return new ErrorRespObject("参数异常：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("删除承运商失败", e.getMessage());
+            return new ErrorRespObject("删除承运商失败：" + e.getMessage());
         }
         return resp;
     }
@@ -114,13 +114,13 @@ public class CarrierController extends BaseController {
             service.online(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (VersionConflictException e) {
-            return new ErrorRespObject("该承运商已被其他用户修改", e.getMessage());
+            return new ErrorRespObject("该承运商已被其他用户修改：" + e.getMessage());
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (IllegalArgumentException e) {
-            return new ErrorRespObject("参数异常", e.getMessage());
+            return new ErrorRespObject("参数异常：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("启用承运商失败", e.getMessage());
+            return new ErrorRespObject("启用承运商失败：" + e.getMessage());
         }
         return resp;
     }
@@ -137,13 +137,13 @@ public class CarrierController extends BaseController {
             service.offline(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (VersionConflictException e) {
-            return new ErrorRespObject("该承运商已被其他用户修改", e.getMessage());
+            return new ErrorRespObject("该承运商已被其他用户修改：" + e.getMessage());
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (IllegalArgumentException e) {
-            return new ErrorRespObject("参数异常", e.getMessage());
+            return new ErrorRespObject("参数异常：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("禁用承运商失败", e.getMessage());
+            return new ErrorRespObject("禁用承运商失败：" + e.getMessage());
         }
         return resp;
     }
@@ -173,7 +173,7 @@ public class CarrierController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询承运商失败", e.getMessage());
+            return new ErrorRespObject("分页查询承运商失败：" + e.getMessage());
         }
         return resp;
 

@@ -56,7 +56,7 @@ public class UtilController extends BaseController {
             resp.setObj(caseQtyStr);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("件数转化失败！", e.getMessage());
+            return new ErrorRespObject("件数转化失败：" + e.getMessage());
         }
         return resp;
     }
@@ -71,7 +71,7 @@ public class UtilController extends BaseController {
             resp.setObj(add);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("件数相加失败", e.getMessage());
+            return new ErrorRespObject("件数相加失败：" + e.getMessage());
         }
         return resp;
     }
@@ -118,7 +118,7 @@ public class UtilController extends BaseController {
             resp.setObj(map);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询库存信息失败", e.getMessage());
+            return new ErrorRespObject("查询库存信息失败：" + e.getMessage());
         }
         return resp;
 
@@ -134,7 +134,7 @@ public class UtilController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("件数相减出错！", e.getMessage());
+            return new ErrorRespObject("件数相减出错：" + e.getMessage());
         }
         return resp;
 
@@ -161,9 +161,9 @@ public class UtilController extends BaseController {
             resp.setObj(stocks);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("查询库存信息失败", e.getMessage());
+            return new ErrorRespObject("查询库存信息失败：" + e.getMessage());
         }
 
         return resp;

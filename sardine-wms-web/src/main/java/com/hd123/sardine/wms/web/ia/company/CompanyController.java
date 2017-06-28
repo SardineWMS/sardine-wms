@@ -33,20 +33,21 @@ import com.hd123.sardine.wms.web.base.BaseController;
 @RequestMapping("/ia/company")
 public class CompanyController extends BaseController {
 
-  @Autowired
-  private CompanyService companyService;
+    @Autowired
+    private CompanyService companyService;
 
-  @RequestMapping(value = "/createDC", method = RequestMethod.POST)
-  public @ResponseBody RespObject creatDC(
-      @RequestParam(value = "token", required = true) String token, @RequestBody Company company) {
-    RespObject resp = new RespObject();
-    try {
-      company.setCompanyType(CompanyType.deliveryCenter);
-      companyService.insert(company);
-      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-    } catch (Exception e) {
-      return new ErrorRespObject("仓库创建失败！", e.getMessage());
+    @RequestMapping(value = "/createDC", method = RequestMethod.POST)
+    public @ResponseBody RespObject creatDC(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestBody Company company) {
+        RespObject resp = new RespObject();
+        try {
+            company.setCompanyType(CompanyType.deliveryCenter);
+            companyService.insert(company);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (Exception e) {
+            return new ErrorRespObject("仓库创建失败：" + e.getMessage());
+        }
+        return resp;
     }
-    return resp;
-  }
 }

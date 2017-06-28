@@ -73,9 +73,9 @@ public class VehicleController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询车辆失败", e.getMessage());
+            return new ErrorRespObject("分页查询车辆失败：" + e.getMessage());
         }
         return resp;
     }
@@ -94,7 +94,7 @@ public class VehicleController extends BaseController {
             resp.setObj(uuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("新增车辆失败", e.getMessage());
+            return new ErrorRespObject("新增车辆失败：" + e.getMessage());
         }
         return resp;
     }
@@ -109,7 +109,7 @@ public class VehicleController extends BaseController {
             resp.setObj(vehicle);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询车辆失败", e.getMessage());
+            return new ErrorRespObject("查询车辆失败：" + e.getMessage());
         }
         return resp;
 
@@ -127,9 +127,9 @@ public class VehicleController extends BaseController {
             service.saveModify(vehicle);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("修改车辆失败", e.getMessage());
+            return new ErrorRespObject("修改车辆失败：" + e.getMessage());
         }
         return resp;
 
@@ -147,9 +147,9 @@ public class VehicleController extends BaseController {
             service.online(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (VersionConflictException e) {
-            return new ErrorRespObject("当前车辆已被其他用户修改", e.getMessage());
+            return new ErrorRespObject("当前车辆已被其他用户修改：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("启用车辆失败", e.getMessage());
+            return new ErrorRespObject("启用车辆失败：" + e.getMessage());
         }
         return resp;
     }
@@ -166,9 +166,9 @@ public class VehicleController extends BaseController {
             service.offline(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (VersionConflictException e) {
-            return new ErrorRespObject("当前车辆已被其他用户修改", e.getMessage());
+            return new ErrorRespObject("当前车辆已被其他用户修改：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("停用车辆失败", e.getMessage());
+            return new ErrorRespObject("停用车辆失败：" + e.getMessage());
         }
         return resp;
     }

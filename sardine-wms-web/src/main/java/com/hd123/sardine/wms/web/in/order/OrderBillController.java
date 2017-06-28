@@ -90,7 +90,7 @@ public class OrderBillController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询失败", e.getMessage());
+            return new ErrorRespObject("分页查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -105,7 +105,7 @@ public class OrderBillController extends BaseController {
             resp.setObj(orderBill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询失败", e.getMessage());
+            return new ErrorRespObject("查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -123,7 +123,7 @@ public class OrderBillController extends BaseController {
             resp.setObj(orderBillUuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("新增入库订单失败", e.getMessage());
+            return new ErrorRespObject("新增入库订单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -140,7 +140,7 @@ public class OrderBillController extends BaseController {
             orderBillService.update(orderBill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("编辑供应商失败", e.getMessage());
+            return new ErrorRespObject("编辑供应商失败：" + e.getMessage());
         }
         return resp;
     }
@@ -158,7 +158,7 @@ public class OrderBillController extends BaseController {
             orderBillService.remove(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("删除供应商失败", e.getMessage());
+            return new ErrorRespObject("删除供应商失败：" + e.getMessage());
         }
         return resp;
     }
@@ -177,7 +177,7 @@ public class OrderBillController extends BaseController {
             orderBillService.uploadStateToPreBookReg(uuid, version, date);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("订单预约失败", e.getMessage());
+            return new ErrorRespObject("订单预约失败：" + e.getMessage());
         }
         return resp;
     }
@@ -195,7 +195,7 @@ public class OrderBillController extends BaseController {
             orderBillService.uploadStateToPreChecked(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("订单预检失败", e.getMessage());
+            return new ErrorRespObject("订单预检失败：" + e.getMessage());
         }
         return resp;
     }
@@ -213,7 +213,7 @@ public class OrderBillController extends BaseController {
             orderBillService.upload_finish(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("订单完成失败", e.getMessage());
+            return new ErrorRespObject("订单完成失败：" + e.getMessage());
         }
         return resp;
     }
@@ -231,7 +231,7 @@ public class OrderBillController extends BaseController {
             orderBillService.uploadStateToAborted(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("订单作废失败", e.getMessage());
+            return new ErrorRespObject("订单作废失败：" + e.getMessage());
         }
         return resp;
     }
@@ -267,7 +267,7 @@ public class OrderBillController extends BaseController {
             resp.setObj(orderBill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询失败", e.getMessage());
+            return new ErrorRespObject("查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -308,7 +308,7 @@ public class OrderBillController extends BaseController {
             resp.setObj(orderBill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("刷新订单件数失败", e.getMessage());
+            return new ErrorRespObject("刷新订单件数失败：" + e.getMessage());
         }
         return resp;
     }
