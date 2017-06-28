@@ -53,7 +53,7 @@ public class ArticleConfigControll extends BaseController {
             @RequestParam(value = "fixedPickBin", required = false) String fixedPickBin) {
         RespObject resp = new RespObject();
         try {
-            
+
             PageQueryDefinition definition = new PageQueryDefinition();
             definition.setPage(page);
             definition.setPageSize(pageSize);
@@ -66,7 +66,7 @@ public class ArticleConfigControll extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询失败", e.getMessage());
+            return new ErrorRespObject("分页查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -80,7 +80,7 @@ public class ArticleConfigControll extends BaseController {
             resp.setObj(articleConfig);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询失败", e.getMessage());
+            return new ErrorRespObject("查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -97,7 +97,7 @@ public class ArticleConfigControll extends BaseController {
             service.setArticleFixedPickBin(articleUuid, fixedPickBin, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("商品固定拣货位设置", e.getMessage());
+            return new ErrorRespObject("商品固定拣货位设置失败：" + e.getMessage());
         }
         return resp;
     }
@@ -114,7 +114,7 @@ public class ArticleConfigControll extends BaseController {
             service.setArticleStorageArea(articleUuid, storageArea, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("商品存储区域设置", e.getMessage());
+            return new ErrorRespObject("商品存储区域设置失败：" + e.getMessage());
         }
         return resp;
     }
@@ -127,11 +127,11 @@ public class ArticleConfigControll extends BaseController {
             @RequestBody PickBinStockLimit pickBinStockLimit) {
         RespObject resp = new RespObject();
         try {
-       
+
             service.setPickBinStockLimit(articleUuid, pickBinStockLimit, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("商品最高最低库存设置", e.getMessage());
+            return new ErrorRespObject("商品最高最低库存设置失败：" + e.getMessage());
         }
         return resp;
     }

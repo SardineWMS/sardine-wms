@@ -68,9 +68,9 @@ public class SerialArchController extends BaseController {
             resp.setObj(uuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
-        } catch (WMSException e) {
-            return new ErrorRespObject("新增线路体系失败", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("新增线路体系失败：" + e.getMessage());
         }
         return resp;
     }
@@ -86,9 +86,9 @@ public class SerialArchController extends BaseController {
             resp.setObj(data);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("获取线路体系失败", e.getMessage());
+            return new ErrorRespObject("获取线路体系失败：" + e.getMessage());
         }
         return resp;
     }
@@ -106,9 +106,9 @@ public class SerialArchController extends BaseController {
             resp.setObj(uuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
-        } catch (WMSException e) {
-            return new ErrorRespObject("新增运输线路失败", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("新增运输线路失败：" + e.getMessage());
         }
         return resp;
     }
@@ -125,9 +125,9 @@ public class SerialArchController extends BaseController {
             resp.setObj(line);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("获取运输线路失败", e.getMessage());
+            return new ErrorRespObject("获取运输线路失败：" + e.getMessage());
         }
         return resp;
 
@@ -146,9 +146,9 @@ public class SerialArchController extends BaseController {
             resp.setObj(code);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
-        } catch (WMSException e) {
-            return new ErrorRespObject("保存线路客户失败", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("保存线路客户失败：" + e.getMessage());
         }
         return resp;
     }
@@ -191,9 +191,9 @@ public class SerialArchController extends BaseController {
             resp.setObj(pqr);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("查询客户失败", e.getMessage());
+            return new ErrorRespObject("查询客户失败：" + e.getMessage());
         }
         return resp;
     }
@@ -210,9 +210,9 @@ public class SerialArchController extends BaseController {
             resp.setObj(line);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("获取运输线路失败", e.getMessage());
+            return new ErrorRespObject("获取运输线路失败：" + e.getMessage());
         }
         return resp;
 
@@ -230,9 +230,9 @@ public class SerialArchController extends BaseController {
             service.removeCustomerFromLine(customerUuid, lineUuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("客户踢出线路失败", e.getMessage());
+            return new ErrorRespObject("客户踢出线路失败：" + e.getMessage());
         }
         return resp;
     }
@@ -250,9 +250,9 @@ public class SerialArchController extends BaseController {
             service.upOrder(customerUuid, lineUuid, order);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("客户调整顺序", e.getMessage());
+            return new ErrorRespObject("客户调整顺序：" + e.getMessage());
         }
         return resp;
     }
@@ -270,9 +270,9 @@ public class SerialArchController extends BaseController {
             service.downOrder(customerUuid, lineUuid, order);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("客户调整顺序", e.getMessage());
+            return new ErrorRespObject("客户调整顺序：" + e.getMessage());
         }
         return resp;
     }
@@ -290,9 +290,9 @@ public class SerialArchController extends BaseController {
             service.postponeCustomer(customerUuid, lineUuid, order);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("客户顺序置后", e.getMessage());
+            return new ErrorRespObject("客户顺序置后：" + e.getMessage());
         }
         return resp;
     }
@@ -310,9 +310,9 @@ public class SerialArchController extends BaseController {
             service.stickCustomer(customerUuid, lineUuid, order);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("客户顺序置顶", e.getMessage());
+            return new ErrorRespObject("客户顺序置顶：" + e.getMessage());
         }
         return resp;
     }
@@ -348,9 +348,9 @@ public class SerialArchController extends BaseController {
             resp.setObj(map);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("查询线路中的门店失败", e.getMessage());
+            return new ErrorRespObject("查询线路中的门店失败：" + e.getMessage());
         }
         return resp;
     }
@@ -369,9 +369,9 @@ public class SerialArchController extends BaseController {
             resp.setObj(result.getRecords());
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("查询线路体系失败", e.getMessage());
+            return new ErrorRespObject("查询线路体系失败：" + e.getMessage());
         }
         return resp;
     }

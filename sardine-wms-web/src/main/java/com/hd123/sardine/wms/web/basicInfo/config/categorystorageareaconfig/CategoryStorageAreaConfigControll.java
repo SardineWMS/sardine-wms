@@ -60,14 +60,15 @@ public class CategoryStorageAreaConfigControll extends BaseController {
             definition.setOrderDir(OrderDir.valueOf(sortDirection));
             definition.put(CategoryStorageAreaConfigService.QUERY_CATEGORYCODE_FIELD, categoryCode);
             definition.put(CategoryStorageAreaConfigService.QUERY_CATEGORYNAME_FIELD, categoryName);
-            definition.put(CategoryStorageAreaConfigService.QUERY_CATEGORYUPPERCODE_FIELD, categoryUpperCode);
+            definition.put(CategoryStorageAreaConfigService.QUERY_CATEGORYUPPERCODE_FIELD,
+                    categoryUpperCode);
 
             PageQueryResult<CategoryStorageAreaConfig> result = service.query(definition);
 
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询失败", e.getMessage());
+            return new ErrorRespObject("分页查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -83,7 +84,7 @@ public class CategoryStorageAreaConfigControll extends BaseController {
             service.setCategoryStorageAreaConfig(categoryUuid, storageArea, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("商品类别存储区域设置", e.getMessage());
+            return new ErrorRespObject("商品类别存储区域设置：" + e.getMessage());
         }
         return resp;
     }

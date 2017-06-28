@@ -28,7 +28,6 @@ import com.hd123.sardine.wms.api.in.receive.ReceiveBillItem;
 import com.hd123.sardine.wms.api.in.receive.ReceiveBillMethod;
 import com.hd123.sardine.wms.api.in.receive.ReceiveBillService;
 import com.hd123.sardine.wms.api.in.receive.ReceiveBillState;
-import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -85,7 +84,7 @@ public class ReceiveBillController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询失败", e.getMessage());
+            return new ErrorRespObject("分页查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -114,8 +113,8 @@ public class ReceiveBillController extends BaseController {
             String uuid = service.insert(receiveBill);
             resp.setObj(uuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (WMSException e) {
-            return new ErrorRespObject("新增收货单失败", e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("新增收货单失败：" + e.getMessage());
         }
         return resp;
 
@@ -132,7 +131,7 @@ public class ReceiveBillController extends BaseController {
             resp.setObj(receiveBill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("获取收货单失败。", e.getMessage());
+            return new ErrorRespObject("获取收货单失败：" + e.getMessage());
         }
         return resp;
 
@@ -149,8 +148,8 @@ public class ReceiveBillController extends BaseController {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             service.remove(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (WMSException e) {
-            return new ErrorRespObject("删除收货单失败！", e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("删除收货单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -166,8 +165,8 @@ public class ReceiveBillController extends BaseController {
             ApplicationContextUtil.setOperateContext(getOperateContext(token));
             service.audit(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (WMSException e) {
-            return new ErrorRespObject("审核收货单失败！", e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("审核收货单失败：" + e.getMessage());
         }
         return resp;
 
@@ -186,8 +185,8 @@ public class ReceiveBillController extends BaseController {
             ApplicationContextUtil.setOperateContext(getOperateContext(token));
             service.update(receiveBill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (WMSException e) {
-            return new ErrorRespObject("修改收货单失败", e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("修改收货单失败：" + e.getMessage());
         }
         return resp;
 

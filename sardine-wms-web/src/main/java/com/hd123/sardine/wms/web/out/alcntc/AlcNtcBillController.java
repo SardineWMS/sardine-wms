@@ -22,7 +22,6 @@ import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBill;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillService;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillState;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
-import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -56,9 +55,9 @@ public class AlcNtcBillController extends BaseController {
             resp.setObj(uuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (IllegalArgumentException e) {
-            return new ErrorRespObject("参数异常", e.getMessage());
-        } catch (WMSException e) {
-            return new ErrorRespObject("新建配单失败", e.getMessage());
+            return new ErrorRespObject("参数异常：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("新建配单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -74,7 +73,7 @@ public class AlcNtcBillController extends BaseController {
             resp.setObj(bill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("获取损溢单失败", e.getMessage());
+            return new ErrorRespObject("获取损溢单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -89,9 +88,9 @@ public class AlcNtcBillController extends BaseController {
             service.update(alcNtcBill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
-        } catch (WMSException e) {
-            return new ErrorRespObject("修改损溢单失败", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("修改损溢单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -133,7 +132,7 @@ public class AlcNtcBillController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询配单失败", e.getMessage());
+            return new ErrorRespObject("分页查询配单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -148,8 +147,8 @@ public class AlcNtcBillController extends BaseController {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             service.remove(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (WMSException e) {
-            return new ErrorRespObject("删除配单失败！", e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("删除配单失败：" + e.getMessage());
         }
         return resp;
 
@@ -167,8 +166,7 @@ public class AlcNtcBillController extends BaseController {
             service.finish(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ErrorRespObject("完成配单失败！", e.getMessage());
+            return new ErrorRespObject("完成配单失败：" + e.getMessage());
         }
         return resp;
 
@@ -186,8 +184,7 @@ public class AlcNtcBillController extends BaseController {
             service.abort(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ErrorRespObject("作废配单失败！", e.getMessage());
+            return new ErrorRespObject("作废配单失败：" + e.getMessage());
         }
         return resp;
 

@@ -36,7 +36,6 @@ import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
-import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -90,7 +89,7 @@ public class DecIncController extends BaseController {
             resp.setObj(uuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("新建损溢单失败", e.getMessage());
+            return new ErrorRespObject("新建损溢单失败：" + e.getMessage());
         }
         return resp;
 
@@ -127,7 +126,7 @@ public class DecIncController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询损溢单失败", e.getMessage());
+            return new ErrorRespObject("分页查询损溢单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -143,7 +142,7 @@ public class DecIncController extends BaseController {
             resp.setObj(bill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("获取损溢单失败", e.getMessage());
+            return new ErrorRespObject("获取损溢单失败：" + e.getMessage());
         }
         return resp;
 
@@ -174,9 +173,9 @@ public class DecIncController extends BaseController {
             service.saveModify(decIncInvBill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
-        } catch (WMSException e) {
-            return new ErrorRespObject("修改损溢单失败", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("修改损溢单失败：" + e.getMessage());
         }
         return resp;
 
@@ -192,8 +191,8 @@ public class DecIncController extends BaseController {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             service.remove(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (WMSException e) {
-            return new ErrorRespObject("删除损溢单失败！", e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("删除损溢单失败：" + e.getMessage());
         }
         return resp;
 
@@ -211,7 +210,7 @@ public class DecIncController extends BaseController {
             service.audit(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("审核损溢单失败！", e.getMessage());
+            return new ErrorRespObject("审核损溢单失败：" + e.getMessage());
         }
         return resp;
 
@@ -242,11 +241,10 @@ public class DecIncController extends BaseController {
             resp.setObj(suppliers);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("查询库存信息失败", e.getMessage());
+            return new ErrorRespObject("查询库存信息失败：" + e.getMessage());
         }
-
         return resp;
 
     }

@@ -47,7 +47,7 @@ public class ReasonConfigController extends BaseController {
             service.setReasonConfig(type, reasons);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("原因配置", e.getMessage());
+            return new ErrorRespObject("原因配置失败：" + e.getMessage());
         }
         return resp;
     }
@@ -64,7 +64,7 @@ public class ReasonConfigController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询失败", e.getMessage());
+            return new ErrorRespObject("分页查询失败：" + e.getMessage());
         }
         return resp;
     }

@@ -61,9 +61,9 @@ public class AcceptanceBillController extends BaseController {
             resp.setObj(uuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (IllegalArgumentException e) {
-            return new ErrorRespObject("参数异常", e.getMessage());
-        } catch (WMSException e) {
-            return new ErrorRespObject("新建领用单失败", e.getMessage());
+            return new ErrorRespObject("参数异常：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("新建领用单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -79,7 +79,7 @@ public class AcceptanceBillController extends BaseController {
             resp.setObj(bill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("获取领用单单失败", e.getMessage());
+            return new ErrorRespObject("获取领用单单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -94,9 +94,9 @@ public class AcceptanceBillController extends BaseController {
             service.update(acceptanceBill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
-            return new ErrorRespObject("登录信息为空，请重新登录", e.getMessage());
-        } catch (WMSException e) {
-            return new ErrorRespObject("修改领用单单失败", e.getMessage());
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("修改领用单单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -135,7 +135,7 @@ public class AcceptanceBillController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询领用单失败", e.getMessage());
+            return new ErrorRespObject("分页查询领用单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -150,8 +150,8 @@ public class AcceptanceBillController extends BaseController {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             service.remove(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (WMSException e) {
-            return new ErrorRespObject("删除领用单失败！", e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("删除领用单失败：" + e.getMessage());
         }
         return resp;
 
@@ -169,8 +169,7 @@ public class AcceptanceBillController extends BaseController {
             service.approve(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ErrorRespObject("批准领用单失败！", e.getMessage());
+            return new ErrorRespObject("批准领用单失败：" + e.getMessage());
         }
         return resp;
 
@@ -188,8 +187,7 @@ public class AcceptanceBillController extends BaseController {
             service.beginAlc(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ErrorRespObject("完成领用单失败！", e.getMessage());
+            return new ErrorRespObject("完成领用单失败：" + e.getMessage());
         }
         return resp;
 
@@ -207,8 +205,7 @@ public class AcceptanceBillController extends BaseController {
             service.finish(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ErrorRespObject("完成领用单失败！", e.getMessage());
+            return new ErrorRespObject("完成领用单失败：" + e.getMessage());
         }
         return resp;
 
@@ -226,8 +223,7 @@ public class AcceptanceBillController extends BaseController {
             service.abort(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ErrorRespObject("作废领用单失败！", e.getMessage());
+            return new ErrorRespObject("作废领用单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -268,7 +264,7 @@ public class AcceptanceBillController extends BaseController {
             resp.setObj(acceptanceBill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("刷新订单件数失败", e.getMessage());
+            return new ErrorRespObject("刷新订单件数失败：" + e.getMessage());
         }
         return resp;
     }

@@ -61,7 +61,7 @@ public class EntityLogController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询失败", e.getMessage());
+            return new ErrorRespObject("分页查询失败：" + e.getMessage());
         }
         return resp;
     }

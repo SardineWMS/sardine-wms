@@ -58,7 +58,7 @@ public class UserController extends BaseController {
             resp.setObj(user);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询失败", e.getMessage());
+            return new ErrorRespObject("查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -71,7 +71,7 @@ public class UserController extends BaseController {
             resp.setObj(user);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询失败", e.getMessage());
+            return new ErrorRespObject("查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -108,7 +108,7 @@ public class UserController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询失败", e.getMessage());
+            return new ErrorRespObject("分页查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -123,7 +123,7 @@ public class UserController extends BaseController {
             resp.setObj(userUuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("新增用户失败", e.getMessage());
+            return new ErrorRespObject("新增用户失败：" + e.getMessage());
         }
         return resp;
     }
@@ -137,7 +137,7 @@ public class UserController extends BaseController {
             userService.update(user);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("编辑用户失败", e.getMessage());
+            return new ErrorRespObject("编辑用户失败：" + e.getMessage());
         }
         return resp;
     }
@@ -153,7 +153,7 @@ public class UserController extends BaseController {
             userService.remove(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("删除用户失败", e.getMessage());
+            return new ErrorRespObject("删除用户失败：" + e.getMessage());
         }
         return resp;
     }
@@ -169,7 +169,7 @@ public class UserController extends BaseController {
             userService.online(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("启用用户失败", e.getMessage());
+            return new ErrorRespObject("启用用户失败：" + e.getMessage());
         }
         return resp;
     }
@@ -185,7 +185,7 @@ public class UserController extends BaseController {
             userService.offline(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("禁用用户失败", e.getMessage());
+            return new ErrorRespObject("禁用用户失败：" + e.getMessage());
         }
         return resp;
     }
@@ -201,7 +201,7 @@ public class UserController extends BaseController {
             userService.saveUserRoles(userUuid, roleUuids);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分配角色失败", e.getMessage());
+            return new ErrorRespObject("分配角色失败：" + e.getMessage());
         }
         return resp;
     }
@@ -216,7 +216,7 @@ public class UserController extends BaseController {
             resp.setObj(roles);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询用户拥有的角色失败", e.getMessage());
+            return new ErrorRespObject("查询用户拥有的角色失败：" + e.getMessage());
         }
         return resp;
     }

@@ -61,7 +61,7 @@ public class PickAreaStorageAreaConfigController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询失败", e.getMessage());
+            return new ErrorRespObject("分页查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -77,7 +77,7 @@ public class PickAreaStorageAreaConfigController extends BaseController {
             service.setPickAreaStorageAreaConfig(pickAreaUuid, storageArea, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("商品类别存储区域设置", e.getMessage());
+            return new ErrorRespObject("商品类别存储区域设置：" + e.getMessage());
         }
         return resp;
     }

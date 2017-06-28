@@ -62,7 +62,7 @@ public class TaskAreaConfigControll extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询失败", e.getMessage());
+            return new ErrorRespObject("分页查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -76,7 +76,7 @@ public class TaskAreaConfigControll extends BaseController {
             resp.setObj(taskAreaConfig);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询失败", e.getMessage());
+            return new ErrorRespObject("查询失败：" + e.getMessage());
         }
         return resp;
     }
@@ -92,7 +92,7 @@ public class TaskAreaConfigControll extends BaseController {
             // resp.setObj(supplierUuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("新增作业区域配置失败", e.getMessage());
+            return new ErrorRespObject("新增作业区域配置失败：" + e.getMessage());
         }
         return resp;
     }
@@ -106,7 +106,7 @@ public class TaskAreaConfigControll extends BaseController {
             service.saveModify(taskAreaConfig);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("编辑作业区域配置失败", e.getMessage());
+            return new ErrorRespObject("编辑作业区域配置失败：" + e.getMessage());
         }
         return resp;
     }
@@ -121,7 +121,7 @@ public class TaskAreaConfigControll extends BaseController {
             service.remove(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("删除作业区域配置失败", e.getMessage());
+            return new ErrorRespObject("删除作业区域配置失败：" + e.getMessage());
         }
         return resp;
     }

@@ -24,7 +24,6 @@ import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.customer.Customer;
 import com.hd123.sardine.wms.api.basicInfo.customer.CustomerService;
 import com.hd123.sardine.wms.api.basicInfo.customer.CustomerState;
-import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -55,7 +54,7 @@ public class CustomerController extends BaseController {
             resp.setObj(customer);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询客户失败", e.getMessage());
+            return new ErrorRespObject("查询客户失败：" + e.getMessage());
         }
         return resp;
     }
@@ -71,7 +70,7 @@ public class CustomerController extends BaseController {
             resp.setObj(customer);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("查询客户失败", e.getMessage());
+            return new ErrorRespObject("查询客户失败：" + e.getMessage());
         }
         return resp;
     }
@@ -103,7 +102,7 @@ public class CustomerController extends BaseController {
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("分页查询客户失败", e.getMessage());
+            return new ErrorRespObject("分页查询客户失败：" + e.getMessage());
         }
         return resp;
     }
@@ -118,10 +117,8 @@ public class CustomerController extends BaseController {
             String uuid = customerService.insert(customer);
             resp.setObj(uuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (IllegalArgumentException e) {
-            return new ErrorRespObject("新增客户失败", e.getMessage());
-        } catch (WMSException e) {
-            return new ErrorRespObject("新增客户失败", e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("新增客户失败：" + e.getMessage());
         }
         return resp;
     }
@@ -135,9 +132,9 @@ public class CustomerController extends BaseController {
             customerService.update(customer);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (IllegalArgumentException e) {
-            return new ErrorRespObject("参数异常", e.getMessage());
-        } catch (WMSException e) {
-            return new ErrorRespObject("修改客户失败", e.getMessage());
+            return new ErrorRespObject("参数异常：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("修改客户失败：" + e.getMessage());
         }
         return resp;
     }
@@ -152,9 +149,9 @@ public class CustomerController extends BaseController {
             customerService.removeState(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (IllegalArgumentException e) {
-            return new ErrorRespObject("参数异常", e.getMessage());
-        } catch (WMSException e) {
-            return new ErrorRespObject("删除客户失败", e.getMessage());
+            return new ErrorRespObject("参数异常：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("删除客户失败：" + e.getMessage());
         }
         return resp;
     }
@@ -169,9 +166,9 @@ public class CustomerController extends BaseController {
             customerService.recover(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (IllegalArgumentException e) {
-            return new ErrorRespObject("参数异常", e.getMessage());
-        } catch (WMSException e) {
-            return new ErrorRespObject("恢复客户失败", e.getMessage());
+            return new ErrorRespObject("参数异常：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("恢复客户失败：" + e.getMessage());
         }
         return resp;
     }
