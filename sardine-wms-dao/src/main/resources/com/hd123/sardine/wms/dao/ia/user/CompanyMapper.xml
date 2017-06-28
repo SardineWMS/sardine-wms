@@ -25,44 +25,76 @@
 		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
 			jdbcType="VARCHAR" />
 		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+		<result column="acreage" property="acreage" jdbcType="DECIMAL" />
 	</resultMap>
 
 	<insert id="insert" parameterType="Company">
 		insert into
-		sardine_company (
-		uuid,
-		companycode,
-		companyname,
-		companytype,
-		version,
-		address,
-		CREATEDTIME,
-		CREATEDID,
-		CREATEDCODE,
-		CREATEDNAME,
-		LASTMODIFYTIME,
-		LASTMODIFYID,
-		LASTMODIFYCODE,
-		LASTMODIFYNAME,
-		homepage
-		)
-		values (
-		#{uuid,jdbcType=VARCHAR},
-		#{code,jdbcType=VARCHAR},
-		#{name,jdbcType=VARCHAR},
-		#{companyType,jdbcType=VARCHAR},
-		#{version,jdbcType=LONGVARCHAR},
-		#{address,jdbcType=VARCHAR},
-		#{createInfo.time,jdbcType=TIMESTAMP},
-		#{createInfo.operator.id,jdbcType=VARCHAR},
-		#{createInfo.operator.code,jdbcType=VARCHAR},
-		#{createInfo.operator.fullName,jdbcType=VARCHAR},
-		#{lastModifyInfo.time,jdbcType=TIMESTAMP},
-		#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
-		#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
-		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
-		#{homePage,jdbcType=VARCHAR}
-		)
+		sardine_company
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="code != null">
+				companycode,
+			</if>
+			<if test="name != null">
+				companyname,
+			</if>
+			<if test="companyType != null">
+				companytype,
+			</if>
+			<if test="address != null">
+				address,
+			</if>
+			<if test="homePage != null">
+				homepage,
+			</if>
+			<if test="acreage != null">
+				acreage,
+			</if>
+			version,
+			CREATEDTIME,
+			CREATEDID,
+			CREATEDCODE,
+			CREATEDNAME,
+			LASTMODIFYTIME,
+			LASTMODIFYID,
+			LASTMODIFYCODE,
+			LASTMODIFYNAME,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="companyType != null">
+				#{companyType,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="homePage != null">
+				#{homePage,jdbcType=VARCHAR},
+			</if>
+			<if test="acreage != null">
+				#{acreage,jdbcType=DECIMAL},
+			</if>
+			#{version,jdbcType=LONGVARCHAR},
+			#{createInfo.time,jdbcType=TIMESTAMP},
+			#{createInfo.operator.id,jdbcType=VARCHAR},
+			#{createInfo.operator.code,jdbcType=VARCHAR},
+			#{createInfo.operator.fullName,jdbcType=VARCHAR},
+			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		</trim>
 	</insert>
 
 	<select id="getByName" parameterType="String" resultMap="BaseResultMap">
