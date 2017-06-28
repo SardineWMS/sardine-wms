@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.pickarea.PickArea;
 import com.hd123.sardine.wms.api.basicInfo.pickarea.PickAreaService;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
@@ -58,7 +59,7 @@ public class PickAreaController extends BaseController {
             definition.setOrderDir(OrderDir.valueOf(sortDirection));
             definition.setPage(page);
             definition.setPageSize(pageSize);
-            definition.setSortField(sort);
+            definition.setSortField(StringUtil.isNullOrBlank(sort) ? "code" : sort);
             definition.put(PickAreaService.QUERY_CODE_LIKE, code);
             definition.put(PickAreaService.QUERY_NAME_EQUALS, name);
             PageQueryResult<PickArea> qpr = service.query(definition);
