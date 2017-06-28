@@ -53,6 +53,7 @@
 				<property name="uncheckUrls">
 					<list>
 						<value>/ia/authen/login</value>
+						<value>/ia/authen/loginOut</value>
 						<value>/ia/authen/register</value>
 					</list>
 				</property>
