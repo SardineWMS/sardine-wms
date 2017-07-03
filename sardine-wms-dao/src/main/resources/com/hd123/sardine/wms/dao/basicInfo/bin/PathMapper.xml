@@ -14,7 +14,8 @@
 		from
 		db_proxy.sardine_path u
 		where u.uuid = #{uuid,jdbcType=VARCHAR}
-		and u.companyUuid
+		and
+		u.companyUuid
 		= #{companyUuid,jdbcType=VARCHAR}
 	</select>
 
@@ -26,22 +27,43 @@
 		u.companyuuid = #{companyUuid,jdbcType=VARCHAR}
 	</select>
 
-	<insert id="insert" parameterType="Zone">
+	<insert id="insert" parameterType="Path">
 		insert into
-		db_proxy.sardine_path (
-		uuid,
-		code,
-		zoneuuid,
-		note,
-		companyuuid
-		)
-		values (
-		#{uuid,jdbcType=VARCHAR},
-		#{code,jdbcType=VARCHAR},
-		#{zoneUuid,jdbcType=VARCHAR},
-		#{note,jdbcType=VARCHAR},
-		#{companyUuid,jdbcType=VARCHAR}
-		)
+		db_proxy.sardine_path
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="code != null">
+				code,
+			</if>
+			<if test="zoneUuid != null">
+				zoneuuid,
+			</if>
+			<if test="companyUuid != null">
+				companyUuid,
+			</if>
+			<if test="note != null">
+				note,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="zoneUuid != null">
+				#{zoneUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="companyUuid != null">
+				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="note != null">
+				#{note,jdbcType=VARCHAR},
+			</if>
+		</trim>
 	</insert>
 
 	<select id="queryByList" parameterType="map" resultMap="BaseResultMap">
