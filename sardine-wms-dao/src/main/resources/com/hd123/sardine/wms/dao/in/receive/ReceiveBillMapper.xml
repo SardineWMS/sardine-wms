@@ -288,30 +288,36 @@
 
 	<select id="query" resultMap="ReceiveBillMap" parameterType="PageQueryDefinition">
 		select t.*,w.code wrhCode,w.name wrhName
-		from db_proxy.sardine_receivebill
-		t,db_proxy.sardine_orderbill o,db_proxy.sardine_wrh w where
-		t.orderBillNumber=o.billNumber and w.uuid=t.wrhuuid
+		from
+		db_proxy.sardine_receivebill
+		t,db_proxy.sardine_orderbill
+		o,db_proxy.sardine_wrh w where
+		t.orderBillNumber=o.billNumber and
+		w.uuid=t.wrhuuid
 		<if test="billNumber != null and billNumber != ''">
 			and t.billNumber like CONCAT(CONCAT('%',
-			#{billNumber,jdbcType=VARCHAR}),
+			#{billNumber,jdbcType=VARCHAR})
 			'%')
+		</if>
+		<if test="companyUuid != null and companyUuid != ''">
+			and t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
 		</if>
 		<if test="state != null">
 			and t.state = #{state,jdbcType=VARCHAR}
 		</if>
 		<if test="supplier != null and supplier != ''">
 			and t.supplieruuid like CONCAT(CONCAT('%',
-			#{supplier,jdbcType=VARCHAR}),
+			#{supplier,jdbcType=VARCHAR})
 			'%')
 		</if>
 		<if test="wrh != null and wrh != ''">
 			and t.wrhuuid like CONCAT(CONCAT('%',
-			#{wrh,jdbcType=VARCHAR}),
+			#{wrh,jdbcType=VARCHAR})
 			'%')
 		</if>
 		<if test="orderBill != null and orderBill != ''">
 			and t.orderBillNumber like CONCAT(CONCAT('%',
-			#{orderBill,jdbcType=VARCHAR}),
+			#{orderBill,jdbcType=VARCHAR})
 			'%')
 		</if>
 		<if test="sortField != null and sortField == 'billNumber'">
