@@ -337,7 +337,9 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
             orderBill.setState(OrderBillState.Finished);
         else
             orderBill.setState(OrderBillState.InProgress);
-        orderBill.setReceivedCaseQtyStr(QpcHelper.caseQtyStrAdd(orderBill.getReceivedCaseQtyStr(),
+        orderBill.setReceivedCaseQtyStr(QpcHelper.caseQtyStrAdd(
+                StringUtil.isNullOrBlank(orderBill.getReceivedCaseQtyStr()) ? "0"
+                        : orderBill.getReceivedCaseQtyStr(),
                 QpcHelper.qtyToCaseQtyStr(qty, qpcStr)));
         orderBill.setLastModifyInfo(
                 OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
