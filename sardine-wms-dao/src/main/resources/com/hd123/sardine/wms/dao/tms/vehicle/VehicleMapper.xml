@@ -203,8 +203,8 @@
 		<if test="vehicleNo != null">
 			and t.vehicleNo=#{vehicleNo,jdbcType=VARCHAR}
 		</if>
-		<if test="vehicleType != null and vehicleType.uuid != null">
-			and t.vehicleTypeUuid=#{vehicleType.uuid,jdbcType=VARCHAR}
+		<if test="vehicleTypeCode != null">
+	and t.vehicleTypeCode=#{vehicleTypeCode,jdbcType=VARCHAR}
 		</if>
 		<if test="companyUuid != null">
 			and t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
