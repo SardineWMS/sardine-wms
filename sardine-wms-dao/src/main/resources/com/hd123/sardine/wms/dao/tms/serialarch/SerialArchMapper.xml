@@ -132,8 +132,8 @@
 		<if test="companyUuid != null">
 			and t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
 		</if>
-		<if test="sortField != null and sortField == code">
-			order by (t.code+0) ${orderDir}
+		<if test="sortField != null and sortField == 'code'">
+			order by t.code ${orderDir}
 		</if>
 	</select>
 

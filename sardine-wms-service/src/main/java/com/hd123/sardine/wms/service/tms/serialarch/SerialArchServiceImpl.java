@@ -27,6 +27,7 @@ import com.hd123.sardine.wms.api.tms.serialarch.SerialArchLineCustomer;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArchService;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
+import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
@@ -158,6 +159,8 @@ public class SerialArchServiceImpl extends BaseWMSService implements SerialArchS
         PageQueryDefinition definition = new PageQueryDefinition();
         definition.setCompanyUuid(companyUuid);
         definition.setPageSize(0);
+        definition.setSortField("code");
+        definition.setOrderDir(OrderDir.asc);
         List<SerialArch> list = dao.query(definition);// 线路体系
         List<SerialArchInfo> tree = new ArrayList<>();
         for (SerialArch serialArch : list) {
