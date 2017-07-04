@@ -61,7 +61,8 @@ public class VehicleController extends BaseController {
             PageQueryDefinition definition = new PageQueryDefinition();
             definition.setPage(page);
             definition.setPageSize(pageSize);
-            definition.setSortField(sort);
+            definition.setSortField(
+                    StringUtil.isNullOrBlank(sort) ? VehicleService.QUERY_CODE_LIKE : sort);
             definition.setOrderDir(OrderDir.valueOf(sortDirection));
             definition.setCompanyUuid(getLoginCompany(token).getUuid());
             definition.put(VehicleService.QUERY_CODE_LIKE, code);
