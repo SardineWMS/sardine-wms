@@ -311,9 +311,11 @@
 			'%')
 		</if>
 		<if test="wrh != null and wrh != ''">
-			and t.wrhuuid like CONCAT(CONCAT('%',
+			and EXISTS (select 1 from db_proxy.sardine_wrh
+			a,db_proxy.sardine_receivebill b
+			where a.uuid=b.wrhuuid and
+			a.code=
 			#{wrh,jdbcType=VARCHAR})
-			'%')
 		</if>
 		<if test="orderBill != null and orderBill != ''">
 			and t.orderBillNumber like CONCAT(CONCAT('%',
