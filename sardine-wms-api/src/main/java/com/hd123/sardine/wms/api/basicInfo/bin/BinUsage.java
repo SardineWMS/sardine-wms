@@ -16,24 +16,26 @@ package com.hd123.sardine.wms.api.basicInfo.bin;
  * 
  */
 public enum BinUsage {
-  /** 存储位 */
-  StorageBin("存储位"),
-  /** 拣货存储位 */
-  PickUpStorageBin("拣货存储位"),
-  /** 收货暂存位 */
-  ReceiveStorageBin("收货暂存位"),
-  /** 集货位 */
-  CollectBin("集货位"),
-  /** 供应商集货位 */
-  SupplierCollectBin("供应商集货位");
+    /** 存储位 */
+    StorageBin("存储位"),
+    /** 拣货存储位 */
+    PickUpStorageBin("拣货存储位"),
+    /** 收货暂存位 */
+    ReceiveStorageBin("收货暂存位"),
+    /** 集货位 */
+    CollectBin("集货位"),
+    /** 供应商集货位 */
+    SupplierCollectBin("供应商集货位"),
+    /** 退仓收货暂存位 */
+    RtnReceiveTempBin("退仓收货暂存位");
 
-  private String caption;
+    private String caption;
 
-  private BinUsage(String caption) {
-    this.caption = caption;
-  }
+    private BinUsage(String caption) {
+        this.caption = caption;
+    }
 
-  public String getCaption() {
-    return caption;
-  }
+    public String getCaption() {
+        return caption;
+    }
 }

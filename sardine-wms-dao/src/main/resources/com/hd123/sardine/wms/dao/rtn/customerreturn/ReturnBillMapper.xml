@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.hd123.sardine.wms.dao.rtn.customerreturn.impl.ReturnBillDaoImpl">
+	<resultMap type="com.hd123.sardine.wms.api.rtn.customerreturn.ReturnBill"
+		id="RtnBillMap">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="billNumber" property="billNumber" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="returnNtcBillNumber" property="returnNtcBillNumber"
+			jdbcType="VARCHAR" />
+		<result column="wrhUuid" property="wrh.uuid" jdbcType="VARCHAR" />
+		<result column="wrhCode" property="wrh.code" jdbcType="VARCHAR" />
+		<result column="wrhName" property="wrh.name" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="customerUuid" property="customer.uuid"
+			jdbcType="VARCHAR" />
+		<result column="customerCode" property="customer.code"
+			jdbcType="VARCHAR" />
+		<result column="customerName" property="customer.name"
+			jdbcType="VARCHAR" />
+		<result column="returnorUuid" property="returnor.uuid"
+			jdbcType="VARCHAR" />
+		<result column="returnorCode" property="returnor.code"
+			jdbcType="VARCHAR" />
+		<result column="returnorName" property="returnor.name"
+			jdbcType="VARCHAR" />
+		<result column="totalCaseQtyStr" property="totalCaseQtyStr"
+			jdbcType="VARCHAR" />
+		<result column="totalAmount" property="totalAmount" jdbcType="DECIMAL" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+		<result column="createdtime " property="createInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="createdID" property="createInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="createdcode" property="createInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="createdName" property="createInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="lastModifytime" property="lastModifyInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="lastModifyid" property="lastModifyInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="lastModifycode" property="lastModifyInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap
+		type="com.hd123.sardine.wms.api.rtn.customerreturn.ReturnBillItem" id="RtnBillItemMap">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="returnBillUuid" property="returnBillUuid"
+			jdbcType="VARCHAR" />
+		<result column="returnNtcBillItemUuid" property="returnNtcBillItemUuid"
+			jdbcType="VARCHAR" />
+		<result column="line" property="line" jdbcType="INTEGER" />
+		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
+		<result column="articleCode" property="article.code" jdbcType="VARCHAR" />
+		<result column="articleName" property="article.name" jdbcType="VARCHAR" />
+		<result column="munit" property="munit" jdbcType="VARCHAR" />
+		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+		<result column="supplierUuid" property="supplier.uuid"
+			jdbcType="VARCHAR" />
+		<result column="supplierCode" property="supplier.code"
+			jdbcType="VARCHAR" />
+		<result column="supplierName" property="supplier.name"
+			jdbcType="VARCHAR" />
+		<result column="qty" property="qty" jdbcType="DECIMAL" />
+		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
+		<result column="returnType" property="returnType" jdbcType="VARCHAR" />
+		<result column="productionDate" property="productionDate"
+			jdbcType="TIMESTAMP" />
+		<result column="validDate" property="validDate" jdbcType="VARCHAR" />
+		<result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="amount" property="amount" jdbcType="DECIMAL" />
+		<result column="containerBarcode" property="containerBarcode"
+			jdbcType="VARCHAR" />
+		<result column="binCode" property="binCode" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<insert id="insert"
+		parameterType="com.hd123.sardine.wms.api.rtn.customerreturn.ReturnBill">
+		insert into db_proxy.sardine_returnbill
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="billNumber != null">
+				billNumber,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="returnNtcBillNumber != null">
+				returnNtcBillNumber,
+			</if>
+			<if test="wrh != null and wrh.uuid != null">
+				wrhuuid,
+			</if>
+			<if test="companyUuid != null">
+				companyUuid,
+			</if>
+			<if test="customer!= null and customer.uuid != null">
+				customerUuid,
+			</if>
+			<if test="customer!= null and customer.code != null">
+				customerCode,
+			</if>
+			<if test="customer!= null and customer.name != null">
+				customerName,
+			</if>
+			<if test="returnor != null and returnor.uuid != null">
+				returnorUuid,
+			</if>
+			<if test="returnor != null and returnor.code != null">
+				returnorCode,
+			</if>
+			<if test="returnor != null and returnor.name != null">
+				returnorName,
+			</if>
+			<if test="totalCaseQtyStr != null">
+				totalCaseQtyStr,
+			</if>
+			<if test="totalAmount != null">
+				totalAmount,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			version,
+			CREATEDTIME,
+			CREATEDID,
+			CREATEDCODE,
+			CREATEDNAME,
+			LASTMODIFYTIME,
+			LASTMODIFYID,
+			LASTMODIFYCODE,
+			LASTMODIFYNAME,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="billNumber != null">
+				#{billNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=VARCHAR},
+			</if>
+			<if test="returnNtcBillNumber != null">
+				#{returnNtcBillNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="wrh != null and wrh.uuid != null">
+				#{wrh.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="companyUuid != null">
+				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="customer!= null and customer.uuid != null">
+				#{customer.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="customer!= null and customer.code != null">
+				#{customer.code,jdbcType=VARCHAR},
+			</if>
+			<if test="customer!= null and customer.name != null">
+				#{customer.name,jdbcType=VARCHAR},
+			</if>
+			<if test="returnor != null and returnor.uuid != null">
+				#{returnor.uuid,jdbcType=TIMESTAMP},
+			</if>
+			<if test="returnor != null and returnor.code != null">
+				#{returnor.code,jdbcType=TIMESTAMP},
+			</if>
+			<if test="returnor != null and returnor.name != null">
+				#{returnor.name,jdbcType=TIMESTAMP},
+			</if>
+			<if test="totalCaseQtyStr != null">
+				#{totalCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="totalAmount != null">
+				#{totalAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			#{version,jdbcType=LONGVARCHAR},
+			#{createInfo.time,jdbcType=TIMESTAMP},
+			#{createInfo.operator.id,jdbcType=VARCHAR},
+			#{createInfo.operator.code,jdbcType=VARCHAR},
+			#{createInfo.operator.fullName,jdbcType=VARCHAR},
+			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<insert id="insertItems"
+		parameterType="com.hd123.sardine.wms.api.rtn.customerreturn.ReturnBillItem">
+		insert into db_proxy.sardine_returnbillitem
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null and uuid != ''">
+				uuid,
+			</if>
+			<if test="returnBillUuid != null">
+				returnBillUuid,
+			</if>
+			<if test="returnNtcBillItemUuid != null">
+				returnNtcBillItemUuid,
+			</if>
+			<if test="line != null">
+				line,
+			</if>
+			<if test="article != null and article.uuid != null">
+				articleUuid,
+			</if>
+			<if test="munit != null">
+				munit,
+			</if>
+			<if test="qpcStr != null">
+				qpcStr,
+			</if>
+			<if test="supplier != null and supplier.uuid != null">
+				supplierUuid,
+			</if>
+			<if test="qty != null">
+				qty,
+			</if>
+			<if test="caseQtyStr != null">
+				caseQtyStr,
+			</if>
+			<if test="returnType != null">
+				returnType,
+			</if>
+			<if test="productionDate != null">
+				productionDate,
+			</if>
+			<if test="validDate != null">
+				validDate,
+			</if>
+			<if test="stockBatch != null">
+				stockBatch,
+			</if>
+			<if test="price != null">
+				price,
+			</if>
+			<if test="amount != null">
+				amount,
+			</if>
+			<if test="containerBarcode != null">
+				containerBarcode,
+			</if>
+			<if test="binCode != null">
+				binCode,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null and uuid != ''">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="returnBillUuid != null">
+				#{returnBillUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="returnNtcBillItemUuid != null">
+				#{returnNtcBillItemUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="line != null">
+				#{line,jdbcType=INTEGER},
+			</if>
+			<if test="article != null and article.uuid != null">
+				#{article.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="munit != null">
+				#{munit,jdbcType=VARCHAR},
+			</if>
+			<if test="qpcStr != null">
+				#{qpcStr,jdbcType=VARCHAR},
+			</if>
+			<if test="supplier != null and supplier.uuid != null">
+				#{supplier.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="qty != null">
+				#{qty,jdbcType=DECIMAL},
+			</if>
+			<if test="caseQtyStr != null">
+				#{caseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="returnType != null">
+				#{returnType,jdbcType=VARCHAR},
+			</if>
+			<if test="productionDate != null">
+				#{productionDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="validDate != null">
+				#{validDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="stockBatch != null">
+				#{stockBatch,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=DECIMAL},
+			</if>
+			<if test="amount != null">
+				#{amount,jdbcType=DECIMAL},
+			</if>
+			<if test="containerBarcode != null">
+				#{containerBarcode,jdbcType=VARCHAR},
+			</if>
+			<if test="binCode != null">
+				#{binCode,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+</mapper>

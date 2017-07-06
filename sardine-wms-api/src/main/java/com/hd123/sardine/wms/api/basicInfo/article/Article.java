@@ -9,15 +9,15 @@
  */
 package com.hd123.sardine.wms.api.basicInfo.article;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.time.DateUtils;
-
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.common.entity.StandardEntity;
 import com.hd123.sardine.wms.common.entity.UCN;
+import com.hd123.sardine.wms.common.utils.DateHelper;
 
 /**
  * 商品实体
@@ -30,6 +30,7 @@ import com.hd123.sardine.wms.common.entity.UCN;
  */
 public class Article extends StandardEntity {
     private static final long serialVersionUID = 4329860271781901045L;
+    public static final String VISUAL_MAXDATE = "8888-12-31";
 
     private String companyUuid;
     private String code;
@@ -49,27 +50,27 @@ public class Article extends StandardEntity {
     private List<ArticleQpc> qpcs = new ArrayList<ArticleQpc>();
 
     public ArticlePutawayBin getPutawayBin() {
-      return putawayBin;
+        return putawayBin;
     }
 
     public void setPutawayBin(ArticlePutawayBin putawayBin) {
-      this.putawayBin = putawayBin;
+        this.putawayBin = putawayBin;
     }
 
     public String getStorageArea() {
-      return storageArea;
+        return storageArea;
     }
 
     public void setStorageArea(String storageArea) {
-      this.storageArea = storageArea;
+        this.storageArea = storageArea;
     }
 
     public String getRemark() {
-      return remark;
+        return remark;
     }
 
     public void setRemark(String remark) {
-      this.remark = remark;
+        this.remark = remark;
     }
 
     /** 组织uuid */
@@ -137,11 +138,11 @@ public class Article extends StandardEntity {
 
     /** 商品保质期管理类型 */
     public DateCheckStandard getExpflag() {
-      return expflag;
+        return expflag;
     }
 
     public void setExpflag(DateCheckStandard expflag) {
-      this.expflag = expflag;
+        this.expflag = expflag;
     }
 
     /** 提供该商品的供应商集合 */
@@ -180,9 +181,36 @@ public class Article extends StandardEntity {
         this.fixedPickBin = fixedPickBin;
     }
 
+    public Date calValidDate(Date produtionDate, Date validate) throws ParseException {
+        Assert.assertArgumentNotNull(produtionDate, "productionDate");
+
+        if (expflag.equals(DateCheckStandard.none))
+            return DateHelper.strToDate(VISUAL_MAXDATE);
+
+        if (expflag.equals(DateCheckStandard.expireDate)) {
+            Assert.assertArgumentNotNull(validate, "validate");
+            return validate;
+        }
+
+        return DateHelper.addDays(produtionDate, expDays);
+    }
+
+    public Date calProductionDate(Date productionDate, Date validDate) throws ParseException {
+        if (expflag.equals(DateCheckStandard.none))
+            return DateHelper.strToDate(VISUAL_MAXDATE);
+
+        if (expflag.equals(DateCheckStandard.produceDate)) {
+            Assert.assertArgumentNotNull(productionDate, "productionDate");
+            return productionDate;
+        }
+
+        Assert.assertArgumentNotNull(validDate, "validDate");
+        return DateHelper.addDays(validDate, -expDays);
+    }
+
     public Date calValidDate(Date produtionDate) {
         Assert.assertArgumentNotNull(produtionDate, "productionDate");
 
-        return DateUtils.addDays(produtionDate, expDays);
+        return DateHelper.addDays(produtionDate, expDays);
     }
 }
