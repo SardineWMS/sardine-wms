@@ -73,7 +73,7 @@ public class AlcNtcBillController extends BaseController {
             resp.setObj(bill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
-            return new ErrorRespObject("获取损溢单失败：" + e.getMessage());
+            return new ErrorRespObject("获取配单失败：" + e.getMessage());
         }
         return resp;
     }
@@ -90,7 +90,7 @@ public class AlcNtcBillController extends BaseController {
         } catch (NotLoginInfoException e) {
             return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
-            return new ErrorRespObject("修改损溢单失败：" + e.getMessage());
+            return new ErrorRespObject("修改配单失败：" + e.getMessage());
         }
         return resp;
     }
