@@ -89,11 +89,10 @@ public class SerialArchServiceImpl extends BaseWMSService implements SerialArchS
 
         line.validate();
 
-        SerialArch arch = dao.getByCode(line.getSerialArch().getCode());
+        SerialArch arch = dao.get(line.getSerialArch().getUuid());
         if (Objects.isNull(arch))
             throw new WMSException(
                     MessageFormat.format("运输线路对应的线路体系{0}不存在", line.getSerialArch().getCode()));
-        line.setSerialArch(new UCN(arch.getUuid(), arch.getCode(), arch.getName()));
         SerialArchLine l = dao.getLineByCode(line.getCode());
         if (Objects.nonNull(l))
             throw new WMSException(MessageFormat.format("已存在代码为{0}的运输线路，不能重复使用", line.getCode()));

@@ -141,6 +141,7 @@
 		resultMap="SerialArchLineMap">
 		select * from db_proxy.sardine_serialarchline where
 		serialarchuuid=#{serialArchUuid,jdbcType=VARCHAR}
+		order by code
 	</select>
 
 	<select id="getLineByCode" parameterType="java.util.Map"
