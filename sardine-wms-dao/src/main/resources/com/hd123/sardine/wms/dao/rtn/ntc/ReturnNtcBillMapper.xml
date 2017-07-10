@@ -292,7 +292,7 @@
 		=w.uuid
 		<if test="billNumber != null and billNumber != ''">
 			and t.billNumber like CONCAT(CONCAT('%',
-			#{billNumber,jdbcType=VARCHAR})
+			#{billNumber,jdbcType=VARCHAR}),
 			'%')
 		</if>
 		<if test="state != null">
@@ -300,17 +300,17 @@
 		</if>
 		<if test="customerCode != null">
 			and t.customerCode like CONCAT(CONCAT('%',
-			#{customerCode,jdbcType=VARCHAR})
+			#{customerCode,jdbcType=VARCHAR}),
 			'%')
 		</if>
 		<if test="customerName">
 			and t.customerName like CONCAT(CONCAT('%',
-			#{customerName,jdbcType=VARCHAR})
+			#{customerName,jdbcType=VARCHAR}),
 			'%')
 		</if>
 		<if test="sourceBillNumber != null ">
 			and t.sourceBillNumber like CONCAT(CONCAT('%',
-			#{sourceBillNumber,jdbcType=VARCHAR})
+			#{sourceBillNumber,jdbcType=VARCHAR}),
 			'%')
 		</if>
 		<if test="returnDateLessThan != null">
