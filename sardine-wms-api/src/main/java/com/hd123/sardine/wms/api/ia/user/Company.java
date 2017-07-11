@@ -10,6 +10,8 @@
 package com.hd123.sardine.wms.api.ia.user;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.hd123.sardine.wms.common.entity.StandardEntity;
 
@@ -34,12 +36,26 @@ public class Company extends StandardEntity {
   private String parentUuid;
   private String code;
   private String name;
+  private String shortName;
   private BigDecimal acreage = BigDecimal.ZERO;
   private String address;
   private String homePage;
-  private CompanyType companyType; 
+  private CompanyType companyType;
+  private DCType dcType;
   private String adminCode;
   private String adminName;
+  private String password;
+  private String adminPhone;
+
+  private List<User> users = new ArrayList<User>();
+
+  public List<User> getUsers() {
+    return users;
+  }
+
+  public void setUsers(List<User> users) {
+    this.users = users;
+  }
 
   public String getAdminCode() {
     return adminCode;
@@ -84,7 +100,7 @@ public class Company extends StandardEntity {
     this.name = name;
   }
 
-  /** 面积，针对仓库，单位m²*/
+  /** 面积，针对仓库，单位m² */
   public BigDecimal getAcreage() {
     return acreage;
   }
@@ -118,6 +134,38 @@ public class Company extends StandardEntity {
 
   public void setCompanyType(CompanyType companyType) {
     this.companyType = companyType;
+  }
+
+  public String getShortName() {
+    return shortName;
+  }
+
+  public void setShortName(String shortName) {
+    this.shortName = shortName;
+  }
+
+  public DCType getDcType() {
+    return dcType;
+  }
+
+  public void setDcType(DCType dcType) {
+    this.dcType = dcType;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public String getAdminPhone() {
+    return adminPhone;
+  }
+
+  public void setAdminPhone(String adminPhone) {
+    this.adminPhone = adminPhone;
   }
 
 }

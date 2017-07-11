@@ -10,6 +10,7 @@
 package com.hd123.sardine.wms.dao.ia.user.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.hd123.rumba.commons.lang.StringUtil;
@@ -24,6 +25,7 @@ import com.hd123.sardine.wms.dao.ia.user.CompanyDao;
 public class CompanyDaoImpl extends BaseDaoImpl<Company> implements CompanyDao {
   private static final String GETBYNAME = "getByName";
   private static final String INSERTDBMAP = "insertDBMap";
+  private static final String QUERYCOMPANYS = "queryCompanys";
 
   @Override
   public Company getByName(String name) {
@@ -39,5 +41,10 @@ public class CompanyDaoImpl extends BaseDaoImpl<Company> implements CompanyDao {
     map.put("dbName", dbName);
 
     insert(INSERTDBMAP, map);
+  }
+
+  @Override
+  public List<Company> queryCompanys(String companyUuid) {
+    return selectList(QUERYCOMPANYS, companyUuid);
   }
 }

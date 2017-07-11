@@ -5,9 +5,13 @@
 		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
 		<result column="companycode" property="code" jdbcType="VARCHAR" />
 		<result column="companyname" property="name" jdbcType="VARCHAR" />
+		<result column="shortname" property="shortName" jdbcType="VARCHAR" />
 		<result column="companytype" property="companyType" jdbcType="VARCHAR" />
+		<result column="dctype" property="dcType" jdbcType="VARCHAR" />
 		<result column="address" property="address" jdbcType="VARCHAR" />
 		<result column="homepage" property="homePage" jdbcType="VARCHAR" />
+		<result column="adminCode" property="adminCode" jdbcType="VARCHAR" />
+		<result column="companytype" property="companyType" jdbcType="VARCHAR" />
 		<result column="createdtime" property="createInfo.time"
 			jdbcType="TIMESTAMP" />
 		<result column="createdID" property="createInfo.operator.id"
@@ -41,8 +45,17 @@
 			<if test="name != null">
 				companyname,
 			</if>
+			<if test="shortName != null">
+				shortName,
+			</if>
 			<if test="companyType != null">
 				companytype,
+			</if>
+			<if test="dcType != null">
+				dcType,
+			</if>
+			<if test="adminCode != null">
+				adminCode,
 			</if>
 			<if test="address != null">
 				address,
@@ -73,8 +86,17 @@
 			<if test="name != null">
 				#{name,jdbcType=VARCHAR},
 			</if>
+			<if test="shortName != null">
+				#{shortName,jdbcType=VARCHAR},
+			</if>
 			<if test="companyType != null">
 				#{companyType,jdbcType=VARCHAR},
+			</if>
+			<if test="dcType != null">
+				#{dcType,jdbcType=VARCHAR},
+			</if>
+			<if test="adminCode != null">
+				#{adminCode,jdbcType=VARCHAR},
 			</if>
 			<if test="address != null">
 				#{address,jdbcType=VARCHAR},
@@ -96,6 +118,27 @@
 			#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
 		</trim>
 	</insert>
+	
+	<update id="update" parameterType="Company">
+	  update sardine_company u 
+	  <set>
+	    u.companyName = #{name,jdbcType=VARCHAR},
+	    u.shortName = #{shortName,jdbcType=VARCHAR},
+	    u.dcType = #{dcType,jdbcType=VARCHAR},
+	    u.adminCode = #{adminCode,jdbcType=VARCHAR},
+	    u.address = #{address,jdbcType=VARCHAR},
+	    u.homePage = #{homePage,jdbcType=VARCHAR},
+	    u.acreage = #{acreage,jdbcType=DECIMAL},
+	    u.version = u.version + 1,
+	    u.LASTMODIFYTIME = #{lastModifyInfo.time,jdbcType=TIMESTAMP},
+		u.LASTMODIFYID = #{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+		u.LASTMODIFYCODE = #{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+		u.LASTMODIFYNAME = #{lastModifyInfo.operator.fullName,jdbcType=VARCHAR}, 
+	  </set>
+	  <where>
+	    u.uuid = #{uuid, jdbcType=VARCHAR} and u.version = #{version, jdbcType=LONGVARCHAR}
+	  </where>
+	</update>
 
 	<select id="getByName" parameterType="String" resultMap="BaseResultMap">
 		select
@@ -115,5 +158,9 @@
 
 	<select id="get" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select * from sardine_company u where u.uuid=#{uuid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="queryCompanys" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select * from sardine_company u where u.uuid like CONCAT(#{companyUuid},'%')
 	</select>
 </mapper>

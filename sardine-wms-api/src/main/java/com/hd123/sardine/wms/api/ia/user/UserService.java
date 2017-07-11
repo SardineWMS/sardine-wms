@@ -44,6 +44,8 @@ public interface UserService {
     public static final String QUERY_USERSTATE_FIELD = "userState";
     /** 用户拥有角色查询 */
     public static final String QUERY_ROLE_FIELD = "roleUuid";
+    /** 用户是否是管理员查询 */
+    public static final String QUERY_ADMINISTRATOR_FIELD = "administrator";
 
     /** 代码排序 */
     public static final String ORDER_CODE_FIELD = "code";

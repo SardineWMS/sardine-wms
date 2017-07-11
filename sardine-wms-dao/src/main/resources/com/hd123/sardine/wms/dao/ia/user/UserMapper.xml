@@ -203,6 +203,9 @@
 		<if test="userState != null">
 			and u.userState = #{userState,jdbcType=VARCHAR}
 		</if>
+		<if test="administrator != null">
+			and u.administrator = #{administrator,jdbcType=CHAR}
+		</if>
 		<if test="phone != null">
 			and u.phone like CONCAT(CONCAT('%', #{phone}),
 			'%')

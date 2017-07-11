@@ -32,7 +32,7 @@ public class SequenceDaoImpl extends NameSpaceSupport implements SequenceDao {
     Assert.assertArgumentNotNull(seqName, "seqName");
     Assert.assertArgumentNotNull(companyUuid, "companyUuid");
 
-    Map<String, String> map = new HashMap<>();
+    Map<String, String> map = new HashMap<String, String>();
     map.put("seqName", seqName);
     map.put("companyUuid", companyUuid);
 
@@ -44,7 +44,7 @@ public class SequenceDaoImpl extends NameSpaceSupport implements SequenceDao {
     Assert.assertArgumentNotNull(seqName, "seqName");
     Assert.assertArgumentNotNull(companyUuid, "companyUuid");
 
-    Map<String, String> map = new HashMap<>();
+    Map<String, String> map = new HashMap<String, String>();
     map.put("seqName", seqName);
     map.put("companyUuid", companyUuid);
 
@@ -56,7 +56,7 @@ public class SequenceDaoImpl extends NameSpaceSupport implements SequenceDao {
     Assert.assertArgumentNotNull(seqName, "seqName");
     Assert.assertArgumentNotNull(companyUuid, "companyUuid");
 
-    Map<String, String> map = new HashMap<>();
+    Map<String, String> map = new HashMap<String, String>();
     map.put("seqName", seqName);
     map.put("companyUuid", companyUuid);
 
@@ -68,7 +68,7 @@ public class SequenceDaoImpl extends NameSpaceSupport implements SequenceDao {
     Assert.assertArgumentNotNull(seqName, "seqName");
     Assert.assertArgumentNotNull(companyUuid, "companyUuid");
 
-    Map<String, String> map = new HashMap<>();
+    Map<String, String> map = new HashMap<String, String>();
     map.put("seqName", seqName);
     map.put("companyUuid", companyUuid);
 
@@ -80,7 +80,7 @@ public class SequenceDaoImpl extends NameSpaceSupport implements SequenceDao {
     Assert.assertArgumentNotNull(seqName, "seqName");
     Assert.assertArgumentNotNull(companyUuid, "companyUuid");
     
-    Map<String, String> map = new HashMap<>();
+    Map<String, String> map = new HashMap<String, String>();
     map.put("seqName", seqName);
     map.put("companyUuid", companyUuid);
 

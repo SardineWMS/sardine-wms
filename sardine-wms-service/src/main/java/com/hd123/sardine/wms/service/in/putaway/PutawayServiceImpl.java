@@ -11,6 +11,9 @@ package com.hd123.sardine.wms.service.in.putaway;
 
 import java.math.BigDecimal;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.ArticleConfigService;
 import com.hd123.sardine.wms.api.in.putaway.PutawayService;
 import com.hd123.sardine.wms.common.exception.WMSException;
 
@@ -21,6 +24,9 @@ import com.hd123.sardine.wms.common.exception.WMSException;
  *
  */
 public class PutawayServiceImpl implements PutawayService {
+
+  @Autowired
+  private ArticleConfigService articleConfigService;
 
   @Override
   public String fetchPutawayTaegetBinByArticle(String articleUuid, BigDecimal qty)

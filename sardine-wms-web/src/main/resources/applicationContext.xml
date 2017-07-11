@@ -23,9 +23,9 @@
 		<property name="address" value="${jedis.address:172.17.1.54}" />
 		<property name="port" value="${jedis.port:6379}" />
 		<property name="auth" value="${jedis.auth:sardine}" />
-<!-- 		<property name="maxActive" value="${jedis.maxActive:100}" />
-		<property name="maxIdle" value="${jedis.maxIdle:20}" />
-		<property name="maxWait" value="${jedis.maxWait:10}" /> -->
+		<!-- <property name="maxActive" value="${jedis.maxActive:100}" /> <property 
+			name="maxIdle" value="${jedis.maxIdle:20}" /> <property name="maxWait" value="${jedis.maxWait:10}" 
+			/> -->
 		<property name="timeout" value="${jedis.timeout:60000}" />
 	</bean>
 
@@ -57,6 +57,12 @@
 						<value>/ia/authen/register</value>
 					</list>
 				</property>
+<!-- 				<property name="dataSourceMap">
+					<map>
+						<entry key="xxxx" value="dataSource" />
+						<entry key="acds" value="dataSource1" />
+					</map>
+				</property> -->
 			</bean>
 		</mvc:interceptor>
 	</mvc:interceptors>
