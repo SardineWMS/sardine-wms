@@ -49,6 +49,8 @@ public class Constants {
 
     /** 虚拟组织ID，用于不需要区分组织的序列 */
     public static final String VIRTUAL_COMPANYUUID = "sardine";
+    
+    public static final String FIRST_NUMBER = "000001";
 
     /** 上架指令号类型，指令号=5位组织代码+01+6位日期+6位流水 */
     public static final String PUTAWAYTASK_NUMBER_TYPE = "01";

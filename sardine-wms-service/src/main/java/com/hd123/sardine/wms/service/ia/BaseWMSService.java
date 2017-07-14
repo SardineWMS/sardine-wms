@@ -18,7 +18,6 @@ import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.validator.ValidateResult;
 import com.hd123.sardine.wms.common.validator.errmsg.ValidateErrorCode;
 import com.hd123.sardine.wms.service.util.BillNumberGenerator;
-import com.hd123.sardine.wms.service.util.FlowCodeGenerator;
 import com.hd123.sardine.wms.service.util.StockBatchUtils;
 
 /**
@@ -27,9 +26,6 @@ import com.hd123.sardine.wms.service.util.StockBatchUtils;
  */
 public abstract class BaseWMSService {
 
-  @Autowired
-  protected FlowCodeGenerator flowCodeGenerator;
-  
   @Autowired
   protected StockBatchUtils stockBatchUtils;
   

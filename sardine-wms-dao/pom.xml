@@ -16,8 +16,10 @@
 		</dependency>
 
 		<dependency>
-			<groupId>oracle</groupId>
-			<artifactId>ojdbc6</artifactId>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<scope>runtime</scope>
+			<version>1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

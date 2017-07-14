@@ -33,7 +33,6 @@ import com.hd123.sardine.wms.service.ia.login.LoginServiceImpl;
 import com.hd123.sardine.wms.service.test.BaseServiceTest;
 import com.hd123.sardine.wms.service.test.ia.user.RegisterUserBuilder;
 import com.hd123.sardine.wms.service.test.ia.user.UserBuilder;
-import com.hd123.sardine.wms.service.util.FlowCodeGenerator;
 
 /**
  * @author zhangsai
@@ -61,8 +60,6 @@ public class LoginServiceTest extends BaseServiceTest {
   public LoginServiceImpl service;
   @Mock
   private UserDao dao;
-  @Mock
-  private FlowCodeGenerator flowCodeGenerator;
   @Mock
   private CompanyService companyService;
 
@@ -112,7 +109,6 @@ public class LoginServiceTest extends BaseServiceTest {
         .withCompanyCode(REGISTER_COMPANYCODE).withAddress(ADDRESS).withHomePage(HOMEPAGE)
         .withCompanyType(COMPANYTYPE).build();
     when(dao.getByCode(anyString())).thenReturn(null);
-    when(flowCodeGenerator.allocate(anyString(), anyString(), 8)).thenReturn("800001");
 
     service.register(registerUser);
 

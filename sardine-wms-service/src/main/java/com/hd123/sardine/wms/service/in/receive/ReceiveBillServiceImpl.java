@@ -50,7 +50,6 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
-import com.hd123.sardine.wms.common.utils.Constants;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
@@ -96,7 +95,7 @@ public class ReceiveBillServiceImpl extends BaseWMSService implements ReceiveBil
     verifyAndRefresh(bill);
 
     bill.setUuid(UUIDGenerator.genUUID());
-    bill.setBillNumber(billNumberGenerator.allocate(Constants.RECEIVE_NUMBER_TYPE));
+    bill.setBillNumber(billNumberGenerator.allocateNextBillNumber(ReceiveBill.class.getSimpleName()));
     bill.setState(ReceiveBillState.Initial);
     bill.setCreateInfo(OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
     bill.setLastModifyInfo(OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));

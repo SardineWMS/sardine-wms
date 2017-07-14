@@ -53,7 +53,6 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
-import com.hd123.sardine.wms.common.utils.Constants;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
@@ -94,7 +93,7 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
     for (Task task : tasks) {
       task.validate();
       task.setUuid(UUIDGenerator.genUUID());
-      task.setTaskNo(billNumberGenerator.allocate(Constants.PICKUPTASK_NUMBER_TYPE));
+      task.setTaskNo(billNumberGenerator.allocateNextBillNumber(task.getTaskType().name()));
       task.setCreator(ApplicationContextUtil.getLoginUser());
       task.setCreateTime(new Date());
       task.setState(TaskState.Initial);
@@ -302,7 +301,7 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
       task.setState(TaskState.Initial);
       task.setSupplier(
           new UCN(rule.getSupplierUuid(), rule.getSupplierCode(), rule.getSupplierName()));
-      task.setTaskNo(billNumberGenerator.allocate(Constants.MOVETASK_NUMBER_TYPE));
+      task.setTaskNo(billNumberGenerator.allocateNextBillNumber(TaskType.Move.name()));
       task.setTaskType(TaskType.Move);
       task.setToBinCode(rule.getToBinCode());
       task.setToContainerBarcode(rule.getToContainerBarcode());
@@ -482,7 +481,7 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
       task.setFromContainerBarcode(rule.getFromContainerBarcode());
       task.setOwner(ApplicationContextUtil.getCompanyUuid());
       task.setState(TaskState.Initial);
-      task.setTaskNo(billNumberGenerator.allocate(Constants.MOVETASK_NUMBER_TYPE));
+      task.setTaskNo(billNumberGenerator.allocateNextBillNumber(TaskType.Move.name()));
       task.setTaskType(TaskType.Move);
       task.setToBinCode(rule.getToBinCode());
       task.setToContainerBarcode(rule.getToContainerBarcode());
@@ -645,8 +644,9 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
     }
 
     if (Container.VIRTUALITY_CONTAINER.equals(task.getFromContainerBarcode()) == false) {
-//      Container fromContainer = containerService.getByBarcode(task.getFromContainerBarcode());
-      
+      // Container fromContainer =
+      // containerService.getByBarcode(task.getFromContainerBarcode());
+
     }
   }
 }

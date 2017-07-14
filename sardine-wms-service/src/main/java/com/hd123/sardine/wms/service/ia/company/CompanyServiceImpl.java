@@ -61,12 +61,10 @@ public class CompanyServiceImpl extends BaseWMSService implements CompanyService
     Assert.assertArgumentNotNull(company.getName(), "company.name");
     Assert.assertArgumentNotNull(company.getAddress(), "company.address");
 
-    String flowCode = flowCodeGenerator.allocate(
-        ApplicationContextUtil.getCompanyUuid().concat(Constants.DC_PREFIX),
-        Constants.VIRTUAL_COMPANYUUID, 2);
-    company.setUuid(
-        ApplicationContextUtil.getCompanyUuid().concat(Constants.DC_PREFIX).concat(flowCode));
+    String companyUuid = billNumberGenerator.allocateNextWareHouseUuid();
+    company.setUuid(companyUuid);
     company.setParentUuid(ApplicationContextUtil.getParentCompanyUuid());
+    String flowCode = companyUuid.replaceAll(ApplicationContextUtil.getParentCompanyUuid(), "");
     company.setCode(
         Constants.DC_CODE_PREFIX.concat(ApplicationContextUtil.getCompanyCode()).concat(flowCode));
     company.setCreateInfo(ApplicationContextUtil.getOperateInfo());

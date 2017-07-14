@@ -44,7 +44,6 @@ import com.hd123.sardine.wms.service.ia.BaseWMSService;
 import com.hd123.sardine.wms.service.ia.login.validator.RegisterValidateHandler;
 import com.hd123.sardine.wms.service.ia.login.validator.UpdatePasswdValidateHandler;
 import com.hd123.sardine.wms.service.log.EntityLogger;
-import com.hd123.sardine.wms.service.util.FlowCodeGenerator;
 
 /**
  * 登录服务实现
@@ -59,9 +58,6 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
 
   @Autowired
   private CompanyDao companyDao;
-
-  @Autowired
-  private FlowCodeGenerator flowCodeGenerator;
 
   @Autowired
   private CompanyService companyService;
@@ -90,26 +86,15 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
     if (dbCompany != null)
       throw new WMSException("企业已存在，不能重复注册");
 
-    String prefix = Constants.RESOURCE_PREFIX;
-    String codePrefix;
-    if (registerUser.getCompanyType().equals(CompanyType.carrier.name())) {
-      prefix = prefix + Constants.CARR_PREFIX;
-      codePrefix = Constants.CARR_CODE_PREFIX;
-    } else if (registerUser.getCompanyType().equals(CompanyType.deliveryCenter.name())) {
-      prefix = prefix + Constants.DC_PREFIX;
-      codePrefix = Constants.DC_CODE_PREFIX;
-    } else {
-      prefix = prefix + Constants.SUPP_PREFIX;
-      codePrefix = Constants.SUPP_CODE_PREFIX;
-    }
+    // String prefix = Constants.RESOURCE_PREFIX;
 
-    String flowCode = flowCodeGenerator.allocate(registerUser.getCompanyType(),
-        Constants.VIRTUAL_COMPANYUUID, Constants.COMPANY_FLOW_LENGTH);
+    String companyUuid = billNumberGenerator.allocateCompanyUuid();
+    String flowCode = companyUuid.replaceAll(Constants.RESOURCE_PREFIX, "");
 
     Company company = new Company();
-    company.setUuid(prefix + flowCode);
+    company.setUuid(companyUuid);
     company.setAddress(registerUser.getAddress());
-    company.setCode(codePrefix + flowCode);
+    company.setCode(Constants.DC_CODE_PREFIX + flowCode);
     company.setCompanyType(CompanyType.valueOf(registerUser.getCompanyType()));
     company.setHomePage(registerUser.getHomePage());
     company.setName(registerUser.getCompanyName());
@@ -197,10 +182,10 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
     User user = new User();
     user.setUuid(UUIDGenerator.genUUID());
     user.setCode(registerInfo.getLoginId());
-    String flowCode = flowCodeGenerator.allocate(Constants.RESOURCE_PREFIX,
-        Constants.VIRTUAL_COMPANYUUID, Constants.COMPANY_FLOW_LENGTH);
+    String companyUuid = billNumberGenerator.allocateCompanyUuid();
+    String flowCode = companyUuid.replaceAll(Constants.RESOURCE_PREFIX, "");
     user.setCompanyUuid(Constants.RESOURCE_PREFIX.concat(flowCode));
-    user.setCompanyCode(flowCode);
+    user.setCompanyCode(Constants.DC_CODE_PREFIX + flowCode);
     user.setCompanyName(registerInfo.getCompanyName());
     user.setName("企业管理员");
     user.setPasswd(registerInfo.getPasswd());

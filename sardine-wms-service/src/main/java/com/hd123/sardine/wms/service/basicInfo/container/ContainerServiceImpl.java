@@ -57,9 +57,9 @@ public class ContainerServiceImpl extends BaseWMSService implements ContainerSer
     Container container = new Container();
     container.setUuid(UUIDGenerator.genUUID());
     container.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-    String flowCode = flowCodeGenerator.allocate(containerType.getBarCodePrefix(),
-        containerType.getCompanyUuid(), containerType.getBarCodeLength());
-    container.setBarcode(containerType.getBarCodePrefix() + flowCode);
+    String barcode = billNumberGenerator.allocateNextContainerBarcode(
+        containerType.getBarCodePrefix(), containerType.getBarCodeLength());
+    container.setBarcode(barcode);
     container.setContainerType(
         new UCN(containerTypeUuid, containerType.getCode(), containerType.getName()));
     container.setCompanyUuid(containerType.getCompanyUuid());
