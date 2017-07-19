@@ -70,6 +70,10 @@
              and c.name = #{name, jdbcType=VARCHAR}
            </if>
 	</select>
+	
+	<select id="getParentUuid" parameterType="java.lang.String" resultType="java.lang.String">
+	  select c.uppercategory from db_proxy.sardine_category c where c.uuid = #{uuid, jdbcType=VARCHAR}
+	</select>
 
 	<insert id="insert" parameterType="com.hd123.sardine.wms.api.basicInfo.category.Category">
 		insert into db_proxy.sardine_category

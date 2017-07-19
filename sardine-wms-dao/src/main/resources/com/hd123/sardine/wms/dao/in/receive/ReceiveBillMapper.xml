@@ -56,14 +56,11 @@
 		<result column="line" property="line" jdbcType="DECIMAL" />
 		<result column="binCode" property="binCode" jdbcType="VARCHAR" />
 		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
-		<result column="qpc" property="qpc" jdbcType="DECIMAL" />
 		<result column="qty" property="qty" jdbcType="DECIMAL" />
 		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
 		<result column="produceDate" property="produceDate" jdbcType="TIMESTAMP" />
 		<result column="validDate" property="validDate" jdbcType="TIMESTAMP" />
 		<result column="receiveDate" property="receiveDate" jdbcType="TIMESTAMP" />
-		<result column="productionBatch" property="productionBatch"
-			jdbcType="VARCHAR" />
 		<result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
 		<result column="containerBarcode" property="containerBarcode"
 			jdbcType="VARCHAR" />
@@ -75,7 +72,6 @@
 		<result column="orderBillLineUuid" property="orderBillLineUuid"
 			jdbcType="VARCHAR" />
 		<result column="price" property="price" jdbcType="DECIMAL" />
-		<result column="amount" property="amount" jdbcType="DECIMAL" />
 	</resultMap>
 
 	<insert id="insert" parameterType="com.hd123.sardine.wms.api.in.receive.ReceiveBill">
@@ -90,12 +86,6 @@
 			<if test="supplier != null and supplier.uuid != null">
 				supplieruuid,
 			</if>
-			<if test="supplier != null and supplier.code != null">
-				suppliercode,
-			</if>
-			<if test="supplier != null and supplier.name != null">
-				suppliername,
-			</if>
 			<if test="companyUuid != null">
 				companyUuid,
 			</if>
@@ -105,9 +95,9 @@
 			<if test="orderBillNumber != null">
 				orderBillNumber,
 			</if>
-			<if test="wrh != null and wrh.uuid != null"> wrhuuid, </if>
-			<!-- <if test="wrh != null and wrh.code != null"> wrhcode, </if> <if test="wrh 
-				!= null and wrh.name != null"> wrhname, </if> -->
+			<if test="wrh != null and wrh.uuid != null"> 
+			    wrhuuid, 
+		    </if>
 			<if test="method != null">
 				method,
 			</if>
@@ -149,12 +139,6 @@
 			<if test="supplier != null and supplier.uuid != null">
 				#{supplier.uuid,jdbcType=VARCHAR},
 			</if>
-			<if test="supplier != null and supplier.code != null">
-				#{supplier.code,jdbcType=VARCHAR},
-			</if>
-			<if test="supplier != null and supplier.name != null">
-				#{supplier.name,jdbcType=VARCHAR},
-			</if>
 			<if test="companyUuid != null">
 				#{companyUuid,jdbcType=VARCHAR},
 			</if>
@@ -167,9 +151,6 @@
 			<if test="wrh != null and wrh.uuid != null">
 				#{wrh.uuid,jdbcType=VARCHAR},
 			</if>
-			<!-- <if test="wrh != null and wrh.code != null"> #{wrh.code,jdbcType=VARCHAR}, 
-				</if> <if test="wrh != null and wrh.name != null"> #{wrh.name,jdbcType=VARCHAR}, 
-				</if> -->
 			<if test="method != null">
 				#{method,jdbcType=VARCHAR},
 			</if>
@@ -208,12 +189,6 @@
 		<set>
 			<if test="supplier != null and supplier.uuid != null">
 				supplieruuid = #{supplier.uuid,jdbcType=VARCHAR},
-			</if>
-			<if test="supplier != null and supplier.code != null">
-				suppliercode = #{supplier.code,jdbcType=VARCHAR},
-			</if>
-			<if test="supplier != null and supplier.name != null">
-				suppliername = #{supplier.name,jdbcType=VARCHAR},
 			</if>
 			<if test="state != null">
 				state = #{state,jdbcType=VARCHAR},
@@ -363,9 +338,6 @@
 			<if test="item.qpcStr != null">
 				qpcStr,
 			</if>
-			<if test="item.qpc != null">
-				qpc,
-			</if>
 			<if test="item.qty != null">
 				qty,
 			</if>
@@ -380,9 +352,6 @@
 			</if>
 			<if test="item.receiveDate != null">
 				receiveDate,
-			</if>
-			<if test="item.productionBatch != null">
-				productionBatch,
 			</if>
 			<if test="item.stockBatch != null">
 				stockBatch,
@@ -405,9 +374,6 @@
 			<if test="item.price != null">
 				price,
 			</if>
-			<if test="item.amount != null">
-				amount
-			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="item.uuid != null">
@@ -425,9 +391,6 @@
 			<if test="item.qpcStr != null">
 				#{item.qpcStr,jdbcType=VARCHAR},
 			</if>
-			<if test="item.qpc != null">
-				#{item.qpc,jdbcType=DECIMAL},
-			</if>
 			<if test="item.qty != null">
 				#{item.qty,jdbcType=DECIMAL},
 			</if>
@@ -442,9 +405,6 @@
 			</if>
 			<if test="item.receiveDate != null">
 				#{item.receiveDate,jdbcType=TIMESTAMP},
-			</if>
-			<if test="item.productionBatch != null">
-				#{item.productionBatch,jdbcType=VARCHAR},
 			</if>
 			<if test="item.stockBatch != null">
 				#{item.stockBatch,jdbcType=VARCHAR},
@@ -466,9 +426,6 @@
 			</if>
 			<if test="item.price != null">
 				#{item.price,jdbcType=DECIMAL},
-			</if>
-			<if test="item.amount != null">
-				#{item.amount,jdbcType=DECIMAL}
 			</if>
 		</trim>
 	</insert>

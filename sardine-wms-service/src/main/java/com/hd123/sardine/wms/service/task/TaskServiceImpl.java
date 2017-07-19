@@ -110,24 +110,12 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
       fromOnWayStock.setStockBatch(task.getStockBatch());
       onWayStocks.add(fromOnWayStock);
 
-      OnWayStock toOnWayStock = new OnWayStock();
-      toOnWayStock.setBinCode(task.getToBinCode());
-      toOnWayStock.setContainerBarcode(task.getToContainerBarcode());
-      toOnWayStock.setQty(task.getQty());
-      toOnWayStock.setStockBatch(task.getStockBatch());
-      toOnWayStock.setTaskNo(task.getTaskNo());
-      toOnWayStock.setTaskType(task.getTaskType());
-      toOnWayStock.setArticleUuid(task.getArticle().getUuid());
-      toOnWayStock.setStockBatch(task.getStockBatch());
-      onWayStocks.add(toOnWayStock);
-
       logger.injectContext(this, task.getUuid(), Task.class.getName(),
           ApplicationContextUtil.getOperateContext());
       logger.log(EntityLogger.EVENT_ADDNEW, "新增" + task.getTaskType().getCaption());
     }
 
     stockService.shiftInOnWayStock(onWayStocks);
-
   }
 
   @Override

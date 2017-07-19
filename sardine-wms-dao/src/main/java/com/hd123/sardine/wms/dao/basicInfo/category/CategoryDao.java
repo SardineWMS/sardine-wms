@@ -34,4 +34,6 @@ public interface CategoryDao {
   void remove(String categoryUuid, long version);
 
   List<Category> queryLastLower(PageQueryDefinition definition);
+
+  String getParentUuid(String uuid);
 }

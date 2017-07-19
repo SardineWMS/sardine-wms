@@ -36,6 +36,21 @@
 		and
 		u.companyuuid = #{companyUuid,jdbcType=VARCHAR}
 	</select>
+	
+	<select id="queryBincodesByScope" parameterType="map" resultType="java.lang.String">
+		select u.*
+		from db_proxy.sardine_bin u
+		where ${sql}
+		and
+		u.companyuuid = #{companyUuid,jdbcType=VARCHAR}
+		<if test="binUsage != null and binUsage != ''">
+		  and u.usage = #{binUsage, jdbcType=VARCHAR}
+		</if>
+		<if test="state != null and state != ''">
+		  and u.state = #{state, jdbcType=VARCHAR}
+		</if>
+		order by u.code
+	</select>
 
 	<insert id="insert" parameterType="Bin">
 		insert into

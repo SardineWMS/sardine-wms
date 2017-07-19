@@ -17,15 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
-import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
-import com.hd123.sardine.wms.api.basicInfo.bin.Wrh;
-import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
-import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierService;
 import com.hd123.sardine.wms.api.in.order.OrderBill;
 import com.hd123.sardine.wms.api.in.order.OrderBillItem;
 import com.hd123.sardine.wms.api.in.order.OrderBillService;
 import com.hd123.sardine.wms.api.in.order.OrderBillState;
-import com.hd123.sardine.wms.common.entity.OperateInfo;
+import com.hd123.sardine.wms.api.in.order.OrderReceiveInfo;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -48,13 +44,10 @@ import com.hd123.sardine.wms.service.log.EntityLogger;
 public class OrderBillServiceImpl extends BaseWMSService implements OrderBillService {
 
   @Autowired
-  private BinService binService;
-
-  @Autowired
-  private SupplierService supplierService;
-
-  @Autowired
   private OrderBillDao orderBillDao;
+
+  @Autowired
+  private OrderVerifier orderVerifier;
 
   @Autowired
   private EntityLogger logger;
@@ -64,17 +57,20 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
     Assert.assertArgumentNotNull(orderBill, "orderBill");
 
     orderBill.validate();
-    verifyOrderBill(orderBill);
 
-    orderBill.refreshCaseQtyStr();
+    orderVerifier.verifyOrderBill(orderBill);
+
+    orderBill.refreshTotalCaseQtyStr();
+    orderBill.refreshTotalReceiveCaseQtyStr();
+    orderBill.refreshTotalAmount();
+    orderBill.refreshTotalReceiveAmount();
     orderBill.setUuid(UUIDGenerator.genUUID());
     orderBill
         .setBillNumber(billNumberGenerator.allocateNextBillNumber(OrderBill.class.getSimpleName()));
     orderBill.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     orderBill.setState(OrderBillState.Initial);
-    orderBill.setCreateInfo(OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
-    orderBill
-        .setLastModifyInfo(OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
+    orderBill.setCreateInfo(ApplicationContextUtil.getOperateInfo());
+    orderBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     orderBillDao.insert(orderBill);
 
     for (OrderBillItem item : orderBill.getItems()) {
@@ -89,18 +85,6 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
     return orderBill.getUuid();
   }
 
-  private void verifyOrderBill(OrderBill orderBill) throws WMSException {
-    assert orderBill != null;
-
-    Supplier supplier = supplierService.get(orderBill.getSupplier().getUuid());
-    if (supplier == null)
-      throw new WMSException("供应商" + orderBill.getSupplier().getCode() + "不存在。");
-
-    Wrh wrh = binService.getWrh(orderBill.getWrh().getUuid());
-    if (wrh == null)
-      throw new WMSException("仓位" + orderBill.getWrh().getCode() + "不存在。");
-  }
-
   @Override
   public void update(OrderBill orderBill)
       throws IllegalArgumentException, VersionConflictException, WMSException {
@@ -109,7 +93,8 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
     Assert.assertArgumentNotNull(orderBill.getBillNumber(), "orderBill.billnumber");
 
     orderBill.validate();
-    verifyOrderBill(orderBill);
+
+    orderVerifier.verifyOrderBill(orderBill);
 
     OrderBill oldOrderBill = orderBillDao.get(orderBill.getUuid());
     if (oldOrderBill == null)
@@ -117,11 +102,13 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
     PersistenceUtils.checkVersion(orderBill.getVersion(), oldOrderBill, "订单",
         orderBill.getBillNumber());
 
-    orderBill.refreshCaseQtyStr();
+    orderBill.refreshTotalCaseQtyStr();
+    orderBill.refreshTotalReceiveCaseQtyStr();
+    orderBill.refreshTotalAmount();
+    orderBill.refreshTotalReceiveAmount();
     orderBill.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     orderBill.setState(OrderBillState.Initial);
-    orderBill
-        .setLastModifyInfo(OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
+    orderBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     orderBillDao.update(orderBill);
 
     for (OrderBillItem item : orderBill.getItems()) {
@@ -195,7 +182,7 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
   }
 
   @Override
-  public void uploadStateToPreBookReg(String uuid, long version, Date bookDate)
+  public void preBookReg(String uuid, long version, Date bookDate)
       throws IllegalArgumentException, VersionConflictException, WMSException {
     Assert.assertArgumentNotNull(uuid, "uuid");
 
@@ -207,9 +194,10 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
     if (oldOrderBill.getState().equals(OrderBillState.Initial) == false)
       throw new WMSException("订单" + oldOrderBill.getBillNumber() + "状态不是初始，不能预约！");
 
+    orderVerifier.verifyOrderBill(oldOrderBill);
+
     oldOrderBill.setBookedDate(bookDate);
-    oldOrderBill
-        .setLastModifyInfo(OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
+    oldOrderBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     oldOrderBill.setState(OrderBillState.PreBookReg);
     orderBillDao.update(oldOrderBill);
 
@@ -219,7 +207,7 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
   }
 
   @Override
-  public void uploadStateToPreChecked(String uuid, long version)
+  public void preCheck(String uuid, long version)
       throws IllegalArgumentException, VersionConflictException, WMSException {
     Assert.assertArgumentNotNull(uuid, "uuid");
 
@@ -232,8 +220,8 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
         && oldOrderBill.getState().equals(OrderBillState.PreBookReg) == false)
       throw new WMSException("订单" + oldOrderBill.getBillNumber() + "状态不是初始或者已预约，不能预检！");
 
-    oldOrderBill
-        .setLastModifyInfo(OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
+    orderVerifier.verifyOrderBill(oldOrderBill);
+    oldOrderBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     oldOrderBill.setState(OrderBillState.PreChecked);
     orderBillDao.update(oldOrderBill);
 
@@ -243,7 +231,7 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
   }
 
   @Override
-  public void upload_finish(String uuid, long version)
+  public void finish(String uuid, long version)
       throws IllegalArgumentException, VersionConflictException, WMSException {
     Assert.assertArgumentNotNull(uuid, "uuid");
 
@@ -257,20 +245,17 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
     if (oldOrderBill.getState().equals(OrderBillState.Aborted))
       throw new WMSException("订单" + oldOrderBill.getBillNumber() + "已作废，不能完成！");
 
-    oldOrderBill
-        .setLastModifyInfo(OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
+    oldOrderBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     oldOrderBill.setState(OrderBillState.Finished);
     orderBillDao.update(oldOrderBill);
 
     logger.injectContext(this, uuid, OrderBill.class.getName(),
         ApplicationContextUtil.getOperateContext());
     logger.log(EntityLogger.EVENT_MODIFY, "完成订单");
-
-    // TODO 完成进行中的收货单，针对app收货
   }
 
   @Override
-  public void uploadStateToAborted(String uuid, long version)
+  public void abort(String uuid, long version)
       throws IllegalArgumentException, VersionConflictException, WMSException {
     Assert.assertArgumentNotNull(uuid, "uuid");
 
@@ -283,8 +268,7 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
         && oldOrderBill.getState().equals(OrderBillState.PreBookReg) == false)
       throw new WMSException("订单" + oldOrderBill.getBillNumber() + "状态不是初始或者已预约，不能作废！");
 
-    oldOrderBill
-        .setLastModifyInfo(OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
+    oldOrderBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     oldOrderBill.setState(OrderBillState.Aborted);
     orderBillDao.update(oldOrderBill);
 
@@ -294,15 +278,10 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
   }
 
   @Override
-  public void receive(String billNumber, String articleUuid, String qpcStr, BigDecimal qty)
+  public void receive(String billNumber, List<OrderReceiveInfo> receiveInfos)
       throws IllegalArgumentException, VersionConflictException, WMSException {
     Assert.assertArgumentNotNull(billNumber, "billNumber");
-    Assert.assertArgumentNotNull(articleUuid, "articleUuid");
-    Assert.assertArgumentNotNull(qpcStr, "qpcStr");
-    Assert.assertArgumentNotNull(qty, "qty");
-
-    if (qty.compareTo(BigDecimal.ZERO) <= 0)
-      throw new WMSException("收货数量" + qty + "必须大于0！");
+    Assert.assertArgumentNotNull(receiveInfos, "receiveInfos");
 
     OrderBill orderBill = orderBillDao.getByBillNumber(billNumber);
     if (orderBill == null)
@@ -310,39 +289,62 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
     if (orderBill.getState().equals(OrderBillState.Aborted)
         || orderBill.getState().equals(OrderBillState.Finished))
       throw new WMSException("订单" + billNumber + "已完成或者已作废，不能再收货！");
+
     List<OrderBillItem> items = orderBillDao.queryItems(orderBill.getUuid());
-    for (OrderBillItem item : items) {
-      if (item.getArticle().getUuid().equals(articleUuid) && item.getQpcStr().equals(qpcStr)) {
-        if (item.getQty().subtract(item.getReceivedQty()).compareTo(qty) < 0)
-          throw new WMSException("商品" + item.getArticle().getCode() + "待收貨數量"
-              + item.getQty().subtract(item.getReceivedQty()) + "小於本次收貨數量" + qty);
-        item.setReceivedQty(item.getReceivedQty().add(qty));
-        item.setReceivedCaseQtyStr(QpcHelper.qtyToCaseQtyStr(item.getReceivedQty(), qpcStr));
-        orderBillDao.updateItem(item.getUuid(), item.getReceivedQty(),
-            item.getReceivedCaseQtyStr());
-        break;
-      }
+
+    for (OrderReceiveInfo receiveInfo : receiveInfos) {
+      if (receiveInfo.getQty() == null || BigDecimal.ZERO.compareTo(receiveInfo.getQty()) <= 0)
+        continue;
+
+      OrderBillItem orderItem = findItem(items, receiveInfo.getArticleUuid(),
+          receiveInfo.getQpcStr());
+      if (orderItem == null)
+        continue;
+      if (orderItem.getQty().subtract(orderItem.getReceivedQty())
+          .compareTo(receiveInfo.getQty()) < 0)
+        throw new WMSException("商品" + orderItem.getArticle().getCode() + "待收貨數量"
+            + orderItem.getQty().subtract(orderItem.getReceivedQty()) + "小於本次收貨數量"
+            + receiveInfo.getQty());
+      orderItem.setReceivedQty(orderItem.getReceivedQty().add(receiveInfo.getQty()));
+      orderItem.setReceivedCaseQtyStr(
+          QpcHelper.qtyToCaseQtyStr(orderItem.getReceivedQty(), receiveInfo.getQpcStr()));
+      orderBillDao.updateItem(orderItem.getUuid(), orderItem.getReceivedQty(),
+          orderItem.getReceivedCaseQtyStr());
     }
 
     boolean receiveFinish = true;
     for (OrderBillItem item : items) {
-      if (item.getQty().subtract(item.getReceivedQty()).compareTo(BigDecimal.ZERO) > 0)
+      if (item.getQty().subtract(item.getReceivedQty()).compareTo(BigDecimal.ZERO) > 0) {
         receiveFinish = false;
+        break;
+      }
     }
 
     if (receiveFinish)
       orderBill.setState(OrderBillState.Finished);
     else
       orderBill.setState(OrderBillState.InProgress);
-    orderBill.setReceivedCaseQtyStr(
-        QpcHelper.caseQtyStrAdd(StringUtil.isNullOrBlank(orderBill.getReceivedCaseQtyStr()) ? "0"
-            : orderBill.getReceivedCaseQtyStr(), QpcHelper.qtyToCaseQtyStr(qty, qpcStr)));
-    orderBill
-        .setLastModifyInfo(OperateInfo.newInstance(ApplicationContextUtil.getOperateContext()));
+    orderBill.refreshTotalReceiveAmount();
+    orderBill.refreshTotalReceiveCaseQtyStr();
+    orderBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     orderBillDao.update(orderBill);
 
     logger.injectContext(this, orderBill.getUuid(), OrderBill.class.getName(),
         ApplicationContextUtil.getOperateContext());
     logger.log(EntityLogger.EVENT_MODIFY, "订单收货");
+  }
+
+  private OrderBillItem findItem(List<OrderBillItem> orderItems, String articleUuid,
+      String qpcStr) {
+    assert orderItems != null;
+    assert articleUuid != null;
+    assert qpcStr != null;
+
+    for (OrderBillItem orderItem : orderItems) {
+      if (orderItem.getArticle().getUuid().equals(articleUuid)
+          && orderItem.getQpcStr().equals(qpcStr))
+        return orderItem;
+    }
+    return null;
   }
 }

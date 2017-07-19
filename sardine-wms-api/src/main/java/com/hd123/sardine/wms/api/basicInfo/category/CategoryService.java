@@ -87,4 +87,13 @@ public interface CategoryService {
    * @return 分页数据
    */
   PageQueryResult<Category> queryLastLower(PageQueryDefinition definition);
+
+  /**
+   * 获取当前类别的父类别
+   * 
+   * @param uuid
+   *          类别UUID
+   * @return 父类别UUID
+   */
+  String getParentCategoryUuid(String uuid);
 }

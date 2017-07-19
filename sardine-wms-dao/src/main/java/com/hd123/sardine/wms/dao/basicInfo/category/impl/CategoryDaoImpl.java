@@ -30,6 +30,7 @@ public class CategoryDaoImpl extends NameSpaceSupport implements CategoryDao {
   public static final String GETLOWERCATEGORYS = "getLowerCategorys";
   public static final String REMOVECATEGORY = "removeCategory";
   public static final String QUERYLASTLOWER = "queryLastLower";
+  public static final String GETPARENTUUID = "getParentUuid";
 
   @Override
   public Category getByCode(String code) {
@@ -84,5 +85,10 @@ public class CategoryDaoImpl extends NameSpaceSupport implements CategoryDao {
     Assert.assertArgumentNotNull(definition, "definition");
 
     return getSqlSession().selectList(generateStatement(QUERYLASTLOWER), definition);
+  }
+
+  @Override
+  public String getParentUuid(String uuid) {
+    return selectOne(GETPARENTUUID, uuid);
   }
 }

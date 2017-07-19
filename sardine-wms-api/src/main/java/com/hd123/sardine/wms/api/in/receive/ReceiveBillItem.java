@@ -22,201 +22,171 @@ import com.hd123.sardine.wms.common.entity.UCN;
  */
 public class ReceiveBillItem extends Entity {
 
-    private static final long serialVersionUID = -8345269229607203571L;
+  private static final long serialVersionUID = -8345269229607203571L;
 
-    private int line;
-    private String receiveBillUuid;
-    private String binCode;
-    private String qpcStr;
-    private BigDecimal qpc;
-    private BigDecimal qty;
-    private String caseQtyStr;
-    private Date produceDate;
-    private Date validDate;
-    private String stockBatch;
-    private String containerBarcode;
-    private UCN article;
-    private String articleSpec;
-    private String munit;
-    private Date receiveDate;
-    private String orderBillLineUuid;
-    private BigDecimal price;
-    private BigDecimal amount;
-    private String productionBatch;
+  private int line;
+  private String receiveBillUuid;
+  private String binCode;
+  private String qpcStr;
+  private BigDecimal qty;
+  private String caseQtyStr;
+  private Date produceDate;
+  private Date validDate;
+  private String stockBatch;
+  private String containerBarcode;
+  private UCN article;
+  private String articleSpec;
+  private String munit;
+  private Date receiveDate;
+  private String orderBillLineUuid;
+  private BigDecimal price;
 
-    /** 商品单价，取自订单明细price */
-    public BigDecimal getPrice() {
-        return price;
-    }
+  /** 商品单价，取自订单明细price */
+  public BigDecimal getPrice() {
+    return price;
+  }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
+  public void setPrice(BigDecimal price) {
+    this.price = price;
+  }
 
-    /** 金额 = price*qty */
-    public BigDecimal getAmount() {
-        return amount;
-    }
+  public int getLine() {
+    return line;
+  }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
+  public void setLine(int line) {
+    this.line = line;
+  }
 
-    public int getLine() {
-        return line;
-    }
+  public String getMunit() {
+    return munit;
+  }
 
-    public void setLine(int line) {
-        this.line = line;
-    }
+  public void setMunit(String munit) {
+    this.munit = munit;
+  }
 
-    public String getMunit() {
-        return munit;
-    }
+  public String getOrderBillLineUuid() {
+    return orderBillLineUuid;
+  }
 
-    public void setMunit(String munit) {
-        this.munit = munit;
-    }
+  public void setOrderBillLineUuid(String orderBillLineUuid) {
+    this.orderBillLineUuid = orderBillLineUuid;
+  }
 
-    public String getOrderBillLineUuid() {
-        return orderBillLineUuid;
-    }
+  /** 收货单UUID */
+  public String getReceiveBillUuid() {
+    return receiveBillUuid;
+  }
 
-    public void setOrderBillLineUuid(String orderBillLineUuid) {
-        this.orderBillLineUuid = orderBillLineUuid;
-    }
+  public void setReceiveBillUuid(String receiveBillUuid) {
+    this.receiveBillUuid = receiveBillUuid;
+  }
 
-    /** 收货单UUID */
-    public String getReceiveBillUuid() {
-        return receiveBillUuid;
-    }
+  /** 包装规格 */
+  public String getQpcStr() {
+    return qpcStr;
+  }
 
-    public void setReceiveBillUuid(String receiveBillUuid) {
-        this.receiveBillUuid = receiveBillUuid;
-    }
+  public void setQpcStr(String qpcStr) {
+    this.qpcStr = qpcStr;
+  }
 
-    /** 包装规格 */
-    public String getQpcStr() {
-        return qpcStr;
-    }
+  /** 数量 */
+  public BigDecimal getQty() {
+    return qty;
+  }
 
-    public void setQpcStr(String qpcStr) {
-        this.qpcStr = qpcStr;
-    }
+  public void setQty(BigDecimal qty) {
+    this.qty = qty;
+  }
 
-    /** 单品包装数量 */
-    public BigDecimal getQpc() {
-        return qpc;
-    }
+  /** 生产日期 */
+  public Date getProduceDate() {
+    return produceDate;
+  }
 
-    public void setQpc(BigDecimal qpc) {
-        this.qpc = qpc;
-    }
+  public void setProduceDate(Date produceDate) {
+    this.produceDate = produceDate;
+  }
 
-    /** 数量 */
-    public BigDecimal getQty() {
-        return qty;
-    }
+  /** 到效日期 */
+  public Date getValidDate() {
+    return validDate;
+  }
 
-    public void setQty(BigDecimal qty) {
-        this.qty = qty;
-    }
+  /** 货位代码 */
+  public String getBinCode() {
+    return binCode;
+  }
 
-    /** 生产日期 */
-    public Date getProduceDate() {
-        return produceDate;
-    }
+  public void setBinCode(String binCode) {
+    this.binCode = binCode;
+  }
 
-    public void setProduceDate(Date produceDate) {
-        this.produceDate = produceDate;
-    }
+  public void setValidDate(Date validDate) {
+    this.validDate = validDate;
+  }
 
-    /** 到效日期 */
-    public Date getValidDate() {
-        return validDate;
-    }
+  /** 批次 */
+  public String getStockBatch() {
+    return stockBatch;
+  }
 
-    /** 货位代码 */
-    public String getBinCode() {
-        return binCode;
-    }
+  public void setStockBatch(String stockBatch) {
+    this.stockBatch = stockBatch;
+  }
 
-    public void setBinCode(String binCode) {
-        this.binCode = binCode;
-    }
+  /** 容器条形码 */
+  public String getContainerBarcode() {
+    return containerBarcode;
+  }
 
-    public void setValidDate(Date validDate) {
-        this.validDate = validDate;
-    }
+  public void setContainerBarcode(String containerBarcode) {
+    this.containerBarcode = containerBarcode;
+  }
 
-    /** 批次 */
-    public String getStockBatch() {
-        return stockBatch;
-    }
+  public UCN getArticle() {
+    return article;
+  }
 
-    public void setStockBatch(String stockBatch) {
-        this.stockBatch = stockBatch;
-    }
+  public void setArticle(UCN article) {
+    this.article = article;
+  }
 
-    /** 容器条形码 */
-    public String getContainerBarcode() {
-        return containerBarcode;
-    }
+  /** 件数 */
+  public String getCaseQtyStr() {
+    return caseQtyStr;
+  }
 
-    public void setContainerBarcode(String containerBarcode) {
-        this.containerBarcode = containerBarcode;
-    }
+  public void setCaseQtyStr(String caseQtyStr) {
+    this.caseQtyStr = caseQtyStr;
+  }
 
-    public UCN getArticle() {
-        return article;
-    }
+  public String getArticleSpec() {
+    return articleSpec;
+  }
 
-    public void setArticle(UCN article) {
-        this.article = article;
-    }
+  public void setArticleSpec(String articleSpec) {
+    this.articleSpec = articleSpec;
+  }
 
-    /** 件数 */
-    public String getCaseQtyStr() {
-        return caseQtyStr;
-    }
+  public Date getReceiveDate() {
+    return receiveDate;
+  }
 
-    public void setCaseQtyStr(String caseQtyStr) {
-        this.caseQtyStr = caseQtyStr;
-    }
+  public void setReceiveDate(Date receiveDate) {
+    this.receiveDate = receiveDate;
+  }
 
-    public String getArticleSpec() {
-        return articleSpec;
-    }
+  public void validate() {
+    Assert.assertArgumentNotNull(qpcStr, "qpcStr");
+    Assert.assertArgumentNotNull(qty, "qty");
 
-    public void setArticleSpec(String articleSpec) {
-        this.articleSpec = articleSpec;
-    }
-
-    public Date getReceiveDate() {
-        return receiveDate;
-    }
-
-    public void setReceiveDate(Date receiveDate) {
-        this.receiveDate = receiveDate;
-    }
-
-    public String getProductionBatch() {
-        return productionBatch;
-    }
-
-    public void setProductionBatch(String productionBatch) {
-        this.productionBatch = productionBatch;
-    }
-
-    public void validate() {
-        Assert.assertArgumentNotNull(qpcStr, "qpcStr");
-        Assert.assertArgumentNotNull(qpc, "qpc");
-        Assert.assertArgumentNotNull(qty, "qty");
-
-        if (qty.compareTo(BigDecimal.ZERO) <= 0)
-            throw new IllegalArgumentException("qty不能小于等于0。");
-        Assert.assertArgumentNotNull(produceDate, "produceDate");
-        Assert.assertArgumentNotNull(validDate, "validDate");
-        Assert.assertArgumentNotNull(containerBarcode, "containerBarcode");
-    }
+    if (qty.compareTo(BigDecimal.ZERO) <= 0)
+      throw new IllegalArgumentException("qty不能小于等于0。");
+    Assert.assertArgumentNotNull(produceDate, "produceDate");
+    Assert.assertArgumentNotNull(validDate, "validDate");
+    Assert.assertArgumentNotNull(containerBarcode, "containerBarcode");
+  }
 }

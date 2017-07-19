@@ -22,8 +22,11 @@
 		<result column="state" property="state" jdbcType="VARCHAR" />
 		<result column="totalCaseQtyStr" property="totalCaseQtyStr"
 			jdbcType="VARCHAR" />
-		<result column="receivedCaseQtyStr" property="receivedCaseQtyStr"
+		<result column="totalReceivedCaseQtyStr" property="totalReceivedCaseQtyStr"
 			jdbcType="VARCHAR" />
+		<result column="totalAmount" property="totalAmount" jdbcType="DECIMAL" />
+		<result column="totalReceiveAmount" property="totalReceiveAmount"
+			jdbcType="DECIMAL" />
 		<result column="note" property="note" jdbcType="VARCHAR" />
 		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
 		<result column="createdtime" property="createInfo.time"
@@ -62,7 +65,6 @@
 		<result column="receivedCaseQtyStr" property="receivedCaseQtyStr"
 			jdbcType="VARCHAR" />
 		<result column="price" property="price" jdbcType="DECIMAL" />
-		<result column="amount" property="amount" jdbcType="DECIMAL" />
 	</resultMap>
 
 	<insert id="insert" parameterType="OrderBill">
@@ -71,7 +73,7 @@
 			<if test="uuid != null">
 				uuid,
 			</if>
-		    <if test="billNumber != null">
+			<if test="billNumber != null">
 				billNumber,
 			</if>
 			<if test="sourceBillNumber != null">
@@ -101,21 +103,27 @@
 			<if test="totalCaseQtyStr != null">
 				totalCaseQtyStr,
 			</if>
-			<if test="receivedCaseQtyStr != null">
-				receivedCaseQtyStr,
+			<if test="totalReceivedCaseQtyStr != null">
+				totalReceivedCaseQtyStr,
+			</if>
+			<if test="totalAmount != null">
+				totalAmount,
+			</if>
+			<if test="totalReceiveAmount != null">
+				totalReceiveAmount,
 			</if>
 			<if test="note != null">
 				note,
 			</if>
-        version,
-		CREATEDTIME,
-		CREATEDID,
-		CREATEDCODE,
-		CREATEDNAME,
-		LASTMODIFYTIME,
-		LASTMODIFYID,
-		LASTMODIFYCODE,
-		LASTMODIFYNAME,
+			version,
+			CREATEDTIME,
+			CREATEDID,
+			CREATEDCODE,
+			CREATEDNAME,
+			LASTMODIFYTIME,
+			LASTMODIFYID,
+			LASTMODIFYCODE,
+			LASTMODIFYNAME,
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uuid != null">
@@ -151,130 +159,158 @@
 			<if test="totalCaseQtyStr != null">
 				#{totalCaseQtyStr,jdbcType=VARCHAR},
 			</if>
-		
-			<if test="receivedCaseQtyStr != null">
-				#{receivedCaseQtyStr,jdbcType=VARCHAR},
+			<if test="totalReceivedCaseQtyStr != null">
+				#{totalReceivedCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="totalAmount != null">
+				#{totalAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="totalReceiveAmount != null">
+				#{totalReceiveAmount,jdbcType=DECIMAL},
 			</if>
 			<if test="note != null">
 				#{note,jdbcType=VARCHAR},
 			</if>
-	    #{version,jdbcType=LONGVARCHAR},
-		#{createInfo.time,jdbcType=TIMESTAMP},
-		#{createInfo.operator.id,jdbcType=VARCHAR},
-		#{createInfo.operator.code,jdbcType=VARCHAR},
-		#{createInfo.operator.fullName,jdbcType=VARCHAR},
-		#{lastModifyInfo.time,jdbcType=TIMESTAMP},
-		#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
-		#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
-		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			#{version,jdbcType=LONGVARCHAR},
+			#{createInfo.time,jdbcType=TIMESTAMP},
+			#{createInfo.operator.id,jdbcType=VARCHAR},
+			#{createInfo.operator.code,jdbcType=VARCHAR},
+			#{createInfo.operator.fullName,jdbcType=VARCHAR},
+			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
 		</trim>
 	</insert>
 
 	<update id="update" parameterType="OrderBill">
-		update db_proxy.sardine_orderbill 
-		set sourceBillNumber = #{sourceBillNumber, jdbcType=VARCHAR},
-		    billType = #{billType, jdbcType=VARCHAR},
-		    supplieruuid = #{supplier.uuid, jdbcType=VARCHAR},
-		    wrhuuid = #{wrh.uuid, jdbcType=VARCHAR},
-		    expireDate = #{expireDate, jdbcType=DATE},
-		    bookedDate = #{bookedDate, jdbcType=DATE},
-		    state = #{state, jdbcType=VARCHAR},
-		    companyUuid = #{companyUuid, jdbcType=VARCHAR},
-		    totalCaseQtyStr = #{totalCaseQtyStr, jdbcType=VARCHAR},
-		    receivedCaseQtyStr = #{receivedCaseQtyStr, jdbcType=VARCHAR},
-		    note = #{note, jdbcType=VARCHAR},
-		    LASTMODIFYTIME = #{lastModifyInfo.time,jdbcType=TIMESTAMP},
-		    LASTMODIFYID = #{lastModifyInfo.operator.id,jdbcType=VARCHAR},
-		    LASTMODIFYCODE = #{lastModifyInfo.operator.code,jdbcType=VARCHAR},
-		    LASTMODIFYNAME = #{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
-		    version = #{version, jdbcType=LONGVARCHAR} + 1
+		update
+		db_proxy.sardine_orderbill
+		set 
+		sourceBillNumber = #{sourceBillNumber, jdbcType=VARCHAR},
+		billType = #{billType, jdbcType=VARCHAR},
+		supplieruuid = #{supplier.uuid, jdbcType=VARCHAR},
+		wrhuuid = #{wrh.uuid, jdbcType=VARCHAR},
+		expireDate = #{expireDate, jdbcType=DATE},
+		bookedDate = #{bookedDate, jdbcType=DATE},
+		state = #{state, jdbcType=VARCHAR},
+		companyUuid = #{companyUuid, jdbcType=VARCHAR},
+		totalCaseQtyStr = #{totalCaseQtyStr, jdbcType=VARCHAR},
+		totalReceivedCaseQtyStr = #{totalReceivedCaseQtyStr, jdbcType=VARCHAR},
+		totalAmount = #{totalAmount, jdbcType=DECIMAL},
+		totalReceiveAmount = #{totalReceiveAmount, jdbcType=DECIMAL},
+		note = #{note, jdbcType=VARCHAR},
+		LASTMODIFYTIME = #{lastModifyInfo.time,jdbcType=TIMESTAMP},
+		LASTMODIFYID = #{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+		LASTMODIFYCODE = #{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+		LASTMODIFYNAME = #{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		version = #{version, jdbcType=LONGVARCHAR} + 1
 		where uuid = #{uuid, jdbcType=VARCHAR}
 		  and version = #{version, jdbcType=LONGVARCHAR}
 	</update>
 
 	<select id="get" parameterType="java.util.Map" resultMap="BaseResultMap">
-		select t.*, s.code suppliercode, s.name suppliername, w.code wrhcode, w.name wrhname
-		         from db_proxy.sardine_OrderBill t,
-		              db_proxy.sardine_supplier s,
-		              db_proxy.sardine_wrh w
-		where t.wrhuuid = w.uuid and t.supplieruuid = s.uuid 
-		  and t.uuid = #{uuid, jdbcType=VARCHAR}
+		select
+		t.*, s.code suppliercode, s.name suppliername, w.code wrhcode, w.name
+		wrhname
+		from db_proxy.sardine_OrderBill t,
+		db_proxy.sardine_supplier s,
+		db_proxy.sardine_wrh w
+		where t.wrhuuid = w.uuid and t.supplieruuid =
+		s.uuid
+		and t.uuid = #{uuid, jdbcType=VARCHAR}
 	</select>
 
-	<select id="getByBillNumber" parameterType="java.util.Map" resultMap="BaseResultMap">
-		select t.*, s.code suppliercode, s.name suppliername, w.code wrhcode, w.name wrhname 
-		         from db_proxy.sardine_OrderBill t,
-		              db_proxy.sardine_supplier s,
-		              db_proxy.sardine_wrh w
-		where t.wrhuuid = w.uuid and t.supplieruuid = s.uuid 
-		  and t.billnumber = #{billNumber, jdbcType=VARCHAR}
-		  and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+	<select id="getByBillNumber" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select t.*, s.code suppliercode, s.name suppliername, w.code
+		wrhcode, w.name wrhname
+		from db_proxy.sardine_OrderBill t,
+		db_proxy.sardine_supplier s,
+		db_proxy.sardine_wrh w
+		where t.wrhuuid =
+		w.uuid and t.supplieruuid = s.uuid
+		and t.billnumber = #{billNumber,
+		jdbcType=VARCHAR}
+		and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
 	</select>
 
 	<delete id="remove" parameterType="java.util.Map">
-		delete from db_proxy.sardine_orderbill 
+		delete from
+		db_proxy.sardine_orderbill
 		where uuid = #{uuid, jdbcType=VARCHAR}
-		  and version = #{version, jdbcType=LONGVARCHAR}
+		and
+		version = #{version, jdbcType=LONGVARCHAR}
 	</delete>
 
 	<insert id="insertItems" parameterType="java.util.Map">
-		insert into db_proxy.sardine_OrderBillItem(
-		  uuid,
-		  line,
-		  orderBillUuid,
-		  articleuuid,
-		  qpcStr,
-		  munit,
-		  qpc,
-		  qty,
-		  caseQtyStr,
-		  receivedQty,
-		  receivedCaseQtyStr,
-		  price
+		insert into
+		db_proxy.sardine_OrderBillItem(
+		uuid,
+		line,
+		orderBillUuid,
+		articleuuid,
+		qpcStr,
+		munit,
+		qty,
+		caseQtyStr,
+		receivedQty,
+		receivedCaseQtyStr,
+		price
 		)
 		values(
-		  #{item.uuid, jdbcType=VARCHAR},
-		  #{item.line, jdbcType=INTEGER},
-		  #{item.orderBillUuid, jdbcType=VARCHAR},
-		  #{item.article.uuid, jdbcType=VARCHAR},
-		  #{item.qpcStr, jdbcType=VARCHAR},
-		  #{item.munit, jdbcType=VARCHAR},
-		  #{item.qpc, jdbcType=DECIMAL},
-		  #{item.qty, jdbcType=DECIMAL},
-		  #{item.caseQtyStr, jdbcType=VARCHAR},
-		  #{item.receivedQty, jdbcType=DECIMAL},
-		  #{item.receivedCaseQtyStr, jdbcType=VARCHAR},
-		  #{item.price, jdbcType=DECIMAL}
+		#{item.uuid, jdbcType=VARCHAR},
+		#{item.line, jdbcType=INTEGER},
+		#{item.orderBillUuid, jdbcType=VARCHAR},
+		#{item.article.uuid, jdbcType=VARCHAR},
+		#{item.qpcStr, jdbcType=VARCHAR},
+		#{item.munit, jdbcType=VARCHAR},
+		#{item.qty, jdbcType=DECIMAL},
+		#{item.caseQtyStr, jdbcType=VARCHAR},
+		#{item.receivedQty, jdbcType=DECIMAL},
+		#{item.receivedCaseQtyStr, jdbcType=VARCHAR},
+		#{item.price, jdbcType=DECIMAL}
 		)
 	</insert>
 
 	<update id="updateItem" parameterType="java.util.Map">
-		update db_proxy.sardine_OrderBillItem t
-		set t.receivedQty = #{qty, jdbcType=DECIMAL},
-		    t.receivedCaseQtyStr = #{caseQtyStr, jdbcType=VARCHAR}
+		update
+		db_proxy.sardine_OrderBillItem t
+		set 
+		t.receivedQty = #{qty, jdbcType=DECIMAL},
+		t.receivedCaseQtyStr = #{caseQtyStr, jdbcType=VARCHAR}
 		where t.uuid = #{uuid, jdbcType=VARCHAR}
 	</update>
 
 	<delete id="removeItems" parameterType="java.util.Map">
-		delete from db_proxy.sardine_OrderBillItem 
-		where orderBillUuid = #{orderBillUuid, jdbcType=VARCHAR}
+		delete from
+		db_proxy.sardine_OrderBillItem
+		where orderBillUuid = #{orderBillUuid,
+		jdbcType=VARCHAR}
 	</delete>
-	
+
 	<select id="queryItems" parameterType="java.util.Map" resultMap="OrderBillItemMap">
-	    select t.*, a.code articlecode, a.name articlename,(t.price * t.qty) amount
-	           from db_proxy.sardine_OrderBillItem t,
-	                db_proxy.sardine_article a
-	          where t.articleuuid = a.uuid 
-	            and t.orderBillUuid = #{orderBillUuid, jdbcType=VARCHAR}
+		select t.*, a.code articlecode, a.name articlename,(t.price * t.qty)
+		amount
+		from db_proxy.sardine_OrderBillItem t,
+		db_proxy.sardine_article a
+		where t.articleuuid = a.uuid
+		and t.orderBillUuid = #{orderBillUuid,
+		jdbcType=VARCHAR}
 	</select>
 
-	<select id="query" parameterType="PageQueryDefinition" resultMap="BaseResultMap">
-		select t.*, s.code suppliercode, s.name suppliername, w.code wrhcode, w.name wrhname from 
-		   db_proxy.sardine_OrderBill t,
-		   db_proxy.sardine_wrh w,
-		   db_proxy.sardine_supplier s
-		where t.wrhuuid = w.uuid and t.supplieruuid = s.uuid 
-		  and t.companyuuid = #{companyUuid, jdbcType=VARCHAR}
+	<select id="query" parameterType="PageQueryDefinition"
+		resultMap="BaseResultMap">
+		select t.*, s.code suppliercode, s.name suppliername, w.code wrhcode,
+		w.name wrhname from
+		db_proxy.sardine_OrderBill t,
+		db_proxy.sardine_wrh
+		w,
+		db_proxy.sardine_supplier s
+		where t.wrhuuid = w.uuid and
+		t.supplieruuid = s.uuid
+		and t.companyuuid = #{companyUuid,
+		jdbcType=VARCHAR}
 		<if test="supplierCode != null and supplierCode != ''">
 			and s.code = #{supplierCode, jdbcType=VARCHAR}
 		</if>
@@ -294,8 +330,10 @@
 			and t.billNumber = #{billNumber, jdbcType=VARCHAR}
 		</if>
 		<if test="articleUuid != null and articleUuid != ''">
-			and exists (select 1 from db_proxy.sardine_OrderBillitem oi
-			oi.articleUuid = #{articleUuid, jdbcType=VARCHAR} and t.uuid = oi.orderbilluuid)
+			and exists (select 1 from db_proxy.sardine_OrderBillitem
+			oi
+			oi.articleUuid = #{articleUuid, jdbcType=VARCHAR} and t.uuid =
+			oi.orderbilluuid)
 		</if>
 	</select>
 </mapper>

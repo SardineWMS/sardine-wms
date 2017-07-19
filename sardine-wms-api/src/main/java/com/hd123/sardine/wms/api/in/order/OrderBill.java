@@ -38,8 +38,9 @@ public class OrderBill extends StandardEntity {
   private OrderBillState state = OrderBillState.Initial;
   private String companyUuid;
   private String totalCaseQtyStr;
-  private String receivedCaseQtyStr;
+  private String totalReceivedCaseQtyStr;
   private BigDecimal totalAmount;
+  private BigDecimal totalReceiveAmount;
   private String note;
 
   private List<OrderBillItem> items = new ArrayList<OrderBillItem>();
@@ -135,21 +136,29 @@ public class OrderBill extends StandardEntity {
   }
 
   /** 已收货件数 */
-  public String getReceivedCaseQtyStr() {
-    return receivedCaseQtyStr;
+  public String getTotalReceivedCaseQtyStr() {
+    return totalReceivedCaseQtyStr;
   }
 
-  public void setReceivedCaseQtyStr(String receivedCaseQtyStr) {
-    this.receivedCaseQtyStr = receivedCaseQtyStr;
+  public void setTotalReceivedCaseQtyStr(String totalReceivedCaseQtyStr) {
+    this.totalReceivedCaseQtyStr = totalReceivedCaseQtyStr;
   }
-  
-  /** 总金额，明细金额之和*/
+
+  /** 总金额，明细金额之和 */
   public BigDecimal getTotalAmount() {
     return totalAmount;
   }
 
   public void setTotalAmount(BigDecimal totalAmount) {
     this.totalAmount = totalAmount;
+  }
+
+  public BigDecimal getTotalReceiveAmount() {
+    return totalReceiveAmount;
+  }
+
+  public void setTotalReceiveAmount(BigDecimal totalReceiveAmount) {
+    this.totalReceiveAmount = totalReceiveAmount;
   }
 
   /** 备注 */
@@ -170,20 +179,43 @@ public class OrderBill extends StandardEntity {
     this.items = items;
   }
 
-  public void refreshCaseQtyStr() {
+  public void refreshTotalCaseQtyStr() {
     totalCaseQtyStr = "0";
     for (OrderBillItem item : items) {
       item.setCaseQtyStr(QpcHelper.qtyToCaseQtyStr(item.getQty(), item.getQpcStr()));
-      if (item.getReceivedQty() == null) {
-        item.setReceivedQty(BigDecimal.ZERO);
-        item.setReceivedCaseQtyStr("0");
-      }
       totalCaseQtyStr = QpcHelper.caseQtyStrAdd(totalCaseQtyStr, item.getCaseQtyStr());
     }
   }
 
+  public void refreshTotalReceiveCaseQtyStr() {
+    totalReceivedCaseQtyStr = "0";
+    for (OrderBillItem item : items) {
+      if (item.getReceivedQty() == null)
+        item.setReceivedQty(BigDecimal.ZERO);
+      item.setReceivedCaseQtyStr(
+          QpcHelper.qtyToCaseQtyStr(item.getReceivedQty(), item.getQpcStr()));
+      totalReceivedCaseQtyStr = QpcHelper.caseQtyStrAdd(totalReceivedCaseQtyStr,
+          item.getReceivedCaseQtyStr());
+    }
+  }
+
+  public void refreshTotalAmount() {
+    totalAmount = BigDecimal.ZERO;
+    for (OrderBillItem item : items) {
+      totalAmount = totalAmount.add(item.getPrice().multiply(item.getQty()));
+    }
+  }
+
+  public void refreshTotalReceiveAmount() {
+    totalReceiveAmount = BigDecimal.ZERO;
+    for (OrderBillItem item : items) {
+      if (item.getReceivedQty() == null)
+        item.setReceivedQty(BigDecimal.ZERO);
+      totalReceiveAmount = totalReceiveAmount.add(item.getPrice().multiply(item.getReceivedQty()));
+    }
+  }
+
   public void validate() {
-    Assert.assertArgumentNotNull(billType, "billType");
     Assert.assertArgumentNotNull(supplier, "supplier");
     Assert.assertArgumentNotNull(wrh, "wrh");
     Assert.assertArgumentNotNull(items, "items");

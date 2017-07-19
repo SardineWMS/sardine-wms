@@ -71,14 +71,6 @@ public class OrderBillItem extends Entity {
     this.munit = munit;
   }
 
-  public BigDecimal getQpc() {
-    return qpc;
-  }
-
-  public void setQpc(BigDecimal qpc) {
-    this.qpc = qpc;
-  }
-
   /** 数量 */
   public BigDecimal getQty() {
     return qty;
@@ -124,33 +116,21 @@ public class OrderBillItem extends Entity {
     this.price = price;
   }
 
-  /** 金额 = price*qty */
-  public BigDecimal getAmount() {
-    return amount;
-  }
-
-  public void setAmount(BigDecimal amount) {
-    this.amount = amount;
-  }
-
   private int line;
   private String orderBillUuid;
   private UCN article;
   private String qpcStr;
   private String munit;
-  private BigDecimal qpc;
   private BigDecimal qty;
   private String caseQtyStr;
   private BigDecimal receivedQty;
   private String receivedCaseQtyStr;
   private BigDecimal price;
-  private BigDecimal amount;
 
   public void validate() {
     Assert.assertArgumentNotNull(article, "article");
     Assert.assertArgumentNotNull(qpcStr, "qpcStr");
     Assert.assertArgumentNotNull(munit, "munit");
-    Assert.assertArgumentNotNull(qpc, "qpc");
     Assert.assertArgumentNotNull(qty, "qty");
 
     if (BigDecimal.ZERO.compareTo(qty) >= 0)

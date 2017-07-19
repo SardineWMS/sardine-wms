@@ -42,7 +42,7 @@ public interface PutawayService {
    * @throws WMSException
    *           商品无固定拣货位、商品和商品类别和拣货分区都未设置对应的存储区域
    */
-  String fetchPutawayTaegetBinByArticle(String articleUuid, BigDecimal qty)
+  String fetchPutawayTargetBinByArticle(String articleUuid, BigDecimal qty)
       throws IllegalArgumentException, WMSException;
 
   /**
@@ -57,7 +57,7 @@ public interface PutawayService {
    * @throws WMSException
    *           容器混载时抛出
    */
-  String fetchPutawayTaegetBinByContainer(String containerBarcode)
+  String fetchPutawayTargetBinByContainer(String containerBarcode)
       throws IllegalArgumentException, WMSException;
 
   /**

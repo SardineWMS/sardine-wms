@@ -74,7 +74,7 @@ public class BillNumberGenerator {
       billNumberDao.insertSequence(pathCode, nextShelfCode, companyUuid);
     } else {
       nextShelfCode = String.format("%0" + SHELFCODE_LENGTH + "d",
-          Integer.valueOf(maxShelfCode) + 1);
+          Long.valueOf(maxShelfCode) + 1);
       billNumberDao.updateSequenceValue(pathCode, nextShelfCode, companyUuid);
     }
     return nextShelfCode;
@@ -95,7 +95,7 @@ public class BillNumberGenerator {
       nextPathCode = zoneCode + FIRST_PATH;
       billNumberDao.insertSequence(zoneCode, nextPathCode, companyUuid);
     } else {
-      nextPathCode = String.format("%0" + PATHCODE_LENGTH + "d", Integer.valueOf(maxPathCode) + 1);
+      nextPathCode = String.format("%0" + PATHCODE_LENGTH + "d", Long.valueOf(maxPathCode) + 1);
       billNumberDao.updateSequenceValue(zoneCode, nextPathCode, companyUuid);
     }
     return nextPathCode;
@@ -118,7 +118,7 @@ public class BillNumberGenerator {
     } else {
       String flowCode = maxCompanyUuid.replaceAll(Constants.RESOURCE_PREFIX, "");
       String newFlowCode = String.format("%0" + COMPANYUUID_FLOW_LENGTH + "d",
-          Integer.valueOf(flowCode) + 1);
+          Long.valueOf(flowCode) + 1);
       nextCompanyUuid = Constants.RESOURCE_PREFIX + newFlowCode;
       billNumberDao.updateSequenceValue("company", nextCompanyUuid, DEFAULT_COMPANYUUID);
     }
@@ -141,7 +141,7 @@ public class BillNumberGenerator {
     } else {
       String flowCode = maxWarehouseUuid.replaceAll(companyUuid, "");
       String newFlowCode = String.format("%0" + WAREHOUSE_FLOWCODE_LENGTH + "d",
-          Integer.valueOf(flowCode) + 1);
+          Long.valueOf(flowCode) + 1);
       nextWarehouseUuid = companyUuid + newFlowCode;
       billNumberDao.updateSequenceValue(companyUuid, nextWarehouseUuid, companyUuid);
     }
@@ -163,7 +163,7 @@ public class BillNumberGenerator {
       billNumberDao.insertSequence(prefix, nextContainerBarcode, companyUuid);
     } else {
       nextContainerBarcode = prefix + String.format("%0" + length + "d",
-          Integer.valueOf(maxContainerBarcode.replaceAll(prefix, "")) + 1);
+          Long.valueOf(maxContainerBarcode.replaceAll(prefix, "")) + 1);
       billNumberDao.updateSequenceValue(prefix, nextContainerBarcode, companyUuid);
     }
 
@@ -186,8 +186,8 @@ public class BillNumberGenerator {
       nextSequenceValue = ApplicationContextUtil.getCompanyCode() + dateString + FIRST_NUMBER;
       billNumberDao.insertSequence(sequenceName, nextSequenceValue, companyUuid);
     } else {
-      if (maxSequenceValue.indexOf(ApplicationContextUtil.getCompanyCode() + dateString) > 0) {
-        nextSequenceValue = String.valueOf(Integer.valueOf(maxSequenceValue) + 1);
+      if (maxSequenceValue.indexOf(ApplicationContextUtil.getCompanyCode() + dateString) >= 0) {
+        nextSequenceValue = String.valueOf(Long.valueOf(maxSequenceValue) + 1);
         billNumberDao.updateSequenceValue(sequenceName, nextSequenceValue, companyUuid);
       } else {
         nextSequenceValue = ApplicationContextUtil.getCompanyCode() + dateString + FIRST_NUMBER;

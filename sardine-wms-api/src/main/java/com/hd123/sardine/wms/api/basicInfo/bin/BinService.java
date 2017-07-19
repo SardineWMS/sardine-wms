@@ -220,4 +220,19 @@ public interface BinService {
    */
   void changeState(String uuid, long version, BinState state)
       throws IllegalArgumentException, VersionConflictException, WMSException;
+
+  /**
+   * 根据货位范围查询货位集合
+   * <p>
+   * 从小到大排序
+   * 
+   * @param binScope
+   *          货位范围
+   * @param usage
+   *          货位用途
+   * @param state
+   *          货位状态
+   * @return 符合条件的货位集合
+   */
+  List<String> queryBinByScopeAndUsage(String binScope, BinUsage usage, BinState state);
 }

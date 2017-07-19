@@ -150,4 +150,9 @@ public class CategoryServiceImpl extends BaseWMSService implements CategoryServi
     pgr.setRecords(list);
     return pgr;
   }
+
+  @Override
+  public String getParentCategoryUuid(String uuid) {
+    return dao.getParentUuid(uuid);
+  }
 }

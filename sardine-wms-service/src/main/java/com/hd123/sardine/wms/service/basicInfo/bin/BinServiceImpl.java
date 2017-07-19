@@ -37,6 +37,7 @@ import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
+import com.hd123.sardine.wms.common.utils.ScopeUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.basicInfo.bin.BinDao;
 import com.hd123.sardine.wms.dao.basicInfo.bin.PathDao;
@@ -339,5 +340,14 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
     logger.injectContext(this, uuid, Bin.class.getName(),
         ApplicationContextUtil.getOperateContext());
     logger.log(EntityLogger.EVENT_MODIFY, "改变货位状态");
+  }
+
+  @Override
+  public List<String> queryBinByScopeAndUsage(String binScope, BinUsage usage, BinState state) {
+    if (StringUtil.isNullOrBlank(binScope))
+      return null;
+
+    String sql = ScopeUtils.scopeExpToSQLExp("u", binScope);
+    return binDao.queryBincodesByScope(sql, usage, state);
   }
 }

@@ -51,9 +51,9 @@ public class StockBatchUtils {
       nextStockBatch = STOCKBATCH_PREFIX + currentDateStr + BillNumberGenerator.FIRST_NUMBER;
       billNumberDao.insertSequence(STOCKBATCH_SEQUENCENAME, nextStockBatch, companyUuid);
     } else {
-      if (maxStockBatch.indexOf(STOCKBATCH_PREFIX + currentDateStr) > 0) {
+      if (maxStockBatch.indexOf(STOCKBATCH_PREFIX + currentDateStr) >= 0) {
         nextStockBatch = STOCKBATCH_PREFIX + String.format("%0" + STOCKBATCH_FLOWCODE_LENGTH + "d",
-            Integer.valueOf(maxStockBatch.replaceAll(STOCKBATCH_PREFIX, "")) + 1);
+            Long.valueOf(maxStockBatch.replaceAll(STOCKBATCH_PREFIX, "")) + 1);
         billNumberDao.updateSequenceValue(STOCKBATCH_SEQUENCENAME, nextStockBatch, companyUuid);
       } else {
         nextStockBatch = STOCKBATCH_PREFIX + currentDateStr + BillNumberGenerator.FIRST_NUMBER;

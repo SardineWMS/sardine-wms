@@ -313,7 +313,6 @@ public class Task extends VersionedEntity {
     }
     Assert.assertArgumentNotNull(fromBinCode, "fromBinCode");
     Assert.assertArgumentNotNull(fromContainerBarcode, "fromContainerBarcode");
-    Assert.assertArgumentNotNull(toBinCode, "toBinCode");
     Assert.assertArgumentNotNull(toContainerBarcode, "toContainerBarcode");
     Assert.assertArgumentNotNull(owner, "owner");
     Assert.assertArgumentNotNull(sourceBillType, "sourceBillType");
