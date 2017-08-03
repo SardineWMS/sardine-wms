@@ -39,6 +39,7 @@ public class ReturnBill extends StandardEntity {
     private String totalCaseQtyStr;
     private BigDecimal totalAmount;
     private String remark;
+    private OperateMethod type = OperateMethod.ManualBill;
     private List<ReturnBillItem> items = new ArrayList<>();
 
     public String getBillNumber() {
@@ -153,6 +154,15 @@ public class ReturnBill extends StandardEntity {
     public void setItems(List<ReturnBillItem> items) {
         Assert.assertArgumentNotNull(items, "items");
         this.items = items;
+    }
+
+    public OperateMethod getType() {
+        return type;
+    }
+
+    /** 单据类型，APP和手工单据 */
+    public void setType(OperateMethod type) {
+        this.type = type;
     }
 
     public void validate() {

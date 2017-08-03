@@ -314,4 +314,191 @@
 			</if>
 		</trim>
 	</insert>
+
+	<update id="update"
+		parameterType="com.hd123.sardine.wms.api.rtn.customerreturn.ReturnBill">
+		update db_proxy.sardine_returnBill
+		<set>
+			<if test="state != null">
+				state = #{state,jdbcType=VARCHAR},
+			</if>
+			<if test="returnNtcBillNumber != null">
+				returnNtcBillNumber =
+				#{returnNtcBillNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="customer != null and customer.uuid != null">
+				customerUuid=#{customer.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="customer != null and customer.code != null">
+				customerCode=#{customer.code,jdbcType=VARCHAR},
+			</if>
+			<if test="customer != null and customer.name != null">
+				customerName=#{customer.name,jdbcType=VARCHAR},
+			</if>
+			<if test="wrh != null and wrh.uuid != null">
+				wrhuuid=#{wrh.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="returnor != null and returnor.uuid != null">
+				returnorUuid=#{returnor.uuid,jdbcType=TIMESTAMP},
+			</if>
+			<if test="returnor != null and returnor.code != null">
+				returnorCode=#{returnor.code,jdbcType=TIMESTAMP},
+			</if>
+			<if test="returnor != null and returnor.name != null">
+				returnorName=#{returnor.name,jdbcType=TIMESTAMP},
+			</if>
+			<if test="totalCaseQtyStr != null">
+				totalCaseQtyStr=#{totalCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="totalAmount != null">
+				totalAmount=#{totalAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="remark != null">
+				remark=#{remark,jdbcType=VARCHAR},
+			</if>
+			LASTMODIFYTIME =
+			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			LASTMODIFYID =
+			#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			LASTMODIFYCODE =
+			#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			LASTMODIFYNAME =
+			#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			version =
+			#{version, jdbcType=LONGVARCHAR} + 1
+		</set>
+		<where>
+			UUID = #{uuid,jdbcType=VARCHAR} and version =
+			#{version,jdbcType=LONGVARCHAR}
+		</where>
+	</update>
+
+	<delete id="remove" parameterType="java.util.Map">
+		delete from
+		db_proxy.sardine_returnbill
+		where uuid=#{uuid,jdbcType=VARCHAR} and
+		version=#{version,jdbcType=LONGVARCHAR}
+	</delete>
+
+	<select id="get" parameterType="java.lang.String" resultMap="RtnBillMap">
+		select t.*,w.code wrhCode,w.name wrhName from
+		db_proxy.sardine_returnbill t,db_proxy.sardine_wrh w where
+		t.wrhuuid=w.uuid and
+		t.uuid=#{uuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getByBillNumber" parameterType="java.util.Map"
+		resultMap="RtnBillMap">
+		select t.*,w.code wrhCode,w.name wrhName from
+		db_proxy.sardine_returnbill t,db_proxy.sardine_wrh w where
+		t.wrhuuid=w.uuid and
+		t.billNumber=#{billNumber,jdbcType=VARCHAR} and
+		t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
+	</select>
+
+	<delete id="removeItems" parameterType="java.lang.String">
+		delete from
+		db_proxy.sardine_returnbillitem where
+		returnBillUuid=#{uuid,jdbcType=VARCHAR}
+	</delete>
+
+	<select id="queryByPage" parameterType="PageQueryDefinition"
+		resultMap="RtnBillMap">
+		select t.*, w.code wrhCode, w.name wrhName
+		from
+		db_proxy.sardine_returnBill t,
+		db_proxy.sardine_wrh w
+		where
+		t.wrhuuid
+		=w.uuid
+		<if test="billNumberLike != null and billNumberLike != ''">
+			and t.billNumber like CONCAT(CONCAT('%',
+			#{billNumberLike,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="stateEquals != null">
+			and t.state = #{stateEquals,jdbcType=VARCHAR}
+		</if>
+		<if test="customerCodeLike != null">
+			and t.customerCode like CONCAT(CONCAT('%',
+			#{customerCodeLike,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="customerNameLike">
+			and t.customerName like CONCAT(CONCAT('%',
+			#{customerNameLike,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="rtnNtcBillLike != null ">
+			and t.returnntcbillnumber like CONCAT(CONCAT('%',
+			#{rtnNtcBillLike,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="wrhEquals != null">
+			and t.wrhUuid=(select a.uuid from db_proxy.sardine_wrh a
+			where a.code=#{wrhEquals,jdbcType=VARCHAR})
+		</if>
+		<if test="returnorCodeLike != null">
+			and t.returnorCode like CONCAT(CONCAT('%',
+			#{returnorCodeLike,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="returnorNameLike != null">
+			and t.returnorName like CONCAT(CONCAT('%',
+			#{returnorNameLike,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="articleCodeContains != null">
+			and EXISTS (select 1 from db_proxy.sardine_article
+			a,db_proxy.sardine_returnbillitem i
+			where a.uuid=i.articleuuid and
+			a.code=
+			#{articleCodeContains,jdbcType=VARCHAR})
+		</if>
+		<if test="articleNameContains != null">
+			and EXISTS (select 1 from db_proxy.sardine_article
+			a,db_proxy.sardine_returnbillitem i
+			where a.uuid=i.articleuuid and
+			a.name=
+			#{articleNameContains,jdbcType=VARCHAR})
+		</if>
+		<if test="supplierNameContains != null">
+			and EXISTS (select 1 from db_proxy.sardine_supplier
+			s,db_proxy.sardine_returnbillitem i
+			where s.uuid=i.supplieruuid and
+			s.name=
+			#{supplierNameContains,jdbcType=VARCHAR})
+		</if>
+		<if test="supplierCodeContains != null">
+			and EXISTS (select 1 from db_proxy.sardine_supplier
+			s,db_proxy.sardine_returnbillitem i
+			where s.uuid=i.supplieruuid and
+			s.code=
+			#{supplierCodeContains,jdbcType=VARCHAR})
+		</if>
+		<if test="companyUuid != null">
+			and t.companyuuid=#{companyUuid,jdbcType=VARCHAR}
+		</if>
+		<if test="sortField != null and sortField == 'billNumber'">
+			order by t.billNumber ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'state'">
+			order by t.state ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'customer'">
+			order by t.customerCode ${orderDir}
+		</if>
+	</select>
+
+	<select id="getItems" parameterType="java.lang.String"
+		resultMap="RtnBillItemMap">
+		select t.*,a.code articleCode,a.name articleName,s.code
+		supplierCode,s.name supplierName from
+		db_proxy.sardine_returnbillitem
+		t,db_proxy.sardine_article
+		a,db_proxy.sardine_supplier s where
+		t.articleuuid=a.uuid and
+		t.supplieruuid=s.uuid and
+		t.returnbilluuid=#{uuid,jdbcType=VARCHAR}
+	</select>
 </mapper>

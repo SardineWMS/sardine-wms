@@ -9,6 +9,9 @@
  */
 package com.hd123.sardine.wms.web.rtn.ntc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -109,6 +112,7 @@ public class ReturnNtcBillController extends BaseController {
             definition.put(ReturnNtcBillService.QUERY_SUPPLIERCODE_EQUALS, supplierCode);
             definition.put(ReturnNtcBillService.QUERY_SUPPLIERNAME_EQUALS, supplierName);
             definition.put(ReturnNtcBillService.QUERY_WRH_EQUALS, wrhCode);
+            definition.setCompanyUuid(getLoginCompany(token).getUuid());
             PageQueryResult<ReturnNtcBill> result = service.query(definition);
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -229,6 +233,66 @@ public class ReturnNtcBillController extends BaseController {
             return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
             return new ErrorRespObject("生成退仓单失败：" + e.getMessage());
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/queryBillWithInitialAndInProgress", method = RequestMethod.GET)
+    public @ResponseBody RespObject queryBillWithInitialAndInProgress(
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
+            @RequestParam(value = "sort", required = false) String sort,
+            @RequestParam(value = "order", required = false,
+                    defaultValue = "asc") String sortDirection,
+            @RequestParam(value = "token", required = false) String token,
+            @RequestParam(value = "billNumber", required = false) String billNumber,
+            @RequestParam(value = "customerCode", required = false) String customerCode) {
+        RespObject resp = new RespObject();
+        try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
+            ApplicationContextUtil.setOperateContext(getOperateContext(token));
+            PageQueryDefinition definition = new PageQueryDefinition();
+            definition.setPage(page);
+            definition.setPageSize(pageSize);
+            definition.setSortField(StringUtil.isNullOrBlank(sort)
+                    ? ReturnNtcBillService.QUERY_BILLNUMBER_LIKE : sort);
+            definition.setOrderDir(OrderDir.valueOf(sortDirection));
+            definition.put(ReturnNtcBillService.QUERY_BILLNUMBER_LIKE, billNumber);
+            definition.put(ReturnNtcBillService.QUERY_CUSTOMERCODE_EQUALS, customerCode);
+            PageQueryResult<ReturnNtcBill> result = service.query(definition);
+            List<ReturnNtcBill> list = new ArrayList<>();
+            for (ReturnNtcBill bill : result.getRecords()) {
+                if (ReturnNtcBillState.initial.equals(bill.getState())
+                        || ReturnNtcBillState.inProgress.equals(bill.getState())) {
+                    list.add(bill);
+                }
+            }
+            result.setRecords(list);
+            resp.setObj(result);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("获取退仓通知单失败：" + e.getMessage());
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/getByBillNumber", method = RequestMethod.GET)
+    public @ResponseBody RespObject getByBillNumber(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "billNumber", required = true) String billNumber) {
+        RespObject resp = new RespObject();
+        try {
+            ApplicationContextUtil.setCompany(getLoginCompany(token));
+            ApplicationContextUtil.setOperateContext(getOperateContext(token));
+            ReturnNtcBill bill = service.getByBillNumber(billNumber);
+            resp.setObj(bill);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("获取退仓通知单失败：" + e.getMessage());
         }
         return resp;
     }

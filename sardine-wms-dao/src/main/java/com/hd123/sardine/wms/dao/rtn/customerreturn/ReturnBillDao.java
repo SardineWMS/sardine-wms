@@ -22,4 +22,10 @@ import com.hd123.sardine.wms.common.dao.BaseDao;
 public interface ReturnBillDao extends BaseDao<ReturnBill> {
 
     void insertItems(List<ReturnBillItem> items);
+
+    void removeItems(String uuid);
+
+    ReturnBill getByBillNumber(String billNumber);
+
+    List<ReturnBillItem> getItems(String uuid);
 }
