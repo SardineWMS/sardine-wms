@@ -25,6 +25,7 @@ import com.hd123.sardine.wms.api.out.wave.WaveBill;
 import com.hd123.sardine.wms.api.out.wave.WaveBillItem;
 import com.hd123.sardine.wms.api.out.wave.WaveBillService;
 import com.hd123.sardine.wms.api.out.wave.WaveBillState;
+import com.hd123.sardine.wms.api.out.wave.WaveType;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArch;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArchService;
 import com.hd123.sardine.wms.common.entity.UCN;
@@ -60,9 +61,12 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     Assert.assertArgumentNotNull(bill, "bill");
 
     bill.validate();
-
-    SerialArch serialArch = serialArchService.get(bill.getSerialArch().getUuid());
-    bill.setSerialArch(new UCN(serialArch.getUuid(), serialArch.getCode(), serialArch.getName()));
+    SerialArch serialArch = null;
+    if (Objects.nonNull(bill.getSerialArch().getUuid())) {
+      serialArch = serialArchService.get(bill.getSerialArch().getUuid());
+      bill.setSerialArch(new UCN(serialArch.getUuid(), serialArch.getCode(), serialArch.getName()));
+    } else if (WaveType.eCommerce.equals(bill.getWaveType()) == false)
+      throw new WMSException("非电商波次，线路体系不能为空");
 
     bill.setBillNumber(billNumberGenerator.allocateNextBillNumber(WaveBill.class.getSimpleName()));
     bill.setState(WaveBillState.initial);
