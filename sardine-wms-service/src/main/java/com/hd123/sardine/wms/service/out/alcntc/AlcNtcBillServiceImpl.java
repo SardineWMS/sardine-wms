@@ -34,6 +34,7 @@ import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillItem;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillService;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillState;
 import com.hd123.sardine.wms.api.out.alcntc.DeliveryArticleInfo;
+import com.hd123.sardine.wms.api.out.alcntc.DeliverySystem;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
@@ -55,6 +56,7 @@ import com.hd123.sardine.wms.service.log.EntityLogger;
 public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillService {
 
   private static final String DEFAULT_CASEQTYSTR = "0";
+  private static final String WARHOUSE_DELIVERY = "warehouseDelivery";
 
   @Autowired
   private EntityLogger logger;
@@ -79,12 +81,14 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
     refreshInVaildQpcStr(alcNtcBill);
 
     alcNtcBill.setUuid(UUIDGenerator.genUUID());
-    alcNtcBill
-        .setBillNumber(billNumberGenerator.allocateNextBillNumber(AlcNtcBill.class.getSimpleName()));
+    alcNtcBill.setBillNumber(
+        billNumberGenerator.allocateNextBillNumber(AlcNtcBill.class.getSimpleName()));
     alcNtcBill.setState(AlcNtcBillState.initial);
     alcNtcBill.setCompany(new UCN(ApplicationContextUtil.getCompanyUuid(), "", ""));
     alcNtcBill.setCreateInfo(ApplicationContextUtil.getOperateInfo());
     alcNtcBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    alcNtcBill.setDeliverySystem(WARHOUSE_DELIVERY.equals(alcNtcBill.getDeliveryMode())
+        ? DeliverySystem.tradition : DeliverySystem.eCommerce);
 
     for (AlcNtcBillItem item : alcNtcBill.getItems()) {
       item.setUuid(UUIDGenerator.genUUID());
