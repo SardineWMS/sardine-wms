@@ -26,6 +26,7 @@ import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.query.PageQueryUtil;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 
 /**
@@ -57,8 +58,12 @@ public class PickAreaStorageAreaConfigServiceImpl implements PickAreaStorageArea
         Assert.assertArgumentNotNull(definition, "definition");
 
         PageQueryResult<PickArea> pickAreaPqr = pickAreaService.query(definition);
-        if (pickAreaPqr == null || CollectionUtils.isEmpty(pickAreaPqr.getRecords()))
-            return null;
+        PageQueryResult<PickAreaStorageAreaConfig> result = new PageQueryResult<>();
+        if (pickAreaPqr == null || CollectionUtils.isEmpty(pickAreaPqr.getRecords())) {
+            PageQueryUtil.assignPageInfo(result, definition);
+            result.setRecords(new ArrayList<>());
+            return result;
+        }
         List<PickAreaStorageAreaConfig> pickAreaStorageAreaConfig = new ArrayList<>();
         for (PickArea pickArea : pickAreaPqr.getRecords()) {
             PickAreaStorageAreaConfig config = new PickAreaStorageAreaConfig();
@@ -69,7 +74,6 @@ public class PickAreaStorageAreaConfigServiceImpl implements PickAreaStorageArea
             pickAreaStorageAreaConfig.add(config);
         }
 
-        PageQueryResult<PickAreaStorageAreaConfig> result = new PageQueryResult<>();
         result.setPage(pickAreaPqr.getPage());
         result.setPageCount(pickAreaPqr.getPageCount());
         result.setPageSize(pickAreaPqr.getPageSize());
