@@ -17,6 +17,7 @@ import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBill;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillItem;
+import com.hd123.sardine.wms.api.out.alcntc.WaveAlcNtcItem;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.dao.out.alcntc.AlcNtcBillDao;
@@ -26,78 +27,89 @@ import com.hd123.sardine.wms.dao.out.alcntc.AlcNtcBillDao;
  *
  */
 public class AlcNtcBillDaoImpl extends BaseDaoImpl<AlcNtcBill> implements AlcNtcBillDao {
-    public static final String MAPPER_GETBYBILLNUMBER = "getByBillNumber";
-    public static final String MAPPER_INSERTITEMS = "insertItems";
-    public static final String MAPPER_REMOVEITEMSBYALCNTCUUID = "removeItemsByAlcNtcUuid";
-    public static final String MAPPER_QUERYITEMSBYALCNTCUUID = "queryItemsByAlcNtcUuid";
-    public static final String MAPPER_GETITEMBYUUID = "getItemByUuid";
-    public static final String MAPPER_UPDATEITEM = "updateItem";
-    public static final String MAPPER_GETBYITEMUUID = "getByItemUuid";
-    public static final String MAPPER_GETBYTASKBILLNUMBER = "getByTaskBillNumber";
+  public static final String MAPPER_GETBYBILLNUMBER = "getByBillNumber";
+  public static final String MAPPER_INSERTITEMS = "insertItems";
+  public static final String MAPPER_REMOVEITEMSBYALCNTCUUID = "removeItemsByAlcNtcUuid";
+  public static final String MAPPER_QUERYITEMSBYALCNTCUUID = "queryItemsByAlcNtcUuid";
+  public static final String MAPPER_GETITEMBYUUID = "getItemByUuid";
+  public static final String MAPPER_UPDATEITEM = "updateItem";
+  public static final String MAPPER_GETBYITEMUUID = "getByItemUuid";
+  public static final String MAPPER_GETBYTASKBILLNUMBER = "getByTaskBillNumber";
 
-    @Override
-    public AlcNtcBill getByBillNumber(String billNumber) {
-        if (StringUtil.isNullOrBlank(billNumber))
-            return null;
-        Map<String, Object> map = ApplicationContextUtil.map();
-        map.put("billNumber", billNumber);
-        return getSqlSession().selectOne(generateStatement(MAPPER_GETBYBILLNUMBER), map);
+  @Override
+  public AlcNtcBill getByBillNumber(String billNumber) {
+    if (StringUtil.isNullOrBlank(billNumber))
+      return null;
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("billNumber", billNumber);
+    return selectOne(MAPPER_GETBYBILLNUMBER, map);
+  }
+
+  @Override
+  public void insertItems(List<AlcNtcBillItem> items) {
+    Assert.assertArgumentNotNull(items, "items");
+    for (AlcNtcBillItem item : items) {
+      insert(MAPPER_INSERTITEMS, item);
     }
+  }
 
-    @Override
-    public void insertItems(List<AlcNtcBillItem> items) {
-        Assert.assertArgumentNotNull(items, "items");
-        for (AlcNtcBillItem item : items) {
-            getSqlSession().insert(generateStatement(MAPPER_INSERTITEMS), item);
-        }
+  @Override
+  public void removeItems(String alcNtcBillUuid) {
+    Assert.assertArgumentNotNull(alcNtcBillUuid, "alcNtcBillUuid");
 
-    }
+    getSqlSession().delete(generateStatement(MAPPER_REMOVEITEMSBYALCNTCUUID), alcNtcBillUuid);
 
-    @Override
-    public void removeItems(String alcNtcBillUuid) {
-        Assert.assertArgumentNotNull(alcNtcBillUuid, "alcNtcBillUuid");
+  }
 
-        getSqlSession().delete(generateStatement(MAPPER_REMOVEITEMSBYALCNTCUUID), alcNtcBillUuid);
+  @Override
+  public List<AlcNtcBillItem> queryItems(String alcNtcBillUuid) {
+    if (StringUtil.isNullOrBlank(alcNtcBillUuid))
+      return new ArrayList<AlcNtcBillItem>();
+    return getSqlSession().selectList(generateStatement(MAPPER_QUERYITEMSBYALCNTCUUID),
+        alcNtcBillUuid);
+  }
 
-    }
+  @Override
+  public AlcNtcBillItem getItemByUuid(String itemUuid) {
+    if (StringUtil.isNullOrBlank(itemUuid))
+      return null;
+    return getSqlSession().selectOne(generateStatement(MAPPER_GETITEMBYUUID), itemUuid);
+  }
 
-    @Override
-    public List<AlcNtcBillItem> queryItems(String alcNtcBillUuid) {
-        if (StringUtil.isNullOrBlank(alcNtcBillUuid))
-            return new ArrayList<AlcNtcBillItem>();
-        return getSqlSession().selectList(generateStatement(MAPPER_QUERYITEMSBYALCNTCUUID),
-                alcNtcBillUuid);
-    }
+  @Override
+  public void updateItem(AlcNtcBillItem item) {
+    Assert.assertArgumentNotNull(item, "item");
 
-    @Override
-    public AlcNtcBillItem getItemByUuid(String itemUuid) {
-        if (StringUtil.isNullOrBlank(itemUuid))
-            return null;
-        return getSqlSession().selectOne(generateStatement(MAPPER_GETITEMBYUUID), itemUuid);
-    }
+    getSqlSession().update(generateStatement(MAPPER_UPDATEITEM), item);
 
-    @Override
-    public void updateItem(AlcNtcBillItem item) {
-        Assert.assertArgumentNotNull(item, "item");
+  }
 
-        getSqlSession().update(generateStatement(MAPPER_UPDATEITEM), item);
+  @Override
+  public AlcNtcBill getByItemUuid(String itemUuid) {
+    if (StringUtil.isNullOrBlank(itemUuid))
+      return null;
+    return getSqlSession().selectOne(generateStatement(MAPPER_GETBYITEMUUID), itemUuid);
+  }
 
-    }
+  @Override
+  public List<AlcNtcBill> getByTaskBillNumber(String taskBillNumber) {
+    if (StringUtil.isNullOrBlank(taskBillNumber))
+      return new ArrayList<>();
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("taskBillNumber", taskBillNumber);
+    return getSqlSession().selectList(generateStatement(MAPPER_GETBYTASKBILLNUMBER), map);
+  }
 
-    @Override
-    public AlcNtcBill getByItemUuid(String itemUuid) {
-        if (StringUtil.isNullOrBlank(itemUuid))
-            return null;
-        return getSqlSession().selectOne(generateStatement(MAPPER_GETBYITEMUUID), itemUuid);
-    }
+  @Override
+  public List<String> queryArticleByWaveBillNumber(String waveBillNumber) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
-    @Override
-    public List<AlcNtcBill> getByTaskBillNumber(String taskBillNumber) {
-        if (StringUtil.isNullOrBlank(taskBillNumber))
-            return new ArrayList<>();
-        Map<String, Object> map = ApplicationContextUtil.map();
-        map.put("taskBillNumber", taskBillNumber);
-        return getSqlSession().selectList(generateStatement(MAPPER_GETBYTASKBILLNUMBER), map);
-    }
+  @Override
+  public List<WaveAlcNtcItem> queryWaveAlcNtcItems(String waveBillNumber, String articleUuid) {
+    // TODO Auto-generated method stub
+    return null;
+  }
 
 }

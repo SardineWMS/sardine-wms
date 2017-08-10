@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.sardine.wms.api.basicInfo.pickarea.OperateMode;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.entity.VersionedEntity;
 
@@ -211,11 +212,11 @@ public class Task extends VersionedEntity {
     this.creator = creator;
   }
 
-  public OperateType getType() {
+  public OperateMode getType() {
     return type;
   }
 
-  public void setType(OperateType type) {
+  public void setType(OperateMode type) {
     this.type = type;
   }
 
@@ -258,7 +259,47 @@ public class Task extends VersionedEntity {
   public void setCompanyUuid(String companyUuid) {
     this.companyUuid = companyUuid;
   }
+
+  public String getSourceBillLineUuid() {
+    return sourceBillLineUuid;
+  }
+
+  public void setSourceBillLineUuid(String sourceBillLineUuid) {
+    this.sourceBillLineUuid = sourceBillLineUuid;
+  }
+
+  public String getTaskGroupNumber() {
+    return taskGroupNumber;
+  }
+
+  public void setTaskGroupNumber(String taskGroupNumber) {
+    this.taskGroupNumber = taskGroupNumber;
+  }
+
+  public BigDecimal getVolume() {
+    return volume;
+  }
+
+  public void setVolume(BigDecimal volume) {
+    this.volume = volume;
+  }
   
+  public String getDeliveryType() {
+    return deliveryType;
+  }
+
+  public void setDeliveryType(String deliveryType) {
+    this.deliveryType = deliveryType;
+  }
+
+  public UCN getWrh() {
+    return wrh;
+  }
+
+  public void setWrh(UCN wrh) {
+    this.wrh = wrh;
+  }
+
   public List<TaskStockItem> getItems() {
     return items;
   }
@@ -267,6 +308,7 @@ public class Task extends VersionedEntity {
     this.items = items;
   }
 
+  private String taskGroupNumber;
   private String taskNo;
   private TaskType taskType;
   private UCN article;
@@ -274,12 +316,15 @@ public class Task extends VersionedEntity {
   private String qpcStr;
   private BigDecimal qty;
   private String caseQtyStr;
+  private BigDecimal volume;
   private BigDecimal realQty;
   private String realCaseQtyStr;
   private Date productionDate;
   private Date validDate;
   private String stockBatch;
   private UCN supplier;
+  private UCN wrh;
+  private String deliveryType;
   private String fromBinCode;
   private String fromContainerBarcode;
   private String toBinCode;
@@ -289,8 +334,9 @@ public class Task extends VersionedEntity {
   private String sourceBillNumber;
   private String sourceBillUuid;
   private int sourceBillLine;
+  private String sourceBillLineUuid;
   private UCN creator;
-  private OperateType type;
+  private OperateMode type;
   private UCN operator;
   private Date createTime;
   private Date beginOperateTime;

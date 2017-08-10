@@ -14,6 +14,7 @@
 		<module>sardine-wms-web</module>
 		<module>sardine-wms-common</module>
 		<module>sardine-ui</module>
+		<module>sardine-wms-report</module>
 	</modules>
 
 	<properties>

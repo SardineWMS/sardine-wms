@@ -16,28 +16,30 @@ package com.hd123.sardine.wms.api.out.alcntc;
  *
  */
 public enum AlcNtcBillState {
-    /** 初始 */
-    initial("初始"),
-    /** 已作废 */
-    aborted("已作废"),
-    /** 待配送 */
-    inAlc("待配送"),
-    /** 分拣中 */
-    inSorting("分拣中"),
-    /** 已完成 */
-    finished("已完成"),
-    /** 配送中 */
-    inProgress("配送中"),
-    /** 已交接 */
-    handover("已交接");
+  /** 初始 */
+  initial("初始"),
+  /** 已使用 */
+  used("已使用"),
+  /** 已作废 */
+  aborted("已作废"),
+  /** 待配送 */
+  inAlc("待配送"),
+  /** 分拣中 */
+  inSorting("分拣中"),
+  /** 已完成 */
+  finished("已完成"),
+  /** 配送中 */
+  inProgress("配送中"),
+  /** 已交接 */
+  handover("已交接");
 
-    private String caption;
+  private String caption;
 
-    public String getCaption() {
-        return caption;
-    }
+  public String getCaption() {
+    return caption;
+  }
 
-    private AlcNtcBillState(String caption) {
-        this.caption = caption;
-    }
+  private AlcNtcBillState(String caption) {
+    this.caption = caption;
+  }
 }

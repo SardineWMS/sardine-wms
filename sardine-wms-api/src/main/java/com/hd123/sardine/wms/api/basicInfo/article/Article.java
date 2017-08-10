@@ -19,6 +19,7 @@ import com.hd123.sardine.wms.common.entity.StandardEntity;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.utils.DateHelper;
+import com.hd123.sardine.wms.common.utils.StockConstants;
 
 /**
  * 商品实体
@@ -31,7 +32,6 @@ import com.hd123.sardine.wms.common.utils.DateHelper;
  */
 public class Article extends StandardEntity {
   private static final long serialVersionUID = 4329860271781901045L;
-  public static final String VISUAL_MAXDATE = "8888-12-31";
 
   private String companyUuid;
   private String code;
@@ -216,7 +216,7 @@ public class Article extends StandardEntity {
     Assert.assertArgumentNotNull(produtionDate, "productionDate");
 
     if (expflag.equals(DateCheckStandard.none))
-      return DateHelper.strToDate(VISUAL_MAXDATE);
+      return DateHelper.strToDate(StockConstants.VISUAL_MAXDATE);
 
     if (expflag.equals(DateCheckStandard.expireDate)) {
       Assert.assertArgumentNotNull(validate, "validate");
@@ -228,7 +228,7 @@ public class Article extends StandardEntity {
 
   public Date calProductionDate(Date productionDate, Date validDate) throws ParseException {
     if (expflag.equals(DateCheckStandard.none))
-      return DateHelper.strToDate(VISUAL_MAXDATE);
+      return DateHelper.strToDate(StockConstants.VISUAL_MAXDATE);
 
     if (expflag.equals(DateCheckStandard.produceDate)) {
       Assert.assertArgumentNotNull(productionDate, "productionDate");

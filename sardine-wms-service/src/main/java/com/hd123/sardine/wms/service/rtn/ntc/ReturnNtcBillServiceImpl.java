@@ -47,6 +47,7 @@ import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.DateHelper;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
+import com.hd123.sardine.wms.common.utils.StockConstants;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.rtn.ntc.ReturnNtcBillDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
@@ -78,7 +79,8 @@ public class ReturnNtcBillServiceImpl extends BaseWMSService implements ReturnNt
     verifyArticlAndWrh(bill);
 
     bill.setUuid(UUIDGenerator.genUUID());
-    bill.setBillNumber(billNumberGenerator.allocateNextBillNumber(ReturnNtcBill.class.getSimpleName()));
+    bill.setBillNumber(
+        billNumberGenerator.allocateNextBillNumber(ReturnNtcBill.class.getSimpleName()));
     bill.setState(ReturnNtcBillState.initial);
     bill.setCreateInfo(ApplicationContextUtil.getOperateInfo());
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
@@ -436,8 +438,9 @@ public class ReturnNtcBillServiceImpl extends BaseWMSService implements ReturnNt
           .getBinByWrhAndUsage(bill.getWrh().getUuid(), BinUsage.RtnReceiveTempBin).getCode());
       Article article = articleService.get(item.getArticle().getUuid());
       boolean flag = DateCheckStandard.none.equals(article.getExpflag());
-      rtnItem.setProductionDate(flag ? DateHelper.strToDate(Article.VISUAL_MAXDATE) : new Date());
-      rtnItem.setValidDate(flag ? DateHelper.strToDate(Article.VISUAL_MAXDATE)
+      rtnItem.setProductionDate(
+          flag ? DateHelper.strToDate(StockConstants.VISUAL_MAXDATE) : new Date());
+      rtnItem.setValidDate(flag ? DateHelper.strToDate(StockConstants.VISUAL_MAXDATE)
           : DateHelper.addDays(rtnItem.getProductionDate(), article.getExpDays()));
       rtnItems.add(rtnItem);
     }

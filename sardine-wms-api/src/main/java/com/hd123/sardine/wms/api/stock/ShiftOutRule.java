@@ -11,6 +11,7 @@ package com.hd123.sardine.wms.api.stock;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import com.hd123.rumba.commons.lang.Assert;
 
@@ -31,7 +32,7 @@ public class ShiftOutRule implements Serializable {
   // 可选参数
   private String stockUuid;
 
-  private String productionBatch;
+  private Date productionDate;
   private String qpcStr;
   private String stockBatch;
   private String sourceBillUuid;
@@ -92,12 +93,12 @@ public class ShiftOutRule implements Serializable {
     this.stockUuid = stockUuid;
   }
 
-  public String getProductionBatch() {
-    return productionBatch;
+  public Date getProductionDate() {
+    return productionDate;
   }
 
-  public void setProductionBatch(String productionBatch) {
-    this.productionBatch = productionBatch;
+  public void setProductionDate(Date productionDate) {
+    this.productionDate = productionDate;
   }
 
   public String getQpcStr() {

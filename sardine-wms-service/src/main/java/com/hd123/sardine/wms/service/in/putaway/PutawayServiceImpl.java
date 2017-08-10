@@ -95,7 +95,7 @@ public class PutawayServiceImpl implements PutawayService {
     StockFilter stockFilter = new StockFilter();
     stockFilter.setContainerBarcode(containerBarcode);
     stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-    List<StockExtendInfo> infos = stockService.queryStocks(stockFilter);
+    List<StockExtendInfo> infos = stockService.queryStockExtendInfo(stockFilter);
     if (infos.isEmpty())
       return null;
 
@@ -218,7 +218,7 @@ public class PutawayServiceImpl implements PutawayService {
     stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     stockFilter.setArticleUuid(articleUuid);
     stockFilter.setBinCode(articleConfig.getFixedPickBin());
-    List<StockExtendInfo> infos = stockService.queryStocks(stockFilter);
+    List<StockExtendInfo> infos = stockService.queryStockExtendInfo(stockFilter);
     if (allocateTotalQty(infos).add(qty).compareTo(highQty) > 0)
       return getTargetBinWhenStorageBin(articleUuid);
     return articleConfig.getFixedPickBin();

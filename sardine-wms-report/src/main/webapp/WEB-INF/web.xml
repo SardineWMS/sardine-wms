@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	version="2.4">
+
+	<display-name>Template WebApp</display-name>
+
+	<mime-mapping>
+		<extension>msi</extension>
+		<mime-type>application/x-msi</mime-type>
+	</mime-mapping>
+
+	<servlet>
+		<servlet-name>ReportServer</servlet-name>
+		<servlet-class>com.fr.web.ReportServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ReportServer</servlet-name>
+		<url-pattern>/ReportServer</url-pattern>
+	</servlet-mapping>
+
+	<!-- 参数过滤器 -->
+	<filter>
+		<filter-name>paraFilter</filter-name>
+		<filter-class>com.hd123.sardine.wms.report.ReportParamsFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>paraFilter</filter-name>
+		<url-pattern>/ReportServer</url-pattern>
+	</filter-mapping>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+      classpath:sardine-report.xml
+    </param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+</web-app>
+
+
+
+

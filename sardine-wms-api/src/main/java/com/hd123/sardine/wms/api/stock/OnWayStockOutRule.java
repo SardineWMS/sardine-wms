@@ -11,8 +11,7 @@ package com.hd123.sardine.wms.api.stock;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-
-import com.hd123.sardine.wms.api.task.TaskType;
+import java.util.Date;
 
 /**
  * 在途库存出库规则
@@ -32,9 +31,56 @@ public class OnWayStockOutRule implements Serializable {
   private String containerBarcode;
   private String stockBatch;
   private String articleUuid;
-  private String taskNo;
-  private TaskType taskType;
+  private String supplierUuid;
+  private String qpcStr;
+  private Date productDate;
   private BigDecimal qty;
+  
+  private String billNumber;
+  private String billType;
+  private String billUuid;
+  private int billLine;
+  private String billLineUuid;
+
+  public String getBillLineUuid() {
+    return billLineUuid;
+  }
+
+  public void setBillLineUuid(String billLineUuid) {
+    this.billLineUuid = billLineUuid;
+  }
+
+  public String getBillNumber() {
+    return billNumber;
+  }
+
+  public void setBillNumber(String billNumber) {
+    this.billNumber = billNumber;
+  }
+
+  public String getBillType() {
+    return billType;
+  }
+
+  public void setBillType(String billType) {
+    this.billType = billType;
+  }
+
+  public String getBillUuid() {
+    return billUuid;
+  }
+
+  public void setBillUuid(String billUuid) {
+    this.billUuid = billUuid;
+  }
+
+  public int getBillLine() {
+    return billLine;
+  }
+
+  public void setBillLine(int billLine) {
+    this.billLine = billLine;
+  }
 
   public String getStockUuid() {
     return stockUuid;
@@ -75,21 +121,29 @@ public class OnWayStockOutRule implements Serializable {
   public void setArticleUuid(String articleUuid) {
     this.articleUuid = articleUuid;
   }
-
-  public String getTaskNo() {
-    return taskNo;
+  
+  public String getSupplierUuid() {
+    return supplierUuid;
   }
 
-  public void setTaskNo(String taskNo) {
-    this.taskNo = taskNo;
+  public void setSupplierUuid(String supplierUuid) {
+    this.supplierUuid = supplierUuid;
   }
 
-  public TaskType getTaskType() {
-    return taskType;
+  public String getQpcStr() {
+    return qpcStr;
   }
 
-  public void setTaskType(TaskType taskType) {
-    this.taskType = taskType;
+  public void setQpcStr(String qpcStr) {
+    this.qpcStr = qpcStr;
+  }
+
+  public Date getProductDate() {
+    return productDate;
+  }
+
+  public void setProductDate(Date productDate) {
+    this.productDate = productDate;
   }
 
   public BigDecimal getQty() {

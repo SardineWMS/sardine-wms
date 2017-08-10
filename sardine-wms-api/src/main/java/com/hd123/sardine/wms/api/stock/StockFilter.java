@@ -9,6 +9,8 @@
  */
 package com.hd123.sardine.wms.api.stock;
 
+import java.util.Date;
+
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 
 /**
@@ -28,7 +30,7 @@ public class StockFilter extends PageQueryDefinition {
   private String stockBatch;
   private String sourceBillUuid;
   private String sourcebillNumber;
-  private String productDate;
+  private Date productDate;
 
   private String stockUuid;
 
@@ -131,11 +133,11 @@ public class StockFilter extends PageQueryDefinition {
     put("sourcebillNumber", sourcebillNumber);
   }
 
-  public String getProductDate() {
+  public Date getProductDate() {
     return productDate;
   }
 
-  public void setProductDate(String productDate) {
+  public void setProductDate(Date productDate) {
     this.productDate = productDate;
     put("productDate", productDate);
   }

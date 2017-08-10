@@ -13,6 +13,7 @@ import java.util.List;
 
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBill;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillItem;
+import com.hd123.sardine.wms.api.out.alcntc.WaveAlcNtcItem;
 import com.hd123.sardine.wms.common.dao.BaseDao;
 
 /**
@@ -20,19 +21,23 @@ import com.hd123.sardine.wms.common.dao.BaseDao;
  *
  */
 public interface AlcNtcBillDao extends BaseDao<AlcNtcBill> {
-    AlcNtcBill getByBillNumber(String billNumber);
+  AlcNtcBill getByBillNumber(String billNumber);
 
-    void insertItems(List<AlcNtcBillItem> items);
+  void insertItems(List<AlcNtcBillItem> items);
 
-    void removeItems(String alcNtcBillUuid);
+  void removeItems(String alcNtcBillUuid);
 
-    List<AlcNtcBillItem> queryItems(String alcNtcBillUuid);
+  List<AlcNtcBillItem> queryItems(String alcNtcBillUuid);
 
-    AlcNtcBillItem getItemByUuid(String itemUuid);
+  AlcNtcBillItem getItemByUuid(String itemUuid);
 
-    void updateItem(AlcNtcBillItem item);
+  void updateItem(AlcNtcBillItem item);
 
-    AlcNtcBill getByItemUuid(String itemUuid);
+  AlcNtcBill getByItemUuid(String itemUuid);
 
-    List<AlcNtcBill> getByTaskBillNumber(String taskBillNumber);
+  List<AlcNtcBill> getByTaskBillNumber(String taskBillNumber);
+
+  List<String> queryArticleByWaveBillNumber(String waveBillNumber);
+
+  List<WaveAlcNtcItem> queryWaveAlcNtcItems(String waveBillNumber, String articleUuid);
 }

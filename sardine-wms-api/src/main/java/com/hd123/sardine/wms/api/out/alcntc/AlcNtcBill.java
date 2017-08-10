@@ -38,14 +38,15 @@ public class AlcNtcBill extends StandardEntity {
     private String sourceBillNumber;
     private String sourceBillType;
     private UCN wrh;
-    private UCN company;
+    private String companyUuid;
     private String remark;
     private UCN customer;
-    private String taskBillNumber;
+    private String waveBillNumber;
     private String totalCaseQtyStr;
-    private BigDecimal totalAmount;
     private String planTotalCaseQtyStr;
     private String realTotalCaseQtyStr;
+    private BigDecimal totalAmount;
+    private BigDecimal realAmount;
 
     private List<AlcNtcBillItem> items = new ArrayList<AlcNtcBillItem>();
 
@@ -122,12 +123,20 @@ public class AlcNtcBill extends StandardEntity {
     }
 
     /** 组织 */
-    public UCN getCompany() {
-        return company;
+    public String getCompanyUuid() {
+      return companyUuid;
     }
 
-    public void setCompany(UCN company) {
-        this.company = company;
+    public void setCompanyUuid(String companyUuid) {
+      this.companyUuid = companyUuid;
+    }
+
+    public BigDecimal getRealAmount() {
+      return realAmount;
+    }
+
+    public void setRealAmount(BigDecimal realAmount) {
+      this.realAmount = realAmount;
     }
 
     /** 说明 */
@@ -149,14 +158,14 @@ public class AlcNtcBill extends StandardEntity {
     }
 
     /** 作业号 */
-    public String getTaskBillNumber() {
-        return taskBillNumber;
+    public String getWaveBillNumber() {
+      return waveBillNumber;
     }
 
-    public void setTaskBillNumber(String taskBillNumber) {
-        this.taskBillNumber = taskBillNumber;
+    public void setWaveBillNumber(String waveBillNumber) {
+      this.waveBillNumber = waveBillNumber;
     }
-
+    
     /** 明细 */
     public List<AlcNtcBillItem> getItems() {
         return items;
@@ -200,7 +209,6 @@ public class AlcNtcBill extends StandardEntity {
 
     public void validate() {
         Assert.assertArgumentNotNull(wrh, "wrh");
-        Assert.assertArgumentNotNull(company, "company");
         Assert.assertArgumentNotNull(customer, "customer");
 
         if (CollectionUtils.isEmpty(items))

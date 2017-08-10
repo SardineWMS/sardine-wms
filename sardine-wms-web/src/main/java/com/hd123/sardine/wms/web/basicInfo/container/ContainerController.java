@@ -109,7 +109,7 @@ public class ContainerController extends BaseController {
             filter.setContainerBarcode(containerBarcode);
             filter.setCompanyUuid(getLoginCompany(token).getUuid());
             filter.setPageSize(0);
-            List<StockExtendInfo> stocks = stockService.queryStocks(filter);
+            List<StockExtendInfo> stocks = stockService.queryStockExtendInfo(filter);
             resp.setObj(stocks);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {

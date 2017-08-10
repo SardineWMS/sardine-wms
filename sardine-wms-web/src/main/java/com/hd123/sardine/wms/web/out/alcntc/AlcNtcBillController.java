@@ -50,7 +50,7 @@ public class AlcNtcBillController extends BaseController {
         try {
             ApplicationContextUtil.setCompany(getLoginCompany(token));
             ApplicationContextUtil.setOperateContext(getOperateContext(token));
-            alcNtcBill.setCompany(getLoginCompany(token));
+            alcNtcBill.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
             String uuid = service.insert(alcNtcBill);
             resp.setObj(uuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

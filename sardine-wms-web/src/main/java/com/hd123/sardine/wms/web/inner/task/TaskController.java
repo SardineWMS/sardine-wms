@@ -98,7 +98,7 @@ public class TaskController extends BaseController {
             StockFilter stockFilter = new StockFilter();
             stockFilter.setPageSize(0);
             stockFilter.setArticleCode(articleCode);
-            List<StockExtendInfo> infos = stockService.queryStocks(stockFilter);
+            List<StockExtendInfo> infos = stockService.queryStockExtendInfo(stockFilter);
             resp.setObj(infos);
         } catch (Exception e) {
             return new ErrorRespObject("分页查询失败：" + e.getMessage());

@@ -26,13 +26,11 @@ import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.bin.Bin;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
-import com.hd123.sardine.wms.api.basicInfo.bin.BinState;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerState;
-import com.hd123.sardine.wms.api.stock.OnWayStock;
-import com.hd123.sardine.wms.api.stock.OnWayStockOutRule;
+import com.hd123.sardine.wms.api.basicInfo.pickarea.OperateMode;
 import com.hd123.sardine.wms.api.stock.ShiftOutRule;
 import com.hd123.sardine.wms.api.stock.Stock;
 import com.hd123.sardine.wms.api.stock.StockExtendInfo;
@@ -40,11 +38,9 @@ import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.api.task.ArticleMoveRule;
 import com.hd123.sardine.wms.api.task.ContainerMoveRule;
-import com.hd123.sardine.wms.api.task.OperateType;
 import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.task.TaskService;
 import com.hd123.sardine.wms.api.task.TaskState;
-import com.hd123.sardine.wms.api.task.TaskStockItem;
 import com.hd123.sardine.wms.api.task.TaskType;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
@@ -79,6 +75,12 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
   private ContainerService containerService;
 
   @Autowired
+  private TaskVerifier taskVerifier;
+
+  @Autowired
+  private TaskHandler taskHandler;
+
+  @Autowired
   private EntityLogger logger;
 
   @Override
@@ -89,9 +91,9 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
     if (tasks.isEmpty())
       return;
 
-    List<OnWayStock> onWayStocks = new ArrayList<OnWayStock>();
     for (Task task : tasks) {
-      task.validate();
+      taskVerifier.verifySourceStock(task);
+
       task.setUuid(UUIDGenerator.genUUID());
       task.setTaskNo(billNumberGenerator.allocateNextBillNumber(task.getTaskType().name()));
       task.setCreator(ApplicationContextUtil.getLoginUser());
@@ -99,23 +101,12 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
       task.setState(TaskState.Initial);
       taskDao.insert(task);
 
-      OnWayStock fromOnWayStock = new OnWayStock();
-      fromOnWayStock.setBinCode(task.getFromBinCode());
-      fromOnWayStock.setContainerBarcode(task.getFromContainerBarcode());
-      fromOnWayStock.setQty(task.getQty().negate());
-      fromOnWayStock.setStockBatch(task.getStockBatch());
-      fromOnWayStock.setTaskNo(task.getTaskNo());
-      fromOnWayStock.setTaskType(task.getTaskType());
-      fromOnWayStock.setArticleUuid(task.getArticle().getUuid());
-      fromOnWayStock.setStockBatch(task.getStockBatch());
-      onWayStocks.add(fromOnWayStock);
+      taskHandler.lockStock(task);
 
       logger.injectContext(this, task.getUuid(), Task.class.getName(),
           ApplicationContextUtil.getOperateContext());
       logger.log(EntityLogger.EVENT_ADDNEW, "新增" + task.getTaskType().getCaption());
     }
-
-    stockService.shiftInOnWayStock(onWayStocks);
   }
 
   @Override
@@ -137,37 +128,11 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
     task.setEndOperateTime(new Date());
     taskDao.update(task);
 
-    shiftOutOnWayStock(task);
+    taskHandler.releaseStock(task);
 
     logger.injectContext(this, uuid, Task.class.getName(),
         ApplicationContextUtil.getOperateContext());
     logger.log(EntityLogger.EVENT_ABORT, "作废" + task.getTaskType().getCaption());
-  }
-
-  private void shiftOutOnWayStock(Task task) throws WMSException {
-    assert task != null;
-
-    List<OnWayStockOutRule> shiftRules = new ArrayList<OnWayStockOutRule>();
-    OnWayStockOutRule fromShiftRule = new OnWayStockOutRule();
-    fromShiftRule.setArticleUuid(task.getArticle().getUuid());
-    fromShiftRule.setBinCode(task.getFromBinCode());
-    fromShiftRule.setContainerBarcode(task.getFromContainerBarcode());
-    fromShiftRule.setQty(task.getQty().negate());
-    fromShiftRule.setStockBatch(task.getStockBatch());
-    fromShiftRule.setTaskNo(task.getTaskNo());
-    fromShiftRule.setTaskType(task.getTaskType());
-    shiftRules.add(fromShiftRule);
-    OnWayStockOutRule toShiftRule = new OnWayStockOutRule();
-    toShiftRule.setArticleUuid(task.getArticle().getUuid());
-    toShiftRule.setBinCode(task.getToBinCode());
-    toShiftRule.setContainerBarcode(task.getToContainerBarcode());
-    toShiftRule.setQty(task.getQty());
-    toShiftRule.setStockBatch(task.getStockBatch());
-    toShiftRule.setTaskNo(task.getTaskNo());
-    toShiftRule.setTaskType(task.getTaskType());
-    shiftRules.add(toShiftRule);
-
-    stockService.shiftOutOnWayStock(shiftRules);
   }
 
   @Override
@@ -183,8 +148,6 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
     if (task.getTaskType().equals(TaskType.Putaway) == false)
       throw new WMSException("当前指令不是上架指令！");
 
-    shiftOutOnWayStock(task);
-
     if (StringUtil.isNullOrBlank(toBinCode) == false)
       task.setToBinCode(toBinCode);
     task.setOperator(ApplicationContextUtil.getLoginUser());
@@ -192,56 +155,9 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
     task.setEndOperateTime(new Date());
     taskDao.update(task);
 
-    ShiftOutRule outRule = new ShiftOutRule();
-    outRule.setArticleUuid(task.getArticle().getUuid());
-    outRule.setBinCode(task.getFromBinCode());
-    outRule.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-    outRule.setContainerBarcode(task.getFromContainerBarcode());
-    outRule.setQpcStr(task.getQpcStr());
-    outRule.setSourceBillUuid(task.getSourceBillUuid());
-    outRule.setStockBatch(task.getStockBatch());
-    outRule.setSupplierUuid(task.getSupplier().getUuid());
-
-    List<Stock> outStocks = stockService.shiftOut(TaskType.Putaway.getCaption(), task.getTaskNo(),
-        Arrays.asList(outRule));
-    for (Stock stock : outStocks) {
-      stock.setBinCode(task.getToBinCode());
-      stock.setContainerBarcode(task.getToContainerBarcode());
-      stock.setUuid(null);
-    }
-    stockService.shiftIn(TaskType.Putaway.getCaption(), task.getTaskNo(), outStocks);
-
-    binAndContainer(task);
-
     logger.injectContext(this, uuid, Task.class.getName(),
         ApplicationContextUtil.getOperateContext());
     logger.log(EntityLogger.EVENT_ADDNEW, "执行上架指令");
-  }
-
-  private void binAndContainer(Task task) throws WMSException {
-    assert task != null;
-
-    if (stockService.binHasStock(task.getFromBinCode()) == false) {
-      Bin fromBin = binService.getBinByCode(task.getFromBinCode());
-      assert fromBin != null;
-      binService.changeState(fromBin.getUuid(), fromBin.getVersion(), BinState.free);
-    }
-    if (stockService.containerHasStock(task.getFromContainerBarcode()) == false) {
-      Container fromContainer = containerService.getByBarcode(task.getFromContainerBarcode());
-      if (fromContainer != null)
-        containerService.change(fromContainer.getUuid(), fromContainer.getVersion(),
-            ContainerState.STACONTAINERIDLE, null);
-    }
-
-    Bin toBin = binService.getBinByCode(task.getToBinCode());
-    assert toBin != null;
-    if (toBin.getState().equals(BinState.free))
-      binService.changeState(toBin.getUuid(), toBin.getVersion(), BinState.using);
-
-    Container toContainer = containerService.getByBarcode(task.getToContainerBarcode());
-    if (toContainer != null && toContainer.getState().equals(ContainerState.STACONTAINERIDLE))
-      containerService.change(toContainer.getUuid(), toContainer.getVersion(),
-          ContainerState.STACONTAINERUSEING, task.getToBinCode());
   }
 
   @Override
@@ -316,8 +232,7 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
       stockFilter.setContainerBarcode(articleMoveRule.getFromContainerBarcode());
       stockFilter.setSupplierUuid(articleMoveRule.getSupplierUuid());
       stockFilter.setQpcStr(articleMoveRule.getQpcStr());
-      stockFilter.setProductDate(articleMoveRule.getProductDate());
-      List<StockExtendInfo> infos = stockService.queryStocks(stockFilter);
+      List<StockExtendInfo> infos = stockService.queryStockExtendInfo(stockFilter);
       if (articleMoveRule.getQty().compareTo(calculateStockQty(infos)) > 0)
         errorMessage.append("商品" + articleMoveRule.getArticleCode() + "移库数量大于库存可移库数量！\n");
 
@@ -381,10 +296,11 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
         errorMessage.append("容器" + rule.getFromContainerBarcode() + "无库存，无法移库！\n");
         continue;
       }
-      if (hasOnwayStock(stocks)) {
-        errorMessage.append("容器" + rule.getFromContainerBarcode() + "存在在途库存，正在被其他业务使用，无法移库！\n");
-        continue;
-      }
+      // if (hasOnwayStock(stocks)) {
+      // errorMessage.append("容器" + rule.getFromContainerBarcode() +
+      // "存在在途库存，正在被其他业务使用，无法移库！\n");
+      // continue;
+      // }
 
       Container fromContainer = containerService.getByBarcode(rule.getFromContainerBarcode());
       if (fromContainer == null) {
@@ -427,16 +343,6 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
       }
     }
     return errorMessage;
-  }
-
-  private boolean hasOnwayStock(List<Stock> stocks) {
-    assert stocks != null;
-
-    for (Stock stock : stocks) {
-      if (stock.getOnWayQty() != null && BigDecimal.ZERO.compareTo(stock.getOnWayQty()) != 0)
-        return true;
-    }
-    return false;
   }
 
   @Override
@@ -523,7 +429,7 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
     task.setEndOperateTime(new Date());
     task.setOperator(ApplicationContextUtil.getLoginUser());
     task.setState(TaskState.Finished);
-    task.setType(OperateType.Web);
+    task.setType(OperateMode.ManualBill);
 
     taskDao.update(task);
 
@@ -537,36 +443,36 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
     outRule.setQty(task.getRealQty());
     outRule.setSupplierUuid(task.getSupplier().getUuid());
     shiftOutRules.add(outRule);
-    List<Stock> outStocks = stockService.shiftOut(task.getTaskType().getCaption(), task.getTaskNo(),
-        shiftOutRules);
-    for (Stock stock : outStocks) {
-      stock.setBinCode(task.getToBinCode());
-      stock.setContainerBarcode(task.getToContainerBarcode());
-      stock.setModifyTime(new Date());
-    }
-    List<Stock> shiftInStocks = stockService.shiftIn(task.getTaskType().getCaption(),
-        task.getTaskNo(), outStocks);
-    for (Stock stock : shiftInStocks) {
-      TaskStockItem item = new TaskStockItem();
-      item.setArticleUuid(stock.getArticleUuid());
-      item.setBinCode(stock.getBinCode());
-      item.setContainerBarcode(stock.getContainerBarcode());
-      item.setMeasureUnit(stock.getMeasureUnit());
-      item.setPrice(stock.getPrice());
-      item.setProductionDate(stock.getProductionDate());
-      item.setQpcStr(stock.getQpcStr());
-      item.setQty(stock.getQty());
-      item.setStockBatch(stock.getStockBatch());
-      item.setSupplierUuid(stock.getSupplierUuid());
-      item.setTaskUuid(task.getUuid());
-      item.setValidDate(task.getValidDate());
-      taskDao.insertItem(item);
-    }
+//    List<Stock> outStocks = stockService.shiftOut(task.getTaskType().getCaption(), task.getTaskNo(),
+//        shiftOutRules);
+//    for (Stock stock : outStocks) {
+//      stock.setBinCode(task.getToBinCode());
+//      stock.setContainerBarcode(task.getToContainerBarcode());
+//      stock.setModifyTime(new Date());
+//    }
+//    List<Stock> shiftInStocks = stockService.shiftIn(task.getTaskType().getCaption(),
+//        task.getTaskNo(), outStocks);
+//    for (Stock stock : shiftInStocks) {
+//      TaskStockItem item = new TaskStockItem();
+//      item.setArticleUuid(stock.getArticleUuid());
+//      item.setBinCode(stock.getBinCode());
+//      item.setContainerBarcode(stock.getContainerBarcode());
+//      item.setMeasureUnit(stock.getMeasureUnit());
+//      item.setPrice(stock.getPrice());
+//      item.setProductionDate(stock.getProductionDate());
+//      item.setQpcStr(stock.getQpcStr());
+//      item.setQty(stock.getQty());
+//      item.setStockBatch(stock.getStockBatch());
+//      item.setSupplierUuid(stock.getSupplierUuid());
+//      item.setTaskUuid(task.getUuid());
+//      item.setValidDate(task.getValidDate());
+//      taskDao.insertItem(item);
+//    }
   }
 
   @Override
   public void containerMove(String uuid, long version)
-      throws IllegalArgumentException, VersionConflictException, WMSException {
+      throws IllegalArgumentException, VersionConflictException, WMSException {/*
     Assert.assertArgumentNotNull(uuid, "uuid");
 
     Task task = taskDao.get(uuid);
@@ -636,5 +542,5 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
       // containerService.getByBarcode(task.getFromContainerBarcode());
 
     }
-  }
+  */}
 }

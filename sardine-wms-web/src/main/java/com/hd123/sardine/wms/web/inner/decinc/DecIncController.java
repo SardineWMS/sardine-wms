@@ -232,7 +232,7 @@ public class DecIncController extends BaseController {
             filter.setContainerBarcode(containerBarcode);
             filter.setQpcStr(qpcStr);
             filter.setPageSize(0);
-            List<StockExtendInfo> stocks = stockService.queryStocks(filter);
+            List<StockExtendInfo> stocks = stockService.queryStockExtendInfo(filter);
 
             Set<UCN> suppliers = new HashSet<>();
             for (StockExtendInfo info : stocks) {

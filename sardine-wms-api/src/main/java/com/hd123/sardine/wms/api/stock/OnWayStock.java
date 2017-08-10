@@ -10,10 +10,10 @@
 package com.hd123.sardine.wms.api.stock;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
-import com.hd123.sardine.wms.api.task.TaskType;
 import com.hd123.sardine.wms.common.entity.Entity;
 
 /**
@@ -30,9 +30,55 @@ public class OnWayStock extends Entity {
   private String containerBarcode;
   private String stockBatch;
   private String articleUuid;
+  private String qpcStr;
+  private String supplierUuid;
+  private Date productDate;
   private BigDecimal qty;
-  private String taskNo;
-  private TaskType taskType;
+  private String billNumber;
+  private String billType;
+  private String billUuid;
+  private int billLine;
+  private String billLineUuid;
+
+  public String getBillLineUuid() {
+    return billLineUuid;
+  }
+
+  public void setBillLineUuid(String billLineUuid) {
+    this.billLineUuid = billLineUuid;
+  }
+
+  public String getBillNumber() {
+    return billNumber;
+  }
+
+  public void setBillNumber(String billNumber) {
+    this.billNumber = billNumber;
+  }
+
+  public String getBillType() {
+    return billType;
+  }
+
+  public void setBillType(String billType) {
+    this.billType = billType;
+  }
+
+  public String getBillUuid() {
+    return billUuid;
+  }
+
+  public void setBillUuid(String billUuid) {
+    this.billUuid = billUuid;
+  }
+
+  public int getBillLine() {
+    return billLine;
+  }
+
+  public void setBillLine(int billLine) {
+    this.billLine = billLine;
+  }
 
   public String getBinCode() {
     return binCode;
@@ -65,13 +111,29 @@ public class OnWayStock extends Entity {
   public void setStockBatch(String stockBatch) {
     this.stockBatch = stockBatch;
   }
-
-  public TaskType getTaskType() {
-    return taskType;
+  
+  public String getQpcStr() {
+    return qpcStr;
   }
 
-  public void setTaskType(TaskType taskType) {
-    this.taskType = taskType;
+  public void setQpcStr(String qpcStr) {
+    this.qpcStr = qpcStr;
+  }
+
+  public String getSupplierUuid() {
+    return supplierUuid;
+  }
+
+  public void setSupplierUuid(String supplierUuid) {
+    this.supplierUuid = supplierUuid;
+  }
+  
+  public Date getProductDate() {
+    return productDate;
+  }
+
+  public void setProductDate(Date productDate) {
+    this.productDate = productDate;
   }
 
   /** 在途库存对应的库存UUID */
@@ -92,21 +154,14 @@ public class OnWayStock extends Entity {
     this.qty = qty;
   }
 
-  /** 产生该在途库存的指令，上架指令、移库指令、拣货指令、补货指令、装车指令、退货交接指令 */
-  public String getTaskNo() {
-    return taskNo;
-  }
-
-  public void setTaskNo(String taskNo) {
-    this.taskNo = taskNo;
-  }
-
   public void validate() {
     Assert.assertArgumentNotNull(qty, "qty");
     if (qty.compareTo(BigDecimal.ZERO) == 0)
       throw new IllegalArgumentException("入库的库存数量不能等于0！");
-    Assert.assertArgumentNotNull(taskNo, "taskNo");
-    Assert.assertArgumentNotNull(taskType, "taskType");
+
+    Assert.assertArgumentNotNull(billNumber, "billNumber");
+    Assert.assertArgumentNotNull(billUuid, "billUuid");
+    Assert.assertArgumentNotNull(billType, "billType");
 
     if (StringUtil.isNullOrBlank(stockUuid) == false)
       return;

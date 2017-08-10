@@ -38,4 +38,6 @@ public interface AcceptanceBillDao {
     void removeItems(String acceptanceBillUuid);
 
     List<AcceptanceBillItem> queryItems(String acceptanceBillUuid);
+    
+    void updateItem(AcceptanceBillItem item);
 }

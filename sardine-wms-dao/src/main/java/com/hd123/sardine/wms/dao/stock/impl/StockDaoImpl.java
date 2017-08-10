@@ -1,193 +1,176 @@
 /**
- * 版权所有(C)，上海海鼎信息工程股份有限公司，2017，所有权利保留。
+ * 版权所有(C)，上海海鼎信息工程股份有限公司，2014，所有权利保留。
  * 
- * 项目名：	sardine-wms-dao
+ * 项目名：	wms-wms-core
  * 文件名：	StockDaoImpl.java
  * 模块说明：	
  * 修改历史：
- * 2017年4月11日 - zhangsai - 创建。
+ * 2014-4-10 - WUJING - 创建。
  */
 package com.hd123.sardine.wms.dao.stock.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.mybatis.spring.support.SqlSessionDaoSupport;
+import org.springframework.stereotype.Repository;
 
 import com.hd123.rumba.commons.lang.Assert;
-import com.hd123.sardine.wms.api.stock.OnWayStock;
 import com.hd123.sardine.wms.api.stock.Stock;
+import com.hd123.sardine.wms.api.stock.StockChangement;
 import com.hd123.sardine.wms.api.stock.StockExtendInfo;
 import com.hd123.sardine.wms.api.stock.StockFilter;
-import com.hd123.sardine.wms.api.stock.StockLog;
-import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
-import com.hd123.sardine.wms.common.utils.PersistenceUtils;
+import com.hd123.sardine.wms.api.stock.StockMajorFilter;
+import com.hd123.sardine.wms.api.stock.StockMajorInfo;
+import com.hd123.sardine.wms.api.stock.StockState;
+import com.hd123.sardine.wms.common.dao.NameSpaceSupport;
+import com.hd123.sardine.wms.dao.stock.PStockShiftIn;
+import com.hd123.sardine.wms.dao.stock.PStockShiftRule;
+import com.hd123.sardine.wms.dao.stock.StockCmd;
 import com.hd123.sardine.wms.dao.stock.StockDao;
+import com.hd123.sardine.wms.dao.stock.StockShiftMessage;
 
 /**
- * 库存DAO 实现
+ * @author WUJING
  * 
- * @author zhangsai
- *
  */
-public class StockDaoImpl extends SqlSessionDaoSupport implements StockDao {
-    public static final String MAPPER_GETBYPRIMARYKEY = "getByPrimaryKey";
-    public static final String MAPPER_GET = "get";
-    public static final String MAPPER_GETBYTASKNO = "getByTaskNo";
-    public static final String MAPPER_INSERT = "insert";
-    public static final String MAPPER_UPDATE = "update";
-    public static final String MAPPER_REMOVE = "remove";
-    public static final String MAPPER_INSERTONWAYSTOCK = "insertOnWayStock";
-    public static final String MAPPER_UPDATEONWAYSTOCK = "updateOnWayStock";
-    public static final String MAPPER_REMOVEONWAYSTOCK = "removeOnWayStock";
-    public static final String MAPPER_QUERYSTOCKEXTENDINFO = "queryStockExtendInfo";
-    public static final String MAPPER_QUERY = "query";
-    public static final String MAPPER_INSERTLOG = "insertLog";
-    public static final String MAPPER_BINHASSTOCK = "binHasStock";
-    public static final String MAPPER_CONTAINERHASSTOCK = "containerHasStock";
+@Repository
+public class StockDaoImpl extends NameSpaceSupport implements StockDao {
+  private static String CLEARPROCEDURE = "clearProcedures";
+  private static String EXCUTESHIFTIN = "executeShiftIn";
+  private static String EXCUTESHIFTOUT = "executeShiftOut";
+  private static String EXECUTESHIFT = "executeShift";
+  private static String EXCUTECHANGEMENT = "executeChangement";
 
-    public String generateStatement(String mapperId) {
-        return this.getClass().getName() + "." + mapperId;
-    }
+  private static String INSERTSTOCK = "insert_Stock";
+  private static String INSERTSTOCKRULE = "insert_StockRule";
+  private static String QUERYSTOCK = "queryStock";
+  private static String QUERYSTOCKEXTENDINFO = "queryStockextendinfo";
+  private static String QUERYSTOCKCHANGEMENT = "queryStockChangement";
 
-    @Override
-    public Stock getByPrimaryKey(String binCode, String containerBarcode, String stockBatch,
-            String articleUuid) {
-        Map<String, Object> map = ApplicationContextUtil.map();
-        map.put("binCode", binCode);
-        map.put("containerBarcode", containerBarcode);
-        map.put("stockBatch", stockBatch);
-        map.put("articleUuid", articleUuid);
+  private static String GETSTOCKMESSAGE = "getStockMessage";
 
-        List<Stock> stocks = getSqlSession().selectList(generateStatement(MAPPER_GETBYPRIMARYKEY),
-                map);
-        if (CollectionUtils.isEmpty(stocks) == false)
-            return stocks.get(0);
-        return null;
-    }
+  private static String SAVESTOCKCMD = "insert_StockCmd";
 
-    @Override
-    public Stock get(String uuid) {
-        Map<String, Object> map = ApplicationContextUtil.map();
-        map.put("uuid", uuid);
+  private static String QUERY_STOCKMAJORINFO = "queryMajorStockInfo";
 
-        List<Stock> stocks = getSqlSession().selectList(generateStatement(MAPPER_GET), map);
-        if (CollectionUtils.isEmpty(stocks) == false)
-            return stocks.get(0);
-        return null;
-    }
+  @Override
+  public void executeClearProcedure(String workId) {
+    Assert.assertArgumentNotNull(workId, "workId");
+    selectOne(CLEARPROCEDURE, workId);
+  }
 
-    @Override
-    public OnWayStock getByTaskNo(String stockUuid, String taskNo) {
-        Map<String, Object> map = ApplicationContextUtil.map();
-        map.put("taskNo", taskNo);
-        map.put("stockUuid", stockUuid);
+  @Override
+  public int executeShiftIn(String workId) {
+    Assert.assertArgumentNotNull(workId, "workId");
 
-        List<OnWayStock> stocks = getSqlSession().selectList(generateStatement(MAPPER_GETBYTASKNO),
-                map);
-        if (CollectionUtils.isEmpty(stocks) == false)
-            return stocks.get(0);
-        return null;
-    }
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("workId", workId);
+    map.put("result", 0);
 
-    @Override
-    public void insert(Stock stock) {
-        Assert.assertArgumentNotNull(stock, "stock");
+    List<Map<String, Object>> list = selectList(EXCUTESHIFTIN, map);
+    if (list != null && list.size() > 0)
+      return (Integer) list.get(0).get("result");
+    return 0;
+  }
 
-        getSqlSession().insert(generateStatement(MAPPER_INSERT), stock);
-    }
+  @Override
+  public int executeShiftOut(String workId) {
+    Assert.assertArgumentNotNull(workId, "workId");
 
-    @Override
-    public void update(Stock stock) {
-        Assert.assertArgumentNotNull(stock, "stock");
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("workId", workId);
+    map.put("result", 0);
+    List<Integer> list = selectList(EXCUTESHIFTOUT, map);
+    if (list != null && list.size() > 0)
+      return list.get(0);
+    return 0;
+  }
 
-        int i = getSqlSession().update(generateStatement(MAPPER_UPDATE), stock);
-        PersistenceUtils.optimisticVerify(i);
-    }
+  @Override
+  public int executeShift(String workId, String binCode, String containerBarcode,
+      StockState state) {
+    Assert.assertArgumentNotNull(workId, "workId");
 
-    @Override
-    public void remove(String uuid, long version) {
-        Assert.assertArgumentNotNull(uuid, "uuid");
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("workId", workId);
+    map.put("binCode", binCode);
+    map.put("containerBarcode", containerBarcode);
+    map.put("state", state);
 
-        Map<String, Object> map = ApplicationContextUtil.map();
-        map.put("uuid", uuid);
-        map.put("version", version);
-        int i = getSqlSession().delete(generateStatement(MAPPER_REMOVE), map);
-        PersistenceUtils.optimisticVerify(i);
-    }
+    map.put("result", 0);
+    List<Integer> list = selectList(EXECUTESHIFT, map);
+    if (list != null && list.size() > 0)
+      return list.get(0);
+    return 0;
 
-    @Override
-    public void insertOnWayStock(OnWayStock onWayStock) {
-        Assert.assertArgumentNotNull(onWayStock, "onWayStock");
+  }
 
-        getSqlSession().insert(generateStatement(MAPPER_INSERTONWAYSTOCK), onWayStock);
-    }
+  @Override
+  public int executeChange(String workId, String targetState) {
+    Assert.assertArgumentNotNull(workId, "workId");
+    Assert.assertArgumentNotNull(targetState, "targetState");
 
-    @Override
-    public void updateOnWayStock(OnWayStock onWayStock) {
-        Assert.assertArgumentNotNull(onWayStock, "onWayStock");
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("workId", workId);
+    map.put("targetState", targetState);
 
-        int i = getSqlSession().update(generateStatement(MAPPER_UPDATEONWAYSTOCK), onWayStock);
-        PersistenceUtils.optimisticVerify(i);
-    }
+    List<Integer> list = selectList(EXCUTECHANGEMENT, map);
+    if (list != null && list.size() > 0)
+      return list.get(0);
+    return 0;
+  }
 
-    @Override
-    public void removeOnWayStock(String uuid) {
-        Assert.assertArgumentNotNull(uuid, "uuid");
+  @Override
+  public void saveStockShiftIn(PStockShiftIn stockShiftIn) {
+    Assert.assertArgumentNotNull(stockShiftIn, "stockShiftIn");
+    selectOne(INSERTSTOCK, stockShiftIn);
+  }
 
-        Map<String, Object> map = ApplicationContextUtil.map();
-        map.put("uuid", uuid);
-        int i = getSqlSession().delete(generateStatement(MAPPER_REMOVEONWAYSTOCK), map);
-        PersistenceUtils.optimisticVerify(i);
-    }
+  @Override
+  public List<Stock> queryStocks(StockFilter filter) {
+    Assert.assertArgumentNotNull(filter, "filter");
 
-    @Override
-    public List<StockExtendInfo> queryStockExtendInfo(StockFilter stockFilter) {
-        Assert.assertArgumentNotNull(stockFilter, "stockFilter");
+    return selectList(QUERYSTOCK, filter);
+  }
 
-        List<StockExtendInfo> result = getSqlSession()
-                .selectList(generateStatement(MAPPER_QUERYSTOCKEXTENDINFO), stockFilter);
-        return result;
-    }
+  @Override
+  public List<StockChangement> queryStocksChangement(String workId) {
+    Assert.assertArgumentNotNull(workId, "workId");
+    List<StockChangement> list = selectList(QUERYSTOCKCHANGEMENT, workId);
+    return list;
+  }
 
-    @Override
-    public List<Stock> query(StockFilter stockFilter) {
-        Assert.assertArgumentNotNull(stockFilter, "stockFilter");
+  @Override
+  public List<StockShiftMessage> getStockMessage(String workId) {
+    Assert.assertArgumentNotNull(workId, "workId");
+    return selectList(GETSTOCKMESSAGE, workId);
+  }
 
-        List<Stock> result = getSqlSession().selectList(generateStatement(MAPPER_QUERY),
-                stockFilter);
-        return result;
-    }
+  @Override
+  public void saveStockShiftRule(PStockShiftRule rule) {
+    Assert.assertArgumentNotNull(rule, "rule");
+    selectOne(INSERTSTOCKRULE, rule);
+  }
 
-    @Override
-    public void insertLog(StockLog log) {
-        Assert.assertArgumentNotNull(log, "log");
+  @Override
+  public void saveStockCmd(StockCmd stockCmd) {
+    Assert.assertArgumentNotNull(stockCmd, "stockCmd");
+    selectOne(SAVESTOCKCMD, stockCmd);
+  }
 
-        getSqlSession().insert(generateStatement(MAPPER_INSERTLOG), log);
-    }
+  @Override
+  public List<StockExtendInfo> queryStockExtendInfo(StockFilter filter) {
+    Assert.assertArgumentNotNull(filter, "filter");
 
-    @Override
-    public boolean binHasStock(String binCode) {
-        Map<String, Object> map = ApplicationContextUtil.map();
-        map.put("binCode", binCode);
+    return selectList(QUERYSTOCKEXTENDINFO, filter);
+  }
 
-        List<String> result = getSqlSession().selectList(generateStatement(MAPPER_BINHASSTOCK),
-                map);
-        if (CollectionUtils.isEmpty(result) == false)
-            return true;
-        return false;
-    }
+  @Override
+  public List<StockMajorInfo> queryMajorInfo(StockMajorFilter filter) {
+    Assert.assertArgumentNotNull(filter, "filter");
 
-    @Override
-    public boolean containerHasStock(String containerBarcode) {
-        Map<String, Object> map = ApplicationContextUtil.map();
-        map.put("containerBarcode", containerBarcode);
-
-        List<String> result = getSqlSession()
-                .selectList(generateStatement(MAPPER_CONTAINERHASSTOCK), map);
-        if (CollectionUtils.isEmpty(result) == false)
-            return true;
-        return false;
-    }
+    List<StockMajorInfo> result = selectList(QUERY_STOCKMAJORINFO, filter);
+    return result;
+  }
 }

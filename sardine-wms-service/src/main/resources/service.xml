@@ -17,4 +17,4 @@
 		<context:include-filter type="regex"
 			expression="(.*Validator)|(.*ValidateHandler)|(.*Helper)" />
 	</context:component-scan>
-</beans>
+</beans> 

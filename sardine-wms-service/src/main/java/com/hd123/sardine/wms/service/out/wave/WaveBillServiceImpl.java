@@ -89,7 +89,7 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     return bill.getUuid();
   }
 
-  private void alcNtcJoinWave(WaveBill bill) throws WMSException {
+  private void alcNtcJoinWave(WaveBill bill) throws WMSException {/*
     assert bill != null;
     List<AlcNtcBill> list = alcNtcService.getByTaskBillNumber(bill.getBillNumber());
     List<String> uuids = CollectionUtil.toUuids(list);
@@ -111,7 +111,7 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
       if (existUuids.contains(alcNtcBill.getUuid()) == false)
         alcNtcService.leaveWave(alcNtcBill.getBillNumber(), alcNtcBill.getVersion());
     }
-  }
+  */}
 
   @Override
   public void saveModify(WaveBill bill)
@@ -215,6 +215,43 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     PageQueryUtil.assignPageInfo(pqr, definition);
     pqr.setRecords(list);
     return pqr;
+  }
+
+  @Override
+  public List<String> start(String uuid, long version)
+      throws IllegalArgumentException, VersionConflictException, WMSException {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public void executeArticle(String waveBillNumber, List<String> articleUuids) throws WMSException {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void startComplete(String billNumber) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void startException(String billNumber, String errorMessage) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void rollBack(String uuid, long version) throws WMSException {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void confirm(String uuid, long version) throws WMSException {
+    // TODO Auto-generated method stub
+    
   }
 
 }

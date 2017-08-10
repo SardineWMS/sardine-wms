@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportFitManager xmlVersion="20151125" releaseVersion="8.0.0">
+<FrmFitManager>
+<ReportFitAttr fitStateInPC="0" fitFont="false"/>
+</FrmFitManager>
+<CptFitManager>
+<ReportFitAttr fitStateInPC="1" fitFont="true"/>
+</CptFitManager>
+</ReportFitManager>

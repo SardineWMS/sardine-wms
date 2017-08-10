@@ -428,7 +428,7 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
 
 	}
 
-	private void shiftIn(ReturnBill bill) throws WMSException {
+	private void shiftIn(ReturnBill bill) throws WMSException {/*
 		assert bill != null;
 		assert bill.getItems() != null;
 
@@ -455,7 +455,7 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
 			stocks.add(stock);
 		}
 		stockService.shiftIn(ReturnBill.class.getName(), bill.getBillNumber(), stocks);
-	}
+	*/}
 
 	private StringBuffer verifyContainer(ReturnBill bill) {
 		assert bill != null;

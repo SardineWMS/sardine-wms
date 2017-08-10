@@ -23,179 +23,176 @@ import com.hd123.sardine.wms.common.entity.UCN;
  *
  */
 public class AcceptanceBillItem extends Entity {
-    private static final long serialVersionUID = -6379236706813119263L;
+  private static final long serialVersionUID = -6379236706813119263L;
 
-    private String acceptanceBillUuid;
-    private int line;
-    private UCN article;
-    private UCN supplier;
-    private String munit = "-";
-    private String qpcStr;
-    private String binCode;
-    private String containerBarCode;
-    private Date productionDate;
-    private Date validDate;
-    private String stockBatch;
-    private BigDecimal qty;
-    private String caseQtyStr;
-    private BigDecimal realQty;
-    private String realCaseQtyStr;
-    private BigDecimal price;
-    private BigDecimal amount;
+  private String acceptanceBillUuid;
+  private int line;
+  private UCN article;
+  private UCN supplier;
+  private String munit = "-";
+  private String qpcStr;
+  private String binCode;
+  private String containerBarCode;
+  private Date productionDate;
+  private Date validDate;
+  private BigDecimal qty;
+  private String caseQtyStr;
+  private BigDecimal planQty = BigDecimal.ZERO;
+  private String planCaseQtyStr;
+  private BigDecimal realQty = BigDecimal.ZERO;
+  private String realCaseQtyStr;
+  private BigDecimal price = BigDecimal.ZERO;
 
-    public String getAcceptanceBillUuid() {
-        return acceptanceBillUuid;
-    }
+  public String getAcceptanceBillUuid() {
+    return acceptanceBillUuid;
+  }
 
-    public void setAcceptanceBillUuid(String acceptanceBillUuid) {
-        this.acceptanceBillUuid = acceptanceBillUuid;
-    }
+  public void setAcceptanceBillUuid(String acceptanceBillUuid) {
+    this.acceptanceBillUuid = acceptanceBillUuid;
+  }
 
-    public int getLine() {
-        return line;
-    }
+  public int getLine() {
+    return line;
+  }
 
-    public void setLine(int line) {
-        this.line = line;
-    }
+  public void setLine(int line) {
+    this.line = line;
+  }
 
-    public UCN getArticle() {
-        return article;
-    }
+  public UCN getArticle() {
+    return article;
+  }
 
-    public void setArticle(UCN article) {
-        this.article = article;
-    }
+  public void setArticle(UCN article) {
+    this.article = article;
+  }
 
-    public UCN getSupplier() {
-        return supplier;
-    }
+  public UCN getSupplier() {
+    return supplier;
+  }
 
-    public void setSupplier(UCN supplier) {
-        this.supplier = supplier;
-    }
+  public void setSupplier(UCN supplier) {
+    this.supplier = supplier;
+  }
 
-    public String getMunit() {
-        return munit;
-    }
+  public String getMunit() {
+    return munit;
+  }
 
-    public void setMunit(String munit) {
-        this.munit = munit;
-    }
+  public void setMunit(String munit) {
+    this.munit = munit;
+  }
 
-    public String getQpcStr() {
-        return qpcStr;
-    }
+  public String getQpcStr() {
+    return qpcStr;
+  }
 
-    public void setQpcStr(String qpcStr) {
-        this.qpcStr = qpcStr;
-    }
+  public void setQpcStr(String qpcStr) {
+    this.qpcStr = qpcStr;
+  }
 
-    public String getBinCode() {
-        return binCode;
-    }
+  public String getBinCode() {
+    return binCode;
+  }
 
-    public void setBinCode(String binCode) {
-        this.binCode = binCode;
-    }
+  public void setBinCode(String binCode) {
+    this.binCode = binCode;
+  }
 
-    public String getContainerBarCode() {
-        return containerBarCode;
-    }
+  public String getContainerBarCode() {
+    return containerBarCode;
+  }
 
-    public void setContainerBarCode(String containerBarCode) {
-        this.containerBarCode = containerBarCode;
-    }
+  public void setContainerBarCode(String containerBarCode) {
+    this.containerBarCode = containerBarCode;
+  }
 
-    public Date getProductionDate() {
-        return productionDate;
-    }
+  public Date getProductionDate() {
+    return productionDate;
+  }
 
-    public void setProductionDate(Date productionDate) {
-        this.productionDate = productionDate;
-    }
+  public void setProductionDate(Date productionDate) {
+    this.productionDate = productionDate;
+  }
 
-    public Date getValidDate() {
-        return validDate;
-    }
+  public Date getValidDate() {
+    return validDate;
+  }
 
-    public void setValidDate(Date validDate) {
-        this.validDate = validDate;
-    }
+  public void setValidDate(Date validDate) {
+    this.validDate = validDate;
+  }
 
-    public String getStockBatch() {
-        return stockBatch;
-    }
+  public BigDecimal getQty() {
+    return qty;
+  }
 
-    public void setStockBatch(String stockBatch) {
-        this.stockBatch = stockBatch;
-    }
+  public void setQty(BigDecimal qty) {
+    this.qty = qty;
+  }
 
-    public BigDecimal getQty() {
-        return qty;
-    }
+  public String getCaseQtyStr() {
+    return caseQtyStr;
+  }
 
-    public void setQty(BigDecimal qty) {
-        this.qty = qty;
-    }
+  public void setCaseQtyStr(String caseQtyStr) {
+    this.caseQtyStr = caseQtyStr;
+  }
 
-    public String getCaseQtyStr() {
-        return caseQtyStr;
-    }
+  public BigDecimal getPlanQty() {
+    return planQty;
+  }
 
-    public void setCaseQtyStr(String caseQtyStr) {
-        this.caseQtyStr = caseQtyStr;
-    }
+  public void setPlanQty(BigDecimal planQty) {
+    this.planQty = planQty;
+  }
 
-    public BigDecimal getRealQty() {
-        return realQty;
-    }
+  public String getPlanCaseQtyStr() {
+    return planCaseQtyStr;
+  }
 
-    public void setRealQty(BigDecimal realQty) {
-        this.realQty = realQty;
-    }
+  public void setPlanCaseQtyStr(String planCaseQtyStr) {
+    this.planCaseQtyStr = planCaseQtyStr;
+  }
 
-    public String getRealCaseQtyStr() {
-        return realCaseQtyStr;
-    }
+  public BigDecimal getRealQty() {
+    return realQty;
+  }
 
-    public void setRealCaseQtyStr(String realCaseQtyStr) {
-        this.realCaseQtyStr = realCaseQtyStr;
-    }
+  public void setRealQty(BigDecimal realQty) {
+    this.realQty = realQty;
+  }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
+  public String getRealCaseQtyStr() {
+    return realCaseQtyStr;
+  }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
+  public void setRealCaseQtyStr(String realCaseQtyStr) {
+    this.realCaseQtyStr = realCaseQtyStr;
+  }
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
+  public BigDecimal getPrice() {
+    return price;
+  }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
+  public void setPrice(BigDecimal price) {
+    this.price = price;
+  }
 
-    public void validate() {
-        Assert.assertArgumentNotNull(article, "article");
-        Assert.assertArgumentNotNull(supplier, "supplier");
-        Assert.assertArgumentNotNull(qpcStr, "qpcStr");
-        Assert.assertArgumentNotNull(munit, "munit");
-        Assert.assertArgumentNotNull(binCode, "binCode");
-        Assert.assertArgumentNotNull(containerBarCode, "containerBarCode");
-        Assert.assertArgumentNotNull(productionDate, "productionDate");
-        Assert.assertArgumentNotNull(validDate, "validDate");
-        Assert.assertArgumentNotNull(stockBatch, "stockBatch");
-        Assert.assertArgumentNotNull(qty, "qty");
-        Assert.assertArgumentNotNull(caseQtyStr, "caseQtyStr");
-        Assert.assertArgumentNotNull(price, "price");
-        Assert.assertArgumentNotNull(amount, "amount");
+  public void validate() {
+    Assert.assertArgumentNotNull(article, "article");
+    Assert.assertArgumentNotNull(supplier, "supplier");
+    Assert.assertArgumentNotNull(qpcStr, "qpcStr");
+    Assert.assertArgumentNotNull(munit, "munit");
+    Assert.assertArgumentNotNull(binCode, "binCode");
+    Assert.assertArgumentNotNull(containerBarCode, "containerBarCode");
+    Assert.assertArgumentNotNull(productionDate, "productionDate");
+    Assert.assertArgumentNotNull(validDate, "validDate");
+    Assert.assertArgumentNotNull(qty, "qty");
+    Assert.assertArgumentNotNull(caseQtyStr, "caseQtyStr");
+    Assert.assertArgumentNotNull(price, "price");
 
-        if (BigDecimal.ZERO.compareTo(qty) >= 0)
-            throw new IllegalArgumentException("商品" + article.getCode() + "领用数量必须大于0！");
-    }
-
+    if (BigDecimal.ZERO.compareTo(qty) >= 0)
+      throw new IllegalArgumentException("商品" + article.getCode() + "领用数量必须大于0！");
+  }
 }

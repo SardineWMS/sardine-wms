@@ -1,119 +1,124 @@
 /**
- * 版权所有(C)，上海海鼎信息工程股份有限公司，2017，所有权利保留。
+ * 版权所有(C)，上海海鼎信息工程股份有限公司，2014，所有权利保留。
  * 
- * 项目名：	sardine-wms-api
+ * 项目名：	wms-wms-api
  * 文件名：	StockService.java
  * 模块说明：	
  * 修改历史：
- * 2017年4月11日 - zhangsai - 创建。
+ * 2014-3-21 - Gao JingYu - 创建。
  */
 package com.hd123.sardine.wms.api.stock;
 
 import java.util.List;
 
-import com.hd123.sardine.wms.common.exception.VersionConflictException;
+import com.hd123.sardine.wms.common.entity.SourceBill;
 import com.hd123.sardine.wms.common.exception.WMSException;
 
 /**
- * 库存服务接口
+ * 库存管理 | 接口
  * 
- * @author zhangsai
- *
+ * @author Gao JingYu
  */
 public interface StockService {
 
   /**
-   * 库存入库
+   * 转入库存。
+   * 
+   * @param sourceBill
+   *          操作单据,not null。
+   * @param stocks
+   *          库存记录,not null。
+   * @return 库存变化记录。
+   * @throws IllegalArgumentException
+   * @throws DBOperServiceException
+   * @throws WMSException
+   */
+  void shiftIn(SourceBill sourceBill, List<StockShiftIn> stocks) throws WMSException;
+
+  /**
+   * 转出库存。
+   * 
+   * @param sourceBill
+   *          操作单据,not null。
+   * @param rules
+   *          库存变化规则，not null。
+   * @return 库存变化记录。
+   * @throws StockException
+   *           当库存不够或不存在时抛出。
+   * @throws IllegalArgumentException
+   * @throws DBOperServiceException
+   */
+  List<StockChangement> shiftOut(SourceBill sourceBill, List<StockShiftRule> rules)
+      throws WMSException;
+
+  /**
+   * 库存转移。
+   * 
+   * @param sourceBill
+   *          操作单据，not null。
+   * @param rules
+   *          库存变化规则。
+   * @param target
+   *          转移库存目标。
+   * @return 库存变化记录。
+   * @throws WMSException
+   * @throws IllegalArgumentException
+   * @throws DBOperServiceException
+   */
+  List<StockChangement> shift(SourceBill sourceBill, List<StockShiftRule> rules,
+      StockShiftTarget target) throws WMSException;
+
+  /**
+   * 根据库存规则，改变库存状态。
    * <p>
-   * 正常库存入库<br>
-   * 如果{@link Stock#getOnWayStocks()}不为empty时，同时入库在途库存
+   * 忽略规则中状态。
    * 
-   * @param sourceBillType
-   *          操作单据类型，not null
-   * @param sourceBillNumber
-   *          操作单据单号，not null
-   * @param willInStocks
-   *          将要入库的库存集合，not null
-   * @return 入库后库存详情
-   * @throws IllegalArgumentException
-   * @throws VersionConflictException
-   * @throws WMSExceptionk
-   */
-  List<Stock> shiftIn(String sourceBillType, String sourceBillNumber, List<Stock> willInStocks)
-      throws IllegalArgumentException, VersionConflictException, WMSException;
-
-  /**
-   * 在途库存入库
-   * 
-   * @param onWayStocks
-   *          在途库存集合，not null
-   * @return 入库后库存详情
-   * @throws IllegalArgumentException
-   * @throws VersionConflictException
+   * @param sourceBill
+   *          操作单据,not null。
+   * @param rules
+   *          库存变化规则，not null。
+   * @param fromState
+   *          来源库存状态， not null。
+   * @param toState
+   *          目标库存状态， not null。
+   * @return 转出库存变化记录。
    * @throws WMSException
-   */
-  List<Stock> shiftInOnWayStock(List<OnWayStock> onWayStocks)
-      throws IllegalArgumentException, VersionConflictException, WMSException;
-
-  /**
-   * 根据指定条件查询库存信息 <br>
-   * 数量=可用库存数量
-   * 
-   * @param stockFilter
-   *          库存查询条件，not null
-   * @return 库存集合
+   *           当库存不够或不存在时抛出。
    * @throws IllegalArgumentException
+   * @throws DBOperServiceException
    */
-  List<StockExtendInfo> queryStocks(StockFilter stockFilter) throws IllegalArgumentException;
+  List<StockChangement> changeState(SourceBill sourceBill, List<StockShiftRule> rules,
+      StockState fromState, StockState toState) throws WMSException;
 
   /**
-   * 正常库存出库，不包含在途库存
+   * 查询库存。
    * 
-   * @param sourceBillType
-   *          操作单据类型，not null
-   * @param sourceBillNumber
-   *          操作单据单号，not null
-   * @param shiftOutRules
-   *          出库规则，not null
-   * @return 出库的库存详情
+   * @param filter
+   *          查询条件，not null
+   * @return 符合条件的库存记录。
    * @throws IllegalArgumentException
-   * @throws VersionConflictException
-   * @throws WMSException
+   * @throws DBOperServiceException
    */
-  List<Stock> shiftOut(String sourceBillType, String sourceBillNumber,
-      List<ShiftOutRule> shiftOutRules)
-      throws IllegalArgumentException, VersionConflictException, WMSException;
+  List<Stock> query(StockFilter filter);
 
   /**
-   * 在途库存出库
+   * 查询库存详情，包含商品UCN、供应商UCN
    * 
-   * @param shiftRules
-   *          在途库存出库规则，not null
-   * @return 出库的库存详情
+   * @param filter
+   *          查询条件，not null
+   * @return 返回结果集
    * @throws IllegalArgumentException
-   * @throws VersionConflictException
-   * @throws WMSException
+   * @throws DBOperServiceException
    */
-  List<Stock> shiftOutOnWayStock(List<OnWayStockOutRule> shiftRules)
-      throws IllegalArgumentException, VersionConflictException, WMSException;
+  List<StockExtendInfo> queryStockExtendInfo(StockFilter filter);
 
   /**
-   * 查询货位是否存在库存，包括正常库存和在途库存
+   * 查询库存以及库存对应的货位信息
+   * <p>
+   * 该方法关联表众多，尽量不要使用该方法
    * 
-   * @param binCode
-   *          货位代码，为空则返回false
-   * @return 有库存返回true，否则返回false
+   * @param filter
+   * @return
    */
-  boolean binHasStock(String binCode);
-
-  /**
-   * 查询容器是否存在库存，包括正常库存和在途库存
-   * 
-   * @param containerBarcode
-   *          容器条码，为空则返回false
-   * @return 有库存返回true，否则返回false
-   */
-  boolean containerHasStock(String containerBarcode);
-
-  List<Stock> query(StockFilter stockFilter);
+  List<StockMajorInfo> queryStockMajorInfo(StockMajorFilter filter);
 }

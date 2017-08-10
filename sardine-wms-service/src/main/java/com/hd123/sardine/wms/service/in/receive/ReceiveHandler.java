@@ -28,11 +28,13 @@ import com.hd123.sardine.wms.api.in.order.OrderReceiveInfo;
 import com.hd123.sardine.wms.api.in.putaway.PutawayService;
 import com.hd123.sardine.wms.api.in.receive.ReceiveBill;
 import com.hd123.sardine.wms.api.in.receive.ReceiveBillItem;
-import com.hd123.sardine.wms.api.stock.Stock;
+import com.hd123.sardine.wms.api.stock.StockComponent;
 import com.hd123.sardine.wms.api.stock.StockService;
+import com.hd123.sardine.wms.api.stock.StockShiftIn;
 import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.task.TaskService;
 import com.hd123.sardine.wms.api.task.TaskType;
+import com.hd123.sardine.wms.common.entity.SourceBill;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 
@@ -75,9 +77,15 @@ public class ReceiveHandler {
     assert receiveBill != null;
     assert items != null;
 
-    List<Stock> stocks = new ArrayList<Stock>();
+    SourceBill sourceBill = new SourceBill("收货单", receiveBill.getUuid(),
+        receiveBill.getBillNumber());
+    List<StockShiftIn> shiftIns = new ArrayList<StockShiftIn>();
     for (ReceiveBillItem item : items) {
-      Stock stock = new Stock();
+      StockShiftIn shiftIn = new StockShiftIn();
+      shiftIn.setSourceLineNumber(item.getLine());
+      shiftIn.setSourceLineUuid(item.getUuid());
+      StockComponent stock = new StockComponent();
+      shiftIn.setStockComponent(stock);
       stock.setArticleUuid(item.getArticle().getUuid());
       stock.setBinCode(item.getBinCode());
       stock.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
@@ -86,17 +94,14 @@ public class ReceiveHandler {
       stock.setProductionDate(item.getProduceDate());
       stock.setQpcStr(item.getQpcStr());
       stock.setQty(item.getQty());
-      stock.setSourceBillNumber(receiveBill.getBillNumber());
-      stock.setSourceBillType("收货单");
-      stock.setSourceBillUuid(receiveBill.getUuid());
-      stock.setSourceLineNumber(item.getLine());
-      stock.setSourceLineUuid(item.getUuid());
+      stock.setPrice(item.getPrice());
+      stock.setSourceBill(sourceBill);
       stock.setStockBatch(item.getStockBatch());
       stock.setSupplierUuid(receiveBill.getSupplier().getUuid());
       stock.setValidDate(item.getValidDate());
-      stocks.add(stock);
+      shiftIns.add(shiftIn);
     }
-    stockService.shiftIn("收货单", receiveBill.getBillNumber(), stocks);
+    stockService.shiftIn(sourceBill, shiftIns);
   }
 
   /**

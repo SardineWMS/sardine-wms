@@ -98,7 +98,7 @@ public class UtilController extends BaseController {
             filter.setBinCode(binCode);
             BigDecimal totalQty = BigDecimal.ZERO;
             ApplicationContextUtil.setCompany(getLoginCompany(token));
-            List<StockExtendInfo> stocks = stockService.queryStocks(filter);
+            List<StockExtendInfo> stocks = stockService.queryStockExtendInfo(filter);
             List<Date> productionDates = new ArrayList<Date>();
             List<String> qpcStrs = new ArrayList<>();
             for (StockExtendInfo stockExtendInfo : stocks) {
@@ -156,7 +156,7 @@ public class UtilController extends BaseController {
             filter.setContainerBarcode(containerBarcode);
             filter.setQpcStr(qpcStr);
             filter.setPageSize(0);
-            List<StockExtendInfo> stocks = stockService.queryStocks(filter);
+            List<StockExtendInfo> stocks = stockService.queryStockExtendInfo(filter);
 
             resp.setObj(stocks);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
