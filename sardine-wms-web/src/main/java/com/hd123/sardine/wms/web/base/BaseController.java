@@ -9,25 +9,11 @@
  */
 package com.hd123.sardine.wms.web.base;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.hd123.rumba.commons.lang.Assert;
-import com.hd123.rumba.commons.lang.StringUtil;
-import com.hd123.sardine.wms.api.ia.login.UserInfo;
-import com.hd123.sardine.wms.common.entity.OperateContext;
-import com.hd123.sardine.wms.common.entity.Operator;
-import com.hd123.sardine.wms.common.entity.UCN;
-import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
-import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
-import com.hd123.sardine.wms.common.utils.SerializationUtils;
-import com.hd123.sardine.wms.common.utils.UUIDGenerator;
-import com.hd123.sardine.wms.web.base.jedis.RedisUtil;
-
 /**
  * @author zhangsai
  *
  */
-public abstract class BaseController {
+public abstract class BaseController {/*
 
   @Autowired
   private RedisUtil redisUtil;
@@ -101,4 +87,4 @@ public abstract class BaseController {
     operCtx.setOperator(new Operator(user.getUuid(), user.getCode(), user.getName()));
     return operCtx;
   }
-}
+*/}

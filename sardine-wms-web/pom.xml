@@ -26,16 +26,6 @@
 			<version>3.2.0</version>
 		</dependency>
 		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>0.7.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.hd123.dcommons</groupId>
-			<artifactId>dcommons-token</artifactId>
-			<version>0.7</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-pool</groupId>
 			<artifactId>commons-pool</artifactId>
 		</dependency>
@@ -43,6 +33,11 @@
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
 			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>17.0</version>
 		</dependency>
 		<dependency>
 			<groupId>redis.clients</groupId>
@@ -82,9 +77,12 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
+		<!-- <dependency> <groupId>javax.servlet</groupId> <artifactId>servlet-api</artifactId> 
+			</dependency> -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.shiro</groupId>

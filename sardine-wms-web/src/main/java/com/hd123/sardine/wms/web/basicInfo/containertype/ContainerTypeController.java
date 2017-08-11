@@ -39,119 +39,115 @@ import com.hd123.sardine.wms.web.base.BaseController;
 @RequestMapping("/basicinfo/containertype")
 public class ContainerTypeController extends BaseController {
 
-    @Autowired
-    private ContainerTypeService containerTypeService;
+  @Autowired
+  private ContainerTypeService containerTypeService;
 
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public @ResponseBody RespObject get(@RequestParam(value = "uuid") String uuid,
-            @RequestParam(value = "token", required = true) String token) {
-        RespObject resp = new RespObject();
-        try {
-            ContainerType containerType = containerTypeService.get(uuid);
-            resp.setObj(containerType);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("查询失败：" + e.getMessage());
-        }
-        return resp;
+  @RequestMapping(value = "/get", method = RequestMethod.GET)
+  public @ResponseBody RespObject get(@RequestParam(value = "uuid") String uuid,
+      @RequestParam(value = "token", required = true) String token) {
+    RespObject resp = new RespObject();
+    try {
+      ContainerType containerType = containerTypeService.get(uuid);
+      resp.setObj(containerType);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("查询失败：" + e.getMessage());
     }
+    return resp;
+  }
 
-    @RequestMapping(value = "/querycontainerTypesUcns", method = RequestMethod.GET)
-    public @ResponseBody RespObject queryContainerTypeUCN(
-            @RequestParam(value = "token", required = true) String token) {
-        RespObject resp = new RespObject();
-        try {
-            PageQueryDefinition definition = new PageQueryDefinition();
-            definition.setPage(1);
-            definition.setPageSize(100);
-            definition.setCompanyUuid(getLoginCompany(token).getUuid());
-            PageQueryResult<ContainerType> result = containerTypeService.query(definition);
+  @RequestMapping(value = "/querycontainerTypesUcns", method = RequestMethod.GET)
+  public @ResponseBody RespObject queryContainerTypeUCN(
+      @RequestParam(value = "token", required = true) String token) {
+    RespObject resp = new RespObject();
+    try {
+      PageQueryDefinition definition = new PageQueryDefinition();
+      definition.setPage(1);
+      definition.setPageSize(100);
+      PageQueryResult<ContainerType> result = containerTypeService.query(definition);
 
-            List<UCN> containerTypes = new ArrayList<>();
-            for (ContainerType c : result.getRecords()) {
-                containerTypes.add(new UCN(c.getUuid(), c.getCode(), c.getName()));
-            }
-            resp.setObj(containerTypes);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("分页查询失败：" + e.getMessage());
-        }
-        return resp;
+      List<UCN> containerTypes = new ArrayList<>();
+      for (ContainerType c : result.getRecords()) {
+        containerTypes.add(new UCN(c.getUuid(), c.getCode(), c.getName()));
+      }
+      resp.setObj(containerTypes);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("分页查询失败：" + e.getMessage());
     }
+    return resp;
+  }
 
-    @RequestMapping(value = "/querybypage", method = RequestMethod.GET)
-    public @ResponseBody RespObject query(
-            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
-            @RequestParam(value = "sort", required = false) String sort,
-            @RequestParam(value = "order", required = false,
-                    defaultValue = "asc") String sortDirection,
-            @RequestParam(value = "token", required = true) String token,
-            @RequestParam(value = "code", required = false) String code,
-            @RequestParam(value = "name", required = false) String name) {
-        RespObject resp = new RespObject();
-        try {
-            PageQueryDefinition definition = new PageQueryDefinition();
-            definition.setPage(page);
-            definition.setPageSize(pageSize);
-            definition.setSortField(sort);
-            definition.setOrderDir(OrderDir.valueOf(sortDirection));
-            definition.setCompanyUuid(getLoginCompany(token).getUuid());
-            definition.put(ContainerTypeService.QUERY_CODE_FIELD, code);
-            definition.put(ContainerTypeService.QUERY_NAME_FIELD, name);
-            PageQueryResult<ContainerType> result = containerTypeService.query(definition);
+  @RequestMapping(value = "/querybypage", method = RequestMethod.GET)
+  public @ResponseBody RespObject query(
+      @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+      @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
+      @RequestParam(value = "sort", required = false) String sort,
+      @RequestParam(value = "order", required = false, defaultValue = "asc") String sortDirection,
+      @RequestParam(value = "token", required = true) String token,
+      @RequestParam(value = "code", required = false) String code,
+      @RequestParam(value = "name", required = false) String name) {
+    RespObject resp = new RespObject();
+    try {
+      PageQueryDefinition definition = new PageQueryDefinition();
+      definition.setPage(page);
+      definition.setPageSize(pageSize);
+      definition.setSortField(sort);
+      definition.setOrderDir(OrderDir.valueOf(sortDirection));
+      definition.put(ContainerTypeService.QUERY_CODE_FIELD, code);
+      definition.put(ContainerTypeService.QUERY_NAME_FIELD, name);
+      PageQueryResult<ContainerType> result = containerTypeService.query(definition);
 
-            resp.setObj(result);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("分页查询失败：" + e.getMessage());
-        }
-        return resp;
+      resp.setObj(result);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("分页查询失败：" + e.getMessage());
     }
+    return resp;
+  }
 
-    @RequestMapping(value = "/savenew", method = RequestMethod.POST)
-    public @ResponseBody RespObject saveNew(
-            @RequestParam(value = "token", required = true) String token,
-            @RequestBody ContainerType containerType) {
-        RespObject resp = new RespObject();
-        try {
-            containerType.setCompanyUuid(getLoginCompany(token).getUuid());
-            String containerTypeUuid = containerTypeService.saveNew(containerType);
-            resp.setObj(containerTypeUuid);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("新增容器类型失败：" + e.getMessage());
-        }
-        return resp;
+  @RequestMapping(value = "/savenew", method = RequestMethod.POST)
+  public @ResponseBody RespObject saveNew(
+      @RequestParam(value = "token", required = true) String token,
+      @RequestBody ContainerType containerType) {
+    RespObject resp = new RespObject();
+    try {
+      String containerTypeUuid = containerTypeService.saveNew(containerType);
+      resp.setObj(containerTypeUuid);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("新增容器类型失败：" + e.getMessage());
     }
+    return resp;
+  }
 
-    @RequestMapping(value = "/savemodify", method = RequestMethod.PUT)
-    public @ResponseBody RespObject saveModify(
-            @RequestParam(value = "token", required = true) String token,
-            @RequestBody ContainerType containerType) {
-        RespObject resp = new RespObject();
-        try {
-            containerTypeService.saveModify(containerType);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("编辑容器类型失败：" + e.getMessage());
-        }
-        return resp;
+  @RequestMapping(value = "/savemodify", method = RequestMethod.PUT)
+  public @ResponseBody RespObject saveModify(
+      @RequestParam(value = "token", required = true) String token,
+      @RequestBody ContainerType containerType) {
+    RespObject resp = new RespObject();
+    try {
+      containerTypeService.saveModify(containerType);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("编辑容器类型失败：" + e.getMessage());
     }
+    return resp;
+  }
 
-    @RequestMapping(value = "/remove", method = RequestMethod.DELETE)
-    public @ResponseBody RespObject remove(
-            @RequestParam(value = "uuid", required = false) String uuid,
-            @RequestParam(value = "token", required = false) String token,
-            @RequestParam(value = "version", required = false) long version) {
-        RespObject resp = new RespObject();
-        try {
-            containerTypeService.remove(uuid, version);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("删除容器类型失败：" + e.getMessage());
-        }
-        return resp;
+  @RequestMapping(value = "/remove", method = RequestMethod.DELETE)
+  public @ResponseBody RespObject remove(
+      @RequestParam(value = "uuid", required = false) String uuid,
+      @RequestParam(value = "token", required = false) String token,
+      @RequestParam(value = "version", required = false) long version) {
+    RespObject resp = new RespObject();
+    try {
+      containerTypeService.remove(uuid, version);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("删除容器类型失败：" + e.getMessage());
     }
+    return resp;
+  }
 
 }

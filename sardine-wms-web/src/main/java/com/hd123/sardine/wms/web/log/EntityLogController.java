@@ -35,35 +35,33 @@ import com.hd123.sardine.wms.web.base.BaseController;
 @RequestMapping("/log/entitylog")
 public class EntityLogController extends BaseController {
 
-    @Autowired
-    private EntityLogService service;
+  @Autowired
+  private EntityLogService service;
 
-    @RequestMapping(value = "/querybypage", method = RequestMethod.GET)
-    public @ResponseBody RespObject query(
-            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
-            @RequestParam(value = "sort", required = false) String sort,
-            @RequestParam(value = "order", required = false,
-                    defaultValue = "asc") String sortDirection,
-            @RequestParam(value = "token", required = false) String token,
-            @RequestParam(value = "entityUuid", required = false) String entityUuid) {
-        RespObject resp = new RespObject();
-        try {
-            PageQueryDefinition definition = new PageQueryDefinition();
-            definition.setPage(page);
-            definition.setPageSize(pageSize);
-            definition.setSortField(sort);
-            definition.setOrderDir(OrderDir.valueOf(sortDirection));
-            definition.setCompanyUuid(getLoginCompany(token).getUuid());
-            definition.put(EntityLogService.QUERY_ENTITYUUID_FIELD, entityUuid);
-            PageQueryResult<EntityLog> result = service.query(definition);
+  @RequestMapping(value = "/querybypage", method = RequestMethod.GET)
+  public @ResponseBody RespObject query(
+      @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+      @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
+      @RequestParam(value = "sort", required = false) String sort,
+      @RequestParam(value = "order", required = false, defaultValue = "asc") String sortDirection,
+      @RequestParam(value = "token", required = false) String token,
+      @RequestParam(value = "entityUuid", required = false) String entityUuid) {
+    RespObject resp = new RespObject();
+    try {
+      PageQueryDefinition definition = new PageQueryDefinition();
+      definition.setPage(page);
+      definition.setPageSize(pageSize);
+      definition.setSortField(sort);
+      definition.setOrderDir(OrderDir.valueOf(sortDirection));
+      definition.put(EntityLogService.QUERY_ENTITYUUID_FIELD, entityUuid);
+      PageQueryResult<EntityLog> result = service.query(definition);
 
-            resp.setObj(result);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("分页查询失败：" + e.getMessage());
-        }
-        return resp;
+      resp.setObj(result);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("分页查询失败：" + e.getMessage());
     }
+    return resp;
+  }
 
 }

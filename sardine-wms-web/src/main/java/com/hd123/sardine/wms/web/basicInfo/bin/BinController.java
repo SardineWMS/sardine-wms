@@ -37,7 +37,6 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
-import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
@@ -77,7 +76,6 @@ public class BinController extends BaseController {
             definition.setPageSize(pageSize);
             definition.setSortField(sort);
             definition.setOrderDir(OrderDir.valueOf(sortDirection));
-            definition.setCompanyUuid(getLoginCompany(token).getUuid());
             definition.put(BinService.QUERY_WRH_FIELD, wrhUuid);
             definition.put(BinService.QUERY_ZONE_FIELD, zoneUuid);
             definition.put(BinService.QUERY_PATH_FIELD, pathUuid);
@@ -135,7 +133,6 @@ public class BinController extends BaseController {
         RespObject resp = new RespObject();
         try {
             PageQueryDefinition definition = new PageQueryDefinition();
-            definition.setCompanyUuid(getLoginCompany(token).getUuid());
             definition.setPage(1);
             definition.setPageSize(1000);
             PageQueryResult<BinType> binTypes = binTypeService.query(definition);
@@ -158,7 +155,6 @@ public class BinController extends BaseController {
             Wrh wrh = new Wrh();
             wrh.setCode(code);
             wrh.setName(name);
-            wrh.setCompanyUuid(getLoginCompany(token).getUuid());
             wrh.setNote(note);
             binService.insertWrh(wrh);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -180,7 +176,6 @@ public class BinController extends BaseController {
             Zone zone = new Zone();
             zone.setCode(code);
             zone.setName(name);
-            zone.setCompanyUuid(getLoginCompany(token).getUuid());
             zone.setNote(note);
             zone.setWrh(new UCN(wrhUuid, null, null));
             binService.insertZone(zone);
@@ -199,7 +194,6 @@ public class BinController extends BaseController {
         RespObject resp = new RespObject();
         try {
             Path path = new Path();
-            path.setCompanyUuid(getLoginCompany(token).getUuid());
             path.setZoneUuid(zoneUuid);
             binService.insertPath(path);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -233,7 +227,6 @@ public class BinController extends BaseController {
         try {
             Bin bin = new Bin();
             bin.setCode(code);
-            bin.setCompanyUuid(getLoginCompany(token).getUuid());
             bin.setUsage(BinUsage.valueOf(binUsage));
             bin.setBinType(new UCN(binTypeUuid, null, null));
             binService.insertBin(bin);
@@ -265,7 +258,6 @@ public class BinController extends BaseController {
             @RequestParam(value = "token", required = true) String token) {
         RespObject resp = new RespObject();
         try {
-            ApplicationContextUtil.setCompany(getLoginCompany(token));
             Bin bin = binService.getBinByCode(bincode);
             resp.setObj(bin);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

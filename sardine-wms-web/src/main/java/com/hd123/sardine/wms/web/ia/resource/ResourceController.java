@@ -34,101 +34,97 @@ import com.hd123.sardine.wms.web.base.BaseController;
 @RestController
 @RequestMapping("/ia/resource")
 public class ResourceController extends BaseController {
-    @Autowired
-    private ResourceService resourceService;
+  @Autowired
+  private ResourceService resourceService;
 
-    @RequestMapping(value = "/queryOwnedMenuResourceByUser", method = RequestMethod.GET)
-    public @ResponseBody RespObject queryOwnedAllResourceByUser(
-            @RequestParam(value = "token") String token) {
-        RespObject resp = new RespObject();
-        try {
-            ApplicationContextUtil.setCompany(getLoginCompany(token));
-            List<Resource> resources = resourceService
-                    .queryOwnedMenuResourceByUser(getLoginUser(token).getUuid());
-            resp.setObj(resources);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("查询失败：" + e.getMessage());
-        }
-        return resp;
+  @RequestMapping(value = "/queryOwnedMenuResourceByUser", method = RequestMethod.GET)
+  public @ResponseBody RespObject queryOwnedAllResourceByUser(
+      @RequestParam(value = "token") String token) {
+    RespObject resp = new RespObject();
+    try {
+      List<Resource> resources = resourceService
+          .queryOwnedMenuResourceByUser(ApplicationContextUtil.getLoginUser().getUuid());
+      resp.setObj(resources);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("查询失败：" + e.getMessage());
     }
+    return resp;
+  }
 
-    @RequestMapping(value = "/queryAllResourceByUser", method = RequestMethod.GET)
-    public @ResponseBody RespObject queryAllResourceByUser(
-            @RequestParam(value = "userUuid") String userUuid,
-            @RequestParam(value = "token") String token) {
-        RespObject resp = new RespObject();
-        try {
-            ApplicationContextUtil.setCompany(getLoginCompany(token));
-            List<Resource> resources = resourceService.queryAllResourceByUser(userUuid);
-            resp.setObj(resources);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("查询失败：" + e.getMessage());
-        }
-        return resp;
+  @RequestMapping(value = "/queryAllResourceByUser", method = RequestMethod.GET)
+  public @ResponseBody RespObject queryAllResourceByUser(
+      @RequestParam(value = "userUuid") String userUuid,
+      @RequestParam(value = "token") String token) {
+    RespObject resp = new RespObject();
+    try {
+      List<Resource> resources = resourceService.queryAllResourceByUser(userUuid);
+      resp.setObj(resources);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("查询失败：" + e.getMessage());
     }
+    return resp;
+  }
 
-    @RequestMapping(value = "/queryOwnedResourceByRole", method = RequestMethod.GET)
-    public @ResponseBody RespObject queryOwnedResourceByRole(
-            @RequestParam(value = "roleUuid") String roleUuid,
-            @RequestParam(value = "token") String token) {
-        RespObject resp = new RespObject();
-        try {
-            List<Resource> resources = resourceService.queryOwnedResourceByRole(roleUuid);
-            resp.setObj(resources);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("查询失败：" + e.getMessage());
-        }
-        return resp;
+  @RequestMapping(value = "/queryOwnedResourceByRole", method = RequestMethod.GET)
+  public @ResponseBody RespObject queryOwnedResourceByRole(
+      @RequestParam(value = "roleUuid") String roleUuid,
+      @RequestParam(value = "token") String token) {
+    RespObject resp = new RespObject();
+    try {
+      List<Resource> resources = resourceService.queryOwnedResourceByRole(roleUuid);
+      resp.setObj(resources);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("查询失败：" + e.getMessage());
     }
+    return resp;
+  }
 
-    @RequestMapping(value = "/queryAllResourceByRole", method = RequestMethod.GET)
-    public @ResponseBody RespObject queryAllResourceByRole(
-            @RequestParam(value = "roleUuid") String roleUuid,
-            @RequestParam(value = "token") String token) {
-        RespObject resp = new RespObject();
-        try {
-            List<Resource> resources = resourceService.queryAllResourceByRole(roleUuid);
-            resp.setObj(resources);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("查询失败：" + e.getMessage());
-        }
-        return resp;
+  @RequestMapping(value = "/queryAllResourceByRole", method = RequestMethod.GET)
+  public @ResponseBody RespObject queryAllResourceByRole(
+      @RequestParam(value = "roleUuid") String roleUuid,
+      @RequestParam(value = "token") String token) {
+    RespObject resp = new RespObject();
+    try {
+      List<Resource> resources = resourceService.queryAllResourceByRole(roleUuid);
+      resp.setObj(resources);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("查询失败：" + e.getMessage());
     }
+    return resp;
+  }
 
-    @RequestMapping(value = "/saveUserResource", method = RequestMethod.POST)
-    public @ResponseBody RespObject saveUserResource(
-            @RequestParam(value = "userUuid") String userUuid,
-            @RequestParam(value = "token", required = true) String token,
-            @RequestBody List<String> resourceUuids) {
-        RespObject resp = new RespObject();
-        try {
-            ApplicationContextUtil.setCompany(getLoginCompany(token));
-            resourceService.saveUserResource(userUuid, resourceUuids);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("新增用户资源权限：" + e.getMessage());
-        }
-        return resp;
+  @RequestMapping(value = "/saveUserResource", method = RequestMethod.POST)
+  public @ResponseBody RespObject saveUserResource(
+      @RequestParam(value = "userUuid") String userUuid,
+      @RequestParam(value = "token", required = true) String token,
+      @RequestBody List<String> resourceUuids) {
+    RespObject resp = new RespObject();
+    try {
+      resourceService.saveUserResource(userUuid, resourceUuids);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("新增用户资源权限：" + e.getMessage());
     }
+    return resp;
+  }
 
-    @RequestMapping(value = "/saveRoleResource", method = RequestMethod.POST)
-    public @ResponseBody RespObject saveRoleResource(
-            @RequestParam(value = "roleUuid") String roleUuid,
-            @RequestParam(value = "token", required = true) String token,
-            @RequestBody List<String> resourceUuids) {
-        RespObject resp = new RespObject();
-        try {
-            ApplicationContextUtil.setCompany(getLoginCompany(token));
-            resourceService.saveRoleResource(roleUuid, resourceUuids);
-            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-        } catch (Exception e) {
-            return new ErrorRespObject("新增角色资源权限：" + e.getMessage());
-        }
-        return resp;
+  @RequestMapping(value = "/saveRoleResource", method = RequestMethod.POST)
+  public @ResponseBody RespObject saveRoleResource(
+      @RequestParam(value = "roleUuid") String roleUuid,
+      @RequestParam(value = "token", required = true) String token,
+      @RequestBody List<String> resourceUuids) {
+    RespObject resp = new RespObject();
+    try {
+      resourceService.saveRoleResource(roleUuid, resourceUuids);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("新增角色资源权限：" + e.getMessage());
     }
+    return resp;
+  }
 
 }

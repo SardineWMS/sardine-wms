@@ -87,7 +87,6 @@ public class TaskAreaConfigControll extends BaseController {
             @RequestBody TaskAreaConfig taskAreaConfig) {
         RespObject resp = new RespObject();
         try {
-            taskAreaConfig.setCompanyUuid(getLoginCompany(token).getUuid());
             service.saveNew(taskAreaConfig);
             // resp.setObj(supplierUuid);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

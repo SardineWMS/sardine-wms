@@ -35,7 +35,6 @@ import com.hd123.sardine.wms.common.utils.SerializationUtils;
 public class ControllerInterceptor implements HandlerInterceptor {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ControllerInterceptor.class);
-  private static final String TOKEN_NAME = "token";
 
   private List<String> uncheckUrls;
   private String url_prefix = "/sardine-wms-web";
@@ -78,9 +77,8 @@ public class ControllerInterceptor implements HandlerInterceptor {
       if (uncheckUrls.contains(requestUrl.substring(url_prefix.length())))
         return true;
 
-      String token = request.getParameter(TOKEN_NAME);
-      BaseController controller = (BaseController) method.getBean();
-      controller.checkUserInfo(token);
+      JWTUtil.verifyLoginContext(request.getCookies());
+      
       return true;
     }
     return false;

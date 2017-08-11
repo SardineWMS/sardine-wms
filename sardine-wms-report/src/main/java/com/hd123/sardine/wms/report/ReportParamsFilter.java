@@ -21,10 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.hd123.rumba.commons.lang.StringUtil;
-import com.hd123.sardine.wms.api.ia.login.UserInfo;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
 import com.hd123.sardine.wms.common.utils.DBUtils;
-import com.hd123.sardine.wms.common.utils.SerializationUtils;
 
 /**
  * @author zhangsai
@@ -32,7 +30,6 @@ import com.hd123.sardine.wms.common.utils.SerializationUtils;
  */
 public class ReportParamsFilter implements Filter {
 
-  private static final String KEY_TOKEN = "token";
   private static final String KEY_URL_REPORTLET = "reportlet";
   private static final String KEY_URL_REPORTLETS = "reportlets";
   private static final String KEY_URL_FORMLET = "formlet";
@@ -53,34 +50,24 @@ public class ReportParamsFilter implements Filter {
       chain.doFilter(request, response);
       return;
     }
-    
+
     HttpServletResponse httpResponse = (HttpServletResponse) response;
     httpResponse.setHeader("Access-Control-Allow-Origin", "*");
 
     HttpServletRequest httpRequest = (HttpServletRequest) request;
-    if (StringUtil.isNullOrBlank(httpRequest.getParameter(KEY_TOKEN))
+    if (StringUtil.isNullOrBlank(httpRequest.getParameter(KEY_URL_COMPANYUUID))
+        && StringUtil.isNullOrBlank(httpRequest.getParameter(KEY_URL_USERUUID))
         && StringUtil.isNullOrBlank(httpRequest.getParameter(KEY_URL_REPORTLET))
         && StringUtil.isNullOrBlank(httpRequest.getParameter(KEY_URL_REPORTLETS))
         && StringUtil.isNullOrBlank(httpRequest.getParameter(KEY_URL_FORMLET))) {
       chain.doFilter(request, response);
       return;
     }
-
-    String token = httpRequest.getParameter(KEY_TOKEN);
-    if (StringUtil.isNullOrBlank(token) == false) {
-      String loginCache = RedisUtil.getString(token);
-      if (StringUtil.isNullOrBlank(loginCache)) {
-        throw new NotLoginInfoException("登录信息为空，请重新登录");
-      }
-      try {
-        UserInfo info = SerializationUtils.deserialize(loginCache, UserInfo.class);
-        request.setAttribute(KEY_URL_COMPANYUUID, info.getCompanyUuid());
-        request.setAttribute(KEY_URL_USERUUID, info.getUuid());
-        String dbname = DBUtils.fetchDbName(info.getCompanyUuid());
-        request.setAttribute(KEY_URL_DBNAME, dbname);
-      } catch (Exception e) {
-        throw new NotLoginInfoException("登录信息为空，请重新登录");
-      }
+    try {
+      String dbname = DBUtils.fetchDbName(httpRequest.getParameter(KEY_URL_COMPANYUUID));
+      request.setAttribute(KEY_URL_DBNAME, dbname);
+    } catch (Exception e) {
+      throw new NotLoginInfoException("登录信息为空，请重新登录");
     }
 
     chain.doFilter(request, response);

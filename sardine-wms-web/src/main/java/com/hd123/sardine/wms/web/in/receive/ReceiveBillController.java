@@ -34,7 +34,6 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
-import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
@@ -65,7 +64,6 @@ public class ReceiveBillController extends BaseController {
       @RequestParam(value = "state", required = false) String state) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setCompany(getLoginCompany(token));
       PageQueryDefinition definition = new PageQueryDefinition();
       definition.setPage(page);
       definition.setPageSize(pageSize);
@@ -77,7 +75,6 @@ public class ReceiveBillController extends BaseController {
       definition.put(ReceiveBillService.QUERY_WRH_FIELD, wrh);
       definition.put(ReceiveBillService.QUERY_STATE_FIELD,
           StringUtil.isNullOrBlank(state) ? null : ReceiveBillState.valueOf(state));
-      definition.setCompanyUuid(getLoginCompany(token).getUuid());
       PageQueryResult<ReceiveBill> result = service.query(definition);
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -93,11 +90,8 @@ public class ReceiveBillController extends BaseController {
       @RequestBody ReceiveBill receiveBill) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setCompany(getLoginCompany(token));
-      ApplicationContextUtil.setOperateContext(getOperateContext(token));
       if (receiveBill.getMethod() == null)
         receiveBill.setMethod(ReceiveBillMethod.ManualBill);
-      receiveBill.setCompanyUuid(getLoginCompany(token).getUuid());
       List<ReceiveBillItem> items = receiveBill.getItems();
       for (ReceiveBillItem receiveBillItem : items) {
         String uuid = receiveBillItem.getArticle().getUuid();
@@ -122,7 +116,6 @@ public class ReceiveBillController extends BaseController {
       @RequestParam(value = "token", required = true) String token) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setCompany(getLoginCompany(token));
       ReceiveBill receiveBill = service.getByBillNo(billNumber);
       resp.setObj(receiveBill);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -139,8 +132,6 @@ public class ReceiveBillController extends BaseController {
       @RequestParam(value = "token", required = true) String token) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setOperateContext(getOperateContext(token));
-      ApplicationContextUtil.setCompany(getLoginCompany(token));
       service.remove(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
@@ -155,8 +146,6 @@ public class ReceiveBillController extends BaseController {
       @RequestParam(value = "token", required = true) String token) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setCompany(getLoginCompany(token));
-      ApplicationContextUtil.setOperateContext(getOperateContext(token));
       service.audit(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
@@ -172,8 +161,6 @@ public class ReceiveBillController extends BaseController {
       @RequestBody ReceiveBill receiveBill) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setCompany(getLoginCompany(token));
-      ApplicationContextUtil.setOperateContext(getOperateContext(token));
       service.update(receiveBill);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {

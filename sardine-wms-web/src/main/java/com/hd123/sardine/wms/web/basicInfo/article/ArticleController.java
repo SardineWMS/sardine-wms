@@ -97,7 +97,6 @@ public class ArticleController extends BaseController {
             @RequestParam(value = "state", required = false) String state) {
         RespObject resp = new RespObject();
         try {
-            ApplicationContextUtil.setCompany(getLoginCompany(token));
             PageQueryDefinition definition = new PageQueryDefinition();
             definition.setPage(page);
             definition.setPageSize(pageSize);
@@ -123,7 +122,6 @@ public class ArticleController extends BaseController {
             @RequestBody Article article) {
         RespObject resp = new RespObject();
         try {
-            article.setCompanyUuid(getLoginCompany(token).getUuid());
             String articleUuid = article.getUuid();
             if (StringUtil.isNullOrBlank(article.getUuid()))
                 articleUuid = articleService.insert(article);
@@ -374,14 +372,12 @@ public class ArticleController extends BaseController {
             @RequestParam(value = "wrh", required = false) String wrh) {
         RespObject resp = new RespObject();
         try {
-            ApplicationContextUtil.setCompany(getLoginCompany(token));
             PageQueryDefinition definition = new PageQueryDefinition();
             definition.setPage(page);
             definition.setPageSize(pageSize);
             definition.setSortField(sort);
             definition.setOrderDir(OrderDir.valueOf(sortDirection));
             definition.put("wrh", wrh);
-            definition.put("companuUuid", getLoginCompany(token).getUuid());
 
             PageQueryResult<UCN> results = articleService.queryInStocks(definition);
             resp.setObj(results);

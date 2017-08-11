@@ -33,7 +33,6 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
-import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.web.base.BaseController;
 
@@ -54,9 +53,6 @@ public class AcceptanceBillController extends BaseController {
       @RequestBody AcceptanceBill acceptanceBill) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setCompany(getLoginCompany(token));
-      ApplicationContextUtil.setOperateContext(getOperateContext(token));
-      acceptanceBill.setCompanyUuid(getLoginCompany(token).getUuid());
       String uuid = service.insert(acceptanceBill);
       resp.setObj(uuid);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -73,7 +69,6 @@ public class AcceptanceBillController extends BaseController {
       @RequestParam(value = "uuid") String uuid) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setCompany(getLoginCompany(token));
       AcceptanceBill bill = service.get(uuid);
       resp.setObj(bill);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -89,7 +84,6 @@ public class AcceptanceBillController extends BaseController {
       @RequestBody AcceptanceBill acceptanceBill) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setCompany(getLoginCompany(token));
       service.update(acceptanceBill);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (NotLoginInfoException e) {
@@ -145,7 +139,6 @@ public class AcceptanceBillController extends BaseController {
       @RequestParam(value = "version", required = true) long version) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setCompany(getLoginCompany(token));
       service.remove(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
@@ -162,8 +155,6 @@ public class AcceptanceBillController extends BaseController {
       @RequestParam(value = "version", required = true) long version) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setCompany(getLoginCompany(token));
-      ApplicationContextUtil.setOperateContext(getOperateContext(token));
       service.approve(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
@@ -180,8 +171,6 @@ public class AcceptanceBillController extends BaseController {
       @RequestParam(value = "version", required = true) long version) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setCompany(getLoginCompany(token));
-      ApplicationContextUtil.setOperateContext(getOperateContext(token));
       service.beginAlc(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
@@ -198,8 +187,6 @@ public class AcceptanceBillController extends BaseController {
       @RequestParam(value = "version", required = true) long version) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setCompany(getLoginCompany(token));
-      ApplicationContextUtil.setOperateContext(getOperateContext(token));
       service.finish(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
@@ -216,8 +203,6 @@ public class AcceptanceBillController extends BaseController {
       @RequestParam(value = "version", required = true) long version) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setCompany(getLoginCompany(token));
-      ApplicationContextUtil.setOperateContext(getOperateContext(token));
       service.abort(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
@@ -233,8 +218,6 @@ public class AcceptanceBillController extends BaseController {
       @RequestBody AcceptanceBill acceptanceBill) {
     RespObject resp = new RespObject();
     try {
-      ApplicationContextUtil.setCompany(getLoginCompany(token));
-      ApplicationContextUtil.setOperateContext(getOperateContext(token));
       if (CollectionUtils.isEmpty(acceptanceBill.getItems())) {
         acceptanceBill.setTotalAmount(BigDecimal.ZERO);
         acceptanceBill.setTotalCaseQtyStr("0");

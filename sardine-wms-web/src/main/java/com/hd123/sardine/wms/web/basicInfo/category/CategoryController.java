@@ -139,7 +139,6 @@ public class CategoryController extends BaseController {
         try {
             RespObject resp = new RespObject();
             PageQueryDefinition definition = new PageQueryDefinition();
-            definition.setCompanyUuid(getLoginCompany(token).getUuid());
             definition.setPage(page);
             definition.setPageSize(pageSize);
             definition.setOrderDir(OrderDir.valueOf(sortDirection));

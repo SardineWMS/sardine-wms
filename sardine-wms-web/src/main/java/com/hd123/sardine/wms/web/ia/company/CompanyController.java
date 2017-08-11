@@ -11,6 +11,9 @@ package com.hd123.sardine.wms.web.ia.company;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -88,10 +91,11 @@ public class CompanyController extends BaseController {
   }
 
   @RequestMapping(value = "/query", method = RequestMethod.GET)
-  public @ResponseBody RespObject query(
+  public @ResponseBody RespObject query(HttpServletRequest request, HttpServletResponse response,
       @RequestParam(value = "token", required = true) String token) {
     RespObject resp = new RespObject();
-    try { 
+    try {
+      request.getCookies();
       List<Company> companys = companyService.queryCompanys();
       resp.setObj(companys);
     } catch (Exception e) {

@@ -33,7 +33,6 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
-import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
@@ -62,7 +61,6 @@ public class ContainerController extends BaseController {
             @RequestParam(value = "toPosition", required = false) String toPostion) {
         RespObject resp = new RespObject();
         try {
-            ApplicationContextUtil.setCompany(getLoginCompany(token));
             PageQueryDefinition definition = new PageQueryDefinition();
             definition.setPage(page);
             definition.setPageSize(pageSize);
@@ -104,10 +102,8 @@ public class ContainerController extends BaseController {
             @RequestParam(value = "token", required = true) String token) {
         RespObject resp = new RespObject();
         try {
-            ApplicationContextUtil.setCompany(getLoginCompany(token));
             StockFilter filter = new StockFilter();
             filter.setContainerBarcode(containerBarcode);
-            filter.setCompanyUuid(getLoginCompany(token).getUuid());
             filter.setPageSize(0);
             List<StockExtendInfo> stocks = stockService.queryStockExtendInfo(filter);
             resp.setObj(stocks);
