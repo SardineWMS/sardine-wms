@@ -31,16 +31,16 @@
 		<url-pattern>/ReportServer</url-pattern>
 	</filter-mapping>
 
-	<context-param>
+<!-- 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
       classpath:sardine-report.xml
     </param-value>
-	</context-param>
-
+	</context-param> -->
+<!-- 
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
+	</listener> -->
 
 </web-app>
 

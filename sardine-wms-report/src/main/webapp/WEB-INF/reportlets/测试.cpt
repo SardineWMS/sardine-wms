@@ -73,7 +73,7 @@
 <IconName>
 <![CDATA[last]]></IconName>
 </Widget>
-<Widget class="com.fr.plugin.nativeprint.core.NativePrintButton">
+<Widget class="com.fr.report.web.button.FlashPrint">
 <WidgetAttr description="">
 <PrivilegeControl/>
 </WidgetAttr>
@@ -91,15 +91,6 @@
 <IconName>
 <![CDATA[export]]></IconName>
 <Buttons pdf="true" excelP="true" excelO="true" excelS="true" word="true" image="true" html="true"/>
-</Widget>
-<Widget class="com.fr.report.web.button.FlashPrint">
-<WidgetAttr description="">
-<PrivilegeControl/>
-</WidgetAttr>
-<Text>
-<![CDATA[${i18n('FR-Engine_Utils_Flash_Print[Client]A')}]]></Text>
-<IconName>
-<![CDATA[flashprint]]></IconName>
 </Widget>
 </ToolBar>
 </ToolBarManager>
@@ -449,5 +440,5 @@
 </StyleList>
 <DesignerVersion DesignerVersion="IAA"/>
 <PreviewType PreviewType="0"/>
-<TemplateID TemplateID="2ec24846-7ff9-4e6a-ae40-46f89e9198ec"/>
+<TemplateID TemplateID="c8755c56-803b-43b0-8791-453a59bdedd0"/>
 </WorkBook>
