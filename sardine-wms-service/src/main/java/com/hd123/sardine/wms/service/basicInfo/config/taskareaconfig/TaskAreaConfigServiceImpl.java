@@ -25,6 +25,7 @@ import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.basicInfo.config.taskareaconfig.TaskAreaConfigDao;
@@ -53,6 +54,7 @@ public class TaskAreaConfigServiceImpl implements TaskAreaConfigService {
         if (oldTaskAreaConfig != null)
             throw new WMSException("操作人已设置了作业范围" + oldTaskAreaConfig.getTaskArea() + "，不能重复设置");
         taskAreaConfig.setUuid(UUIDGenerator.genUUID());
+        taskAreaConfig.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
         dao.insert(taskAreaConfig);
         return taskAreaConfig.getUuid();
     }
