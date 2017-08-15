@@ -34,6 +34,7 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
@@ -90,16 +91,7 @@ public class ReceiveBillController extends BaseController {
       @RequestBody ReceiveBill receiveBill) {
     RespObject resp = new RespObject();
     try {
-      if (receiveBill.getMethod() == null)
-        receiveBill.setMethod(ReceiveBillMethod.ManualBill);
-      List<ReceiveBillItem> items = receiveBill.getItems();
-      for (ReceiveBillItem receiveBillItem : items) {
-        String uuid = receiveBillItem.getArticle().getUuid();
-        Article article = articleService.get(uuid);
-        int expDays = article.getExpDays();
-        Date date = receiveBillItem.getProduceDate();
-        receiveBillItem.getValidDate().setTime(date.getTime() + (24 * 60 * 60 * 1000) * expDays);
-      }
+      receiveBill.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       String uuid = service.insert(receiveBill);
       resp.setObj(uuid);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -149,6 +141,7 @@ public class ReceiveBillController extends BaseController {
       service.audit(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
+      e.printStackTrace();
       return new ErrorRespObject("审核收货单失败：" + e.getMessage());
     }
     return resp;

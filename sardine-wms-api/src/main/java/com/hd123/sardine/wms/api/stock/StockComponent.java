@@ -14,14 +14,16 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.common.entity.SourceBill;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.validator.Validator;
 
 /**
  * 库存部件
  * <p>
- * BK = owner + companyUuid + supplierUuid + binUuid + containerBarCode + articleUuid
- * + stockBatch + state + productionDate + operateBill + qpcStr;
+ * BK = owner + companyUuid + supplierUuid + binUuid + containerBarCode +
+ * articleUuid + stockBatch + state + productionDate + operateBill + qpcStr;
  * 
  * BK = stockBatch + binUuid + containerBarCode + state + operateBill
  * 
@@ -42,7 +44,7 @@ public class StockComponent implements Serializable, Validator {
   public static final int LENGTH_STOCK_BATCH = 30;
 
   public static final String DEFAULT_OPERATE_BILL = "-";
-  
+
   private String owner;
   private String companyUuid;
   private String supplierUuid;
@@ -52,8 +54,10 @@ public class StockComponent implements Serializable, Validator {
   private String stockBatch;
   private Date productionDate;
   private Date validDate;
+  private String productionBatch;
   private SourceBill sourceBill;
-  private SourceBill operateBill;
+  private SourceBill operateBill = new SourceBill(DEFAULT_OPERATE_BILL, DEFAULT_OPERATE_BILL,
+      DEFAULT_OPERATE_BILL);
   private StockState state = StockState.normal;
   private BigDecimal qty;
   private String qpcStr;
@@ -189,6 +193,14 @@ public class StockComponent implements Serializable, Validator {
     Assert.assertArgumentNotNull(productionDate, "productionDate");
     this.productionDate = productionDate;
   }
+  
+  public String getProductionBatch() {
+    return productionBatch;
+  }
+
+  public void setProductionBatch(String productionBatch) {
+    this.productionBatch = productionBatch;
+  }
 
   /** 来源入库单据 */
   public SourceBill getSourceBill() {
@@ -270,7 +282,7 @@ public class StockComponent implements Serializable, Validator {
    * 操作单据
    * 
    * 正常状态的库存，默认‘-’， 在单量库存的产生，是产生该变化的单据。
-   * */
+   */
   public SourceBill getOperateBill() {
     return operateBill;
   }
@@ -326,7 +338,7 @@ public class StockComponent implements Serializable, Validator {
     Assert.assertArgumentNotNull(instockTime, "instockTime");
     this.instockTime = instockTime;
   }
-  
+
   public BigDecimal getPrice() {
     return price;
   }
@@ -337,7 +349,6 @@ public class StockComponent implements Serializable, Validator {
 
   @Override
   public void validate() {
-    Assert.assertArgumentNotNull(owner, "owner");
     Assert.assertArgumentNotNull(companyUuid, "companyUuid");
     Assert.assertArgumentNotNull(supplierUuid, "supplierUuid");
     Assert.assertArgumentNotNull(binCode, "binCode");
@@ -346,6 +357,7 @@ public class StockComponent implements Serializable, Validator {
     Assert.assertArgumentNotNull(stockBatch, "stockBatch");
     Assert.assertArgumentNotNull(productionDate, "productionDate");
     Assert.assertArgumentNotNull(validDate, "validDate");
+    Assert.assertArgumentNotNull(productionBatch, "productionBatch");
     Assert.assertArgumentNotNull(sourceBill, "sourceBill");
     Assert.assertArgumentNotNull(sourceBill.getBillNumber(), "sourceBill.billnumber");
     Assert.assertArgumentNotNull(sourceBill.getBillType(), "sourceBill.billType");
@@ -355,5 +367,8 @@ public class StockComponent implements Serializable, Validator {
     Assert.assertArgumentNotNull(qty, "qty");
     Assert.assertArgumentNotNull(measureUnit, "measureUnit");
     Assert.assertArgumentNotNull(instockTime, "instockTime");
+
+    if (StringUtil.isNullOrBlank(owner))
+      owner = ApplicationContextUtil.getCompanyUuid();
   }
 }

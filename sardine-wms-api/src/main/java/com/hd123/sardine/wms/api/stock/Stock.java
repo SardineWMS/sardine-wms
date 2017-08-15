@@ -13,14 +13,14 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.hd123.rumba.commons.time.DateUtil;
-import com.hd123.sardine.wms.common.entity.Entity;
+import com.hd123.sardine.wms.common.entity.VersionedEntity;
 
 /**
  * 库存
  * 
  * @author Gao JingYu
  */
-public class Stock extends Entity {
+public class Stock extends VersionedEntity {
   private static final long serialVersionUID = -8249258273409513364L;
 
   /** 虚拟库存信息 */

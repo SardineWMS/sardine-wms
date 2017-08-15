@@ -174,6 +174,7 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
   public PageQueryResult<OrderBill> query(PageQueryDefinition definition) {
     Assert.assertArgumentNotNull(definition, "definition");
 
+    definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     PageQueryResult<OrderBill> pgr = new PageQueryResult<OrderBill>();
     List<OrderBill> list = orderBillDao.query(definition);
     PageQueryUtil.assignPageInfo(pgr, definition);
@@ -293,7 +294,7 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
     List<OrderBillItem> items = orderBillDao.queryItems(orderBill.getUuid());
 
     for (OrderReceiveInfo receiveInfo : receiveInfos) {
-      if (receiveInfo.getQty() == null || BigDecimal.ZERO.compareTo(receiveInfo.getQty()) <= 0)
+      if (receiveInfo.getQty() == null || BigDecimal.ZERO.compareTo(receiveInfo.getQty()) >= 0)
         continue;
 
       OrderBillItem orderItem = findItem(items, receiveInfo.getArticleUuid(),

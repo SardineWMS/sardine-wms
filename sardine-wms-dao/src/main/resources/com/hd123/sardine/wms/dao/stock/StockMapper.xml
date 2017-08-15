@@ -3,739 +3,655 @@
 
 <mapper namespace="com.hd123.sardine.wms.dao.stock.impl.StockDaoImpl">
 	<resultMap id="StockMap" type="Stock">
-    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
-    <result column="owner" property="stockComponent.owner"
-      jdbcType="VARCHAR" />
-    <result column="companyUuid" property="stockComponent.companyUuid"
-      jdbcType="VARCHAR" />
-    <result column="supplierUuid" property="stockComponent.supplierUuid"
-      jdbcType="VARCHAR" />
-    <result column="binCode" property="stockComponent.binCode"
-      jdbcType="VARCHAR" />
-    <result column="containerBarcode" property="stockComponent.containerBarcode"
-      jdbcType="VARCHAR" />
-    <result column="articleUuid" property="stockComponent.articleUuid"
-      jdbcType="VARCHAR" />
-    <result column="stockBatch" property="stockComponent.stockBatch"
-      jdbcType="VARCHAR" />
-    <result column="state" property="stockComponent.state"
-      jdbcType="VARCHAR" />
-    <result column="billUuid" property="stockComponent.sourceBill.billUuid"
-      jdbcType="VARCHAR" />
-    <result column="billNumber" property="stockComponent.sourceBill.billNumber"
-      jdbcType="VARCHAR" />
-    <result column="billType" property="stockComponent.sourceBill.billType"
-      jdbcType="VARCHAR" />
-    <result column="operatebillUuid" property="stockComponent.operateBill.billUuid"
-      jdbcType="VARCHAR" />
-    <result column="operatebillNumber" property="stockComponent.operateBill.billNumber"
-      jdbcType="VARCHAR" />
-    <result column="operatebillType" property="stockComponent.operateBill.billType"
-      jdbcType="VARCHAR" />
-    <result column="qty" property="stockComponent.qty" jdbcType="DECIMAL" />
-    <result column="qpcStr" property="stockComponent.qpcStr"
-      jdbcType="VARCHAR" />
-    <result column="measureUnit" property="stockComponent.measureUnit"
-      jdbcType="VARCHAR" />
-    <result column="productionDate" property="stockComponent.productionDate"
-      jdbcType="DATE" />
-    <result column="validDate" property="stockComponent.validDate"
-      jdbcType="DATE" />
-    <result column="instockTime" property="stockComponent.instockTime"
-      jdbcType="TIMESTAMP" />
-    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
-  </resultMap>
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="owner" property="stockComponent.owner"
+			jdbcType="VARCHAR" />
+		<result column="companyUuid" property="stockComponent.companyUuid"
+			jdbcType="VARCHAR" />
+		<result column="supplierUuid" property="stockComponent.supplierUuid"
+			jdbcType="VARCHAR" />
+		<result column="binCode" property="stockComponent.binCode"
+			jdbcType="VARCHAR" />
+		<result column="containerBarcode" property="stockComponent.containerBarcode"
+			jdbcType="VARCHAR" />
+		<result column="articleUuid" property="stockComponent.articleUuid"
+			jdbcType="VARCHAR" />
+	    <result column="productionBatch" property="stockComponent.productionBatch"
+			jdbcType="VARCHAR" />
+		<result column="stockBatch" property="stockComponent.stockBatch"
+			jdbcType="VARCHAR" />
+		<result column="state" property="stockComponent.state"
+			jdbcType="VARCHAR" />
+		<result column="billUuid" property="stockComponent.sourceBill.billUuid"
+			jdbcType="VARCHAR" />
+		<result column="billNumber" property="stockComponent.sourceBill.billNumber"
+			jdbcType="VARCHAR" />
+		<result column="billType" property="stockComponent.sourceBill.billType"
+			jdbcType="VARCHAR" />
+		<result column="operatebillUuid" property="stockComponent.operateBill.billUuid"
+			jdbcType="VARCHAR" />
+		<result column="operatebillNumber" property="stockComponent.operateBill.billNumber"
+			jdbcType="VARCHAR" />
+		<result column="operatebillType" property="stockComponent.operateBill.billType"
+			jdbcType="VARCHAR" />
+		<result column="qty" property="stockComponent.qty" jdbcType="DECIMAL" />
+		<result column="qpcStr" property="stockComponent.qpcStr"
+			jdbcType="VARCHAR" />
+		<result column="measureUnit" property="stockComponent.measureUnit"
+			jdbcType="VARCHAR" />
+		<result column="productionDate" property="stockComponent.productionDate"
+			jdbcType="DATE" />
+		<result column="validDate" property="stockComponent.validDate"
+			jdbcType="DATE" />
+		<result column="instockTime" property="stockComponent.instockTime"
+			jdbcType="TIMESTAMP" />
+		<result column="modified" property="modified" jdbcType="TIMESTAMP" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+	</resultMap>
 
-  <resultMap id="StockExtendInfoMap" type="StockExtendInfo">
-    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
-    <result column="owner" property="owner" jdbcType="VARCHAR" />
-    <result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
-    <result column="supplierUuid" property="supplier.uuid"
-      jdbcType="VARCHAR" />
-    <result column="supplierCode" property="supplier.code"
-      jdbcType="VARCHAR" />
-    <result column="supplierName" property="supplier.name"
-      jdbcType="VARCHAR" />
-    <result column="binCode" property="binCode" jdbcType="VARCHAR" />
-    <result column="containerBarcode" property="containerBarcode"
-      jdbcType="VARCHAR" />
-    <result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
-    <result column="articleCode" property="article.code" jdbcType="VARCHAR" />
-    <result column="articleName" property="article.name" jdbcType="VARCHAR" />
-    <result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
-    <result column="productionDate" property="productionDate"
-      jdbcType="DATE" />
-    <result column="validDate" property="validDate" jdbcType="DATE" />
-    <result column="billUuid" property="sourceBill.billUuid"
-      jdbcType="VARCHAR" />
-    <result column="billNumber" property="sourceBill.billNumber"
-      jdbcType="VARCHAR" />
-    <result column="billType" property="sourceBill.billType"
-      jdbcType="VARCHAR" />
-    <result column="qty" property="qty" jdbcType="DECIMAL" />
-    <result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
-    <result column="measureUnit" property="measureUnit" jdbcType="VARCHAR" />
-  </resultMap>
+	<resultMap id="StockExtendInfoMap" type="StockExtendInfo">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="owner" property="owner" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="supplierUuid" property="supplier.uuid"
+			jdbcType="VARCHAR" />
+		<result column="supplierCode" property="supplier.code"
+			jdbcType="VARCHAR" />
+		<result column="supplierName" property="supplier.name"
+			jdbcType="VARCHAR" />
+		<result column="binCode" property="binCode" jdbcType="VARCHAR" />
+		<result column="containerBarcode" property="containerBarcode"
+			jdbcType="VARCHAR" />
+		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
+		<result column="articleCode" property="article.code" jdbcType="VARCHAR" />
+		<result column="articleName" property="article.name" jdbcType="VARCHAR" />
+		<result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
+		<result column="productionDate" property="productionDate"
+			jdbcType="DATE" />
+		<result column="validDate" property="validDate" jdbcType="DATE" />
+		<result column="billUuid" property="sourceBill.billUuid"
+			jdbcType="VARCHAR" />
+		<result column="billNumber" property="sourceBill.billNumber"
+			jdbcType="VARCHAR" />
+		<result column="billType" property="sourceBill.billType"
+			jdbcType="VARCHAR" />
+		<result column="qty" property="qty" jdbcType="DECIMAL" />
+		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+		<result column="measureUnit" property="measureUnit" jdbcType="VARCHAR" />
+	</resultMap>
 
-  <resultMap id="StockMajorInfoMap" type="StockMajorInfo">
-    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
-    <result column="owner" property="owner" jdbcType="VARCHAR" />
-    <result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
-    <result column="supplierUuid" property="supplier.uuid"
-      jdbcType="VARCHAR" />
-    <result column="supplierCode" property="supplier.code"
-      jdbcType="VARCHAR" />
-    <result column="supplierName" property="supplier.name"
-      jdbcType="VARCHAR" />
-    <result column="binCode" property="binCode" jdbcType="VARCHAR" />
-    <result column="containerBarCode" property="containerBarCode"
-      jdbcType="VARCHAR" />
-    <result column="articleUuid" property="article.uuid"
-      jdbcType="VARCHAR" />
-    <result column="articleCode" property="article.code"
-      jdbcType="VARCHAR" />
-    <result column="articleName" property="article.name"
-      jdbcType="VARCHAR" />
-    <result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
-    <result column="productionDate" property="productionDate"
-      jdbcType="DATE" />
-    <result column="validDate" property="validDate" jdbcType="DATE" />
-    <result column="qty" property="qty" jdbcType="DECIMAL" />
-    <result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
-    <result column="measureUnit" property="article.munit"
-      jdbcType="VARCHAR" />
-    <result column="state" property="state" jdbcType="VARCHAR" />
+	<resultMap id="StockMajorInfoMap" type="StockMajorInfo">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="owner" property="owner" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="supplierUuid" property="supplier.uuid"
+			jdbcType="VARCHAR" />
+		<result column="supplierCode" property="supplier.code"
+			jdbcType="VARCHAR" />
+		<result column="supplierName" property="supplier.name"
+			jdbcType="VARCHAR" />
+		<result column="binCode" property="binCode" jdbcType="VARCHAR" />
+		<result column="containerBarCode" property="containerBarCode"
+			jdbcType="VARCHAR" />
+		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
+		<result column="articleCode" property="article.code" jdbcType="VARCHAR" />
+		<result column="articleName" property="article.name" jdbcType="VARCHAR" />
+		<result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
+		<result column="productionDate" property="productionDate"
+			jdbcType="DATE" />
+		<result column="validDate" property="validDate" jdbcType="DATE" />
+		<result column="qty" property="qty" jdbcType="DECIMAL" />
+		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+		<result column="measureUnit" property="article.munit" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="warehouseuuid" property="warehouse.uuid"
+			jdbcType="VARCHAR" />
+		<result column="warehousecode" property="warehouse.code"
+			jdbcType="VARCHAR" />
+		<result column="warehousename" property="warehouse.name"
+			jdbcType="VARCHAR" />
+		<result column="usage" property="binUsgae" jdbcType="VARCHAR" />
+		<result column="alclmtdays" property="alclmtdays" jdbcType="DECIMAL" />
+	</resultMap>
 
-    <result column="warehouseuuid" property="warehouse.uuid"
-      jdbcType="VARCHAR" />
-    <result column="warehousecode" property="warehouse.code"
-      jdbcType="VARCHAR" />
-    <result column="warehousename" property="warehouse.name"
-      jdbcType="VARCHAR" />
-    <result column="usage" property="binUsgae" jdbcType="VARCHAR" />
-    <result column="alclmtdays" property="alclmtdays" jdbcType="DECIMAL" />
-  </resultMap>
+	<insert id="insertStock" parameterType="Stock">
+		insert into db_proxy.sardine_stock
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="version != null">
+				version,
+			</if>
+			<if test="modified != null">
+				modified,
+			</if>
+			<if test="stockComponent != null and stockComponent.owner != null">
+				owner,
+			</if>
+			<if test="stockComponent != null and stockComponent.companyUuid != null">
+				companyUuid,
+			</if>
+			<if test="stockComponent != null and stockComponent.supplierUuid != null">
+				supplierUuid,
+			</if>
+			<if test="stockComponent != null and stockComponent.binCode != null">
+				binCode,
+			</if>
+			<if test="stockComponent != null and stockComponent.containerBarcode != null">
+				containerBarcode,
+			</if>
+			<if test="stockComponent != null and stockComponent.articleUuid != null">
+				articleUuid,
+			</if>
+			<if test="stockComponent != null and stockComponent.productionBatch != null">
+				productionBatch,
+			</if>
+			<if test="stockComponent != null and stockComponent.stockBatch != null">
+				stockBatch,
+			</if>
+			<if test="stockComponent != null and stockComponent.productionDate != null">
+				productionDate,
+			</if>
+			<if test="stockComponent != null and stockComponent.validDate != null">
+				validDate,
+			</if>
+			<if test="stockComponent != null and stockComponent.sourceBill != null and stockComponent != null and stockComponent.sourceBill.billUuid != null">
+				billUuid,
+			</if>
+			<if test="stockComponent != null and stockComponent.sourceBill != null and stockComponent != null and stockComponent.sourceBill.billNumber != null">
+				billNumber,
+			</if>
+			<if test="stockComponent != null and stockComponent.sourceBill != null and stockComponent != null and stockComponent.sourceBill.billType != null">
+				billType,
+			</if>
+			<if test="stockComponent != null and stockComponent.operateBill != null and stockComponent != null and stockComponent.operateBill.billUuid != null">
+				OPERATEBILLUUID,
+			</if>
+			<if test="stockComponent != null and stockComponent.operateBill != null and stockComponent != null and stockComponent.operateBill.billNumber != null">
+				OPERATEbillNumber,
+			</if>
+			<if test="stockComponent != null and stockComponent.operateBill != null and stockComponent != null and stockComponent.operateBill.billType != null">
+				OPERATEbillType,
+			</if>
+			<if test="stockComponent != null and stockComponent.state != null">
+				state,
+			</if>
+			<if test="stockComponent != null and stockComponent.qty != null">
+				qty,
+			</if>
+			<if test="stockComponent != null and stockComponent.qpcStr != null">
+				qpcStr,
+			</if>
+			<if test="stockComponent != null and stockComponent.measureUnit != null">
+				measureUnit,
+			</if>
+			<if test="stockComponent != null and stockComponent.instockTime != null">
+				instockTime,
+			</if>
+			<if test="stockComponent != null and stockComponent.price != null">
+				price,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="modified != null">
+				#{modified,jdbcType=TIMESTAMP},
+			</if>
+			<if test="stockComponent != null and stockComponent.owner != null">
+				#{stockComponent.owner,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.companyUuid != null">
+				#{stockComponent.companyUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.supplierUuid != null">
+				#{stockComponent.supplierUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.binCode != null">
+				#{stockComponent.binCode,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.containerBarcode != null">
+				#{stockComponent.containerBarcode,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.articleUuid != null">
+				#{stockComponent.articleUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.productionBatch != null">
+				#{stockComponent.productionBatch,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.stockBatch != null">
+				#{stockComponent.stockBatch,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.productionDate != null">
+				#{stockComponent.productionDate,jdbcType=DATE},
+			</if>
+			<if test="stockComponent != null and stockComponent.validDate != null">
+				#{stockComponent.validDate,jdbcType=DATE},
+			</if>
+			<if test="stockComponent != null and stockComponent.sourceBill != null and stockComponent != null and stockComponent.sourceBill.billUuid != null">
+				#{stockComponent.sourceBill.billUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.sourceBill != null and stockComponent != null and stockComponent.sourceBill.billNumber != null">
+				#{stockComponent.sourceBill.billNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.sourceBill != null and stockComponent != null and stockComponent.sourceBill.billType != null">
+				#{stockComponent.sourceBill.billType,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.operateBill != null and stockComponent != null and stockComponent.operateBill.billUuid != null">
+				#{stockComponent.operateBill.billUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.operateBill != null and stockComponent != null and stockComponent.operateBill.billNumber != null">
+				#{stockComponent.operateBill.billNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.operateBill != null and stockComponent != null and stockComponent.operateBill.billType != null">
+				#{stockComponent.operateBill.billType,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.state != null">
+				#{stockComponent.state,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.qty != null">
+				#{stockComponent.qty,jdbcType=DECIMAL},
+			</if>
+			<if test="stockComponent != null and stockComponent.qpcStr != null">
+				#{stockComponent.qpcStr,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.measureUnit != null">
+				#{stockComponent.measureUnit,jdbcType=VARCHAR},
+			</if>
+			<if test="stockComponent != null and stockComponent.instockTime != null">
+				#{stockComponent.instockTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="stockComponent != null and stockComponent.price != null">
+				#{stockComponent.price,jdbcType=DECIMAL},
+			</if>
+		</trim>
+	</insert>
 
-  <resultMap id="stockChangementMap" type="StockChangement">
-    <result column="stockUuid" property="stockUuid" jdbcType="VARCHAR" />
-    <result column="direction" property="direction" jdbcType="VARCHAR" />
-    <result column="sourceLineUuid" property="sourceLineUuid"
-      jdbcType="VARCHAR" />
-    <result column="sourceLineNumber" property="sourceLineNumber"
-      jdbcType="VARCHAR" />
-    <result column="owner" property="stockComponent.owner"
-      jdbcType="VARCHAR" />
-    <result column="companyUuid" property="stockComponent.companyUuid"
-      jdbcType="VARCHAR" />
-    <result column="supplierUuid" property="stockComponent.supplierUuid"
-      jdbcType="VARCHAR" />
-    <result column="binCode" property="stockComponent.binCode"
-      jdbcType="VARCHAR" />
-    <result column="containerBarcode" property="stockComponent.containerBarcode"
-      jdbcType="VARCHAR" />
-    <result column="articleUuid" property="stockComponent.articleUuid"
-      jdbcType="VARCHAR" />
-    <result column="stockBatch" property="stockComponent.stockBatch"
-      jdbcType="VARCHAR" />
-    <result column="state" property="stockComponent.state"
-      jdbcType="VARCHAR" />
-    <result column="billUuid" property="stockComponent.sourceBill.billUuid"
-      jdbcType="VARCHAR" />
-    <result column="billNumber" property="stockComponent.sourceBill.billNumber"
-      jdbcType="VARCHAR" />
-    <result column="billType" property="stockComponent.sourceBill.billType"
-      jdbcType="VARCHAR" />
-    <result column="operatebillUuid" property="stockComponent.operateBill.billUuid"
-      jdbcType="VARCHAR" />
-    <result column="operatebillNumber" property="stockComponent.operateBill.billNumber"
-      jdbcType="VARCHAR" />
-    <result column="operatebillType" property="stockComponent.operateBill.billType"
-      jdbcType="VARCHAR" />
-    <result column="qty" property="stockComponent.qty" jdbcType="DECIMAL" />
-    <result column="qpcStr" property="stockComponent.qpcStr"
-      jdbcType="VARCHAR" />
-    <result column="measureUnit" property="stockComponent.measureUnit"
-      jdbcType="VARCHAR" />
-    <result column="productionDate" property="stockComponent.productionDate"
-      jdbcType="TIMESTAMP" />
-    <result column="validDate" property="stockComponent.validDate"
-      jdbcType="TIMESTAMP" />
-    <result column="instockTime" property="stockComponent.instockTime"
-      jdbcType="TIMESTAMP" />
-  </resultMap>
+	<insert id="insertStockLog" parameterType="StockOperLog">
+		insert into db_proxy.sardine_STOCK_log
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="stockUuid != null">
+				stockUuid,
+			</if>
+			<if test="binCode != null">
+				binCode,
+			</if>
+			<if test="containerBarcode != null">
+				containerBarcode,
+			</if>
+			<if test="companyUuid != null">
+				companyUuid,
+			</if>
+			<if test="articleUuid != null">
+				articleUuid,
+			</if>
+			<if test="qpcStr != null">
+				qpcStr,
+			</if>
+			<if test="productionBatch != null">
+				productionBatch,
+			</if>
+			<if test="stockBatch != null">
+				stockBatch,
+			</if>
+			<if test="supplierUuid != null">
+				supplierUuid,
+			</if>
+			<if test="owner != null">
+				owner,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="operateBill != null and operateBill.billUuid != null">
+				billUuid,
+			</if>
+			<if test="operateBill != null and operateBill.billNumber != null">
+				billNumber,
+			</if>
+			<if test="operateBill != null and operateBill.billType != null">
+				billType,
+			</if>
+			<if test="qty != null">
+				qty,
+			</if>
+			<if test="beforeQty != null">
+				beforeQty,
+			</if>
+			<if test="afterQty != null">
+				afterQty,
+			</if>
+			<if test="logTime != null">
+				logTime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="stockUuid != null">
+				#{stockUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="binCode != null">
+				#{binCode,jdbcType=VARCHAR},
+			</if>
+			<if test="containerBarcode != null">
+				#{containerBarcode,jdbcType=VARCHAR},
+			</if>
+			<if test="companyUuid != null">
+				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="articleUuid != null">
+				#{articleUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="qpcStr != null">
+				#{qpcStr,jdbcType=VARCHAR},
+			</if>
+			<if test="productionBatch != null">
+				#{productionBatch,jdbcType=VARCHAR},
+			</if>
+			<if test="stockBatch != null">
+				#{stockBatch,jdbcType=VARCHAR},
+			</if>
+			<if test="supplierUuid != null">
+				#{supplierUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="owner != null">
+				#{owner,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=VARCHAR},
+			</if>
+			<if test="operateBill != null and operateBill.billUuid != null">
+				#{operateBill.billUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="operateBill != null and operateBill.billNumber != null">
+				#{operateBill.billNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="operateBill != null and operateBill.billType != null">
+				#{operateBill.billType,jdbcType=VARCHAR},
+			</if>
+			<if test="qty != null">
+				#{qty,jdbcType=DECIMAL},
+			</if>
+			<if test="beforeQty != null">
+				#{beforeQty,jdbcType=DECIMAL},
+			</if>
+			<if test="afterQty != null">
+				#{afterQty,jdbcType=DECIMAL},
+			</if>
+			<if test="logTime != null">
+				#{logTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
 
-  <resultMap id="stockMessageMap"
-    type="StockShiftMessage">
-    <result column="workId" property="workId" jdbcType="VARCHAR" />
-    <result column="code" property="code" jdbcType="VARCHAR" />
-    <result column="message" property="message" jdbcType="VARCHAR" />
-    <result column="sourcelineUuid" property="lineUuid" jdbcType="VARCHAR" />
-    <result column="sourcelineNumber" property="lineNumber"
-      jdbcType="VARCHAR" />
-    <result column="success" property="success" jdbcType="VARCHAR" />
-    <result column="articleUuid" property="articleUuid" jdbcType="VARCHAR" />
-    <result column="message" property="message" jdbcType="VARCHAR" />
-    <result column="stockQty" property="stockQty" jdbcType="DECIMAL" />
-    <result column="shiftQty" property="shiftQty" jdbcType="DECIMAL" />
-  </resultMap>
+	<update id="updateStock" parameterType="java.util.Map">
+		update db_proxy.sardine_stock set qty = qty + #{qty, jdbcType=DECIMAL},
+		version = version + 1
+		where uuid = #{uuid, jdbcType=VARCHAR}
+		and version = #{version, jdbcType=LONGVARCHAR}
+	</update>
+	
+	<delete id="removeStock" parameterType="java.util.Map">
+		delete from db_proxy.sardine_stock
+		where uuid = #{uuid, jdbcType=VARCHAR}
+		and version = #{version, jdbcType=LONGVARCHAR}
+	</delete>
 
-  <select id="clearProcedures" parameterType="java.lang.String"
-    statementType="CALLABLE">
-   <![CDATA[
-         { CALL sardine_stock_cleardata(#{workId,mode=IN,jdbcType=VARCHAR})}
-        ]]>
-  </select>
+	<select id="queryStocks" resultMap="StockMap" parameterType="StockFilter">
+		select t.* from db_proxy.sardine_stock t
+		where 1=1
+		<if test="owner != null and owner != ''">
+			and t.owner = #{owner}
+		</if>
+		<if test="companyUuid != null and companyUuid != ''">
+			and t.companyUuid = #{companyUuid}
+		</if>
+		<if test="supplierUuid != null and supplierUuid != ''">
+			and t.supplierUuid = #{supplierUuid}
+		</if>
+		<if test="binCode != null and binCode != ''">
+			and t.binCode = #{binCode}
+		</if>
+		<if test="containerBarcode != null and containerBarcode != ''">
+			and t.containerBarcode = #{containerBarcode}
+		</if>
+		<if test="articleUuid != null and articleUuid != ''">
+			and t.articleUuid = #{articleUuid}
+		</if>
+		<if test="stockBatch != null and stockBatch != ''">
+			and t.stockBatch = #{stockBatch}
+		</if>
+		<if test="qpcStr != null and qpcStr != ''">
+			and t.qpcStr = #{qpcStr}
+		</if>
+		<if test="productionBatch != null and productionBatch != ''">
+			and t.productionBatch = #{productionBatch}
+		</if>
+		<if test="sourceBill != null and sourceBill.billUuid != null">
+			and t.billUuid = #{sourceBill.billUuid}
+		</if>
+		<if test="sourceBill != null and sourceBill.billNumber != null">
+			and t.billNumber = #{sourceBill.billNumber}
+		</if>
+		<if test="sourceBill != null and sourceBill.billType != null">
+			and t.billType = #{sourceBill.billType}
+		</if>
+		<if test="operateBill != null and operateBill.billUuid != null">
+			and t.OPERATEBILLUUID = #{operateBill.billUuid}
+		</if>
+		<if test="operateBill != null and operateBill.billNumber != null">
+			and t.OPERATEBILLNUMBER = #{operateBill.billNumber}
+		</if>
+		<if test="operateBill != null and operateBill.billType != null">
+			and t.OPERATEBILLTYPE = #{operateBill.billType}
+		</if>
+		<if test="states != null">
+			and t.state in
+			<foreach collection="states" item="item" index="index" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="containerBarcodes != null">
+			and t.containerBarCode in
+			<foreach collection="containerBarcodes" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="binCodes != null">
+			and t.bincode in
+			<foreach collection="binCodes" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="articleUuids != null">
+			and t.articleUuid in
+			<foreach collection="articleUuids" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		ORDER BY INSTOCKTIME
+	</select>
 
-  <select id="executeShiftIn" parameterType="java.util.Map"
-    statementType="CALLABLE">
-  <![CDATA[
-     { call sardine_STOCK_SHIFTIN(#{workId,mode=IN,jdbcType=VARCHAR}, #{result,mode=OUT,jdbcType=INTEGER})}  
-    ]]>
-  </select>
+	<select id="queryMajorInfo" resultMap="StockMajorInfoMap"
+		parameterType="StockMajorFilter">
+		SELECT STOCK.UUID UUID,
+		STOCK.OWNER OWNER,
+		STOCK.companyUuid companyUuid,
+		STOCK.BINCODE BINCODE,
+		STOCK.CONTAINERBARCODE CONTAINERBARCODE,
+		STOCK.ARTICLEUUID ARTICLEUUID,
+		STOCK.MEASUREUNIT MEASUREUNIT,
+		ARTICLE.CODE ARTICLECODE,
+		ARTICLE.NAME ARTICLENAME,
+		ARTICLE.SPEC
+		ARTICLESPEC,
+		STOCK.STOCKBATCH
+		STOCKBATCH,
+		STOCK.QTY QTY,
+		STOCK.QPCSTR QPCSTR,
+		STOCK.PRODUCTIONDATE PRODUCTIONDATE,
+		STOCK.VALIDDATE VALIDDATE,
+		STOCK.STATE STATE,
+		BIN.WRHUUID WAREHOUSEUUID,
+		BIN.WRHCODE
+		WAREHOUSECODE,
+		BIN.WRHNAME WAREHOUSENAME,
+		BIN.USAGE USAGE,
+		S.SUUID
+		SUPPLIERUUID,
+		S.CODE SUPPLIERCODE,
+		S.NAME SUPPLIERNAME,
+		ARTICLE.ALCLMTDAYS ALCLMTDAYS
+		FROM sardine_bin BIN,
+		sardine_article article
+		sardine_supplier S,
+		sardine STOCK
+		WHERE BIN.CODE
+		= STOCK.BINCODE
+		AND BIN.companyuuid = STOCK.companyuuid
+		AND STOCK.ARTICLEUUID =
+		ARTICLE.uuid
+		AND S.uuid = STOCK.SUPPLIERUUID
+		and
+		STOCK.companyuuid = #{companyUuid}
+		AND BIN.USAGE IN ('StorageBin',
+		'PickUpStorageBin')
+		<if test="articleUuid != null and articleUuid != ''">
+			and ST.ARTICLEUUID = #{articleUuid} AND ST.companyUuid = #{companyUuid}
+		</if>
+		<if test="warehouseUuid != null and warehouseUuid != ''">
+			AND BIN.WRHUUID = #{warehouseUuid}
+		</if>
+		<if test="articleUuids != null">
+			AND
+			ST.ARTICLEUUID IN
+			<foreach collection="articleUuids" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		ORDER BY STOCK.PRODUCTIONDATE ASC, STOCK.INSTOCKTIME ASC
+	</select>
 
-  <select id="executeShiftOut" parameterType="java.util.Map"
-    statementType="CALLABLE">
-  <![CDATA[
-     { call sardine_STOCK_SHIFTOUT(#{workId,mode=IN,jdbcType=VARCHAR}, #{result,mode=OUT,jdbcType=INTEGER})}  
-    ]]>
-  </select>
-
-  <select id="executeChangement" parameterType="java.util.Map"
-    statementType="CALLABLE">
-  <![CDATA[
-     { call PWMS_STOCK_CHANGESTATE(#{workId,mode=IN,jdbcType=VARCHAR},#{targetState,mode=IN,jdbcType=VARCHAR}, #{result,mode=OUT,jdbcType=VARCHAR})}  
-    ]]>
-  </select>
-
-  <select id="getStockMessage" parameterType="java.lang.String"
-    resultMap="stockMessageMap">
-    select t.* from sardine_STOCK_SHIFTMESSAGE t where t.workid =
-    #{workId,jdbcType=VARCHAR}
-  </select>
-
-  <insert id="insert_Stock" parameterType="PStockShiftIn">
-    insert into sardine_stock_shiftin
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="workId != null">
-        workId,
-      </if>
-      <if test="sourceLineUuid != null">
-        sourceLineUuid,
-      </if>
-      <if test="sourceLineNumber != null">
-        sourceLineNumber,
-      </if>
-      <if test="owner != null">
-        owner,
-      </if>
-      <if test="companyUuid != null">
-        companyUuid,
-      </if>
-      <if test="supplierUuid != null">
-        supplierUuid,
-      </if>
-      <if test="binCode != null">
-        binCode,
-      </if>
-      <if test="containerBarcode != null">
-        containerBarcode,
-      </if>
-      <if test="articleUuid != null">
-        articleUuid,
-      </if>
-      <if test="stockBatch != null">
-        stockBatch,
-      </if>
-      <if test="productionDate != null">
-        productionDate,
-      </if>
-      <if test="validDate != null">
-        validDate,
-      </if>
-      <if test="sourceBill != null and sourceBill.billUuid != null">
-        billUuid,
-      </if>
-      <if test="sourceBill != null and sourceBill.billNumber != null">
-        billNumber,
-      </if>
-      <if test="sourceBill != null and sourceBill.billType != null">
-        billType,
-      </if>
-      <if test="operateBill != null and operateBill.billUuid != null">
-        OPERATEbillUuid,
-      </if>
-      <if test="operateBill != null and operateBill.billNumber != null">
-        OPERATEbillNumber,
-      </if>
-      <if test="operateBill != null and operateBill.billType != null">
-        OPERATEbillType,
-      </if>
-      <if test="state != null">
-        state,
-      </if>
-      <if test="qty != null">
-        qty,
-      </if>
-      <if test="qpcStr != null">
-        qpcStr,
-      </if>
-      <if test="measureUnit != null">
-        measureUnit,
-      </if>
-      <if test="instockTime != null">
-        instockTime,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="workId != null">
-        #{workId,jdbcType=VARCHAR},
-      </if>
-      <if test="sourceLineUuid != null">
-        #{sourceLineUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="sourceLineNumber != null">
-        #{sourceLineNumber,jdbcType=INTEGER},
-      </if>
-      <if test="owner != null">
-        #{owner,jdbcType=VARCHAR},
-      </if>
-      <if test="companyUuid != null">
-        #{companyUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="supplierUuid != null">
-        #{supplierUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="binCode != null">
-        #{binCode,jdbcType=VARCHAR},
-      </if>
-      <if test="containerBarcode != null">
-        #{containerBarcode,jdbcType=VARCHAR},
-      </if>
-      <if test="articleUuid != null">
-        #{articleUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="stockBatch != null">
-        #{stockBatch,jdbcType=VARCHAR},
-      </if>
-      <if test="productionDate != null">
-        #{productionDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="validDate != null">
-        #{validDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="sourceBill != null and sourceBill.billUuid != null">
-        #{sourceBill.billUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="sourceBill != null and sourceBill.billNumber != null">
-        #{sourceBill.billNumber,jdbcType=VARCHAR},
-      </if>
-      <if test="sourceBill != null and sourceBill.billType != null">
-        #{sourceBill.billType,jdbcType=VARCHAR},
-      </if>
-      <if test="operateBill != null and operateBill.billUuid != null">
-        #{operateBill.billUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="operateBill != null and operateBill.billNumber != null">
-        #{operateBill.billNumber,jdbcType=VARCHAR},
-      </if>
-      <if test="operateBill != null and operateBill.billType != null">
-        #{operateBill.billType,jdbcType=VARCHAR},
-      </if>
-      <if test="state != null">
-        #{state,jdbcType=VARCHAR},
-      </if>
-      <if test="qty != null">
-        #{qty,jdbcType=DECIMAL},
-      </if>
-      <if test="qpcStr != null">
-        #{qpcStr,jdbcType=VARCHAR},
-      </if>
-      <if test="measureUnit != null">
-        #{measureUnit,jdbcType=VARCHAR},
-      </if>
-      <if test="instockTime != null">
-        #{instockTime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-
-  <insert id="insert_StockRule" parameterType="PStockShiftRule">
-    insert into sardine_STOCK_SHIFTRULE
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="workId != null">
-        workId,
-      </if>
-      <if test="owner != null">
-        owner,
-      </if>
-      <if test="companyUuid != null">
-        companyUuid,
-      </if>
-      <if test="binCode != null">
-        binCode,
-      </if>
-      <if test="containerBarcode != null">
-        containerBarcode,
-      </if>
-      <if test="articleUuid != null">
-        articleUuid,
-      </if>
-      <if test="state != null">
-        state,
-      </if>
-      <if test="qty != null">
-        qty,
-      </if>
-      <if test="qpcStr != null">
-        qpcStr,
-      </if>
-      <if test="stockUuid != null">
-        stockUuid,
-      </if>
-      <if test="supplierUuid != null">
-        supplierUuid,
-      </if>
-      <if test="stockBatch != null">
-        stockBatch,
-      </if>
-      <if test="sourceLineUuid != null">
-        sourceLineUuid,
-      </if>
-      <if test="sourceLineNumber != null">
-        sourceLineNumber,
-      </if>
-      <if test="operateBillUuid != null">
-        operateBillUuid,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="workId != null">
-        #{workId,jdbcType=VARCHAR},
-      </if>
-      <if test="owner != null">
-        #{owner,jdbcType=VARCHAR},
-      </if>
-      <if test="companyUuid != null">
-        #{companyUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="binCode != null">
-        #{binCode,jdbcType=VARCHAR},
-      </if>
-      <if test="containerBarcode != null">
-        #{containerBarcode,jdbcType=VARCHAR},
-      </if>
-      <if test="articleUuid != null">
-        #{articleUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="state != null">
-        #{state,jdbcType=VARCHAR},
-      </if>
-      <if test="qty != null">
-        #{qty,jdbcType=DECIMAL},
-      </if>
-      <if test="qpcStr != null">
-        #{qpcStr,jdbcType=VARCHAR},
-      </if>
-      <if test="stockUuid != null">
-        #{stockUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="supplierUuid != null">
-        #{supplierUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="stockBatch != null">
-        #{stockBatch,jdbcType=VARCHAR},
-      </if>
-      <if test="sourceLineUuid != null">
-        #{sourceLineUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="sourceLineNumber != null">
-        #{sourceLineNumber,jdbcType=INTEGER},
-      </if>
-      <if test="operateBillUuid != null">
-        #{operateBillUuid,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-
-  <select id="queryStockChangement" resultMap="stockChangementMap"
-    parameterType="java.lang.String">
-    select t.* from sardine_STOCK_CHANGEMENT t
-    where t.WORKID =
-    #{workId}
-  </select>
-
-  <select id="queryStock" resultMap="StockMap"
-    parameterType="StockFilter">
-    select t.* from WMSStock t
-    where 1=1
-    <if test="owner != null and owner != ''">
-      and t.owner = #{owner}
-    </if>
-    <if test="companyUuid != null and companyUuid != ''">
-      and t.companyUuid = #{companyUuid}
-    </if>
-    <if test="supplierUuid != null and supplierUuid != ''">
-      and t.supplierUuid = #{supplierUuid}
-    </if>
-    <if test="binCode != null and binCode != ''">
-      and t.binCode = #{binCode}
-    </if>
-    <if test="containerBarcode != null and containerBarcode != ''">
-      and t.containerBarcode = #{containerBarcode}
-    </if>
-    <if test="articleUuid != null and articleUuid != ''">
-      and t.articleUuid = #{articleUuid}
-    </if>
-    <if test="stockBatch != null and stockBatch != ''">
-      and t.stockBatch = #{stockBatch}
-    </if>
-    <if test="qpcStr != null and qpcStr != ''">
-      and t.qpcStr = #{qpcStr}
-    </if>
-    <if test="sourceBill != null and sourceBill.billUuid != null">
-      and t.billUuid = #{sourceBill.billUuid}
-    </if>
-    <if test="sourceBill != null and sourceBill.billNumber != null">
-      and t.billNumber = #{sourceBill.billNumber}
-    </if>
-    <if test="sourceBill != null and sourceBill.billType != null">
-      and t.billType = #{sourceBill.billType}
-    </if>
-    <if test="operateBill != null and operateBill.billUuid != null">
-      and t.OPERATEBILLUUID = #{operateBill.billUuid}
-    </if>
-    <if test="operateBill != null and operateBill.billNumber != null">
-      and t.OPERATEBILLNUMBER = #{operateBill.billNumber}
-    </if>
-    <if test="operateBill != null and operateBill.billType != null">
-      and t.OPERATEBILLTYPE = #{operateBill.billType}
-    </if>
-    <if test="states != null">
-      and t.state in
-      <foreach collection="states" item="item" index="index"
-        open="(" separator="," close=")">
-        #{item}
-      </foreach>
-    </if>
-    <if test="containerBarcodes != null">
-      and t.containerBarCode in
-      <foreach collection="containerBarcodes" item="item" index="index"
-        open="(" separator="," close=")">
-        #{item}
-      </foreach>
-    </if>
-    <if test="binCodes != null">
-      and t.bincode in
-      <foreach collection="binCodes" item="item" index="index"
-        open="(" separator="," close=")">
-        #{item}
-      </foreach>
-    </if>
-    <if test="articleUuids != null">
-      and t.articleUuid in
-      <foreach collection="articleUuids" item="item" index="index"
-        open="(" separator="," close=")">
-        #{item}
-      </foreach>
-    </if>
-    ORDER BY INSTOCKTIME
-  </select>
-
-  <select id="queryMajorStockInfo" resultMap="StockMajorInfoMap"
-    parameterType="StockMajorFilter">
-    SELECT STOCK.UUID UUID,
-    STOCK.OWNER OWNER,
-    STOCK.companyUuid companyUuid,
-    STOCK.BINCODE BINCODE,
-    STOCK.CONTAINERBARCODE CONTAINERBARCODE,
-    STOCK.ARTICLEUUID ARTICLEUUID,
-    STOCK.MEASUREUNIT MEASUREUNIT,
-    ARTICLE.CODE ARTICLECODE,
-    ARTICLE.NAME ARTICLENAME,
-    ARTICLE.SPEC
-    ARTICLESPEC,
-    STOCK.STOCKBATCH
-    STOCKBATCH,
-    STOCK.QTY QTY,
-    STOCK.QPCSTR QPCSTR,
-    STOCK.PRODUCTIONDATE PRODUCTIONDATE,
-    STOCK.VALIDDATE VALIDDATE,
-    STOCK.STATE STATE,
-    BIN.WRHUUID WAREHOUSEUUID,
-    BIN.WRHCODE
-    WAREHOUSECODE,
-    BIN.WRHNAME WAREHOUSENAME,
-    BIN.USAGE USAGE,
-    S.SUUID
-    SUPPLIERUUID,
-    S.CODE SUPPLIERCODE,
-    S.NAME SUPPLIERNAME,
-    ARTICLE.ALCLMTDAYS ALCLMTDAYS
-    FROM sardine_bin BIN,
-    sardine_article article
-    sardine_supplier S,
-    sardine STOCK
-    WHERE BIN.CODE
-    = STOCK.BINCODE
-    AND BIN.companyuuid = STOCK.companyuuid
-    AND STOCK.ARTICLEUUID =
-    ARTICLE.uuid
-    AND S.uuid = STOCK.SUPPLIERUUID
-    and
-    STOCK.companyuuid = #{companyUuid}
-    AND BIN.USAGE IN ('StorageBin',
-    'PickUpStorageBin')
-    <if test="articleUuid != null and articleUuid != ''">
-      and ST.ARTICLEUUID = #{articleUuid} AND ST.companyUuid = #{companyUuid}
-    </if>
-    <if test="warehouseUuid != null and warehouseUuid != ''">
-      AND BIN.WRHUUID = #{warehouseUuid}
-    </if>
-    <if test="articleUuids != null">
-      AND 
-      ST.ARTICLEUUID IN
-      <foreach collection="articleUuids" item="item" index="index"
-        open="(" separator="," close=")">
-        #{item}
-      </foreach>
-    </if>
-    ORDER BY STOCK.PRODUCTIONDATE ASC, STOCK.INSTOCKTIME ASC
-  </select>
-
-  <select id="queryStockextendinfo" resultMap="StockExtendInfoMap"
-    parameterType="StockFilter">
-    select s.*,ss.code suppliercode,ss.name
-    suppliername, a.code articleCode, a.name articleName
-    from
-    db_proxy.sardine_article a,
-    db_proxy.sardine_supplier ss,
-    db_proxy.sardine_bin b,
-    db_proxy.sardine_stock s
-    where s.bincode = b.code and s.companyuuid = b.companyuuid
-    and s.articleuuid = a.uuid and s.supplieruuid = ss.uuid 
-    <if test="wrhUuid != null and wrhUuid != ''">
-      and b.wrhuuid = #{wrhUuid}
-    </if>
-    <if test="companyUuid != null and companyUuid != ''">
-      and s.companyUuid = #{companyUuid}
-    </if>
-    <if test="supplierUuid != null and supplierUuid != ''">
-      and s.supplierUuid = #{supplierUuid}
-    </if>
-    <if test="binCode != null and binCode != ''">
-      and s.binCode = #{binCode}
-    </if>
-    <if test="binUsage != null and binUsage != ''">
-      and b.usage = #{binUsage}
-    </if>
-    <if test="containerBarcode != null and containerBarcode != ''">
-      and s.containerBarcode = #{containerBarcode}
-    </if>
-    <if test="articleUuid != null and articleUuid != ''">
-      and s.articleUuid = #{articleUuid}
-    </if>
-    <if test="stockBatch != null and stockBatch != ''">
-      and s.stockBatch = #{stockBatch}
-    </if>
-    <if test="qpcStr != null and qpcStr != ''">
-      and s.qpcStr = #{qpcStr}
-    </if>
-    <if test="sourceBill != null and sourceBill.billUuid != null">
-      and s.billUuid = #{sourceBill.billUuid}
-    </if>
-    <if test="sourceBill != null and sourceBill.billNumber != null">
-      and s.billNumber = #{sourceBill.billNumber}
-    </if>
-    <if test="sourceBill != null and sourceBill.billType != null">
-      and s.billType = #{sourceBill.billType}
-    </if>
-    <if
-      test="operateBill != null and operateBill.billUuid != null and operateBill.billUuid != ''">
-      and s.OPERATEBILLUUID = #{operateBill.billUuid}
-    </if>
-    <if
-      test="operateBill != null and operateBill.billNumber != null and operateBill.billNumber != ''">
-      and s.OPERATEBILLNUMBER like CONCAT(CONCAT('%',
-      #{operateBill.billNumber}), '%')
-    </if>
-    <if
-      test="operateBill != null and operateBill.billType != null and operateBill.billType != ''">
-      and s.OPERATEBILLTYPE = #{operateBill.billType}
-    </if>
-    <if test="states != null">
-      and s.state in
-      <foreach collection="states" item="item" index="index"
-        open="(" separator="," close=")">
-        #{item}
-      </foreach>
-    </if>
-    <if test="usages != null">
-      and b.usage in
-      <foreach collection="usages" item="item" index="index"
-        open="(" separator="," close=")">
-        #{item}
-      </foreach>
-    </if>
-    <if test="containerBarcodes != null">
-      and s.containerBarcode in
-      <foreach collection="containerBarcodes" item="item" index="index"
-        open="(" separator="," close=")">
-        #{item}
-      </foreach>
-    </if>
-    <if test="binCodes != null">
-      and s.bincode in
-      <foreach collection="binCodes" item="item" index="index"
-        open="(" separator="," close=")">
-        #{item}
-      </foreach>
-    </if>
-    <if test="articleUuids != null">
-      and s.articleUuid in
-      <foreach collection="articleUuids" item="item" index="index"
-        open="(" separator="," close=")">
-        #{item}
-      </foreach>
-    </if>
-    <if test="wrhUuids != null">
-      and b.wrhuuid in
-      <foreach collection="wrhUuids" item="item" index="index"
-        open="(" separator="," close=")">
-        #{item}
-      </foreach>
-    </if>
-    ORDER BY PRODUCTIONDATE,INSTOCKTIME
-  </select>
-
-  <insert id="insert_StockCmd" parameterType="StockCmd">
-    insert into db_proxy.sardine_stock_Cmd
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="workId != null">
-        workId,
-      </if>
-      <if test="billUuid != null">
-        billUuid,
-      </if>
-      <if test="billNumber != null">
-        billNumber,
-      </if>
-      <if test="billType != null">
-        billType,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="workId != null">
-        #{workId,jdbcType=VARCHAR},
-      </if>
-      <if test="billUuid != null">
-        #{billUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="billNumber != null">
-        #{billNumber,jdbcType=VARCHAR},
-      </if>
-      <if test="billType != null">
-        #{billType,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
+	<select id="queryStockExtendInfo" resultMap="StockExtendInfoMap"
+		parameterType="StockFilter">
+		select s.*,ss.code suppliercode,ss.name
+		suppliername, a.code articleCode, a.name articleName
+		from
+		db_proxy.sardine_article a,
+		db_proxy.sardine_supplier ss,
+		db_proxy.sardine_bin b,
+		db_proxy.sardine_stock s
+		where s.bincode = b.code and s.companyuuid = b.companyuuid
+		and s.articleuuid = a.uuid and s.supplieruuid = ss.uuid
+		<if test="wrhUuid != null and wrhUuid != ''">
+			and b.wrhuuid = #{wrhUuid}
+		</if>
+		<if test="companyUuid != null and companyUuid != ''">
+			and s.companyUuid = #{companyUuid}
+		</if>
+		<if test="supplierUuid != null and supplierUuid != ''">
+			and s.supplierUuid = #{supplierUuid}
+		</if>
+		<if test="binCode != null and binCode != ''">
+			and s.binCode = #{binCode}
+		</if>
+		<if test="binUsage != null and binUsage != ''">
+			and b.usage = #{binUsage}
+		</if>
+		<if test="containerBarcode != null and containerBarcode != ''">
+			and s.containerBarcode = #{containerBarcode}
+		</if>
+		<if test="articleUuid != null and articleUuid != ''">
+			and s.articleUuid = #{articleUuid}
+		</if>
+		<if test="stockBatch != null and stockBatch != ''">
+			and s.stockBatch = #{stockBatch}
+		</if>
+		<if test="qpcStr != null and qpcStr != ''">
+			and s.qpcStr = #{qpcStr}
+		</if>
+		<if test="productionBatch != null and productionBatch != ''">
+			and s.productionBatch = #{productionBatch}
+		</if>
+		<if test="sourceBill != null and sourceBill.billUuid != null">
+			and s.billUuid = #{sourceBill.billUuid}
+		</if>
+		<if test="sourceBill != null and sourceBill.billNumber != null">
+			and s.billNumber = #{sourceBill.billNumber}
+		</if>
+		<if test="sourceBill != null and sourceBill.billType != null">
+			and s.billType = #{sourceBill.billType}
+		</if>
+		<if
+			test="operateBill != null and operateBill.billUuid != null and operateBill.billUuid != ''">
+			and s.OPERATEBILLUUID = #{operateBill.billUuid}
+		</if>
+		<if
+			test="operateBill != null and operateBill.billNumber != null and operateBill.billNumber != ''">
+			and s.OPERATEBILLNUMBER like CONCAT(CONCAT('%',
+			#{operateBill.billNumber}), '%')
+		</if>
+		<if
+			test="operateBill != null and operateBill.billType != null and operateBill.billType != ''">
+			and s.OPERATEBILLTYPE = #{operateBill.billType}
+		</if>
+		<if test="states != null">
+			and s.state in
+			<foreach collection="states" item="item" index="index" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="usages != null">
+			and b.usage in
+			<foreach collection="usages" item="item" index="index" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="containerBarcodes != null">
+			and s.containerBarcode in
+			<foreach collection="containerBarcodes" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="binCodes != null">
+			and s.bincode in
+			<foreach collection="binCodes" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="articleUuids != null">
+			and s.articleUuid in
+			<foreach collection="articleUuids" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="wrhUuids != null">
+			and b.wrhuuid in
+			<foreach collection="wrhUuids" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		ORDER BY PRODUCTIONDATE,INSTOCKTIME
+	</select>
 </mapper>

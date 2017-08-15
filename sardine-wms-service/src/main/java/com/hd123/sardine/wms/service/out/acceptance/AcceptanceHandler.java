@@ -36,6 +36,7 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
+import com.hd123.sardine.wms.service.util.StockBatchUtils;
 
 /**
  * @author zhangsai
@@ -49,6 +50,9 @@ public class AcceptanceHandler {
   @Autowired
   private TaskService taskService;
 
+  @Autowired
+  private StockBatchUtils stockBatchUtils;
+
   public void shiftInOnWayStock(AcceptanceBill acceptanceBill) throws WMSException {
     Assert.assertArgumentNotNull(acceptanceBill, "acceptanceBill");
 
@@ -60,7 +64,8 @@ public class AcceptanceHandler {
       stockFilter.setArticleUuid(acceptanceItem.getArticle().getUuid());
       stockFilter.setBinCode(acceptanceItem.getBinCode());
       stockFilter.setContainerBarcode(acceptanceItem.getContainerBarCode());
-      stockFilter.setProductDate(acceptanceItem.getProductionDate());
+      stockFilter.setProductionBatch(
+          stockBatchUtils.genProductionBatch(acceptanceItem.getProductionDate()));
       stockFilter.setQpcStr(acceptanceItem.getQpcStr());
       stockFilter.setSupplierUuid(acceptanceItem.getSupplier().getUuid());
       List<StockExtendInfo> infos = stockService.queryStockExtendInfo(stockFilter);
@@ -149,7 +154,8 @@ public class AcceptanceHandler {
         stockFilter.setArticleUuid(item.getArticle().getUuid());
         stockFilter.setQpcStr(item.getQpcStr());
         stockFilter.setSupplierUuid(item.getSupplier().getUuid());
-        stockFilter.setProductDate(item.getProductionDate());
+        stockFilter
+            .setProductionBatch(stockBatchUtils.genProductionBatch(item.getProductionDate()));
         List<StockExtendInfo> infos = stockService.queryStockExtendInfo(stockFilter);
         BigDecimal canAcceptanceQty = BigDecimal.ZERO;
         for (StockExtendInfo info : infos) {

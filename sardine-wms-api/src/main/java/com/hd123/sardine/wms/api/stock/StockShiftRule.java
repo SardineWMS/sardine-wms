@@ -11,7 +11,6 @@ package com.hd123.sardine.wms.api.stock;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.common.validator.Validator;
@@ -37,14 +36,19 @@ public class StockShiftRule implements Serializable, Validator {
   private String stockUuid;
 
   private String supplierUuid;
-  private Date productionDate;
+  private String productionBatch;
   private String qpcStr;
   private String stockBatch;
   private String operateBillUuid;
+  private String sourceBillUuid;
 
-  // 相关行
-  private String sourceLineUuid;
-  private int sourceLineNumber;
+  public String getSourceBillUuid() {
+    return sourceBillUuid;
+  }
+
+  public void setSourceBillUuid(String sourceBillUuid) {
+    this.sourceBillUuid = sourceBillUuid;
+  }
 
   /** 库存UUID */
   public String getStockUuid() {
@@ -135,12 +139,12 @@ public class StockShiftRule implements Serializable, Validator {
   }
 
   /** 批号 */
-  public Date getProductionDate() {
-    return productionDate;
+  public String getProductionBatch() {
+    return productionBatch;
   }
 
-  public void setProductionDate(Date productionDate) {
-    this.productionDate = productionDate;
+  public void setProductionBatch(String productionBatch) {
+    this.productionBatch = productionBatch;
   }
 
   /** 批次 */
@@ -189,32 +193,6 @@ public class StockShiftRule implements Serializable, Validator {
     this.qty = qty;
   }
 
-  /** 来源明细行UUID */
-  public String getSourceLineUuid() {
-    return sourceLineUuid;
-  }
-
-  /**
-   * 设置来源行UUID
-   * 
-   * @param sourceLineUuid
-   *          not null。
-   * @throws IllegalArgumentException
-   */
-  public void setSourceLineUuid(String sourceLineUuid) {
-    Assert.assertArgumentNotNull(sourceLineUuid, "sourceLineUuid");
-    this.sourceLineUuid = sourceLineUuid;
-  }
-
-  /** 来源行行号 */
-  public int getSourceLineNumber() {
-    return sourceLineNumber;
-  }
-
-  public void setSourceLineNumber(int sourceLineNumber) {
-    this.sourceLineNumber = sourceLineNumber;
-  }
-
   /** 商品规格 */
   public String getQpcStr() {
     return qpcStr;
@@ -242,6 +220,5 @@ public class StockShiftRule implements Serializable, Validator {
     Assert.assertArgumentNotNull(articleUuid, "articleUuid");
     Assert.assertArgumentNotNull(state, "state");
     Assert.assertArgumentNotNull(qty, "qty");
-    Assert.assertArgumentNotNull(sourceLineUuid, "sourceLineUuid");
   }
 }

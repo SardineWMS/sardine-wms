@@ -27,6 +27,41 @@ import com.hd123.sardine.wms.common.entity.VersionedEntity;
  */
 public class Task extends VersionedEntity {
   private static final long serialVersionUID = 1126133098926836810L;
+  
+  private String taskGroupNumber;
+  private String taskNo;
+  private TaskType taskType;
+  private UCN article;
+  private TaskState state;
+  private String qpcStr;
+  private BigDecimal qty;
+  private String caseQtyStr;
+  private BigDecimal realQty;
+  private String realCaseQtyStr;
+  private Date productionDate;
+  private Date validDate;
+  private String stockBatch;
+  private UCN supplier;
+  private UCN wrh;
+  private String fromBinCode;
+  private String fromContainerBarcode;
+  private String toBinCode;
+  private String toContainerBarcode;
+  private String owner;
+  private String sourceBillType;
+  private String sourceBillNumber;
+  private String sourceBillUuid;
+  private int sourceBillLine;
+  private String sourceBillLineUuid;
+  private UCN creator;
+  private OperateMode type;
+  private UCN operator;
+  private Date createTime;
+  private Date beginOperateTime;
+  private Date endOperateTime;
+  private String companyUuid;
+
+  private List<TaskStockItem> items = new ArrayList<TaskStockItem>();
 
   public String getTaskNo() {
     return taskNo;
@@ -276,22 +311,6 @@ public class Task extends VersionedEntity {
     this.taskGroupNumber = taskGroupNumber;
   }
 
-  public BigDecimal getVolume() {
-    return volume;
-  }
-
-  public void setVolume(BigDecimal volume) {
-    this.volume = volume;
-  }
-  
-  public String getDeliveryType() {
-    return deliveryType;
-  }
-
-  public void setDeliveryType(String deliveryType) {
-    this.deliveryType = deliveryType;
-  }
-
   public UCN getWrh() {
     return wrh;
   }
@@ -307,43 +326,6 @@ public class Task extends VersionedEntity {
   public void setItems(List<TaskStockItem> items) {
     this.items = items;
   }
-
-  private String taskGroupNumber;
-  private String taskNo;
-  private TaskType taskType;
-  private UCN article;
-  private TaskState state;
-  private String qpcStr;
-  private BigDecimal qty;
-  private String caseQtyStr;
-  private BigDecimal volume;
-  private BigDecimal realQty;
-  private String realCaseQtyStr;
-  private Date productionDate;
-  private Date validDate;
-  private String stockBatch;
-  private UCN supplier;
-  private UCN wrh;
-  private String deliveryType;
-  private String fromBinCode;
-  private String fromContainerBarcode;
-  private String toBinCode;
-  private String toContainerBarcode;
-  private String owner;
-  private String sourceBillType;
-  private String sourceBillNumber;
-  private String sourceBillUuid;
-  private int sourceBillLine;
-  private String sourceBillLineUuid;
-  private UCN creator;
-  private OperateMode type;
-  private UCN operator;
-  private Date createTime;
-  private Date beginOperateTime;
-  private Date endOperateTime;
-  private String companyUuid;
-
-  private List<TaskStockItem> items = new ArrayList<TaskStockItem>();
 
   public void validate() {
     Assert.assertArgumentNotNull(taskType, "taskType");

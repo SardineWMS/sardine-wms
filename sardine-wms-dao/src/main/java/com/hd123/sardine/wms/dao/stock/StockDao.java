@@ -9,39 +9,21 @@
  */
 package com.hd123.sardine.wms.dao.stock;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import com.hd123.sardine.wms.api.stock.Stock;
-import com.hd123.sardine.wms.api.stock.StockChangement;
 import com.hd123.sardine.wms.api.stock.StockExtendInfo;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockMajorFilter;
 import com.hd123.sardine.wms.api.stock.StockMajorInfo;
-import com.hd123.sardine.wms.api.stock.StockState;
 
 /**
  * @author WUJING
  * 
  */
 public interface StockDao {
-  /**
-   * 执行清除存储过程。
-   * 
-   * @param workId
-   */
-  void executeClearProcedure(String workId);
-
-  int executeShiftIn(String workId);
-
-  int executeShiftOut(String workId);
-
-  int executeShift(String workId, String binCode, String containerBarcode, StockState state);
-
-  int executeChange(String workId, String targetState);
-
-  void saveStockShiftIn(PStockShiftIn stockShiftIn);
-
-  void saveStockShiftRule(PStockShiftRule rule);
 
   /**
    * 根据查询条件查询库存
@@ -50,24 +32,6 @@ public interface StockDao {
    * @return 库存列表
    */
   List<Stock> queryStocks(StockFilter filter);
-
-  /**
-   * 查询出库信息
-   * 
-   * @param workId
-   * @return 库存变化记录列表
-   */
-  List<StockChangement> queryStocksChangement(String workId);
-
-  List<StockShiftMessage> getStockMessage(String workId);
-
-  /**
-   * 保存操作单据
-   * 
-   * @param stockCmd
-   *          操作单据信息
-   */
-  void saveStockCmd(StockCmd stockCmd);
 
   /**
    * 查询库存详情，包含商品UCN、供应商UCN
@@ -90,4 +54,42 @@ public interface StockDao {
    * @throws DBOperServiceException
    */
   List<StockMajorInfo> queryMajorInfo(StockMajorFilter filter);
+
+  /**
+   * 新增库存
+   * 
+   * @param stock
+   */
+  void insertStock(Stock stock);
+
+  /**
+   * 编辑库存，只针对库存数量修改
+   * 
+   * @param uuid
+   *          库存UUID
+   * @param version
+   *          库存版本号
+   * @param qty
+   *          要修改的数量，可正可负
+   * @param modifyDate
+   *          修改时间
+   */
+  void updateStock(String uuid, long version, BigDecimal qty, Date modifyDate);
+
+  /**
+   * 删除库存
+   * 
+   * @param uuid
+   *          库存UUID
+   * @param version
+   *          库存版本号
+   */
+  void removeStock(String uuid, long version);
+
+  /**
+   * 插入库存操作日志
+   * 
+   * @param log
+   */
+  void insertStockLog(StockOperLog log);
 }

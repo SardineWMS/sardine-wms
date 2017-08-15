@@ -50,6 +50,6 @@ public class NameSpaceSupport extends SqlSessionDaoSupport {
   }
 
   public int delete(String mapperId, Object paramter) {
-    return getSqlSession().delete(generateStatement(MAPPER_REMOVE), paramter);
+    return getSqlSession().delete(generateStatement(mapperId), paramter);
   }
 }

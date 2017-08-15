@@ -22,6 +22,7 @@ import com.hd123.sardine.wms.api.task.TaskType;
 import com.hd123.sardine.wms.common.entity.SourceBill;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
+import com.hd123.sardine.wms.service.util.StockBatchUtils;
 
 /**
  * 指令相关库存和货位容器处理
@@ -33,6 +34,9 @@ public class TaskHandler {
 
   @Autowired
   private StockService stockService;
+
+  @Autowired
+  private StockBatchUtils stockBatchUtils;
 
   /**
    * 锁定指令对应的库存
@@ -53,7 +57,7 @@ public class TaskHandler {
     shiftRule.setOwner(ApplicationContextUtil.getCompanyUuid());
     shiftRule.setContainerBarcode(task.getFromContainerBarcode());
     shiftRule.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-    shiftRule.setProductionDate(task.getProductionDate());
+    shiftRule.setProductionBatch(stockBatchUtils.genProductionBatch(task.getProductionDate()));
     shiftRule.setStockBatch(task.getStockBatch());
     shiftRule.setSupplierUuid(task.getSupplier().getUuid());
     shiftRule.setQty(task.getQty());
@@ -85,7 +89,7 @@ public class TaskHandler {
       shiftRule.setOwner(ApplicationContextUtil.getCompanyUuid());
       shiftRule.setContainerBarcode(task.getFromContainerBarcode());
       shiftRule.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-      shiftRule.setProductionDate(task.getProductionDate());
+      shiftRule.setProductionBatch(stockBatchUtils.genProductionBatch(task.getProductionDate()));
       shiftRule.setStockBatch(task.getStockBatch());
       shiftRule.setSupplierUuid(task.getSupplier().getUuid());
       shiftRule.setQty(task.getQty());

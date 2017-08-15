@@ -37,6 +37,7 @@ import com.hd123.sardine.wms.api.task.TaskType;
 import com.hd123.sardine.wms.common.entity.SourceBill;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
+import com.hd123.sardine.wms.service.util.StockBatchUtils;
 
 /**
  * 收货相关处理器
@@ -63,6 +64,9 @@ public class ReceiveHandler {
 
   @Autowired
   private TaskService taskService;
+
+  @Autowired
+  private StockBatchUtils stockBatchUtils;
 
   /**
    * 收货库存入库
@@ -96,6 +100,7 @@ public class ReceiveHandler {
       stock.setQty(item.getQty());
       stock.setPrice(item.getPrice());
       stock.setSourceBill(sourceBill);
+      stock.setProductionBatch(stockBatchUtils.genProductionBatch(item.getProduceDate()));
       stock.setStockBatch(item.getStockBatch());
       stock.setSupplierUuid(receiveBill.getSupplier().getUuid());
       stock.setValidDate(item.getValidDate());

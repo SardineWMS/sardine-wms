@@ -9,8 +9,6 @@
  */
 package com.hd123.sardine.wms.api.stock;
 
-import java.util.Date;
-
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 
 /**
@@ -30,9 +28,38 @@ public class StockFilter extends PageQueryDefinition {
   private String stockBatch;
   private String sourceBillUuid;
   private String sourcebillNumber;
-  private Date productDate;
-
+  private String productionBatch;
+  private StockState state;
+  private String operateBillUuid;
   private String stockUuid;
+  private String owner;
+
+  public String getOwner() {
+    return owner;
+  }
+
+  public void setOwner(String owner) {
+    this.owner = owner;
+    put("owner", owner);
+  }
+
+  public StockState getState() {
+    return state;
+  }
+
+  public void setState(StockState state) {
+    this.state = state;
+    put("state", state == null ? null : state.name());
+  }
+
+  public String getOperateBillUuid() {
+    return operateBillUuid;
+  }
+
+  public void setOperateBillUuid(String operateBillUuid) {
+    this.operateBillUuid = operateBillUuid;
+    put("operateBillUuid", operateBillUuid);
+  }
 
   public String getStockUuid() {
     return stockUuid;
@@ -133,12 +160,12 @@ public class StockFilter extends PageQueryDefinition {
     put("sourcebillNumber", sourcebillNumber);
   }
 
-  public Date getProductDate() {
-    return productDate;
+  public String getProductionBatch() {
+    return productionBatch;
   }
 
-  public void setProductDate(Date productDate) {
-    this.productDate = productDate;
-    put("productDate", productDate);
+  public void setProductionBatch(String productionBatch) {
+    this.productionBatch = productionBatch;
+    put("productionBatch", productionBatch);
   }
 }

@@ -24,6 +24,7 @@ import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.task.TaskType;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
+import com.hd123.sardine.wms.service.util.StockBatchUtils;
 
 /**
  * @author zhangsai
@@ -34,21 +35,25 @@ public class TaskVerifier {
   @Autowired
   private StockService stockService;
 
+  @Autowired
+  private StockBatchUtils stockBatchUtils;
+
   public List<Stock> verifySourceStock(Task task) throws WMSException {
     Assert.assertArgumentNotNull(task, "task");
 
     task.validate();
     StockFilter stockFilter = new StockFilter();
+    stockFilter.setPageSize(0);
     stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     stockFilter.setArticleUuid(task.getArticle().getUuid());
     stockFilter.setContainerBarcode(task.getFromContainerBarcode());
     stockFilter.setBinCode(task.getFromBinCode());
     stockFilter.setQpcStr(task.getQpcStr());
-    stockFilter.setProductDate(task.getProductionDate());
+    stockFilter.setProductionBatch(stockBatchUtils.genProductionBatch(task.getProductionDate()));
     stockFilter.setStockBatch(task.getStockBatch());
     List<Stock> stocks = stockService.query(stockFilter);
 
-    if (CollectionUtils.isNotEmpty(stocks))
+    if (CollectionUtils.isEmpty(stocks))
       throw new WMSException("指令来源库存不足！");
 
     BigDecimal normalStockQty = calculateStockQty(stocks);
@@ -65,7 +70,7 @@ public class TaskVerifier {
   }
 
   private BigDecimal calculateStockQty(List<Stock> stocks) {
-    if (CollectionUtils.isNotEmpty(stocks))
+    if (CollectionUtils.isEmpty(stocks))
       return BigDecimal.ZERO;
 
     BigDecimal normalStockQty = BigDecimal.ZERO;

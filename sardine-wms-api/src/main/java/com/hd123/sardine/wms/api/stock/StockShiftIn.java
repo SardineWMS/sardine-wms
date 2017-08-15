@@ -76,7 +76,6 @@ public class StockShiftIn implements Serializable, Validator {
 
   @Override
   public void validate() {
-    Assert.assertArgumentNotNull(sourceLineUuid, "sourceLineUuid");
     Assert.assertArgumentNotNull(stockComponent, "stockcomponent");
     stockComponent.validate();
   }

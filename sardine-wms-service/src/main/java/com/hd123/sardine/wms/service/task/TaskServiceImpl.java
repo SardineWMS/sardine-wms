@@ -31,7 +31,6 @@ import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerState;
 import com.hd123.sardine.wms.api.basicInfo.pickarea.OperateMode;
-import com.hd123.sardine.wms.api.stock.ShiftOutRule;
 import com.hd123.sardine.wms.api.stock.Stock;
 import com.hd123.sardine.wms.api.stock.StockExtendInfo;
 import com.hd123.sardine.wms.api.stock.StockFilter;
@@ -433,16 +432,16 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
 
     taskDao.update(task);
 
-    List<ShiftOutRule> shiftOutRules = new ArrayList<ShiftOutRule>();
-    ShiftOutRule outRule = new ShiftOutRule();
-    outRule.setArticleUuid(task.getArticle().getUuid());
-    outRule.setBinCode(task.getFromBinCode());
-    outRule.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-    outRule.setContainerBarcode(task.getFromContainerBarcode());
-    outRule.setQpcStr(task.getQpcStr());
-    outRule.setQty(task.getRealQty());
-    outRule.setSupplierUuid(task.getSupplier().getUuid());
-    shiftOutRules.add(outRule);
+//    List<ShiftOutRule> shiftOutRules = new ArrayList<ShiftOutRule>();
+//    ShiftOutRule outRule = new ShiftOutRule();
+//    outRule.setArticleUuid(task.getArticle().getUuid());
+//    outRule.setBinCode(task.getFromBinCode());
+//    outRule.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+//    outRule.setContainerBarcode(task.getFromContainerBarcode());
+//    outRule.setQpcStr(task.getQpcStr());
+//    outRule.setQty(task.getRealQty());
+//    outRule.setSupplierUuid(task.getSupplier().getUuid());
+//    shiftOutRules.add(outRule);
 //    List<Stock> outStocks = stockService.shiftOut(task.getTaskType().getCaption(), task.getTaskNo(),
 //        shiftOutRules);
 //    for (Stock stock : outStocks) {
