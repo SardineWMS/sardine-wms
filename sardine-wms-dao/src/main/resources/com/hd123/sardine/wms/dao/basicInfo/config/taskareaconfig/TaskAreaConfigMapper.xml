@@ -98,7 +98,7 @@
 		<if test="operatorName != null and operatorName != ''">
 			and t.operatorName = #{operatorName, jdbcType=VARCHAR}
 		</if>
-		<if test="sortField != null and sortField == 'categoryCode'">
+		<if test="sortField != null and sortField == 'operatorCode'">
 			order by t.operatorCode ${orderDir}
 		</if>
 	</select>

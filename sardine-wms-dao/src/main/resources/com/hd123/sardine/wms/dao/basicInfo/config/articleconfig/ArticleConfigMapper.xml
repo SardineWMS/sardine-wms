@@ -101,7 +101,7 @@
 		<if test="fixedPickBin != null and fixedPickBin != ''">
 			and t.fixedPickBin = #{fixedPickBin, jdbcType=VARCHAR}
 		</if>
-		<if test="sortField != null and sortField == 'articleCode'">
+		<if test="sortField != null and sortField == 'article'">
 			order by a.code ${orderDir}
 		</if>
 	</select>
