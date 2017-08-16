@@ -238,6 +238,7 @@ public class ReturnNtcBillController extends BaseController {
       definition.setOrderDir(OrderDir.valueOf(sortDirection));
       definition.put(ReturnNtcBillService.QUERY_BILLNUMBER_LIKE, billNumber);
       definition.put(ReturnNtcBillService.QUERY_CUSTOMERCODE_EQUALS, customerCode);
+      definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<ReturnNtcBill> result = service.query(definition);
       List<ReturnNtcBill> list = new ArrayList<>();
       for (ReturnNtcBill bill : result.getRecords()) {
