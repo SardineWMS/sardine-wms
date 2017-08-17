@@ -37,6 +37,7 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
@@ -156,6 +157,7 @@ public class BinController extends BaseController {
             wrh.setCode(code);
             wrh.setName(name);
             wrh.setNote(note);
+            wrh.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
             binService.insertWrh(wrh);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -178,6 +180,7 @@ public class BinController extends BaseController {
             zone.setName(name);
             zone.setNote(note);
             zone.setWrh(new UCN(wrhUuid, null, null));
+            zone.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
             binService.insertZone(zone);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -195,6 +198,7 @@ public class BinController extends BaseController {
         try {
             Path path = new Path();
             path.setZoneUuid(zoneUuid);
+            path.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
             binService.insertPath(path);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -229,6 +233,7 @@ public class BinController extends BaseController {
             bin.setCode(code);
             bin.setUsage(BinUsage.valueOf(binUsage));
             bin.setBinType(new UCN(binTypeUuid, null, null));
+            bin.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
             binService.insertBin(bin);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
