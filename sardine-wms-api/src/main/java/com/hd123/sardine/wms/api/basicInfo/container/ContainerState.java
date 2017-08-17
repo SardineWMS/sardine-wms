@@ -17,14 +17,14 @@ public enum ContainerState {
 
     /** 空闲 */
     STACONTAINERIDLE("空闲"),
+    /** 锁定，临时状态，保证容器不被其他人使用 */
+    STACONTAINERLOCK("锁定"),
     /** 收货中 */
     STACONTAINERSTKINING("收货中"),
     /** 已使用 */
     STACONTAINERUSEING("已使用"),
     /** 拣货中 */
     STACONTAINERPICKING("拣货中"),
-    /** 平移中 */
-    STACONTAINERMOVING("平移中"),
     /** 上架中 */
     STACONTAINERPUTAWAYING("上架中");
 

@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.hd123.rumba.commons.lang.Assert;
-import com.hd123.sardine.wms.api.basicInfo.pickarea.OperateMode;
+import com.hd123.sardine.wms.common.entity.OperateMode;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.entity.VersionedEntity;
 
@@ -27,7 +27,7 @@ import com.hd123.sardine.wms.common.entity.VersionedEntity;
  */
 public class Task extends VersionedEntity {
   private static final long serialVersionUID = 1126133098926836810L;
-  
+
   private String taskGroupNumber;
   private String taskNo;
   private TaskType taskType;
@@ -333,12 +333,10 @@ public class Task extends VersionedEntity {
     Assert.assertArgumentNotNull(qpcStr, "qpcStr");
     Assert.assertArgumentNotNull(qty, "qty");
     Assert.assertArgumentNotNull(caseQtyStr, "caseQtyStr");
-    if (TaskType.Pickup.equals(taskType) == false) {
-      Assert.assertArgumentNotNull(productionDate, "productionDate");
-      Assert.assertArgumentNotNull(validDate, "validDate");
-      Assert.assertArgumentNotNull(stockBatch, "stockBatch");
-      Assert.assertArgumentNotNull(supplier, "supplier");
-    }
+    Assert.assertArgumentNotNull(productionDate, "productionDate");
+    Assert.assertArgumentNotNull(validDate, "validDate");
+    Assert.assertArgumentNotNull(stockBatch, "stockBatch");
+    Assert.assertArgumentNotNull(supplier, "supplier");
     Assert.assertArgumentNotNull(fromBinCode, "fromBinCode");
     Assert.assertArgumentNotNull(fromContainerBarcode, "fromContainerBarcode");
     Assert.assertArgumentNotNull(toContainerBarcode, "toContainerBarcode");

@@ -42,6 +42,16 @@
 		from db_proxy.sardine_article u
 		where u.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
+	
+	<select id="queryArticles" parameterType="map" resultMap="BaseResultMap">
+		select u.*
+		from db_proxy.sardine_article u
+		where u.uuid in 
+		<foreach collection="articleUuids" item="item" index="index" open="("
+				separator="," close=")">
+				#{item}
+	    </foreach>
+	</select>
 
 	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
 		select

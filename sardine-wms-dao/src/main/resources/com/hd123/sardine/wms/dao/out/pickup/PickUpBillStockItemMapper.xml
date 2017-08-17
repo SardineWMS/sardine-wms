@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper
+  namespace="com.hd123.sardine.wms.dao.out.pickup.PickUpBillItemItemmapper">
+
+  <resultMap id="PickUpBillItemItemMap"
+    type="com.hd123.sardine.wms.api.out.pickup.PickUpBillStockItem">
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="qpc" property="qpc" jdbcType="DECIMAL" />
+    <result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+    <result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
+    <result column="qty" property="qty" jdbcType="DECIMAL" />
+    <result column="containerBarcode" property="targetContainerBarcode"
+      jdbcType="VARCHAR" />
+    <result column="articleUuid" property="articleUuid" jdbcType="VARCHAR" />
+    <result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
+    <result column="productionBatch" property="productionBatch"
+      jdbcType="VARCHAR" />
+    <result column="validDate" property="validDate" jdbcType="DATE" />
+    <result column="productionDate" property="productionDate"
+      jdbcType="DATE" />
+    <result column="supplierUuid" property="supplierUuid"
+      jdbcType="VARCHAR" />
+    <result column="pickUpBillItemUuid" property="pickUpBillItemUuid"
+      jdbcType="VARCHAR" />
+  </resultMap>
+
+  <insert id="insert"
+    parameterType="com.hd123.sardine.wms.api.out.pickup.PickUpBillStockItem">
+    insert into wmspickupbillStockitem
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uuid != null">
+        uuid,
+      </if>
+      <if test="targetContainerBarcode != null">
+        containerBarcode,
+      </if>
+      <if test="qpcStr != null">
+        qpcStr,
+      </if>
+      <if test="qpc != null">
+        qpc,
+      </if>
+      <if test="caseQtyStr != null">
+        caseQtyStr,
+      </if>
+      <if test="qty != null">
+        qty,
+      </if>
+      <if test="productionBatch != null">
+        productionBatch,
+      </if>
+      <if test="stockBatch != null">
+        stockBatch,
+      </if>
+      <if test="articleUuid != null">
+        articleUuid,
+      </if>
+      <if test="pickUpBillItemUuid != null">
+        pickUpBillItemUuid,
+      </if>
+      <if test="validDate != null">
+        validDate,
+      </if>
+      <if test="productionDate != null">
+        productionDate,
+      </if>
+      <if test="supplierUuid != null">
+        supplierUuid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uuid != null">
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="targetContainerBarcode != null">
+        #{targetContainerBarcode,jdbcType=VARCHAR},
+      </if>
+      <if test="qpcStr != null">
+        #{qpcStr,jdbcType=VARCHAR},
+      </if>
+      <if test="qpc != null">
+        #{qpc,jdbcType=DECIMAL},
+      </if>
+      <if test="caseQtyStr != null">
+        #{caseQtyStr,jdbcType=VARCHAR},
+      </if>
+      <if test="qty != null">
+        #{qty,jdbcType=DECIMAL},
+      </if>
+      <if test="productionBatch != null">
+        #{productionBatch,jdbcType=VARCHAR},
+      </if>
+      <if test="stockBatch != null">
+        #{stockBatch,jdbcType=VARCHAR},
+      </if>
+      <if test="articleUuid != null">
+        #{articleUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="pickUpBillItemUuid != null">
+        #{pickUpBillItemUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="validDate != null">
+        #{validDate,jdbcType=DATE},
+      </if>
+      <if test="productionDate != null">
+        #{productionDate,jdbcType=DATE},
+      </if>
+      <if test="supplierUuid != null">
+        #{supplierUuid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="queryItems" resultMap="PickUpBillItemItemMap"
+    parameterType="java.lang.String">
+    select *
+    from wmspickupbillStockitem t
+    where
+    t.pickupbillitemuuid =
+    #{pickUpBillItemUuid,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="removeItems" parameterType="java.util.Map">
+    delete from
+    wmspickupbillStockitem
+    t where 1=1
+    <if test="itemUuids != null">
+      and t.pickUpBillItemUuid in
+      <foreach collection="itemUuids" item="item" index="index"
+        open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </delete>
+</mapper>

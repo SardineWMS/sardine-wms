@@ -27,4 +27,6 @@ public interface ArticleDao extends BaseDao<Article> {
     Article getByBarcode(String barcode);
 
     List<UCN> queryInStocks(PageQueryDefinition definition);
+    
+    List<Article> queryArticles(List<String> articleUuids);
 }

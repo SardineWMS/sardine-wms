@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.hd123.sardine.wms.dao.out.pickup.impl.PickUpBillDaoImpl">
+
+	<resultMap id="PickUpBillMap"
+		type="com.hd123.sardine.wms.api.out.pickup.PickUpBill">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+		<result column="billNumber" property="billNumber" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="method" property="method" jdbcType="VARCHAR" />
+		<result column="waveBillNumber" property="waveBillNumber"
+			jdbcType="VARCHAR" />
+		<result column="pickOrder" property="pickOrder" jdbcType="VARCHAR" />
+		<result column="pickeruuid" property="picker.uuid" jdbcType="VARCHAR" />
+		<result column="pickercode" property="picker.code" jdbcType="VARCHAR" />
+		<result column="pickername" property="picker.name" jdbcType="VARCHAR" />
+		<result column="pickAreauuid" property="pickArea.uuid"
+			jdbcType="VARCHAR" />
+		<result column="pickAreacode" property="pickArea.code"
+			jdbcType="VARCHAR" />
+		<result column="pickAreaname" property="pickArea.name"
+			jdbcType="VARCHAR" />
+		<result column="customeruuid" property="customer.uuid"
+			jdbcType="VARCHAR" />
+		<result column="customercode" property="customer.code"
+			jdbcType="VARCHAR" />
+		<result column="customername" property="customer.name"
+			jdbcType="VARCHAR" />
+		<result column="deliveryType" property="deliveryType" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="createdtime" property="createInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="createdID" property="createInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="createdcode" property="createInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="createdName" property="createInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="lastModifytime" property="lastModifyInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="lastModifyid" property="lastModifyInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="lastModifycode" property="lastModifyInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<insert id="insert_pickUp" parameterType="com.hd123.sardine.wms.api.out.pickup.PickUpBill">
+		insert into db_proxy.sardine_pickupbill
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="billNumber != null">
+				billNumber,
+			</if>
+			<if test="companyUuid != null">
+				companyUuid,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="method != null">
+				method,
+			</if>
+			<if test="waveBillUuid != null">
+				waveBillUuid,
+			</if>
+			<if test="waveBillNumber != null">
+				waveBillNumber,
+			</if>
+			<if test="pickOrder != null">
+				pickOrder,
+			</if>
+			<if test="deliveryType != null">
+				deliveryType,
+			</if>
+			<if test="customer != null and customer.uuid != null">
+				customeruuid,
+			</if>
+			<if test="picker != null and picker.uuid != null">
+				pickeruuid,
+			</if>
+			<if test="picker != null and picker.code != null">
+				pickercode,
+			</if>
+			<if test="picker != null and picker.name != null">
+				pickername,
+			</if>
+			<if test="pickArea != null and pickArea.uuid != null">
+				pickAreauuid,
+			</if>
+			<if test="pickArea != null and pickArea.code != null">
+				pickAreacode,
+			</if>
+			<if test="pickArea != null and pickArea.name != null">
+				pickAreaname,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="version != null">
+				VERSION,
+			</if>
+			<if test="createInfo != null and createInfo.time != null">
+				CREATEDTIME ,
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.id != null">
+				CREATEDID,
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.fullName != null">
+				CREATEDNAME,
+			</if>
+			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
+				LASTMODIFYTIME,
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				LASTMODIFYID,
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				LASTMODIFYNAME,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="billNumber != null">
+				#{billNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="orgId != null">
+				#{orgId,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=VARCHAR},
+			</if>
+			<if test="method != null">
+				#{method,jdbcType=VARCHAR},
+			</if>
+			<if test="waveBillUuid != null">
+				#{waveBillUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="waveBillNumber != null">
+				#{waveBillNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="pickOrder != null">
+				#{pickOrder,jdbcType=VARCHAR},
+			</if>
+			<if test="deliveryType != null">
+				#{deliveryType,jdbcType=VARCHAR},
+			</if>
+			<if test="store != null and store.uuid != null">
+				#{store.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="store != null and store.code != null">
+				#{store.code,jdbcType=VARCHAR},
+			</if>
+			<if test="store != null and store.name != null">
+				#{store.name,jdbcType=VARCHAR},
+			</if>
+			<if test="deliveryTarget != null and deliveryTarget.uuid != null">
+				#{deliveryTarget.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="deliveryTarget != null and deliveryTarget.code != null">
+				#{deliveryTarget.code,jdbcType=VARCHAR},
+			</if>
+			<if test="deliveryTarget != null and deliveryTarget.name != null">
+				#{deliveryTarget.name,jdbcType=VARCHAR},
+			</if>
+			<if test="picker != null and picker.uuid != null">
+				#{picker.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="picker != null and picker.code != null">
+				#{picker.code,jdbcType=VARCHAR},
+			</if>
+			<if test="picker != null and picker.name != null">
+				#{picker.name,jdbcType=VARCHAR},
+			</if>
+			<if test="pickArea != null and pickArea.uuid != null">
+				#{pickArea.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="pickArea != null and pickArea.code != null">
+				#{pickArea.code,jdbcType=VARCHAR},
+			</if>
+			<if test="pickArea != null and pickArea.name != null">
+				#{pickArea.name,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="createInfo != null and createInfo.time != null">
+				#{createInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.id != null">
+				#{createInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="createInfo != null and createInfo.operator != null and createInfo.operator.fullName != null">
+				#{createInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
+				#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="update_pickUp" parameterType="com.hd123.sardine.wms.api.out.pickup.PickUpBill">
+		update WMSPICKUPBILL
+		<set>
+			<if test="state != null">
+				state = #{state,jdbcType=VARCHAR},
+			</if>
+			<if test="method != null">
+				method = #{method,jdbcType=VARCHAR},
+			</if>
+			<if test="picker == null">
+				pickeruuid=null,
+				pickercode=null,
+				pickername=null,
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="picker != null and picker.uuid != null">
+				pickeruuid = #{picker.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="picker != null and picker.code != null">
+				pickercode = #{picker.code,jdbcType=VARCHAR},
+			</if>
+			<if test="picker != null and picker.name != null">
+				pickername = #{picker.name,jdbcType=VARCHAR},
+			</if>
+			<if test="refresher != null and refresher.uuid != null">
+				refresheruuid = #{refresher.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="refresher != null and refresher.code != null">
+				refreshercode = #{refresher.code,jdbcType=VARCHAR},
+			</if>
+			<if test="refresher != null and refresher.name != null">
+				refreshername = #{refresher.name,jdbcType=VARCHAR},
+			</if>
+			pickOrderLevel = #{pickOrderLevel,jdbcType=VARCHAR},
+			version =
+			#{version,jdbcType=LONGVARCHAR} + 1,
+			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
+				LASTMODIFYTIME =
+				#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.id != null">
+				LASTMODIFYID =
+				#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
+				LASTMODIFYNAME =
+				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<where>
+			UUID = #{uuid,jdbcType=VARCHAR} and version =
+			#{version,jdbcType=LONGVARCHAR}
+		</where>
+	</update>
+
+	<select id="get" resultMap="PickUpBillMap" parameterType="java.lang.String">
+		select * from WMSPICKUPBILL t
+		where t.uuid = #{uuid,jdbcType=VARCHAR}
+	</select>
+
+	<update id="update_Bill_State" parameterType="java.util.Map">
+		update
+		WMSPICKUPBILL t set t.state = 'approved',t.pickorder =
+		(select l.code
+		|| '-' || s.orderno from tmsserialarchline l ,
+		tmsserialarchlinestore s where l.uuid = s.archlineuuid
+		and
+		t.storeuuid = s.storeuuid and l.serialarchuuid =
+		#{serialarchUuid,jdbcType=VARCHAR}) where t.waveBillnumber =
+		#{waveBillNumber,jdbcType=VARCHAR}
+	</update>
+
+	<select id="getByBillNumber" resultMap="PickUpBillMap"
+		parameterType="java.util.Map">
+		select *
+		from WMSPICKUPBILL t
+		where
+		t.billnumber =
+		#{billNumber,jdbcType=VARCHAR} and t.orgid =
+		#{orgId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getSimplePickUpBill" resultMap="PickUpBillMap"
+		parameterType="java.util.Map">
+		select t.*
+		from WMSPICKUPBILL t
+		where (t.billNumber =
+		#{billNumber,jdbcType=VARCHAR} or
+		t.billnumber like
+		CONCAT('__________',#{billNumber,jdbcType=VARCHAR})) and t.orgid =
+		#{orgId,jdbcType=VARCHAR}
+		and t.state in ('approved','inProgress')
+	</select>
+
+	<select id="getRplByRefresh" resultMap="PickUpBillMap"
+		parameterType="java.util.Map">
+		select *
+		from WMSPICKUPBILL t
+		where 1=1 and t.method = 'HandTerminal'
+		and t.type != 'WholeContainer' and t.state = 'approved'
+		<if test="billNumbers != null">
+			and t.billnumber in
+			<foreach collection="billNumbers" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="orgId != null">
+			and t.orgid = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="pickAreaUuidIn != null">
+			and t.pickareauuid in
+			<foreach collection="pickAreaUuidIn" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		order by
+		t.wavebillnumber asc,
+		SUBSTR(t.PICKORDER, 1,
+		INSTR(t.PICKORDER,
+		'-') - 1) asc,
+		To_NUMBER(SUBSTR(t.PICKORDER,
+		INSTR(t.PICKORDER, '-') +
+		1))
+		asc,t.pickareacode
+	</select>
+
+	<select id="getTaskPickUpCount" resultType="java.lang.Integer"
+		parameterType="java.util.Map">
+		select count(t.billNumber)
+		from WMSPICKUPBILL t,WMSPICKUPBILLItem t1
+		where 1=1 and t.method = 'HandTerminal' and
+		t.uuid =
+		t1.pickUpBillUuid and t.type =
+		'WholeContainer'
+		and ((t.state
+		=
+		'inProgress'
+		<if test="operatorUuid != null">
+			and t.pickerUuid = #{operatorUuid,jdbcType=VARCHAR}
+		</if>
+		)
+		or t.state = 'approved')
+		<if test="orgId != null">
+			and t.orgid = #{orgId,jdbcType=VARCHAR}
+		</if>
+		<if test="operatorUuid != null">
+			and exists (select 1 from WMSWORKBINSCOPE
+			tb,WMSWORKBINSCOPEITEM tbi
+			where tb.uuid = tbi.binScopeUuid and
+			tb.orgid=
+			#{orgId,jdbcType=VARCHAR}
+			and tb.type = 'WholePickup' and
+			tbi.bincode
+			= t1.sourceBinCode
+			and tb.operatorUuid=
+			#{operatorUuid,jdbcType=VARCHAR})
+		</if>
+		<if test="pickAreaUuidIn != null">
+			and t.pickareauuid in
+			<foreach collection="pickAreaUuidIn" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		order by t.pickOrder asc
+	</select>
+
+	
+
+	<select id="query" resultMap="PickUpBillMap"
+		parameterType="com.hd123.sardine.wms.api.out.pickup.PickUpBillFilter">
+		select *
+		from (select *
+		from (select r.*,rownum as
+		row_number from
+		(select t.*
+		from WMSPICKUPBILL t
+		where 1=1
+		<if test="orgEquals != null and orgEquals != ''">
+			and t.orgId = #{orgEquals}
+		</if>
+		<if test="billNumberLike != null and billNumberLike != ''">
+			and t.billNumber like CONCAT(CONCAT('%',
+			#{billNumberLike}), '%')
+		</if>
+		<if test="waveNoLike != null and waveNoLike != ''">
+			and t.waveBillNumber like CONCAT(CONCAT('%',
+			#{waveNoLike}), '%')
+		</if>
+		<if test="pickStates != null">
+			and t.state in
+			<foreach collection="pickStates" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="pickTypeEquals != null">
+			and t.type = #{pickTypeEquals}
+		</if>
+		<if test="pickAreaUuids != null">
+			and t.pickareauuid in
+			<foreach collection="pickAreaUuids" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="storeUuidEquals != null and storeUuidEquals != ''">
+			and t.storeuuid = #{storeUuidEquals}
+		</if>
+		<if test="deliveryTargetCode != null and deliveryTargetCode != ''">
+			and t.deliveryTargetCode like CONCAT(CONCAT('%',
+			#{deliveryTargetCode}), '%')
+		</if>
+		<if test="pickUpBinContain != null and pickUpBinContain != ''">
+			and exists (
+			select 1 from wmspickupbillitem i
+			where
+			t.uuid = i.pickupbilluuid and
+			i.sourcebincode = #{pickUpBinContain}
+			)
+		</if>
+		<if test="articleCodeEquals != null and articleCodeEquals != ''">
+			and exists (
+			select 1 from wmspickupbillitem i
+			where
+			t.uuid = i.pickupbilluuid and
+			i.articlecode = #{articleCodeEquals}
+			)
+		</if>
+		<if test="deliveryTargetUuid != null and deliveryTargetUuid != ''">
+			and t.deliverytargetuuid = #{deliveryTargetUuid}
+		</if>
+		<if test="pickerUuidEquals != null and pickerUuidEquals != ''">
+			and t.pickeruuid = #{pickerUuidEquals}
+		</if>
+		<if test="deliveryTypeEquals != null and deliveryTypeEquals != ''">
+			and t.deliverytype = #{deliveryTypeEquals}
+		</if>
+		<if test="pickMethodEquals != null and pickMethodEquals != ''">
+			and t.method = #{pickMethodEquals}
+		</if>
+		<if test="operaterMethodEquals == 'refreshBill'">
+			and t.method = 'refreshBill' and (t.state = 'approved'
+			or t.state= 'inProgress')
+			and t.type != 'WholeContainer'
+		</if>
+		<if test="operaterMethodEquals == 'HandTerminal'">
+			and t.method = 'HandTerminal' and t.type !=
+			'WholeContainer'
+		</if>
+		<if test="pickOrderLevelEquals == 'HighPriority'">
+			and t.pickOrderLevel = 'HighPriority'
+		</if>
+		<if test="pickOrderLevelEquals == 'DelayPriority' ">
+			and t.pickOrderLevel = 'DelayPriority'
+		</if>
+		<if test="sortField != null and sortField == 'billNumber'">
+			order by t.billNumber ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'lastModifyTime'">
+			order by t.lastModifyTime ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'pickorder'">
+			order by t.pickorder ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'pickAreaCode'">
+			order by t.pickAreaCode ${orderDir}
+			nulls last
+		</if>
+		<if test="sortField != null and sortField == 'deliveryTargetCode'">
+			order by t.deliveryTargetCode ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'waveBillNumber'">
+			order by t.waveBillNumber ${orderDir}
+		</if>
+		)r )p
+		where p.row_number > #{page} ) q
+		where rownum <![CDATA[<]]>=
+		#{pageSize}
+	</select>
+
+	<select id="getToPickBillCountByAlcNtcBill" resultType="java.lang.Integer"
+		parameterType="java.util.Map">
+		select count(distinct t.billNumber)
+		from WMSPICKUPBILL
+		t,WMSPickUpBillItem t1
+		where t.uuid = t1.pickUpbillUuid and t.state
+		in ('inProgress','approved')
+		<if test="orgId != null and orgId != ''">
+			and t.orgId = #{orgId}
+		</if>
+		<if test="alcNtcBillNumber != null and alcNtcBillNumber != ''">
+			and exists
+			( select 1 from wmsalcNtcbill
+			a,wmsalcNtcBillItem a1
+			where a.billnumber
+			= a1.alcNtcbillNumber
+			and
+			a.orgid = t.orgId
+			and a1.uuid =
+			t1.alcNtcBillItemUuid
+			and
+			a.billnumber = #{alcNtcBillNumber}
+			)
+		</if>
+	</select>
+
+	<delete id="remove" parameterType="java.lang.String">
+		delete from wmspickupbill t
+		where t.uuid = #{uuid,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="update_volume" parameterType="java.util.Map">
+		update wmspickupbill t
+		set t.volume = t.volume +
+		#{augendVolume,jdbcType=DECIMAL}
+		where
+		t.uuid = #{uuid,jdbcType=VARCHAR} and t.volume =
+		#{AddendVolume,jdbcType=DECIMAL}
+	</update>
+
+	<select id="queryPickUpByWave" parameterType="java.lang.String"
+		resultType="java.lang.String">
+		select r.uuid from wmspickupbill r where r.wavebillNumber
+		= #{waveBillNumber,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getPickUpBillCountByWaveBillNumber" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		select count(1) from wmspickUpbill t where
+		t.wavebillNumber
+		=
+		#{waveBillNumber,jdbcType=VARCHAR}
+		and t.orgId =
+		#{orgId,jdbcType=VARCHAR} and t.state in
+		('approved','inConfirm','initial','inProgress')
+	</select>
+
+	<delete id="removeByWaveBillNumber" parameterType="java.lang.String">
+		delete from
+		wmspickupbill t
+		where
+		t.wavebillnumber =
+		#{waveBillNumber,jdbcType=VARCHAR}
+	</delete>
+
+	<select id="getInProgressByStore" parameterType="java.util.Map"
+		resultMap="PickUpBillMap">
+		select * from wmspickupbill p where p.uuid in(select
+		i.pickupbilluuid from
+		wmspickupbillitem i
+		where
+		i.sourcecontainerbarcode = #{containerBarcode,jdbcType=VARCHAR}) and
+		p.state = 'inProgress' and p.orgid = #{orgId,jdbcType=VARCHAR} and
+		p.deliveryTargetuuid = #{deliveryTargetUuid,jdbcType=VARCHAR}
+		and
+		p.storeUuid = #{storeUuid,jdbcType=VARCHAR}
+		and
+		p.deliveryType =
+		#{deliveryType,jdbcType=VARCHAR}
+	</select>
+
+	<select id="queryReceiveNumbersByItemUuid" parameterType="java.lang.String"
+		resultType="java.lang.String">
+		select r.billnumber from wmsalcntcbill
+		a,wmsalcntcbillitem ai,wmsreceivebill
+		r where
+		a.billnumber =
+		ai.alcntcbillnumber and a.orderbill = r.orderbill and ai.uuid =
+		#{alcNtcBillItemUuid,jdbcType=VARCHAR}
+	</select>
+</mapper>

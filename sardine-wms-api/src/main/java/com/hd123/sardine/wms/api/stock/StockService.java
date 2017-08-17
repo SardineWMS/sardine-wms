@@ -121,4 +121,22 @@ public interface StockService {
    * @return
    */
   List<StockMajorInfo> queryStockMajorInfo(StockMajorFilter filter);
+
+  /**
+   * 检查货位是否存在正常、锁定、待移库出等库存
+   * 
+   * @param binCode
+   *          货位代码，not null
+   * @return ture：存在实物库存，FALSE：不存在
+   */
+  boolean hasBinStock(String binCode);
+
+  /**
+   * 检查容器是否存在正常、锁定、待移库出等库存
+   * 
+   * @param containerBarcode
+   *          容器条码，not null
+   * @return ture：存在实物库存，FALSE：不存在
+   */
+  boolean hasContainerStock(String containerBarcode);
 }

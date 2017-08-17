@@ -179,4 +179,9 @@ public class ArticleConfigServiceImpl implements ArticleConfigService {
     pgr.setRecords(list);
     return pgr;
   }
+
+  @Override
+  public List<ArticleConfig> queryArticleConfigByArticleUuids(List<String> articleUuids) {
+    return null;
+  }
 }

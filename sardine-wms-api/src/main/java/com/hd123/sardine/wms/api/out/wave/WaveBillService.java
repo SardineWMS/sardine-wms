@@ -91,14 +91,24 @@ public interface WaveBillService {
   /**
    * 执行商品补货拣货
    * 
-   * @param waveBillNumber
+   * @param uuid
+   *          波次UUID，not null
+   * @param billNumber
    *          波次单号。not null
    * @param articleUuids
    *          商品UUID集合， not null
    * @throws IllegalArgumentException
    * @throws WMSException
    */
-  void executeArticle(String waveBillNumber, List<String> articleUuids) throws WMSException;
+  void executeArticle(String uuid, String billNumber, List<String> articleUuids)
+      throws WMSException;
+
+  /**
+   * 
+   * @param uuid
+   * @param billNumber
+   */
+  void generatePickUpBill(String uuid, String billNumber) throws WMSException;
 
   /**
    * 校验波次生成结果，并修改波次状态
@@ -108,7 +118,7 @@ public interface WaveBillService {
    * @throws IllegalArgumentException
    * @throws DBOperServiceException
    */
-  void startComplete(String billNumber);
+  void startComplete(String billNumber) throws WMSException;
 
   /**
    * 启动异常
@@ -123,7 +133,7 @@ public interface WaveBillService {
    *          错误信息
    * @throws IllegalArgumentException
    */
-  void startException(String billNumber, String errorMessage);
+  void startException(String billNumber, String errorMessage) throws WMSException;
 
   /**
    * 回滚波次单

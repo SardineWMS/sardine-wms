@@ -84,24 +84,19 @@
 		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
 		<result column="owner" property="owner" jdbcType="VARCHAR" />
 		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
-		<result column="supplierUuid" property="supplier.uuid"
-			jdbcType="VARCHAR" />
-		<result column="supplierCode" property="supplier.code"
-			jdbcType="VARCHAR" />
-		<result column="supplierName" property="supplier.name"
+		<result column="supplierUuid" property="supplierUuid"
 			jdbcType="VARCHAR" />
 		<result column="binCode" property="binCode" jdbcType="VARCHAR" />
-		<result column="containerBarCode" property="containerBarCode"
+		<result column="containerBarcode" property="containerBarcode"
 			jdbcType="VARCHAR" />
-		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
-		<result column="articleCode" property="article.code" jdbcType="VARCHAR" />
-		<result column="articleName" property="article.name" jdbcType="VARCHAR" />
+		<result column="articleUuid" property="articleUuid" jdbcType="VARCHAR" />
 		<result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
 		<result column="productionDate" property="productionDate"
 			jdbcType="DATE" />
 		<result column="validDate" property="validDate" jdbcType="DATE" />
 		<result column="qty" property="qty" jdbcType="DECIMAL" />
 		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+		<result column="munit" property="munit" jdbcType="VARCHAR" />
 		<result column="measureUnit" property="article.munit" jdbcType="VARCHAR" />
 		<result column="state" property="state" jdbcType="VARCHAR" />
 		<result column="warehouseuuid" property="warehouse.uuid"
@@ -110,8 +105,7 @@
 			jdbcType="VARCHAR" />
 		<result column="warehousename" property="warehouse.name"
 			jdbcType="VARCHAR" />
-		<result column="usage" property="binUsgae" jdbcType="VARCHAR" />
-		<result column="alclmtdays" property="alclmtdays" jdbcType="DECIMAL" />
+		<result column="binusage" property="binUsgae" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<insert id="insertStock" parameterType="Stock">
@@ -488,54 +482,11 @@
 
 	<select id="queryMajorInfo" resultMap="StockMajorInfoMap"
 		parameterType="StockMajorFilter">
-		SELECT STOCK.UUID UUID,
-		STOCK.OWNER OWNER,
-		STOCK.companyUuid companyUuid,
-		STOCK.BINCODE BINCODE,
-		STOCK.CONTAINERBARCODE CONTAINERBARCODE,
-		STOCK.ARTICLEUUID ARTICLEUUID,
-		STOCK.MEASUREUNIT MEASUREUNIT,
-		ARTICLE.CODE ARTICLECODE,
-		ARTICLE.NAME ARTICLENAME,
-		ARTICLE.SPEC
-		ARTICLESPEC,
-		STOCK.STOCKBATCH
-		STOCKBATCH,
-		STOCK.QTY QTY,
-		STOCK.QPCSTR QPCSTR,
-		STOCK.PRODUCTIONDATE PRODUCTIONDATE,
-		STOCK.VALIDDATE VALIDDATE,
-		STOCK.STATE STATE,
-		BIN.WRHUUID WAREHOUSEUUID,
-		BIN.WRHCODE
-		WAREHOUSECODE,
-		BIN.WRHNAME WAREHOUSENAME,
-		BIN.USAGE USAGE,
-		S.SUUID
-		SUPPLIERUUID,
-		S.CODE SUPPLIERCODE,
-		S.NAME SUPPLIERNAME,
-		ARTICLE.ALCLMTDAYS ALCLMTDAYS
-		FROM sardine_bin BIN,
-		sardine_article article
-		sardine_supplier S,
-		sardine STOCK
-		WHERE BIN.CODE
-		= STOCK.BINCODE
-		AND BIN.companyuuid = STOCK.companyuuid
-		AND STOCK.ARTICLEUUID =
-		ARTICLE.uuid
-		AND S.uuid = STOCK.SUPPLIERUUID
-		and
-		STOCK.companyuuid = #{companyUuid}
-		AND BIN.USAGE IN ('StorageBin',
+		SELECT * FROM db_proxy.sardine_stock s 
+		WHERE 
+		s.companyuuid = #{companyUuid}
+		AND s.binUSAGE IN ('StorageBin',
 		'PickUpStorageBin')
-		<if test="articleUuid != null and articleUuid != ''">
-			and ST.ARTICLEUUID = #{articleUuid} AND ST.companyUuid = #{companyUuid}
-		</if>
-		<if test="warehouseUuid != null and warehouseUuid != ''">
-			AND BIN.WRHUUID = #{warehouseUuid}
-		</if>
 		<if test="articleUuids != null">
 			AND
 			ST.ARTICLEUUID IN
@@ -544,7 +495,7 @@
 				#{item}
 			</foreach>
 		</if>
-		ORDER BY STOCK.PRODUCTIONDATE ASC, STOCK.INSTOCKTIME ASC
+		ORDER BY s.PRODUCTIONDATE ASC, s.INSTOCKTIME ASC
 	</select>
 
 	<select id="queryStockExtendInfo" resultMap="StockExtendInfoMap"

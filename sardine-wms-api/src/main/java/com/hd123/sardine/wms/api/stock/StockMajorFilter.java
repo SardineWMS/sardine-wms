@@ -20,11 +20,16 @@ import java.util.List;
 public class StockMajorFilter implements Serializable {
   private static final long serialVersionUID = -3174275230375720354L;
 
-  private String articleUuid;
-  private List<String> binCodes = new ArrayList<String>();
   private List<String> articleUuids = new ArrayList<String>();
-  private String warehouseUuid;
-  private String orgId;
+  private String companyUuid;
+
+  public String getCompanyUuid() {
+    return companyUuid;
+  }
+
+  public void setCompanyUuid(String companyUuid) {
+    this.companyUuid = companyUuid;
+  }
 
   public List<String> getArticleUuids() {
     return articleUuids;
@@ -32,37 +37,5 @@ public class StockMajorFilter implements Serializable {
 
   public void setArticleUuids(List<String> articleUuids) {
     this.articleUuids = articleUuids;
-  }
-  
-  public String getArticleUuid() {
-    return articleUuid;
-  }
-
-  public void setArticleUuid(String articleUuid) {
-    this.articleUuid = articleUuid;
-  }
-
-  public List<String> getBinCodes() {
-    return binCodes;
-  }
-
-  public void setBinCodes(List<String> binCodes) {
-    this.binCodes = binCodes;
-  }
-
-  public String getWarehouseUuid() {
-    return warehouseUuid;
-  }
-
-  public void setWarehouseUuid(String warehouseUuid) {
-    this.warehouseUuid = warehouseUuid;
-  }
-
-  public String getOrgId() {
-    return orgId;
-  }
-
-  public void setOrgId(String orgId) {
-    this.orgId = orgId;
   }
 }

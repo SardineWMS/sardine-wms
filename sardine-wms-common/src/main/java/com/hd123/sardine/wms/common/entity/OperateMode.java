@@ -7,7 +7,7 @@
  * 修改历史：
  * 2017年6月12日 - yangwenzhu - 创建。
  */
-package com.hd123.sardine.wms.api.basicInfo.pickarea;
+package com.hd123.sardine.wms.common.entity;
 
 /**
  * 拣货、补货操作方式|枚举类

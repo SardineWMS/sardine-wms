@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.sardine.wms.common.entity.OperateMode;
 import com.hd123.sardine.wms.common.entity.StandardEntity;
 import com.hd123.sardine.wms.common.entity.UCN;
 
@@ -39,7 +40,7 @@ public class ReturnBill extends StandardEntity {
     private String totalCaseQtyStr;
     private BigDecimal totalAmount;
     private String remark;
-    private OperateMethod type = OperateMethod.ManualBill;
+    private OperateMode type = OperateMode.ManualBill;
     private List<ReturnBillItem> items = new ArrayList<>();
 
     public String getBillNumber() {
@@ -156,12 +157,12 @@ public class ReturnBill extends StandardEntity {
         this.items = items;
     }
 
-    public OperateMethod getType() {
+    public OperateMode getType() {
         return type;
     }
 
     /** 单据类型，APP和手工单据 */
-    public void setType(OperateMethod type) {
+    public void setType(OperateMode type) {
         this.type = type;
     }
 

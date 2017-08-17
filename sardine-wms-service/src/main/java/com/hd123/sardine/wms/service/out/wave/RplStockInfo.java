@@ -12,16 +12,17 @@ package com.hd123.sardine.wms.service.out.wave;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.hd123.sardine.wms.api.out.wave.WaveBinUsage;
 import com.hd123.sardine.wms.common.entity.UCN;
 
 public class RplStockInfo {
 
   private String owner;
   private String companyUuid;
-  private UCN supplier;
+  private String supplierUuid;
   private String binCode;
   private String containerBarcode;
-  private UCN article;
+  private String articleUuid;
   private String productionBatch;
   private String stockBatch;
   private BigDecimal qpc;
@@ -83,12 +84,19 @@ public class RplStockInfo {
     this.containerBarcode = containerBarcode;
   }
 
-  public UCN getSupplier() {
-    return supplier;
+  public String getArticleUuid() {
+    return articleUuid;
   }
 
-  public void setSupplier(UCN supplier) {
-    this.supplier = supplier;
+  public void setArticleUuid(String articleUuid) {
+    this.articleUuid = articleUuid;
+  }
+  public String getSupplierUuid() {
+    return supplierUuid;
+  }
+
+  public void setSupplierUuid(String supplierUuid) {
+    this.supplierUuid = supplierUuid;
   }
 
   public String getBinCode() {
@@ -97,14 +105,6 @@ public class RplStockInfo {
 
   public void setBinCode(String binCode) {
     this.binCode = binCode;
-  }
-
-  public UCN getArticle() {
-    return article;
-  }
-
-  public void setArticle(UCN article) {
-    this.article = article;
   }
 
   public String getProductionBatch() {

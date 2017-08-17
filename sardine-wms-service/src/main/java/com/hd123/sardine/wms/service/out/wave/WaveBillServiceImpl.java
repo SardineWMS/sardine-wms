@@ -14,18 +14,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
-import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBill;
-import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillService;
-import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillState;
+import com.hd123.sardine.wms.api.basicInfo.article.Article;
+import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.ArticleConfig;
+import com.hd123.sardine.wms.api.basicInfo.pickarea.PickArea;
+import com.hd123.sardine.wms.api.out.alcntc.WaveAlcNtcItem;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
 import com.hd123.sardine.wms.api.out.wave.WaveBill;
-import com.hd123.sardine.wms.api.out.wave.WaveBillItem;
 import com.hd123.sardine.wms.api.out.wave.WaveBillService;
 import com.hd123.sardine.wms.api.out.wave.WaveBillState;
-import com.hd123.sardine.wms.api.out.wave.WaveType;
+import com.hd123.sardine.wms.api.out.wave.WavePickUpItem;
+import com.hd123.sardine.wms.api.stock.StockMajorInfo;
+import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArch;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArchService;
 import com.hd123.sardine.wms.common.entity.UCN;
@@ -35,7 +40,6 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
-import com.hd123.sardine.wms.common.utils.CollectionUtil;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.out.wave.WaveBillDao;
@@ -52,21 +56,21 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
   @Autowired
   private EntityLogger logger;
   @Autowired
-  private AlcNtcBillService alcNtcService;
-  @Autowired
   private SerialArchService serialArchService;
+  @Autowired
+  private PickUpBillService pickUpBillService;
+  @Autowired
+  private WaveVerifier waveVerifier;
+  @Autowired
+  private WaveHandler waveHandler;
+  @Autowired
+  private WaveQueryHandler waveQueryHandler;
 
   @Override
   public String saveNew(WaveBill bill) throws IllegalArgumentException, WMSException {
     Assert.assertArgumentNotNull(bill, "bill");
 
-    bill.validate();
-    SerialArch serialArch = null;
-    if (Objects.nonNull(bill.getSerialArch().getUuid())) {
-      serialArch = serialArchService.get(bill.getSerialArch().getUuid());
-      bill.setSerialArch(new UCN(serialArch.getUuid(), serialArch.getCode(), serialArch.getName()));
-    } else if (WaveType.eCommerce.equals(bill.getWaveType()) == false)
-      throw new WMSException("非电商波次，线路体系不能为空");
+    waveVerifier.verifyWaveBill(bill);
 
     bill.setBillNumber(billNumberGenerator.allocateNextBillNumber(WaveBill.class.getSimpleName()));
     bill.setState(WaveBillState.initial);
@@ -74,51 +78,22 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     bill.setCreateInfo(ApplicationContextUtil.getOperateInfo());
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
 
-    alcNtcJoinWave(bill);
-
     dao.insert(bill);
-    for (WaveBillItem item : bill.getItems()) {
-      item.setUuid(UUIDGenerator.genUUID());
-      item.setWaveBillUuid(bill.getUuid());
-      item.setAlcNtcBillState(AlcNtcBillState.inAlc);
-    }
-    dao.insertItems(bill.getItems());
+    dao.saveWaveAlcNtcItems(bill.getUuid());
+    waveHandler.joinWave(bill, null);
+
     logger.injectContext(this, bill.getUuid(), WaveBill.class.getName(),
         ApplicationContextUtil.getOperateContext());
     logger.log(EntityLogger.EVENT_ADDNEW, "新增波次单");
     return bill.getUuid();
   }
 
-  private void alcNtcJoinWave(WaveBill bill) throws WMSException {/*
-    assert bill != null;
-    List<AlcNtcBill> list = alcNtcService.getByTaskBillNumber(bill.getBillNumber());
-    List<String> uuids = CollectionUtil.toUuids(list);
-    List<String> existUuids = new ArrayList<>();
-
-    for (WaveBillItem item : bill.getItems()) {
-      AlcNtcBill alcNtcBill = alcNtcService.getByBillNumber(item.getAlcNtcBillNumber());
-      if (Objects.isNull(alcNtcBill))
-        throw new IllegalArgumentException("通知单" + item.getAlcNtcBillNumber() + "不存在");
-
-      if (uuids.contains(alcNtcBill.getUuid()) == false)
-        alcNtcService.joinWave(alcNtcBill.getBillNumber(), alcNtcBill.getVersion(),
-            bill.getBillNumber());
-
-      existUuids.add(alcNtcBill.getUuid());
-    }
-
-    for (AlcNtcBill alcNtcBill : list) {
-      if (existUuids.contains(alcNtcBill.getUuid()) == false)
-        alcNtcService.leaveWave(alcNtcBill.getBillNumber(), alcNtcBill.getVersion());
-    }
-  */}
-
   @Override
   public void saveModify(WaveBill bill)
       throws IllegalArgumentException, VersionConflictException, WMSException {
     Assert.assertArgumentNotNull(bill, "bill");
+    waveVerifier.verifyWaveBill(bill);
 
-    bill.validate();
     WaveBill waveBill = dao.get(bill.getUuid());
     if (Objects.isNull(waveBill))
       throw new IllegalArgumentException("要修改的波次单" + waveBill.getUuid() + "不存在");
@@ -131,16 +106,11 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     bill.setState(WaveBillState.initial);
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
 
-    alcNtcJoinWave(bill);
-
-    for (WaveBillItem item : bill.getItems()) {
-      item.setUuid(UUIDGenerator.genUUID());
-      item.setWaveBillUuid(bill.getUuid());
-      item.setAlcNtcBillState(AlcNtcBillState.inAlc);
-    }
     dao.update(bill);
-    dao.removeItems(bill.getUuid());
-    dao.insertItems(bill.getItems());
+    dao.removeWaveAlcNtcItems(bill.getUuid());
+    dao.saveWaveAlcNtcItems(bill.getUuid());
+
+    waveHandler.joinWave(bill, waveBill);
 
     logger.injectContext(this, waveBill.getUuid(), WaveBill.class.getName(),
         ApplicationContextUtil.getOperateContext());
@@ -159,39 +129,20 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
       throw new IllegalArgumentException(
           MessageFormat.format("当前波次单的状态是{0},不是初始，不能删除", bill.getState()));
 
-    alcNtcLeaveWave(bill);
-
-    dao.removeItems(uuid);
     dao.remove(uuid, version);
+
+    waveHandler.leaveWave(bill);
 
     logger.injectContext(this, uuid, WaveBill.class.getName(),
         ApplicationContextUtil.getOperateContext());
     logger.log(EntityLogger.EVENT_REMOVE, "删除波次单");
   }
 
-  private void alcNtcLeaveWave(WaveBill bill) throws WMSException {
-    assert bill != null;
-    List<WaveBillItem> items = bill.getItems();
-    for (WaveBillItem item : items) {
-      AlcNtcBill alcNtcBill = alcNtcService.getByBillNumber(item.getAlcNtcBillNumber());
-      if (Objects.isNull(alcNtcBill))
-        throw new IllegalArgumentException(
-            MessageFormat.format("通知单{0}不存在 ", item.getAlcNtcBillNumber()));
-
-      alcNtcService.leaveWave(alcNtcBill.getBillNumber(), alcNtcBill.getVersion());
-    }
-
-  }
-
   @Override
   public WaveBill get(String uuid) {
     if (StringUtil.isNullOrBlank(uuid))
       return null;
-    List<WaveBillItem> items = dao.getItemsByWaveBillUuid(uuid);
     WaveBill bill = dao.get(uuid);
-    if (Objects.isNull(bill))
-      return null;
-    bill.setItems(items);
     return bill;
   }
 
@@ -200,10 +151,6 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     if (StringUtil.isNullOrBlank(billNumber))
       return null;
     WaveBill bill = dao.getByBillNumber(billNumber);
-    if (Objects.isNull(bill))
-      return null;
-    List<WaveBillItem> items = dao.getItemsByWaveBillUuid(bill.getUuid());
-    bill.setItems(items);
     return bill;
   }
 
@@ -220,38 +167,148 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
   @Override
   public List<String> start(String uuid, long version)
       throws IllegalArgumentException, VersionConflictException, WMSException {
-    // TODO Auto-generated method stub
-    return null;
+    Assert.assertArgumentNotNull(uuid, "uuid");
+
+    WaveBill waveBill = dao.get(uuid);
+    if (waveBill == null)
+      throw new WMSException("波次不存在！");
+    PersistenceUtils.checkVersion(version, waveBill, WaveBill.CAPTION, waveBill.getBillNumber());
+
+    if (waveBill.getState().equals(WaveBillState.initial) == false)
+      throw new WMSException("波次状态不是初始，无法启动！");
+
+    waveBill.setState(WaveBillState.inProgress);
+    waveBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(waveBill);
+
+    List<String> articleUuids = dao.queryWaveArticleUuids(waveBill.getUuid());
+    return articleUuids;
   }
 
   @Override
-  public void executeArticle(String waveBillNumber, List<String> articleUuids) throws WMSException {
-    // TODO Auto-generated method stub
-    
+  public void executeArticle(String uuid, String billNumber, List<String> articleUuids)
+      throws WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+    Assert.assertArgumentNotNull(billNumber, "billNumber");
+
+    if (CollectionUtils.isEmpty(articleUuids))
+      return;
+
+    waveQueryHandler.buildCache(billNumber, articleUuids);
+    List<WavePickUpItem> pickResult = new ArrayList<WavePickUpItem>();
+    List<Task> rplTasks = new ArrayList<Task>();
+    for (String articleUuid : articleUuids) {
+      Article article = waveQueryHandler.findArticleByArticleUuid(articleUuid);
+      List<StockMajorInfo> stocks = waveQueryHandler.findStockByArticleUuid(articleUuid);
+      ArticleConfig articleConfig = waveQueryHandler.findArticleConfigByArticleUuid(articleUuid);
+      PickArea pickarea = waveQueryHandler.findPickAreaByArticleUuid(
+          articleConfig == null ? null : articleConfig.getFixedPickBin());
+      List<WaveAlcNtcItem> inAlcItems = waveQueryHandler.findWaveAlcNtcItems(articleUuid);
+      PickUpGenerator pickUpGenerator = new PickUpGenerator(article, billNumber,
+          ApplicationContextUtil.getCompanyUuid());
+      pickUpGenerator.setArticleConfig(articleConfig);
+      pickUpGenerator.setPickareas(pickarea);
+      pickUpGenerator.setStocks(stocks);
+      pickUpGenerator.setWaveAlcNtcItems(inAlcItems);
+      pickUpGenerator.build();
+
+      List<WavePickUpItem> result = pickUpGenerator.getPickResult();
+      if (CollectionUtils.isEmpty(result))
+        continue;
+      pickResult.addAll(result);
+
+      if (articleConfig == null || StringUtil.isNullOrBlank(articleConfig.getFixedPickBin()))
+        continue;
+
+      RplGenerator rplGenerator = new RplGenerator(pickUpGenerator.getRplCollector(), articleConfig,
+          pickarea, article);
+      rplGenerator.build();
+      rplTasks.addAll(rplGenerator.getRplTasks());
+    }
+
+    waveHandler.savePickResultAndStock(uuid, billNumber, pickResult);
+    waveHandler.saveRplResult(rplTasks);
   }
 
   @Override
-  public void startComplete(String billNumber) {
-    // TODO Auto-generated method stub
-    
+  public void generatePickUpBill(String uuid, String billNumber) throws WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+    Assert.assertArgumentNotNull(billNumber, "billNumber");
+
+    List<PickUpBill> bills = waveHandler.generatePickUpBill(uuid, billNumber);
+    for (PickUpBill bill : bills) {
+      pickUpBillService.saveNew(bill);
+    }
   }
 
   @Override
-  public void startException(String billNumber, String errorMessage) {
-    // TODO Auto-generated method stub
-    
+  public void startComplete(String billNumber) throws WMSException {
+    Assert.assertArgumentNotNull(billNumber, "billNumber");
+
+    WaveBill waveBill = dao.getByBillNumber(billNumber);
+    if (waveBill == null)
+      throw new WMSException("波次单" + billNumber + "不存在！");
+    waveBill.setState(WaveBillState.started);
+    waveBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(waveBill);
+  }
+
+  @Override
+  public void startException(String billNumber, String errorMessage) throws WMSException {
+    Assert.assertArgumentNotNull(billNumber, "billNumber");
+
+    WaveBill waveBill = dao.getByBillNumber(billNumber);
+    if (waveBill == null)
+      throw new WMSException("波次单" + billNumber + "不存在！");
+    waveBill.setState(WaveBillState.exception);
+    waveBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(waveBill);
   }
 
   @Override
   public void rollBack(String uuid, long version) throws WMSException {
-    // TODO Auto-generated method stub
-    
+    Assert.assertArgumentNotNull(uuid, "uuid");
+
+    WaveBill waveBill = dao.get(uuid);
+    if (waveBill == null)
+      throw new WMSException("波次单" + uuid + "不存在！");
+    PersistenceUtils.checkVersion(version, waveBill, WaveBill.CAPTION, waveBill.getBillNumber());
+
+    if (waveBill.getState().equals(WaveBillState.exception) == false
+        && waveBill.getState().equals(WaveBillState.started) == false)
+      throw new WMSException("只有启动异常或者启动完成的波次可以回滚！");
+
+    waveHandler.rollbackStock(uuid, waveBill.getBillNumber());
+
+    pickUpBillService.removeByWaveUuid(uuid);
+    dao.removeRplTasks(uuid);
+    dao.removeWavePickUpItems(uuid);
+
+    waveBill.setState(WaveBillState.initial);
+    waveBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(waveBill);
   }
 
   @Override
   public void confirm(String uuid, long version) throws WMSException {
-    // TODO Auto-generated method stub
-    
-  }
+    Assert.assertArgumentNotNull(uuid, "uuid");
 
+    WaveBill waveBill = dao.get(uuid);
+    if (waveBill == null)
+      throw new WMSException("波次单" + uuid + "不存在！");
+    PersistenceUtils.checkVersion(version, waveBill, WaveBill.CAPTION, waveBill.getBillNumber());
+
+    if (waveBill.getState().equals(WaveBillState.started) == false)
+      throw new WMSException("只有启动启动完成的波次可以确认！");
+    
+    pickUpBillService.approveByWaveBillNumber(waveBill.getBillNumber());
+    dao.insertRplTaskToTask(uuid);
+    dao.removeRplTasks(uuid);
+    dao.removeWaveAlcNtcItems(uuid);
+    dao.removeWavePickUpItems(uuid);
+    
+    waveBill.setState(WaveBillState.inAlc);
+    waveBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(waveBill);
+  }
 }

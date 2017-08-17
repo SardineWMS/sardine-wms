@@ -350,4 +350,19 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
     String sql = ScopeUtils.scopeExpToSQLExp("u", binScope);
     return binDao.queryBincodesByScope(sql, usage, state);
   }
+
+  @Override
+  public void lock(String uuid, long version) throws WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+
+    Bin bin = binDao.get(uuid, ApplicationContextUtil.getCompanyUuid());
+    if (bin == null)
+      throw new WMSException("货位不存在！");
+    PersistenceUtils.checkVersion(version, bin, "货位", uuid);
+    binDao.changeState(uuid, version, BinState.lock);
+
+    logger.injectContext(this, uuid, Bin.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_MODIFY, "锁定货位");
+  }
 }

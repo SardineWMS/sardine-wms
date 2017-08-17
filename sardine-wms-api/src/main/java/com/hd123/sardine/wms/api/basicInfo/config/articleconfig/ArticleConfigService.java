@@ -9,6 +9,8 @@
  */
 package com.hd123.sardine.wms.api.basicInfo.config.articleconfig;
 
+import java.util.List;
+
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -111,5 +113,7 @@ public interface ArticleConfigService {
      */
     PageQueryResult<ArticleConfig> queryArticleConfigquery(PageQueryDefinition definition)
             throws IllegalArgumentException;
+    
+    List<ArticleConfig> queryArticleConfigByArticleUuids(List<String> articleUuids);
 
 }

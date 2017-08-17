@@ -19,6 +19,8 @@ import com.hd123.sardine.wms.common.entity.Entity;
 import com.hd123.sardine.wms.common.entity.UCN;
 
 /**
+ * 库存信息，只适用于波次算法
+ * 
  * @author zhangsai
  * 
  */
@@ -27,30 +29,19 @@ public class StockMajorInfo extends Entity {
 
   private String owner;
   private String companyUuid;
-  private UCN supplier;
+  private String supplierUuid;
   private String binCode;
   private String containerBarcode;
-  private UCN article;
+  private String articleUuid;
   private String munit;
-  private String articleSpec;
   private String stockBatch;
   private BigDecimal qty;
   private String qpcStr;
   private Date productionDate;
   private Date validDate;
   private StockState state;
-
   private UCN warehouse;
   private BinUsage binUsgae;
-  private int alclmtdays = 0;
-
-  public int getAlclmtdays() {
-    return alclmtdays;
-  }
-
-  public void setAlclmtdays(int alclmtdays) {
-    this.alclmtdays = alclmtdays;
-  }
 
   public String getOwner() {
     return owner;
@@ -68,12 +59,20 @@ public class StockMajorInfo extends Entity {
     this.companyUuid = companyUuid;
   }
 
-  public UCN getSupplier() {
-    return supplier;
+  public String getSupplierUuid() {
+    return supplierUuid;
   }
 
-  public void setSupplier(UCN supplier) {
-    this.supplier = supplier;
+  public void setSupplierUuid(String supplierUuid) {
+    this.supplierUuid = supplierUuid;
+  }
+
+  public String getArticleUuid() {
+    return articleUuid;
+  }
+
+  public void setArticleUuid(String articleUuid) {
+    this.articleUuid = articleUuid;
   }
 
   public String getBinCode() {
@@ -92,28 +91,12 @@ public class StockMajorInfo extends Entity {
     this.containerBarcode = containerBarcode;
   }
 
-  public UCN getArticle() {
-    return article;
-  }
-
-  public void setArticle(UCN article) {
-    this.article = article;
-  }
-
   public String getMunit() {
     return munit;
   }
 
   public void setMunit(String munit) {
     this.munit = munit;
-  }
-
-  public String getArticleSpec() {
-    return articleSpec;
-  }
-
-  public void setArticleSpec(String articleSpec) {
-    this.articleSpec = articleSpec;
   }
 
   public String getStockBatch() {
@@ -180,7 +163,7 @@ public class StockMajorInfo extends Entity {
     this.binUsgae = binUsgae;
   }
 
-  public boolean isConformAlclmtdays() {
+  public boolean isConformAlclmtdays(int alclmtdays) {
     if (alclmtdays <= 0)
       return true;
 

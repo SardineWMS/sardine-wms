@@ -7,7 +7,7 @@
  * 修改历史：
  * 2014-8-20 - zhangsai - 创建。
  */
-package com.hd123.sardine.wms.service.out.wave;
+package com.hd123.sardine.wms.api.out.wave;
 
 /**
  * 波次货位用途。

@@ -16,24 +16,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
-import com.hd123.sardine.wms.api.basicInfo.bin.Bin;
-import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.out.acceptance.AcceptanceBill;
 import com.hd123.sardine.wms.api.out.acceptance.AcceptanceBillItem;
-import com.hd123.sardine.wms.api.out.acceptance.AcceptanceBillState;
 import com.hd123.sardine.wms.api.stock.StockExtendInfo;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.api.stock.StockShiftRule;
 import com.hd123.sardine.wms.api.stock.StockState;
-import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.task.TaskService;
-import com.hd123.sardine.wms.api.task.TaskState;
-import com.hd123.sardine.wms.api.task.TaskType;
 import com.hd123.sardine.wms.common.entity.SourceBill;
 import com.hd123.sardine.wms.common.exception.WMSException;
-import com.hd123.sardine.wms.common.query.PageQueryDefinition;
-import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.service.util.StockBatchUtils;
@@ -122,7 +114,7 @@ public class AcceptanceHandler {
         StockState.locked, StockState.normal);
   }
 
-  public void generateAndSavePickUpTasks(AcceptanceBill acceptanceBill) throws WMSException {
+  public void generateAndSavePickUpTasks(AcceptanceBill acceptanceBill) throws WMSException {/*
     Assert.assertArgumentNotNull(acceptanceBill, "acceptanceBill");
 
     List<Task> pickTasks = new ArrayList<>();
@@ -175,9 +167,9 @@ public class AcceptanceHandler {
     if (AcceptanceBillState.Approved.equals(acceptanceBill.getState()))
       shiftInOnWayStock(acceptanceBill);
     taskService.insert(pickTasks);
-  }
+  */}
 
-  public void abortUnFinishPickTasks(String acceptanceBillUuid) throws WMSException {
+  public void abortUnFinishPickTasks(String acceptanceBillUuid) throws WMSException {/*
     Assert.assertArgumentNotNull(acceptanceBillUuid, "acceptanceBillUuid");
 
     PageQueryDefinition definition = new PageQueryDefinition();
@@ -195,5 +187,5 @@ public class AcceptanceHandler {
     for (Task task : inProgressTasks.getRecords()) {
       taskService.abort(task.getUuid(), task.getVersion());
     }
-  }
+  */}
 }

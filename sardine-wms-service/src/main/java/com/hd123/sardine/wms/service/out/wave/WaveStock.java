@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.hd123.sardine.wms.api.out.wave.WaveBinUsage;
 import com.hd123.sardine.wms.common.entity.UCN;
 
 /**
@@ -31,18 +32,18 @@ public class WaveStock implements Serializable, Comparable<WaveStock> {
   private WaveBinUsage waveBinUsage;
   private boolean wholeContainerUsable;
   private String containerBarcode;
-  private UCN article;
+  private String articleUuid;
   private String qpcStr;
   private BigDecimal usableQty = BigDecimal.ZERO;
   private BigDecimal pickQty = BigDecimal.ZERO;
   private Date produceDate;
 
-  public UCN getArticle() {
-    return article;
+  public String getArticleUuid() {
+    return articleUuid;
   }
 
-  public void setArticle(UCN article) {
-    this.article = article;
+  public void setArticleUuid(String articleUuid) {
+    this.articleUuid = articleUuid;
   }
 
   /** 货位代码 */

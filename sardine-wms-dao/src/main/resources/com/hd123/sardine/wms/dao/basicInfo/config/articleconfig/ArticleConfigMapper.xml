@@ -61,6 +61,18 @@
 		and t.companyUuid =
 		#{companyUuid,jdbcType=VARCHAR}
 	</select>
+	
+	<select id="queryArticleConfigByArticleUuids" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select t.* from db_proxy.sardine_article_config t
+		where t.companyUuid =
+		#{companyUuid,jdbcType=VARCHAR} and 
+		t.articleUuid in 
+		<foreach collection="articleUuids" item="item" index="index" open="("
+				separator="," close=")">
+				#{item}
+	    </foreach>
+	</select>
 
 	<update id="update" parameterType="ArticleConfig">
 		update db_proxy.sardine_article_config

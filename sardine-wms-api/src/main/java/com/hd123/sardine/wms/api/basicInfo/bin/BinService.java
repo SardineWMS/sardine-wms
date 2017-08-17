@@ -222,6 +222,17 @@ public interface BinService {
       throws IllegalArgumentException, VersionConflictException, WMSException;
 
   /**
+   * 锁定货位，临时状态，防止货位使用并发
+   * 
+   * @param uuid
+   *          货位UUID
+   * @param version
+   *          货位版本号
+   * @throws WMSException
+   */
+  void lock(String uuid, long version) throws WMSException;
+
+  /**
    * 根据货位范围查询货位集合
    * <p>
    * 从小到大排序

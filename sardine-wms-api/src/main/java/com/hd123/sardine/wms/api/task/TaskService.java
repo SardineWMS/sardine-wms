@@ -75,11 +75,13 @@ public interface TaskService {
    *          版本号
    * @param toBinCode
    *          目标货位，如果为空则使用指令原目标货位
+   * @param toContainerBarcode
+   *          上架的目标容器，如果为空，表示上架后没有容器
    * @throws IllegalArgumentException
    * @throws VersionConflictException
    * @throws WMSException
    */
-  void putaway(String uuid, long version, String toBinCode)
+  void putaway(String uuid, long version, String toBinCode, String toContainerBarcode)
       throws IllegalArgumentException, VersionConflictException, WMSException;
 
   /**
@@ -92,76 +94,42 @@ public interface TaskService {
   PageQueryResult<Task> query(PageQueryDefinition definition);
 
   /**
-   * 按照商品移库规则批量保存商品移库指令
-   * 
-   * @param articleMoveRules
-   *          移库条件
-   * @throws IllegalArgumentException
-   * @throws WMSException
-   */
-  List<Task> saveArticleMoveTask(List<ArticleMoveRule> articleMoveRules)
-      throws IllegalArgumentException, WMSException;
-
-  /**
-   * 按照商品移库规则批量保存商品移库指令，并执行生成的移库指令
-   * 
-   * @param articleMoveRules
-   *          移库条件
-   * @throws IllegalArgumentException
-   * @throws WMSException
-   */
-  void saveAndMoveArticleMoveTask(List<ArticleMoveRule> articleMoveRules)
-      throws IllegalArgumentException, WMSException;
-
-  /**
-   * 按容器移库规则保存移库指令
-   * 
-   * @param containerMoveRules
-   *          移库条件
-   * @throws IllegalArgumentException
-   * @throws WMSException
-   */
-  List<Task> saveContainerMoveTask(List<ContainerMoveRule> containerMoveRules)
-      throws IllegalArgumentException, WMSException;
-
-  /**
-   * 按容器移库规则保存移库指令，并执行生成的移库指令
-   * 
-   * @param containerMoveRules
-   *          移库条件
-   * @throws IllegalArgumentException
-   * @throws WMSException
-   */
-  void saveAndMoveContainerMoveTask(List<ContainerMoveRule> containerMoveRules)
-      throws IllegalArgumentException, WMSException;
-
-  /**
-   * 商品移库
+   * 执行移库指令
    * 
    * @param uuid
-   *          商品移库指令UUID
+   *          指令UUID，not null
    * @param version
    *          版本号
-   * @param realQty
-   *          移库实际数量
-   * @throws IllegalArgumentException
-   * @throws VersionConflictException
-   * @throws WMSException
+   * @param qty
+   *          数量，为空时取指令原数量
    */
-  void articleMove(String uuid, long version, BigDecimal realQty)
-      throws IllegalArgumentException, VersionConflictException, WMSException;
+  void move(String uuid, long version, BigDecimal qty);
 
   /**
-   * 容器移库
+   * 执行补货指令
    * 
    * @param uuid
-   *          容器移库指令UUID
+   *          指令UUID，not null
    * @param version
-   *          指令版本号
-   * @throws IllegalArgumentException
-   * @throws VersionConflictException
+   *          版本号
    * @throws WMSException
    */
-  void containerMove(String uuid, long version)
-      throws IllegalArgumentException, VersionConflictException, WMSException;
+  void rpl(String uuid, long version) throws WMSException;
+
+  /**
+   * 执行退货下架指令
+   * 
+   * @param uuid
+   *          指令UUID， not null
+   * @param version
+   *          版本号
+   * @param binCode
+   *          下架目标货位，为空取指令原目标货位
+   * @param containerBarcode
+   *          目标容器，not null
+   * @param qty
+   *          下架数量，为空时取指令原数量
+   */
+  void rtnShelf(String uuid, long version, String binCode, String containerBarcode, BigDecimal qty)
+      throws WMSException;
 }

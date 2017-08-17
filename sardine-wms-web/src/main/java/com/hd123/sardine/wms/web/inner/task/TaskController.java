@@ -111,7 +111,7 @@ public class TaskController extends BaseController {
       return resp;
 
     try {
-      taskService.saveArticleMoveTask(articleMoveRules);
+      // taskService.saveArticleMoveTask(articleMoveRules);
     } catch (Exception e) {
       return new ErrorRespObject("保存移库规则失败：" + e.getMessage());
     }
@@ -127,7 +127,7 @@ public class TaskController extends BaseController {
       return resp;
 
     try {
-      taskService.saveAndMoveArticleMoveTask(articleMoveRules);
+      // taskService.saveAndMoveArticleMoveTask(articleMoveRules);
     } catch (Exception e) {
       return new ErrorRespObject("保存并移库失败：" + e.getMessage());
     }
@@ -143,7 +143,7 @@ public class TaskController extends BaseController {
       return resp;
 
     try {
-      taskService.saveContainerMoveTask(containereMoveRules);
+      // taskService.saveContainerMoveTask(containereMoveRules);
     } catch (Exception e) {
       return new ErrorRespObject("保存容器移库规则失败：" + e.getMessage());
     }
@@ -159,7 +159,7 @@ public class TaskController extends BaseController {
       return resp;
 
     try {
-      taskService.saveAndMoveContainerMoveTask(containereMoveRules);
+      // taskService.saveAndMoveContainerMoveTask(containereMoveRules);
     } catch (Exception e) {
       return new ErrorRespObject("保存并移库失败：" + e.getMessage());
     }
@@ -175,7 +175,7 @@ public class TaskController extends BaseController {
     RespObject resp = new RespObject();
 
     try {
-      taskService.articleMove(uuid, version, realQty);
+      // taskService.articleMove(uuid, version, realQty);
     } catch (Exception e) {
       return new ErrorRespObject("保存并移库失败：" + e.getMessage());
     }
@@ -190,7 +190,7 @@ public class TaskController extends BaseController {
     RespObject resp = new RespObject();
 
     try {
-      taskService.containerMove(uuid, version);
+      // taskService.containerMove(uuid, version);
     } catch (Exception e) {
       return new ErrorRespObject("保存并移库失败：" + e.getMessage());
     }

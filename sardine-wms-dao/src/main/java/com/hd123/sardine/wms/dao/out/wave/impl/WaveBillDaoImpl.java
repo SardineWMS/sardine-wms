@@ -15,11 +15,12 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.out.alcntc.WaveAlcNtcItem;
+import com.hd123.sardine.wms.api.out.wave.PickRule;
 import com.hd123.sardine.wms.api.out.wave.WaveBill;
-import com.hd123.sardine.wms.api.out.wave.WaveBillItem;
+import com.hd123.sardine.wms.api.out.wave.WavePickUpItem;
+import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.dao.out.wave.WaveBillDao;
@@ -30,15 +31,20 @@ import com.hd123.sardine.wms.dao.out.wave.WaveBillDao;
  */
 public class WaveBillDaoImpl extends BaseDaoImpl<WaveBill> implements WaveBillDao {
   public static final String MAPPER_GETBYBILLNUMBER = "getByBillNumber";
-  public static final String MAPPER_INSERTITEM = "insertItem";
-  public static final String MAPPER_REMOVEITEMS = "removeItems";
-  public static final String MAPPER_GETITEMSBYWAVEBILLUUID = "getItemsByWaveBillUuid";
   public static final String QUERYWAVEALCNTCITEMS = "queryWaveAlcNtcItems";
   public static final String UPDATEWAVEALCNTCITEMSSTATE = "updateWaveAlcNtcItemsState";
   public static final String SAVEWAVEALCNTCITEMS = "saveWaveAlcNtcItems";
-  public static final String SAVEPICKTASK = "savePickTask";
-  public static final String SAVERPLTASK = "saveRplTask";
-  public static final String LOCKSTOCK = "lockStock";
+  public static final String REMOVEWAVEALCNTCITEMS = "removeWaveAlcNtcItems";
+  public static final String QUERYWAVEARTICLEUUIDS = "queryWaveArticleUuids";
+  public static final String SAVEWAVEPICKUPITEMS = "saveWavePickUpItems";
+  public static final String QUERYPICKRULES = "queryPickRules";
+  public static final String QUERYPICKITEM = "queryPickItem";
+  public static final String INSERTRPLTASKS = "insertRplTasks";
+  public static final String QUERYRPLTASKS = "queryRplTasks";
+  public static final String INSERTRPLTASKTOTASK = "insertRplTaskToTask";
+  public static final String QUERYPICKITEMBYPICKRULE = "queryPickItemByPickRule";
+  public static final String REMOVERPLTASKS = "removeRplTasks";
+  public static final String REMOVEWAVEPICKUPITEMS = "removeWavePickUpItems";
 
   @Override
   public WaveBill getByBillNumber(String billNumber) {
@@ -47,31 +53,6 @@ public class WaveBillDaoImpl extends BaseDaoImpl<WaveBill> implements WaveBillDa
     Map<String, Object> map = ApplicationContextUtil.map();
     map.put("billNumber", billNumber);
     return getSqlSession().selectOne(generateStatement(MAPPER_GETBYBILLNUMBER), map);
-  }
-
-  @Override
-  public void insertItems(List<WaveBillItem> items) {
-    Assert.assertArgumentNotNull(items, "items");
-    for (WaveBillItem item : items) {
-      getSqlSession().insert(generateStatement(MAPPER_INSERTITEM), item);
-    }
-  }
-
-  @Override
-  public void removeItems(String waveBillUuid) {
-    Assert.assertArgumentNotNull(waveBillUuid, "waveBillUuid");
-
-    getSqlSession().delete(generateStatement(MAPPER_REMOVEITEMS), waveBillUuid);
-
-  }
-
-  @Override
-  public List<WaveBillItem> getItemsByWaveBillUuid(String waveBillUuid) {
-    if (StringUtil.isNullOrBlank(waveBillUuid))
-      return new ArrayList<>();
-
-    return getSqlSession().selectList(generateStatement(MAPPER_GETITEMSBYWAVEBILLUUID),
-        waveBillUuid);
   }
 
   @Override
@@ -98,37 +79,90 @@ public class WaveBillDaoImpl extends BaseDaoImpl<WaveBill> implements WaveBillDa
   }
 
   @Override
-  public void saveWaveAlcNtcItems(String sql) {
-    if (StringUtil.isNullOrBlank(sql))
+  public void saveWaveAlcNtcItems(String waveUuid) {
+    if (StringUtil.isNullOrBlank(waveUuid))
       return;
 
-    insert(SAVEWAVEALCNTCITEMS, sql);
+    insert(SAVEWAVEALCNTCITEMS, waveUuid);
   }
 
   @Override
-  public void savePickTask(String sql) {
-    if (StringUtil.isNullOrBlank(sql))
+  public void removeWaveAlcNtcItems(String waveBillUuid) {
+    if (StringUtil.isNullOrBlank(waveBillUuid))
       return;
 
-    insert(SAVEPICKTASK, sql);
+    delete(REMOVEWAVEALCNTCITEMS, waveBillUuid);
   }
 
   @Override
-  public void saveRplTask(String sql) {
-    if (StringUtil.isNullOrBlank(sql))
-      return;
+  public List<String> queryWaveArticleUuids(String waveBillUuid) {
+    if (StringUtil.isNullOrBlank(waveBillUuid))
+      return new ArrayList<String>();
 
-    insert(SAVERPLTASK, sql);
+    return selectList(QUERYWAVEARTICLEUUIDS, waveBillUuid);
   }
 
   @Override
-  public void lockStock(String waveBillNumber, String waveBillUuid) {
-    if (StringUtil.isNullOrBlank(waveBillUuid) || StringUtil.isNullOrBlank(waveBillNumber))
+  public void saveWavePickUpItems(List<WavePickUpItem> pickResult) {
+    if (pickResult.isEmpty())
       return;
 
-    Map<String, Object> map = ApplicationContextUtil.map();
-    map.put("waveBillNumber", waveBillNumber);
-    map.put("waveBillUuid", waveBillUuid);
-    selectList(LOCKSTOCK, map);
+    for (WavePickUpItem pitem : pickResult)
+      insert(SAVEWAVEPICKUPITEMS, pitem);
+  }
+
+  @Override
+  public List<PickRule> queryPickRules(String uuid) {
+    if (StringUtil.isNullOrBlank(uuid))
+      return new ArrayList<PickRule>();
+
+    return selectList(QUERYPICKRULES, uuid);
+  }
+
+  @Override
+  public List<WavePickUpItem> queryPickItem(String waveUuid) {
+    if (StringUtil.isNullOrBlank(waveUuid))
+      return new ArrayList<WavePickUpItem>();
+
+    return selectList(QUERYPICKITEM, waveUuid);
+  }
+
+  @Override
+  public void insertRplTasks(List<Task> rplTasks) {
+    if (rplTasks.isEmpty())
+      return;
+
+    for (Task task : rplTasks)
+      insert(INSERTRPLTASKS, task);
+  }
+
+  @Override
+  public List<Task> queryRplTasks(String waveUuid) {
+    if (StringUtil.isNullOrBlank(waveUuid))
+      return new ArrayList<Task>();
+
+    return selectList(QUERYRPLTASKS, waveUuid);
+  }
+
+  @Override
+  public void insertRplTaskToTask(String waveUuid) {
+    selectList(INSERTRPLTASKTOTASK, waveUuid);
+  }
+
+  @Override
+  public List<WavePickUpItem> queryPickItemByPickRule(PickRule pickRule) {
+    if (pickRule == null)
+      return new ArrayList<WavePickUpItem>();
+    return selectList(QUERYPICKITEMBYPICKRULE, pickRule);
+  }
+
+  @Override
+  public void removeRplTasks(String waveUuid) {
+    delete(REMOVERPLTASKS, waveUuid);
+  }
+
+  @Override
+  public void removeWavePickUpItems(String waveUuid) {
+    delete(REMOVEWAVEPICKUPITEMS, waveUuid);
   }
 }

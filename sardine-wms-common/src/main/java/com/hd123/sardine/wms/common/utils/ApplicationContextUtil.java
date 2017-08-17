@@ -32,6 +32,8 @@ public class ApplicationContextUtil {
 
   private static ThreadLocal<String> DBNAME_LOCAL = new ThreadLocal<String>();
 
+  private static ThreadLocal<Boolean> MANAGECONTAINER_LOCAL = new ThreadLocal<Boolean>();
+
   private static ThreadLocal<OperateContext> OPERATECONTEXT_LOCAL = new ThreadLocal<OperateContext>();
 
   /**
@@ -43,6 +45,12 @@ public class ApplicationContextUtil {
     if (StringUtil.isNullOrBlank(COMPANYUUID_LOCAL.get()))
       throw new IllegalArgumentException("登录信息为空，要重新登录咯");
     return COMPANYUUID_LOCAL.get();
+  }
+
+  public static boolean manageContainer() {
+    if (MANAGECONTAINER_LOCAL.get() == null)
+      return false;
+    return MANAGECONTAINER_LOCAL.get().booleanValue();
   }
 
   public static String getCompanyCode() {

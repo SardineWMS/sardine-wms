@@ -21,18 +21,8 @@ public enum BinState {
   free("空闲"),
   /** 使用中 */
   using("使用中"),
-  /** 上架异常锁定 */
-  errorLock("上架异常锁定"),
-  /** 平移锁定 */
-  moveLock("平移锁定"),
-  /** 集货锁定 */
-  collectionLock("集货锁定"),
-  /** 装车锁定 */
-  shipLock("装车锁定"),
-  /** 封仓锁定 */
-  closeLock("封仓锁定"),
-  /** 上架锁定 */
-  putawayLock("上架锁定");
+  /** 锁定，临时状态 */
+  lock("锁定");
 
   private String caption;
 

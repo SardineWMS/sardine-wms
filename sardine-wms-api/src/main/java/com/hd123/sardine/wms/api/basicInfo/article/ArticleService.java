@@ -269,4 +269,6 @@ public interface ArticleService {
      * @throws IllegalArgumentException
      */
     List<ArticleQpc> queryArticleQpcs(String articleUuid) throws IllegalArgumentException;
+    
+    List<Article> queryArticles(List<String> aticleUuids);
 }

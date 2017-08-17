@@ -12,6 +12,7 @@ package com.hd123.sardine.wms.service.out.wave;
 import java.math.BigDecimal;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.sardine.wms.api.out.wave.WaveBinUsage;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.validator.Validator;
 

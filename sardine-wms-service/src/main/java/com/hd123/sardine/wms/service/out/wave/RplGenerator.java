@@ -14,16 +14,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.sardine.wms.api.basicInfo.article.Article;
 import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.ArticleConfig;
 import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.PickBinStockLimit;
 import com.hd123.sardine.wms.api.basicInfo.pickarea.PickArea;
 import com.hd123.sardine.wms.api.basicInfo.pickarea.RplQtyMode;
+import com.hd123.sardine.wms.api.task.Task;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
-import com.hd123.sardine.wms.common.utils.StockConstants;
-import com.hd123.sardine.wms.dao.out.wave.RplTask;
 
 /**
  * 补货单生成器
@@ -31,12 +34,12 @@ import com.hd123.sardine.wms.dao.out.wave.RplTask;
  * @author zhangsai
  * 
  */
-public class RplGenerator1 {
+public class RplGenerator {
   // 补货信息采集器，由调用者实现、传入
   private RplCollector collector;
 
   /** 补货单集合 */
-  private List<RplTask> rplTasks = new ArrayList<RplTask>();
+  private List<Task> rplTasks = new ArrayList<Task>();
 
   /** 可用于补货的存储位库存信息 */
   private List<RplStockInfo> rplStockInfos = new ArrayList<RplStockInfo>();
@@ -44,7 +47,7 @@ public class RplGenerator1 {
   /** 整件拣货位补货信息 */
   private List<RplRequestInfo> rplInfos = new ArrayList<RplRequestInfo>();
 
-  // private String articleUuid;
+  private Article article;
 
   private PickArea pickArea;
 
@@ -56,16 +59,18 @@ public class RplGenerator1 {
    * @param collector
    *          补货信息收集器，not null
    */
-  public RplGenerator1(RplCollector collector, ArticleConfig articleConfig) {
+  public RplGenerator(RplCollector collector, ArticleConfig articleConfig, PickArea pickArea,
+      Article article) {
     Assert.assertArgumentNotNull(collector, "collector");
+    Assert.assertArgumentNotNull(articleConfig, "articleConfig");
+    Assert.assertArgumentNotNull(pickArea, "pickArea");
+    Assert.assertArgumentNotNull(article, "article");
 
     this.collector = collector;
     this.articleConfig = articleConfig;
+    this.article = article;
+    this.pickArea = pickArea;
   }
-
-  // public void setArticle(String articleUuid) {
-  // this.articleUuid = articleUuid;
-  // }
 
   /**
    * 根据补货来源库存信息{@link RplCollector#getStockInfos()}、
@@ -81,11 +86,12 @@ public class RplGenerator1 {
     this.rplStockInfos = collector.getStockInfos();
 
     // 非整托补到拆零拣货位
+    wholeContainerRplToSplitBin();
     rplToSplitBin();
   }
 
   /** 获取补货生成的补货单集合 */
-  public List<RplTask> getRplTasks() {
+  public List<Task> getRplTasks() {
     return rplTasks;
   }
 
@@ -101,18 +107,18 @@ public class RplGenerator1 {
     for (RplStockInfo info : infos) {
       if (BigDecimal.ZERO.compareTo(rplQty) >= 0)
         break;
-      RplTask task = new RplTask();
-      task.setArticle(info.getArticle());
+      Task task = new Task();
+      task.setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
       task.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       task.setFromBinCode(info.getBinCode());
       task.setFromContainerBarcode(info.getContainerBarcode());
       task.setProductionDate(info.getProductionDate());
       task.setQpcStr(info.getQpcStr());
       task.setStockBatch(info.getStockBatch());
-      task.setSupplier(info.getSupplier());
+      task.setSupplier(new UCN(info.getSupplierUuid(), null, null));
       task.setValidDate(info.getValidDate());
       task.setToBinCode(rplInfo.getBinCode());
-      task.setToContainerBarcode(StockConstants.VISUAL_STOCK_CONTAINERBARCODE);
+      task.setToContainerBarcode(info.getContainerBarcode());
       if (rplQty.compareTo(info.getAvailableQty()) >= 0)
         task.setQty(info.getAvailableQty());
       else
@@ -143,6 +149,51 @@ public class RplGenerator1 {
     }
 
     return infos;
+  }
+
+  private void wholeContainerRplToSplitBin() {
+    if (rplInfos.isEmpty())
+      return;
+
+    for (RplRequestInfo rplInfo : rplInfos) {
+      // 如果补货数量等于0，跳过该补货信息
+      if (rplInfo.needRpl() == false)
+        continue;
+
+      wholeContainerRpl(rplInfo);
+    }
+  }
+
+  private void wholeContainerRpl(RplRequestInfo rplInfo) {
+    assert rplInfo != null;
+
+    for (RplStockInfo rplStockInfo : rplStockInfos) {
+      if (rplInfo.needRpl() == false) {
+        return;
+      }
+
+      if (rplStockInfo.getWarehouse().getUuid().equals(rplInfo.getWareHouse().getUuid()) == false) {
+        continue;
+      }
+
+      // 补货来源库存规格与补货规格不一致的跳过
+      if (rplStockInfo.getQpcStr().equals(rplInfo.getQpcStr()) == false) {
+        continue;
+      }
+
+      List<RplStockInfo> infos = findStockInfos(rplStockInfo.getBinCode(),
+          rplStockInfo.getContainerBarcode(), rplStockInfo.getQpcStr());
+
+      if (CollectionUtils.isEmpty(infos)) {
+        continue;
+      }
+      BigDecimal totalQty = caculateTotalQty(infos);
+      if (totalQty.compareTo(rplInfo.getToRplQty()) > 0) {
+        break;
+      }
+
+      generateRplTask(infos, rplInfo, totalQty);
+    }
   }
 
   /**

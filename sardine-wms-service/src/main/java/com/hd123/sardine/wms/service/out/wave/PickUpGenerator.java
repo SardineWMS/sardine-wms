@@ -12,29 +12,28 @@ package com.hd123.sardine.wms.service.out.wave;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
+import com.hd123.sardine.wms.api.basicInfo.article.Article;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.ArticleConfig;
-import com.hd123.sardine.wms.api.basicInfo.pickarea.OperateMode;
+import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.pickarea.PickArea;
 import com.hd123.sardine.wms.api.out.alcntc.WaveAlcNtcItem;
+import com.hd123.sardine.wms.api.out.wave.WaveBinUsage;
+import com.hd123.sardine.wms.api.out.wave.WavePickUpItem;
 import com.hd123.sardine.wms.api.stock.StockMajorInfo;
 import com.hd123.sardine.wms.api.stock.StockState;
+import com.hd123.sardine.wms.common.entity.OperateMode;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
-import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
-import com.hd123.sardine.wms.common.utils.DateHelper;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.common.utils.StockConstants;
-import com.hd123.sardine.wms.dao.out.wave.PickTask;
 
 /**
  * 拣货单生成器。
@@ -42,16 +41,13 @@ import com.hd123.sardine.wms.dao.out.wave.PickTask;
  * @author zhangsai
  * 
  */
-public class PickUpGenerator1 {
-  // private static final Logger LOGGER =
-  // LoggerFactory.getLogger(PickUpGenerator.class);
-
+public class PickUpGenerator {
   private String waveBillNumber;
   private String companyUuid;
-  private String articleUuid;
+  private Article article;
   private List<WaveAlcNtcItem> alcNtcItems = new ArrayList<WaveAlcNtcItem>();
   private List<WaveProcessorItem> waveProcessorItems = new ArrayList<WaveProcessorItem>();
-  private List<PickTask> pickTasks = new ArrayList<PickTask>();
+  private List<WavePickUpItem> result = new ArrayList<WavePickUpItem>();
 
   private List<StockMajorInfo> stocks = new ArrayList<StockMajorInfo>();
   private List<WaveStock> waveStocks = new ArrayList<WaveStock>();
@@ -60,18 +56,10 @@ public class PickUpGenerator1 {
   private List<WavePickBin> fixBins = new ArrayList<WavePickBin>();
 
   private PickArea area;
-  private Map<String, String> pickOrders;
   private ArticleConfig articleConfig;
 
   public void setArticleConfig(ArticleConfig articleConfig) {
     this.articleConfig = articleConfig;
-  }
-
-  public void setPickOrders(Map<String, String> pickOrders) {
-    if (pickOrders == null)
-      this.pickOrders = new HashMap<String, String>();
-    else
-      this.pickOrders = pickOrders;
   }
 
   /**
@@ -85,12 +73,12 @@ public class PickUpGenerator1 {
    *          not null, not empty
    * @throws IllegalArgumentException
    */
-  public PickUpGenerator1(String articleUuid, String waveBillNumber, String companyUuid) {
-    Assert.assertArgumentNotNull(articleUuid, "articleUuid");
+  public PickUpGenerator(Article article, String waveBillNumber, String companyUuid) {
+    Assert.assertArgumentNotNull(article, "article");
     Assert.assertArgumentNotNull(waveBillNumber, "waveBillNumber");
     Assert.assertArgumentNotNull(companyUuid, "companyUuid");
 
-    this.articleUuid = articleUuid;
+    this.article = article;
     this.waveBillNumber = waveBillNumber;
     this.companyUuid = companyUuid;
   }
@@ -111,8 +99,8 @@ public class PickUpGenerator1 {
   }
 
   /** 获取生成的拣货明细 */
-  public List<PickTask> getPickTasks() {
-    return pickTasks;
+  public List<WavePickUpItem> getPickResult() {
+    return result;
   }
 
   /** 获取波次通知单明细 */
@@ -121,32 +109,19 @@ public class PickUpGenerator1 {
   }
 
   public void build() throws WMSException {
-    buildArticle();
-    buildWaveAlcNtcItems();
     buildStock();
     buildWavePickBins();
     buildWaveProcessorItems();
 
-    pickTasks.clear();
+    result.clear();
+    
+    for (WaveProcessorItem item : waveProcessorItems) {
+      pickFromStorageBin(item);
+    }
 
     for (WaveProcessorItem item : waveProcessorItems) {
       pickFromDynamicBin(item);
       pickFromFixBin(item);
-    }
-  }
-
-  private void buildArticle() {
-    if (alcNtcItems.isEmpty())
-      return;
-  }
-
-  private void buildWaveAlcNtcItems() {
-    if (alcNtcItems.isEmpty()) {
-      return;
-    }
-
-    for (WaveAlcNtcItem item : alcNtcItems) {
-      item.setOrderNo(pickOrders.get(item.getCustomer().getUuid()));
     }
   }
 
@@ -156,7 +131,7 @@ public class PickUpGenerator1 {
   private void buildStock() {
     String fixBinCode = articleConfig == null ? null : articleConfig.getFixedPickBin();
     for (StockMajorInfo majorInfo : stocks) {
-      if (majorInfo.getArticle().getUuid().equals(articleUuid) == false)
+      if (majorInfo.getArticleUuid().equals(article.getUuid()) == false)
         continue;
 
       if (majorInfo.getState().equals(StockState.normal) == false
@@ -175,7 +150,7 @@ public class PickUpGenerator1 {
           waveStock.setWaveBinUsage(WaveBinUsage.DynamicPickBin);
         else
           continue;
-        waveStock.setArticle(majorInfo.getArticle());
+        waveStock.setArticleUuid(majorInfo.getArticleUuid());
         waveStock.setBinCode(majorInfo.getBinCode());
         waveStock.setContainerBarcode(majorInfo.getContainerBarcode());
         waveStock.setProduceDate(majorInfo.getProductionDate());
@@ -207,13 +182,14 @@ public class PickUpGenerator1 {
       if (Objects.equals(majorInfo.getContainerBarcode(), containerBarcode) == false)
         continue;
 
-      if (majorInfo.getArticle().getUuid().equals(articleUuid) == false)
+      if (majorInfo.getArticleUuid().equals(article.getUuid()) == false)
         continue;
 
       if (majorInfo.getQpcStr().equals(qpcStr) == false)
         continue;
 
-      if (majorInfo.isConformAlclmtdays() == false && binUsage.equals(WaveBinUsage.StorageBin))
+      if (majorInfo.isConformAlclmtdays(article.getAlcLmtDays()) == false
+          && binUsage.equals(WaveBinUsage.StorageBin))
         continue;
 
       if (binUsage.equals(WaveBinUsage.DynamicPickBin)
@@ -270,7 +246,7 @@ public class PickUpGenerator1 {
       if (Objects.equals(majorInfo.getContainerBarcode(), containerBarcode) == false)
         continue;
 
-      if (majorInfo.getArticle().getUuid().equals(articleUuid) == false)
+      if (majorInfo.getArticleUuid().equals(article.getUuid()) == false)
         return false;
 
       if (majorInfo.getQpcStr().equals(qpcStr) == false)
@@ -279,7 +255,7 @@ public class PickUpGenerator1 {
       if (majorInfo.getState().equals(StockState.normal) == false)
         return false;
 
-      if (majorInfo.isConformAlclmtdays() == false)
+      if (majorInfo.isConformAlclmtdays(article.getAlcLmtDays()) == false)
         return false;
     }
     return true;
@@ -323,13 +299,13 @@ public class PickUpGenerator1 {
       if (Objects.equals(majorInfo.getContainerBarcode(), containerBarcode) == false)
         continue;
 
-      if (majorInfo.getArticle().getUuid().equals(articleUuid) == false)
+      if (majorInfo.getArticleUuid().equals(article.getUuid()) == false)
         return false;
 
       if (majorInfo.getState().equals(StockState.normal) == false)
         return false;
 
-      if (majorInfo.isConformAlclmtdays() == false)
+      if (majorInfo.isConformAlclmtdays(article.getAlcLmtDays()) == false)
         return false;
 
       totalQty = totalQty.add(majorInfo.getQty());
@@ -462,7 +438,7 @@ public class PickUpGenerator1 {
       WaveProcessorItem processorItem = findWaveProcessorItem(alcItem);
       if (processorItem == null) {
         processorItem = new WaveProcessorItem();
-        processorItem.setArticleUuid(articleUuid);
+        processorItem.setArticleUuid(article.getUuid());
         processorItem.setCustomer(alcItem.getCustomer());
         processorItem.setDeliveryType(alcItem.getDeliveryType());
         processorItem.setWarehouse(alcItem.getWrh());
@@ -486,6 +462,43 @@ public class PickUpGenerator1 {
       return processorItem;
     }
     return null;
+  }
+  
+  private void pickFromStorageBin(WaveProcessorItem item) {
+    assert item != null;
+    if (item.needPickUp() == false) {
+      return;
+    }
+
+    for (WavePickBin pickBin : storageBins) {
+      if (pickBin.warehouse.getUuid().equals(item.getWarehouse().getUuid()) == false) {
+        continue;
+      }
+
+      for (WaveStock stock : waveStocks) {
+        if (item.needPickUp() == false)
+          return;
+
+        if (pickBin.binCode.equals(stock.getBinCode()) == false)
+          continue;
+
+        if (pickBin.pickQpcStr.equals(stock.getQpcStr()) == false) {
+          continue;
+        }
+
+        if (stock.isWholeContainerUsable() == false || stock.isAvailable() == false) {
+          continue;
+        }
+
+        if (item.getToPickUpQty().compareTo(stock.getAvailableQty()) >= 0) {
+          BigDecimal pickQty = stock.getAvailableQty();
+          item.addPickQty(pickQty);
+          stock.addPickQty(pickQty);
+          pickBin.pickQty = pickBin.pickQty.add(pickQty);
+          genPickTasks(item, pickBin, pickQty, stock.getContainerBarcode());
+        }
+      }
+    }
   }
 
   private void pickFromDynamicBin(WaveProcessorItem item) {
@@ -518,7 +531,7 @@ public class PickUpGenerator1 {
         if (pickQty.compareTo(BigDecimal.ZERO) > 0) {
           stock.addPickQty(pickQty);
           pickBin.pickQty = pickBin.pickQty.add(pickQty);
-          genPickTasks(item, pickBin, pickQty);
+          genPickTasks(item, pickBin, pickQty, Container.VIRTUALITY_CONTAINER);
         }
       }
     }
@@ -611,13 +624,13 @@ public class PickUpGenerator1 {
 
       if (pickQty.compareTo(BigDecimal.ZERO) > 0) {
         pickBin.pickQty = pickBin.pickQty.add(pickQty);
-        genPickTasks(item, pickBin, pickQty);
+        genPickTasks(item, pickBin, pickQty, Container.VIRTUALITY_CONTAINER);
       }
     }
   }
 
-  private void genPickTasks(WaveProcessorItem processItem, WavePickBin pickBin,
-      BigDecimal pickQty) {
+  private void genPickTasks(WaveProcessorItem processItem, WavePickBin pickBin, BigDecimal pickQty,
+      String containerBarcode) {
     assert processItem != null;
     assert pickBin != null;
     assert pickQty != null;
@@ -630,36 +643,30 @@ public class PickUpGenerator1 {
       if (pickQty.compareTo(BigDecimal.ZERO) <= 0)
         break;
 
-      PickTask task = new PickTask();
-      task.setArticle(new UCN(alcItem.getArticleUuid(), alcItem.getArticleCode(), null));
-      task.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-      task.setFromBinCode(pickBin.binCode);
-      task.setFromContainerBarcode(StockConstants.VISUAL_STOCK_CONTAINERBARCODE);
-      task.setOwner(alcItem.getCustomer().getUuid());
-      task.setProductionDate(DateHelper.strToDate(StockConstants.VISUAL_MAXDATE));
-      task.setQpcStr(pickBin.pickQpcStr);
-      task.setSourceBillLine(alcItem.getLine());
-      task.setSourceBillLineUuid(alcItem.getAltNtcItemUuid());
-      task.setSourceBillNumber(alcItem.getAlcNtcBillNumber());
-      task.setSourceBillType("配货通知单");
-      task.setSourceBillUuid(alcItem.getAlcNtcBillUuid());
-      task.setStockBatch(StockConstants.VISUAL_STOCK_STOCKBATCH);
-      task.setSupplier(new UCN(StockConstants.VISUAL_STOCK_SUPPLIERUUID, null, null));
-      task.setType(pickBin.operateMethod);
-      task.setWrh(pickBin.warehouse);
-      task.setDeliveryType(alcItem.getDeliveryType());
-      task.setToBinCode(StockConstants.VISUAL_STOCK_BINCODE);
-      task.setToContainerBarcode(StockConstants.VISUAL_STOCK_CONTAINERBARCODE);
-      task.setValidDate(DateHelper.strToDate(StockConstants.VISUAL_MAXDATE));
+      WavePickUpItem pickItem = new WavePickUpItem();
+      pickItem.setAlcNtcBillItemUuid(alcItem.getAltNtcItemUuid());
+      pickItem.setArticleUuid(article.getUuid());
+      ;
+      pickItem.setBinCode(pickBin.binCode);
+      pickItem.setContainerBarcode(containerBarcode);
+      pickItem.setDeliveryType(processItem.getDeliveryType());
+      pickItem.setOperateMethod(pickBin.operateMethod);
+      pickItem.setPickArea(pickBin.pickArea);
+      pickItem.setQpc(pickBin.qpc);
+      pickItem.setQpcStr(pickBin.pickQpcStr);
       if (alcItem.getAlcQty().compareTo(pickQty) >= 0)
-        task.setQty(pickQty);
+        pickItem.setQty(pickQty);
       else
-        task.setQty(alcItem.getAlcQty());
-      task.setCaseQtyStr(QpcHelper.qtyToCaseQtyStr(task.getQty(), task.getQpcStr()));
-      task.setVolume(pickBin.splitVolume);
-      pickTasks.add(task);
+        pickItem.setQty(alcItem.getAlcQty());
+      pickItem.setCaseQtyStr(QpcHelper.qtyToCaseQtyStr(pickItem.getQty(), pickItem.getQpcStr()));
+      pickItem.setCustomer(processItem.getCustomer());
+      // pickItem.setType(pickBin.);
+      pickItem.setVolume(pickBin.splitVolume);
+      pickItem.setWaveBillNumber(waveBillNumber);
+      pickItem.setBinUsage(pickBin.binUsage);
+      result.add(pickItem);
 
-      pickQty = pickQty.subtract(task.getQty());
+      pickQty = pickQty.subtract(pickItem.getQty());
     }
   }
 
@@ -729,13 +736,13 @@ public class PickUpGenerator1 {
         if (majorInfo.getBinUsgae().equals(BinUsage.StorageBin) == false)
           continue;
 
-        if (majorInfo.getArticle().getUuid().equals(articleUuid) == false)
+        if (majorInfo.getArticleUuid().equals(article.getUuid()) == false)
           continue;
 
         if (majorInfo.getState().equals(StockState.normal) == false)
           continue;
 
-        if (majorInfo.isConformAlclmtdays() == false)
+        if (majorInfo.isConformAlclmtdays(article.getAlcLmtDays()) == false)
           continue;
 
         RplStockInfo rplStockInfo = createRplStockInfo(majorInfo);
@@ -750,7 +757,7 @@ public class PickUpGenerator1 {
       assert majorInfo != null;
 
       RplStockInfo rplStockInfo = new RplStockInfo();
-      rplStockInfo.setArticle(majorInfo.getArticle());
+      rplStockInfo.setArticleUuid(majorInfo.getArticleUuid());
       rplStockInfo.setBinCode(majorInfo.getBinCode());
       if (majorInfo.getBinUsgae().equals(BinUsage.StorageBin))
         rplStockInfo.setBinUsage(WaveBinUsage.StorageBin);
@@ -761,7 +768,7 @@ public class PickUpGenerator1 {
       rplStockInfo.setQpcStr(majorInfo.getQpcStr());
       rplStockInfo.setUsableQty(majorInfo.getQty());
       rplStockInfo.setStockBatch(majorInfo.getStockBatch());
-      rplStockInfo.setSupplier(majorInfo.getSupplier());
+      rplStockInfo.setSupplierUuid(majorInfo.getSupplierUuid());
       rplStockInfo.setValidDate(majorInfo.getValidDate());
       rplStockInfo.setWarehouse(majorInfo.getWarehouse());
 
@@ -775,7 +782,7 @@ public class PickUpGenerator1 {
       if (pickBin.pickQty.compareTo(stockQty) <= 0)
         return null;
       RplRequestInfo rplInfo = new RplRequestInfo();
-      rplInfo.setArticleUuid(articleUuid);
+      rplInfo.setArticleUuid(article.getUuid());
       rplInfo.setBinCode(pickBin.binCode);
       rplInfo.setOrgId(companyUuid);
       rplInfo.setPickArea(pickBin.pickArea);

@@ -35,6 +35,7 @@ public class Bin extends VersionedEntity {
   private String binLevel;
   private String binColumn;
   private BinState state = BinState.free;
+  private String locker;
 
   private String companyUuid;
 
@@ -117,6 +118,14 @@ public class Bin extends VersionedEntity {
 
   public void setState(BinState state) {
     this.state = state;
+  }
+  
+  public String getLocker() {
+    return locker;
+  }
+
+  public void setLocker(String locker) {
+    this.locker = locker;
   }
 
   public String getCompanyUuid() {

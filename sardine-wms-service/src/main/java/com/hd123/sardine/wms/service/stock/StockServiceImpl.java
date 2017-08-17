@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
@@ -269,6 +270,52 @@ public class StockServiceImpl implements StockService {
   @Override
   public List<StockMajorInfo> queryStockMajorInfo(StockMajorFilter filter) {
     Assert.assertArgumentNotNull(filter, "filter");
+
+    filter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     return stockDao.queryMajorInfo(filter);
+  }
+
+  @Override
+  public boolean hasBinStock(String binCode) {
+    Assert.assertArgumentNotNull(binCode, "binCode");
+
+    StockFilter stockFilter = new StockFilter();
+    stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    stockFilter.setBinCode(binCode);
+    stockFilter.setPageSize(0);
+
+    List<Stock> stocks = stockDao.queryStocks(stockFilter);
+    if (CollectionUtils.isEmpty(stocks))
+      return false;
+
+    for (Stock stock : stocks) {
+      if (stock.getStockComponent().getState().equals(StockState.normal)
+          || stock.getStockComponent().getState().equals(StockState.locked)
+          || stock.getStockComponent().getState().equals(StockState.forMoveOut))
+        return true;
+    }
+    return false;
+  }
+
+  @Override
+  public boolean hasContainerStock(String containerBarcode) {
+    Assert.assertArgumentNotNull(containerBarcode, "containerBarcode");
+
+    StockFilter stockFilter = new StockFilter();
+    stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    stockFilter.setContainerBarcode(containerBarcode);
+    stockFilter.setPageSize(0);
+
+    List<Stock> stocks = stockDao.queryStocks(stockFilter);
+    if (CollectionUtils.isEmpty(stocks))
+      return false;
+
+    for (Stock stock : stocks) {
+      if (stock.getStockComponent().getState().equals(StockState.normal)
+          || stock.getStockComponent().getState().equals(StockState.locked)
+          || stock.getStockComponent().getState().equals(StockState.forMoveOut))
+        return true;
+    }
+    return false;
   }
 }

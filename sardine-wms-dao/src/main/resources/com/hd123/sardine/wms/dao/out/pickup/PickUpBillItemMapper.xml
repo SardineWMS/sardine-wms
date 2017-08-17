@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.hd123.zjlh.wms.dao.delivery.pickup.PickUpBillItemmapper">
+
+  <resultMap id="PickUpBillItemMap"
+    type="com.hd123.sardine.wms.api.out.pickup.PickUpBillItem">
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="line" property="line" jdbcType="DECIMAL" />
+    <result column="sourceBinCode" property="sourceBinCode"
+      jdbcType="VARCHAR" />
+    <result column="sourceContainerBarcode" property="sourceContainerBarcode"
+      jdbcType="VARCHAR" />
+    <result column="articleuuid" property="article.articleUuid"
+      jdbcType="VARCHAR" />
+    <result column="articleCode" property="article.articleCode"
+      jdbcType="VARCHAR" />
+    <result column="articleName" property="article.articleName"
+      jdbcType="VARCHAR" />
+    <result column="articleSpec" property="article.articleSpec"
+      jdbcType="VARCHAR" />
+    <result column="qpc" property="qpc" jdbcType="DECIMAL" />
+    <result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+    <result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
+    <result column="qty" property="qty" jdbcType="DECIMAL" />
+    <result column="realCaseQtyStr" property="realCaseQtyStr"
+      jdbcType="VARCHAR" />
+    <result column="realQty" property="realQty" jdbcType="DECIMAL" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="alcNtcBillItemUuid" property="alcNtcBillItemUuid"
+      jdbcType="VARCHAR" />
+    <result column="pickTime" property="pickTime" jdbcType="TIMESTAMP" />
+    <result column="pickUpBillUuid" property="pickUpBillUuid"
+      jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="measureUnit" property="article.munit"
+      jdbcType="VARCHAR" />
+  </resultMap>
+
+  <insert id="insert"
+    parameterType="com.hd123.sardine.wms.api.out.pickup.PickUpBillItem">
+    insert into wmspickupbillitem
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uuid != null">
+        uuid,
+      </if>
+      <if test="line != null">
+        line,
+      </if>
+      <if test="sourceBinCode != null">
+        sourceBinCode,
+      </if>
+      <if test="sourceContainerBarcode != null">
+        sourceContainerBarcode,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="article.articleUuid != null">
+        articleUuid,
+      </if>
+      <if test="article.articleCode != null">
+        articleCode,
+      </if>
+      <if test="article.articleName != null">
+        articleName,
+      </if>
+      <if test="article.articleSpec != null">
+        articleSpec,
+      </if>
+      <if test="qpcStr != null">
+        qpcStr,
+      </if>
+      <if test="qpc != null">
+        qpc,
+      </if>
+      <if test="caseQtyStr != null">
+        caseQtyStr,
+      </if>
+      <if test="qty != null">
+        qty,
+      </if>
+      <if test="realCaseQtyStr != null">
+        realCaseQtyStr,
+      </if>
+      <if test="realQty != null">
+        realQty,
+      </if>
+      <if test="alcNtcBillItemUuid != null">
+        alcNtcBillItemUuid,
+      </if>
+      <if test="pickTime != null">
+        pickTime,
+      </if>
+      <if test="pickUpBillUuid != null">
+        pickUpBillUuid,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="article.munit != null">
+        measureUnit,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uuid != null">
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="line != null">
+        #{line,jdbcType=INTEGER},
+      </if>
+      <if test="sourceBinCode != null">
+        #{sourceBinCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceContainerBarcode != null">
+        #{sourceContainerBarcode,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="article.articleUuid != null">
+        #{article.articleUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="article.articleCode != null">
+        #{article.articleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="article.articleName != null">
+        #{article.articleName,jdbcType=VARCHAR},
+      </if>
+      <if test="article.articleSpec != null">
+        #{article.articleSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="qpcStr != null">
+        #{qpcStr,jdbcType=VARCHAR},
+      </if>
+      <if test="qpc != null">
+        #{qpc,jdbcType=DECIMAL},
+      </if>
+      <if test="caseQtyStr != null">
+        #{caseQtyStr,jdbcType=VARCHAR},
+      </if>
+      <if test="qty != null">
+        #{qty,jdbcType=DECIMAL},
+      </if>
+      <if test="realCaseQtyStr != null">
+        #{realCaseQtyStr,jdbcType=VARCHAR},
+      </if>
+      <if test="realQty != null">
+        #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="alcNtcBillItemUuid != null">
+        #{alcNtcBillItemUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="pickTime != null">
+        #{pickTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pickUpBillUuid != null">
+        #{pickUpBillUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="article.munit != null">
+        #{article.munit,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="queryItems" resultMap="PickUpBillItemMap"
+    parameterType="java.lang.String">
+    select *
+    from wmspickupBillItem t
+    where t.pickUpBillUuid
+    =
+    #{pickUpBillUuid,jdbcType=VARCHAR} order by t.line
+  </select>
+
+  <select id="queryItemsByBillUuids" resultMap="PickUpBillItemMap"
+    parameterType="java.util.Map">
+    select *
+    from wmspickupBillItem t
+    where 1=1
+    <if test="pickUpBillUuids != null">
+      and t.pickUpBillUuid in
+      <foreach collection="pickUpBillUuids" item="pickUpBillUuid"
+        index="index" open="(" separator="," close=")">
+        #{pickUpBillUuid}
+      </foreach>
+    </if>
+  </select>
+
+
+  <delete id="removeByUuids" parameterType="java.util.Map">
+    delete from wmspickupBillItem t
+    where t.uuid in
+    <foreach collection="uuidIn" item="item" index="index" open="("
+      separator="," close=")">
+      #{item}
+    </foreach>
+  </delete>
+
+  <delete id="removeItems" parameterType="java.lang.String">
+    delete from
+    wmspickupBillItem
+    t
+    where t.pickUpBillUuid =
+    #{pickUpBillUuid,jdbcType=VARCHAR}
+  </delete>
+
+  <update id="update_realQty" parameterType="java.util.Map">
+    update
+    wmspickupBillItem t
+    <set>
+      <if test="realCaseQtyStr != null">
+        t.realCaseQtyStr = #{realCaseQtyStr,jdbcType=VARCHAR},
+      </if>
+      <if test="realQty != null">
+        t.realQty = #{realQty,jdbcType=DECIMAL} ,
+      </if>
+      <if test="state != null">
+        t.state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        t.remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="pickTime != null">
+        t.pickTime = #{pickTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <where>
+      t.uuid = #{uuid,jdbcType=VARCHAR}
+    </where>
+  </update>
+
+  <delete id="removeByWaveBillNumber" parameterType="java.lang.String">
+    delete from
+    wmspickupBillItem t
+    where t.pickupbilluuid in (select r.uuid from
+    wmspickupBill r
+    where r.wavebillnumber =
+    #{waveBillNumber,jdbcType=VARCHAR})
+  </delete>
+
+  <select id="querySourceBin" resultType="java.lang.String"
+    parameterType="java.lang.String">
+    select distinct t.sourcebincode from wmspickupBillItem
+    t
+    where
+    t.pickupbilluuid in
+    (select r.uuid from wmspickupBill r
+    where
+    r.wavebillnumber =
+    #{waveBillNumber,jdbcType=VARCHAR})
+  </select>
+</mapper>

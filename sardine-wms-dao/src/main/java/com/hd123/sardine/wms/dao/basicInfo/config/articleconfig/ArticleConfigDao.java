@@ -19,12 +19,14 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
  *
  */
 public interface ArticleConfigDao {
-    void insertArticleConfig(ArticleConfig articleConfig);
+  void insertArticleConfig(ArticleConfig articleConfig);
 
-    void updateArticleConfig(ArticleConfig articleConfig);
+  void updateArticleConfig(ArticleConfig articleConfig);
 
-    ArticleConfig getArticleConfig(String articleUuid);
+  ArticleConfig getArticleConfig(String articleUuid);
 
-    List<ArticleConfig> query(PageQueryDefinition definition);
+  List<ArticleConfig> query(PageQueryDefinition definition);
+
+  List<ArticleConfig> queryArticleConfigByArticleUuids(List<String> articleUuids);
 
 }

@@ -12,8 +12,10 @@ package com.hd123.sardine.wms.dao.out.wave;
 import java.util.List;
 
 import com.hd123.sardine.wms.api.out.alcntc.WaveAlcNtcItem;
+import com.hd123.sardine.wms.api.out.wave.PickRule;
 import com.hd123.sardine.wms.api.out.wave.WaveBill;
-import com.hd123.sardine.wms.api.out.wave.WaveBillItem;
+import com.hd123.sardine.wms.api.out.wave.WavePickUpItem;
+import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.common.dao.BaseDao;
 
 /**
@@ -24,21 +26,31 @@ public interface WaveBillDao extends BaseDao<WaveBill> {
 
   WaveBill getByBillNumber(String billNumber);
 
-  void insertItems(List<WaveBillItem> items);
-
-  void removeItems(String waveBillUuid);
-
-  List<WaveBillItem> getItemsByWaveBillUuid(String waveBillUuid);
-
   List<WaveAlcNtcItem> queryWaveAlcNtcItems(String waveBillNumber, List<String> articleUuids);
 
   int updateWaveAlcNtcItemsState(String waveBillNumber, List<String> articleUuids);
 
-  void saveWaveAlcNtcItems(String sql);
+  void removeWaveAlcNtcItems(String waveBillUuid);
+  
+  void saveWaveAlcNtcItems(String waveBillUuid);
 
-  void savePickTask(String sql);
-
-  void saveRplTask(String sql);
-
-  void lockStock(String waveBillNumber, String waveBillUuid);
+  List<String> queryWaveArticleUuids(String waveBillUuid);
+  
+  void saveWavePickUpItems(List<WavePickUpItem> pickResult);
+  
+  List<PickRule> queryPickRules(String uuid);
+  
+  List<WavePickUpItem> queryPickItem(String waveUuid);
+  
+  void insertRplTasks(List<Task> rplTasks);
+  
+  List<Task> queryRplTasks(String waveUuid);
+  
+  void insertRplTaskToTask(String waveUuid);
+  
+  List<WavePickUpItem> queryPickItemByPickRule(PickRule pickRule);
+  
+  void removeRplTasks(String waveUuid);
+  
+  void removeWavePickUpItems(String waveUuid);
 }

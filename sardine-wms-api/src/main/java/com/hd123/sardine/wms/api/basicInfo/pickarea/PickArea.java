@@ -12,6 +12,7 @@ package com.hd123.sardine.wms.api.basicInfo.pickarea;
 import java.math.BigDecimal;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.sardine.wms.common.entity.OperateMode;
 import com.hd123.sardine.wms.common.entity.StandardEntity;
 
 /**

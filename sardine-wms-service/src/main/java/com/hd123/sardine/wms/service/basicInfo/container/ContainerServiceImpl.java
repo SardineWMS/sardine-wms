@@ -20,6 +20,7 @@ import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerState;
 import com.hd123.sardine.wms.api.basicInfo.containertype.ContainerType;
 import com.hd123.sardine.wms.api.basicInfo.containertype.ContainerTypeService;
+import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
@@ -42,6 +43,8 @@ public class ContainerServiceImpl extends BaseWMSService implements ContainerSer
   private ContainerDao dao;
   @Autowired
   private ContainerTypeService containerTypeService;
+  @Autowired
+  private StockService stockService;
 
   @Autowired
   private EntityLogger logger;
@@ -103,6 +106,8 @@ public class ContainerServiceImpl extends BaseWMSService implements ContainerSer
       throw new WMSException("指定的容器不存在！");
     PersistenceUtils.checkVersion(version, container, "容器", container.getBarcode());
 
+    ContainerState oldState = container.getState();
+    String oldPosition = container.getPosition();
     if (state != null)
       container.setState(state);
     if (StringUtil.isNullOrBlank(position) == false)
@@ -113,6 +118,73 @@ public class ContainerServiceImpl extends BaseWMSService implements ContainerSer
 
     logger.injectContext(this, uuid, Container.class.getName(),
         ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_MODIFY, "修改容器状态和目标位置");
+    logger.log(EntityLogger.EVENT_MODIFY,
+        "修改容器状态，原状态：" + oldState.getCaption() + "，新状态：" + container.getState().getCaption()
+            + "；老位置：" + oldPosition + "，新位置：" + container.getPosition());
+  }
+
+  @Override
+  public void recycle(String uuid, long version) throws WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+
+    Container container = dao.get(uuid);
+    if (container == null)
+      throw new WMSException("指定的容器不存在！");
+    PersistenceUtils.checkVersion(version, container, "容器", container.getBarcode());
+
+    ContainerState oldState = container.getState();
+    if (stockService.hasContainerStock(container.getBarcode()))
+      container.setState(ContainerState.STACONTAINERUSEING);
+    else
+      container.setState(ContainerState.STACONTAINERIDLE);
+    container.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(container);
+
+    logger.injectContext(this, uuid, Container.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_MODIFY,
+        "修改容器状态，原状态：" + oldState.getCaption() + "，新状态：" + container.getState().getCaption());
+  }
+
+  @Override
+  public void lock(String uuid, long version) throws WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+
+    Container container = dao.get(uuid);
+    if (container == null)
+      throw new WMSException("指定的容器不存在！");
+    PersistenceUtils.checkVersion(version, container, "容器", container.getBarcode());
+    ContainerState oldState = container.getState();
+    container.setState(ContainerState.STACONTAINERLOCK);
+    container.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(container);
+    logger.injectContext(this, uuid, Container.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_MODIFY,
+        "修改容器状态，原状态：" + oldState.getCaption() + "，新状态：" + container.getState().getCaption());
+  }
+
+  @Override
+  public void using(String uuid, long version, String position) throws WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+
+    Container container = dao.get(uuid);
+    if (container == null)
+      throw new WMSException("指定的容器不存在！");
+    PersistenceUtils.checkVersion(version, container, "容器", container.getBarcode());
+
+    ContainerState oldState = container.getState();
+    if (stockService.hasContainerStock(container.getBarcode())) {
+      container.setState(ContainerState.STACONTAINERUSEING);
+      container.setPosition(position);
+    } else
+      container.setState(ContainerState.STACONTAINERIDLE);
+    container.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(container);
+
+    logger.injectContext(this, uuid, Container.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_MODIFY,
+        "修改容器状态，原状态：" + oldState.getCaption() + "，新状态：" + container.getState().getCaption());
   }
 }
