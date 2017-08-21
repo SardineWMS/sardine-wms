@@ -24,6 +24,4 @@ public interface PickUpBillStockItemDao {
   void saveNew(List<PickUpBillStockItem> items);
 
   List<PickUpBillStockItem> query(String itemUuid);
-  
-  void removeByItem(List<String> itemUuids);
 }

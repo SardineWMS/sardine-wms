@@ -9,10 +9,17 @@
  */
 package com.hd123.sardine.wms.dao.out.pickup.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+
+import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillItem;
 import com.hd123.sardine.wms.common.dao.NameSpaceSupport;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.dao.out.pickup.PickUpBillItemDao;
 
 /**
@@ -21,40 +28,52 @@ import com.hd123.sardine.wms.dao.out.pickup.PickUpBillItemDao;
  */
 public class PickUpBillItemDaoImpl extends NameSpaceSupport implements PickUpBillItemDao {
 
+  private static final String SAVENEW = "saveNew";
+  private static final String QUERYBYPICKUPBILL = "queryByPickUpBill";
+  private static final String UPDATEREALQTY = "updateRealQty";
+  private static final String REMOVEBYPICKUPBILL = "removeByPickUpBill";
+  private static final String REMOVEBYWAVEBILLNUMBER = "removeByWaveBillNumber";
+
   @Override
   public void saveNew(List<PickUpBillItem> items) {
-    // TODO Auto-generated method stub
+    if (CollectionUtils.isNotEmpty(items))
+      return;
 
+    for (PickUpBillItem item : items) {
+      insert(SAVENEW, item);
+    }
   }
 
   @Override
   public List<PickUpBillItem> queryByPickUpBill(String pickUpBillUuid) {
-    // TODO Auto-generated method stub
-    return null;
+    if (StringUtil.isNullOrBlank(pickUpBillUuid))
+      return new ArrayList<PickUpBillItem>();
+
+    return selectList(QUERYBYPICKUPBILL, pickUpBillUuid);
   }
 
   @Override
   public void updateRealQty(PickUpBillItem item) {
-    // TODO Auto-generated method stub
+    Assert.assertArgumentNotNull(item, "item");
 
+    update(UPDATEREALQTY, item);
   }
 
   @Override
   public void removeByPickUpBill(String pickUpBillUuid) {
-    // TODO Auto-generated method stub
+    if (StringUtil.isNullOrBlank(pickUpBillUuid))
+      return;
 
-  }
-
-  @Override
-  public void removeItems(List<String> uuids) {
-    // TODO Auto-generated method stub
-
+    delete(REMOVEBYPICKUPBILL, pickUpBillUuid);
   }
 
   @Override
   public void removeByWaveBillNumber(String waveBillNumber) {
-    // TODO Auto-generated method stub
+    if (StringUtil.isNullOrBlank(waveBillNumber))
+      return;
 
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("waveBillNumber", waveBillNumber);
+    delete(REMOVEBYWAVEBILLNUMBER, map);
   }
-
 }

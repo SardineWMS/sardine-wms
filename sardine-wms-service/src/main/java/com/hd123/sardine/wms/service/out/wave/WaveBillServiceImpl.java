@@ -79,7 +79,7 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
 
     dao.insert(bill);
-    dao.saveWaveAlcNtcItems(bill.getUuid());
+    dao.saveWaveAlcNtcItems(bill.getBillNumber());
     waveHandler.joinWave(bill, null);
 
     logger.injectContext(this, bill.getUuid(), WaveBill.class.getName(),
@@ -107,8 +107,8 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
 
     dao.update(bill);
-    dao.removeWaveAlcNtcItems(bill.getUuid());
-    dao.saveWaveAlcNtcItems(bill.getUuid());
+    dao.removeWaveAlcNtcItems(bill.getBillNumber());
+    dao.saveWaveAlcNtcItems(bill.getBillNumber());
 
     waveHandler.joinWave(bill, waveBill);
 
@@ -181,7 +181,7 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     waveBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     dao.update(waveBill);
 
-    List<String> articleUuids = dao.queryWaveArticleUuids(waveBill.getUuid());
+    List<String> articleUuids = dao.queryWaveArticleUuids(waveBill.getBillNumber());
     return articleUuids;
   }
 
@@ -304,7 +304,7 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     pickUpBillService.approveByWaveBillNumber(waveBill.getBillNumber());
     dao.insertRplTaskToTask(uuid);
     dao.removeRplTasks(uuid);
-    dao.removeWaveAlcNtcItems(uuid);
+    dao.removeWaveAlcNtcItems(waveBill.getBillNumber());
     dao.removeWavePickUpItems(uuid);
     
     waveBill.setState(WaveBillState.inAlc);

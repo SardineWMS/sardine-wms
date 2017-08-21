@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.hd123.zjlh.wms.dao.delivery.pickup.PickUpBillItemmapper">
+<mapper namespace="com.hd123.sardine.wms.dao.out.pickup.impl.PickUpBillItemDaoImpl">
 
   <resultMap id="PickUpBillItemMap"
     type="com.hd123.sardine.wms.api.out.pickup.PickUpBillItem">
@@ -11,15 +11,14 @@
       jdbcType="VARCHAR" />
     <result column="sourceContainerBarcode" property="sourceContainerBarcode"
       jdbcType="VARCHAR" />
-    <result column="articleuuid" property="article.articleUuid"
+    <result column="articleuuid" property="article.uuid"
       jdbcType="VARCHAR" />
-    <result column="articleCode" property="article.articleCode"
+    <result column="articleCode" property="article.code"
       jdbcType="VARCHAR" />
-    <result column="articleName" property="article.articleName"
+    <result column="articleName" property="article.name"
       jdbcType="VARCHAR" />
-    <result column="articleSpec" property="article.articleSpec"
+    <result column="articleSpec" property="articleSpec"
       jdbcType="VARCHAR" />
-    <result column="qpc" property="qpc" jdbcType="DECIMAL" />
     <result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
     <result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
     <result column="qty" property="qty" jdbcType="DECIMAL" />
@@ -33,13 +32,13 @@
     <result column="pickUpBillUuid" property="pickUpBillUuid"
       jdbcType="VARCHAR" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="measureUnit" property="article.munit"
+    <result column="munit" property="munit"
       jdbcType="VARCHAR" />
   </resultMap>
 
-  <insert id="insert"
+  <insert id="saveNew"
     parameterType="com.hd123.sardine.wms.api.out.pickup.PickUpBillItem">
-    insert into wmspickupbillitem
+    insert into db_proxy.sardine_pickupbillitem
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="uuid != null">
         uuid,
@@ -56,23 +55,11 @@
       <if test="state != null">
         state,
       </if>
-      <if test="article.articleUuid != null">
+      <if test="article != null and article.uuid != null">
         articleUuid,
-      </if>
-      <if test="article.articleCode != null">
-        articleCode,
-      </if>
-      <if test="article.articleName != null">
-        articleName,
-      </if>
-      <if test="article.articleSpec != null">
-        articleSpec,
       </if>
       <if test="qpcStr != null">
         qpcStr,
-      </if>
-      <if test="qpc != null">
-        qpc,
       </if>
       <if test="caseQtyStr != null">
         caseQtyStr,
@@ -98,8 +85,8 @@
       <if test="remark != null">
         remark,
       </if>
-      <if test="article.munit != null">
-        measureUnit,
+      <if test="munit != null">
+        munit,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -118,23 +105,11 @@
       <if test="state != null">
         #{state,jdbcType=VARCHAR},
       </if>
-      <if test="article.articleUuid != null">
-        #{article.articleUuid,jdbcType=VARCHAR},
-      </if>
-      <if test="article.articleCode != null">
-        #{article.articleCode,jdbcType=VARCHAR},
-      </if>
-      <if test="article.articleName != null">
-        #{article.articleName,jdbcType=VARCHAR},
-      </if>
-      <if test="article.articleSpec != null">
-        #{article.articleSpec,jdbcType=VARCHAR},
+      <if test="article != null and article.uuid != null">
+        #{article.uuid,jdbcType=VARCHAR},
       </if>
       <if test="qpcStr != null">
         #{qpcStr,jdbcType=VARCHAR},
-      </if>
-      <if test="qpc != null">
-        #{qpc,jdbcType=DECIMAL},
       </if>
       <if test="caseQtyStr != null">
         #{caseQtyStr,jdbcType=VARCHAR},
@@ -160,56 +135,33 @@
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="article.munit != null">
-        #{article.munit,jdbcType=VARCHAR},
+      <if test="munit != null">
+        #{munit,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
 
-  <select id="queryItems" resultMap="PickUpBillItemMap"
+  <select id="queryByPickUpBill" resultMap="PickUpBillItemMap"
     parameterType="java.lang.String">
-    select *
-    from wmspickupBillItem t
-    where t.pickUpBillUuid
+    select t.*, a.code articleCode, a.name articleName, a.spec articleSpec
+    from db_proxy.sardine_pickupbillitem t,
+         db_proxy.sardine_article a
+    where t.articleuuid = a.uuid and t.pickUpBillUuid
     =
     #{pickUpBillUuid,jdbcType=VARCHAR} order by t.line
   </select>
 
-  <select id="queryItemsByBillUuids" resultMap="PickUpBillItemMap"
-    parameterType="java.util.Map">
-    select *
-    from wmspickupBillItem t
-    where 1=1
-    <if test="pickUpBillUuids != null">
-      and t.pickUpBillUuid in
-      <foreach collection="pickUpBillUuids" item="pickUpBillUuid"
-        index="index" open="(" separator="," close=")">
-        #{pickUpBillUuid}
-      </foreach>
-    </if>
-  </select>
-
-
-  <delete id="removeByUuids" parameterType="java.util.Map">
-    delete from wmspickupBillItem t
-    where t.uuid in
-    <foreach collection="uuidIn" item="item" index="index" open="("
-      separator="," close=")">
-      #{item}
-    </foreach>
-  </delete>
-
-  <delete id="removeItems" parameterType="java.lang.String">
+  <delete id="removeByPickUpBill" parameterType="java.lang.String">
     delete from
-    wmspickupBillItem
+    db_proxy.sardine_pickupbillitem 
     t
     where t.pickUpBillUuid =
     #{pickUpBillUuid,jdbcType=VARCHAR}
   </delete>
 
-  <update id="update_realQty" parameterType="java.util.Map">
+  <update id="updateRealQty" parameterType="java.util.Map">
     update
-    wmspickupBillItem t
+    db_proxy.sardine_pickupbillitem t
     <set>
       <if test="realCaseQtyStr != null">
         t.realCaseQtyStr = #{realCaseQtyStr,jdbcType=VARCHAR},
@@ -234,22 +186,11 @@
 
   <delete id="removeByWaveBillNumber" parameterType="java.lang.String">
     delete from
-    wmspickupBillItem t
+    sardine_pickupbillitem t
     where t.pickupbilluuid in (select r.uuid from
-    wmspickupBill r
-    where r.wavebillnumber =
-    #{waveBillNumber,jdbcType=VARCHAR})
+    sardine_pickupbill r
+    where r.sourceBillNumber = #{waveBillNumber,jdbcType=VARCHAR}
+      and r.sourceBillType = '波次单'
+      and r.companyUuid = #{companyUuid, jdbcType=VARCHAR})
   </delete>
-
-  <select id="querySourceBin" resultType="java.lang.String"
-    parameterType="java.lang.String">
-    select distinct t.sourcebincode from wmspickupBillItem
-    t
-    where
-    t.pickupbilluuid in
-    (select r.uuid from wmspickupBill r
-    where
-    r.wavebillnumber =
-    #{waveBillNumber,jdbcType=VARCHAR})
-  </select>
 </mapper>

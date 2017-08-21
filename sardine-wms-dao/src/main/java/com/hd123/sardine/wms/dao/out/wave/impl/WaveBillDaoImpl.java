@@ -79,27 +79,34 @@ public class WaveBillDaoImpl extends BaseDaoImpl<WaveBill> implements WaveBillDa
   }
 
   @Override
-  public void saveWaveAlcNtcItems(String waveUuid) {
-    if (StringUtil.isNullOrBlank(waveUuid))
+  public void saveWaveAlcNtcItems(String waveBillNumber) {
+    if (StringUtil.isNullOrBlank(waveBillNumber))
       return;
 
-    insert(SAVEWAVEALCNTCITEMS, waveUuid);
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("waveBillNumber", waveBillNumber);
+    insert(SAVEWAVEALCNTCITEMS, map);
   }
 
   @Override
-  public void removeWaveAlcNtcItems(String waveBillUuid) {
-    if (StringUtil.isNullOrBlank(waveBillUuid))
+  public void removeWaveAlcNtcItems(String waveBillNumber) {
+    if (StringUtil.isNullOrBlank(waveBillNumber))
       return;
-
-    delete(REMOVEWAVEALCNTCITEMS, waveBillUuid);
+    
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("waveBillNumber", waveBillNumber);
+    delete(REMOVEWAVEALCNTCITEMS, map);
   }
 
   @Override
-  public List<String> queryWaveArticleUuids(String waveBillUuid) {
-    if (StringUtil.isNullOrBlank(waveBillUuid))
+  public List<String> queryWaveArticleUuids(String waveBillNumber) {
+    if (StringUtil.isNullOrBlank(waveBillNumber))
       return new ArrayList<String>();
 
-    return selectList(QUERYWAVEARTICLEUUIDS, waveBillUuid);
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("waveBillNumber", waveBillNumber);
+    
+    return selectList(QUERYWAVEARTICLEUUIDS, map);
   }
 
   @Override

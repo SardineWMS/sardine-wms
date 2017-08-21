@@ -27,6 +27,7 @@ import com.hd123.sardine.wms.common.validator.Validator;
 public class PickUpBillItem extends Entity implements Validator {
   private static final long serialVersionUID = -2636761783201988340L;
 
+  private int line;
   private String pickUpBillUuid;
   private String sourceBinCode;
   private String sourceContainerBarcode = Container.VIRTUALITY_CONTAINER;
@@ -44,6 +45,14 @@ public class PickUpBillItem extends Entity implements Validator {
   private String alcNtcBillItemUuid;
   private Date pickTime;
   private String remark;
+
+  public int getLine() {
+    return line;
+  }
+
+  public void setLine(int line) {
+    this.line = line;
+  }
 
   /** 拣货单uuid */
   public String getPickUpBillUuid() {

@@ -30,13 +30,21 @@ public class WaveAlcNtcItem implements Serializable {
   private String deliveryType;
 
   private String altNtcItemUuid;
-  private int line;
   private String articleUuid;
-  private String articleCode;
 
   private BigDecimal alcQty;
   private BigDecimal pickQty = BigDecimal.ZERO;
   private String orderNo;
+  
+  private String waveUuid;
+
+  public String getWaveUuid() {
+    return waveUuid;
+  }
+
+  public void setWaveUuid(String waveUuid) {
+    this.waveUuid = waveUuid;
+  }
 
   public String getAlcNtcBillUuid() {
     return alcNtcBillUuid;
@@ -94,28 +102,12 @@ public class WaveAlcNtcItem implements Serializable {
     this.altNtcItemUuid = altNtcItemUuid;
   }
   
-  public int getLine() {
-    return line;
-  }
-
-  public void setLine(int line) {
-    this.line = line;
-  }
-
   public String getArticleUuid() {
     return articleUuid;
   }
 
   public void setArticleUuid(String articleUuid) {
     this.articleUuid = articleUuid;
-  }
-
-  public String getArticleCode() {
-    return articleCode;
-  }
-
-  public void setArticleCode(String articleCode) {
-    this.articleCode = articleCode;
   }
 
   public BigDecimal getAlcQty() {

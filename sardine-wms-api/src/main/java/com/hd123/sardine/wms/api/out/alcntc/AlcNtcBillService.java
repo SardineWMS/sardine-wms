@@ -192,23 +192,4 @@ public interface AlcNtcBillService {
    */
   void pickUp(String itemUuid, BigDecimal qty) throws IllegalArgumentException, WMSException;
 
-  /**
-   * 根据波次号查询该波次下未拣货的商品
-   * 
-   * @param waveBillNumber
-   *          波次单号
-   * @return 商品UUID集合
-   */
-  List<String> queryArticleByWaveBillNumber(String waveBillNumber);
-
-  /**
-   * 根据波次号查询当前波次下待配货的配单明细
-   * 
-   * @param waveBillNumber
-   *          波次号
-   * @param articleUuid
-   *          商品UUID
-   * @return 配单明细集合
-   */
-  List<WaveAlcNtcItem> queryAlcNtcItems(String waveBillNumber, List<String> articleUuids);
 }

@@ -31,4 +31,10 @@ public interface PickUpBillDao {
   PickUpBill getByBillNumber(String billNumber);
 
   List<PickUpBill> query(PickUpBillFilter filter);
+  
+  List<PickUpBill> queryByWaveUuid(String waveUuid);
+  
+  void remove(String uuid, long version);
+  
+  void approveByWaveBillNumber(String waveBillNumber);
 }

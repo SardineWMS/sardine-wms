@@ -30,9 +30,9 @@ public interface WaveBillDao extends BaseDao<WaveBill> {
 
   int updateWaveAlcNtcItemsState(String waveBillNumber, List<String> articleUuids);
 
-  void removeWaveAlcNtcItems(String waveBillUuid);
+  void removeWaveAlcNtcItems(String waveBillNumber);
   
-  void saveWaveAlcNtcItems(String waveBillUuid);
+  void saveWaveAlcNtcItems(String waveBillNumber);
 
   List<String> queryWaveArticleUuids(String waveBillUuid);
   

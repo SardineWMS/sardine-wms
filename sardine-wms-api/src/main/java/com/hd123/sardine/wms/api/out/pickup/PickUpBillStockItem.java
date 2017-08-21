@@ -37,8 +37,6 @@ public class PickUpBillStockItem extends Entity implements Validator {
   private Date productionDate;
   private String supplierUuid;
 
-  private String sourceNum;
-
   /** 拣货单明细uuid */
   public String getPickUpBillItemUuid() {
     return pickUpBillItemUuid;
@@ -141,15 +139,6 @@ public class PickUpBillStockItem extends Entity implements Validator {
   public void setSupplierUuid(String supplierUuid) {
     Assert.assertArgumentNotNull(supplierUuid, "supplierUuid");
     this.supplierUuid = supplierUuid;
-  }
-
-  /** 库存来源单据 */
-  public String getSourceNum() {
-    return sourceNum;
-  }
-
-  public void setSourceNum(String sourceNum) {
-    this.sourceNum = sourceNum;
   }
 
   @Override

@@ -16,9 +16,6 @@ package com.hd123.sardine.wms.api.out.pickup;
  * 
  */
 public enum PickUpBillState {
-  /** 未审核 */
-  initial("未审核"),
-
   /** 待确认 */
   inConfirm("待确认"),
 

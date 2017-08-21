@@ -244,8 +244,7 @@ public class WaveHandler {
           bill.setPickArea(rule.getPickArea());
           bill.setPickOrder(pickItem.getPickOrder());
           bill.setType(pickItem.getType());
-          bill.setWaveBillUuid(uuid);
-          bill.setWaveBillNumber(billNumber);
+          bill.setSourceBill(new SourceBill(WaveBill.CAPTION, uuid, billNumber));
           bill.setVolume(BigDecimal.ZERO);
           bill.setState(PickUpBillState.inConfirm);
           bills.add(bill);

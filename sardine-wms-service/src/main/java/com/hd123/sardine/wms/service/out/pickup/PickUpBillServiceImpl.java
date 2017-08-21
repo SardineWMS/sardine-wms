@@ -9,11 +9,24 @@
  */
 package com.hd123.sardine.wms.service.out.pickup;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillFilter;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBillItem;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBillState;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.query.PageQueryUtil;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
+import com.hd123.sardine.wms.common.utils.UUIDGenerator;
+import com.hd123.sardine.wms.dao.out.pickup.PickUpBillDao;
+import com.hd123.sardine.wms.dao.out.pickup.PickUpBillItemDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
 
 /**
@@ -22,45 +35,90 @@ import com.hd123.sardine.wms.service.ia.BaseWMSService;
  */
 public class PickUpBillServiceImpl extends BaseWMSService implements PickUpBillService {
 
+  @Autowired
+  private PickUpBillDao pickUpBillDao;
+
+  @Autowired
+  private PickUpBillItemDao pickUpBillItemDao;
+
   @Override
   public void saveNew(PickUpBill pickUpBill) throws WMSException {
+    Assert.assertArgumentNotNull(pickUpBill, "pickUpBill");
 
+    pickUpBill.validate();
+    pickUpBill.setUuid(UUIDGenerator.genUUID());
+    pickUpBill.setBillNumber(
+        billNumberGenerator.allocateNextBillNumber(PickUpBill.class.getSimpleName()));
+    pickUpBill.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+
+    for (PickUpBillItem pickItem : pickUpBill.getItems()) {
+      pickItem.setUuid(UUIDGenerator.genUUID());
+      pickItem.setPickUpBillUuid(pickUpBill.getUuid());
+    }
+
+    pickUpBillDao.saveNew(pickUpBill);
+    pickUpBillItemDao.saveNew(pickUpBill.getItems());
   }
 
   @Override
   public PickUpBill get(String uuid) {
-    // TODO Auto-generated method stub
-    return null;
+    if (StringUtil.isNullOrBlank(uuid))
+      return null;
+
+    PickUpBill bill = pickUpBillDao.get(uuid);
+    if (bill == null)
+      return null;
+    bill.setItems(pickUpBillItemDao.queryByPickUpBill(uuid));
+    return bill;
   }
 
   @Override
   public PickUpBill getByBillNumber(String billNumber) {
-    // TODO Auto-generated method stub
-    return null;
+    if (StringUtil.isNullOrBlank(billNumber))
+      return null;
+
+    PickUpBill bill = pickUpBillDao.getByBillNumber(billNumber);
+    if (bill == null)
+      return null;
+    bill.setItems(pickUpBillItemDao.queryByPickUpBill(bill.getUuid()));
+    return bill;
   }
 
   @Override
   public PageQueryResult<PickUpBill> query(PickUpBillFilter filter) {
-    // TODO Auto-generated method stub
-    return null;
+    Assert.assertArgumentNotNull(filter, "filter");
+
+    PageQueryResult<PickUpBill> qpr = new PageQueryResult<PickUpBill>();
+    List<PickUpBill> list = pickUpBillDao.query(filter);
+    PageQueryUtil.assignPageInfo(qpr, filter);
+    qpr.setRecords(list);
+    return qpr;
   }
 
   @Override
   public void approveByWaveBillNumber(String waveBillNumber) {
-    // TODO Auto-generated method stub
-
+    Assert.assertArgumentNotNull(waveBillNumber, "waveBillNumber");
+    
+    pickUpBillDao.approveByWaveBillNumber(waveBillNumber);
   }
 
   @Override
-  public void audit(String billNumber) throws WMSException {
-    // TODO Auto-generated method stub
-
+  public void audit(String uuid, long version) throws WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
   }
 
   @Override
-  public void removeByWaveUuid(String waveUuid) {
-    // TODO Auto-generated method stub
+  public void removeByWaveUuid(String waveUuid) throws WMSException {
+    if (StringUtil.isNullOrBlank(waveUuid))
+      return;
 
+    List<PickUpBill> pickUpBills = pickUpBillDao.queryByWaveUuid(waveUuid);
+    for (PickUpBill bill : pickUpBills) {
+      if (bill.getState().equals(PickUpBillState.inConfirm) == false)
+        throw new WMSException("拣货单状态不是待确认，不能删除！");
+
+      pickUpBillDao.remove(bill.getUuid(), bill.getVersion());
+      pickUpBillItemDao.removeByPickUpBill(bill.getUuid());
+    }
   }
-
 }

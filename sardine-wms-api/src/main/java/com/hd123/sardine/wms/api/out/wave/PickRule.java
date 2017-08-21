@@ -29,6 +29,15 @@ public class PickRule implements Serializable {
   private PickType type;
   private UCN pickArea;
   private BigDecimal volume;
+  private String waveUuid;
+
+  public String getWaveUuid() {
+    return waveUuid;
+  }
+
+  public void setWaveUuid(String waveUuid) {
+    this.waveUuid = waveUuid;
+  }
 
   public UCN getCustomer() {
     return customer;

@@ -9,8 +9,12 @@
  */
 package com.hd123.sardine.wms.dao.out.pickup.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+
+import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillStockItem;
 import com.hd123.sardine.wms.common.dao.NameSpaceSupport;
 import com.hd123.sardine.wms.dao.out.pickup.PickUpBillStockItemDao;
@@ -21,22 +25,24 @@ import com.hd123.sardine.wms.dao.out.pickup.PickUpBillStockItemDao;
  */
 public class PickUpBillStockItemDaoImpl extends NameSpaceSupport implements PickUpBillStockItemDao {
 
+  private static final String SAVENEW = "saveNew";
+  private static final String QUERY = "query";
+
   @Override
   public void saveNew(List<PickUpBillStockItem> items) {
-    // TODO Auto-generated method stub
+    if (CollectionUtils.isEmpty(items))
+      return;
 
+    for (PickUpBillStockItem sItem : items) {
+      insert(SAVENEW, sItem);
+    }
   }
 
   @Override
   public List<PickUpBillStockItem> query(String itemUuid) {
-    // TODO Auto-generated method stub
-    return null;
+    if (StringUtil.isNullOrBlank(itemUuid))
+      return new ArrayList<PickUpBillStockItem>();
+
+    return selectList(QUERY, itemUuid);
   }
-
-  @Override
-  public void removeByItem(List<String> itemUuids) {
-    // TODO Auto-generated method stub
-
-  }
-
 }

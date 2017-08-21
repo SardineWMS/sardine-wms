@@ -35,7 +35,6 @@ public class WavePickUpItem {
   private String articleUuid;
   private String munit;
   private String qpcStr;
-  private BigDecimal qpc;
   private BigDecimal qty;
   private String caseQtyStr;
 
@@ -161,15 +160,6 @@ public class WavePickUpItem {
 
   public void setQpcStr(String qpcStr) {
     this.qpcStr = qpcStr;
-  }
-
-  /** 取拣货来源货位qpc */
-  public BigDecimal getQpc() {
-    return qpc;
-  }
-
-  public void setQpc(BigDecimal qpc) {
-    this.qpc = qpc;
   }
 
   /** 拣货数量 */

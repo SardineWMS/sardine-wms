@@ -16,7 +16,6 @@ import java.util.List;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.hd123.rumba.commons.lang.Assert;
-import com.hd123.sardine.wms.api.out.wave.WaveBill;
 import com.hd123.sardine.wms.common.entity.OperateMode;
 import com.hd123.sardine.wms.common.entity.SourceBill;
 import com.hd123.sardine.wms.common.entity.StandardEntity;
@@ -33,8 +32,9 @@ public class PickUpBill extends StandardEntity implements Validator {
   private static final long serialVersionUID = 7299422514258269815L;
 
   public static final String CAPTION = "拣货单";
-  private PickUpBillState state = PickUpBillState.initial;
+  private PickUpBillState state = PickUpBillState.inConfirm;
 
+  private String billNumber;
   private UCN customer;
   private String deliveryType;
 
@@ -42,10 +42,37 @@ public class PickUpBill extends StandardEntity implements Validator {
   private OperateMode method;
   private PickType type;
   private UCN pickArea;
-  private String waveBillNumber;
-  private String waveBillUuid;
+  private SourceBill sourceBill;
   private String pickOrder;
   private BigDecimal volume;
+  private String companyUuid;
+  private String remark;
+  
+  public String getRemark() {
+    return remark;
+  }
+
+  public void setRemark(String remark) {
+    this.remark = remark;
+  }
+
+  private List<PickUpBillItem> items = new ArrayList<PickUpBillItem>();
+
+  public String getCompanyUuid() {
+    return companyUuid;
+  }
+
+  public void setCompanyUuid(String companyUuid) {
+    this.companyUuid = companyUuid;
+  }
+
+  public String getBillNumber() {
+    return billNumber;
+  }
+
+  public void setBillNumber(String billNumber) {
+    this.billNumber = billNumber;
+  }
 
   public BigDecimal getVolume() {
     return volume;
@@ -54,8 +81,6 @@ public class PickUpBill extends StandardEntity implements Validator {
   public void setVolume(BigDecimal volume) {
     this.volume = volume;
   }
-
-  private List<PickUpBillItem> items = new ArrayList<PickUpBillItem>();
 
   @JsonIgnore
   public boolean isFinishPickUp() {
@@ -124,22 +149,13 @@ public class PickUpBill extends StandardEntity implements Validator {
     this.pickArea = pickArea;
   }
 
-  /** 波次 */
-  public String getWaveBillNumber() {
-    return waveBillNumber;
+  /** 波次单或者要货单 */
+  public SourceBill getSourceBill() {
+    return sourceBill;
   }
 
-  public void setWaveBillNumber(String waveBillNumber) {
-    Assert.assertArgumentNotNull(waveBillNumber, "waveBillNumber");
-    this.waveBillNumber = waveBillNumber;
-  }
-
-  public String getWaveBillUuid() {
-    return waveBillUuid;
-  }
-
-  public void setWaveBillUuid(String waveBillUuid) {
-    this.waveBillUuid = waveBillUuid;
+  public void setSourceBill(SourceBill sourceBill) {
+    this.sourceBill = sourceBill;
   }
 
   /** 拣货顺序 */
@@ -176,17 +192,12 @@ public class PickUpBill extends StandardEntity implements Validator {
     this.deliveryType = deliveryType;
   }
 
-  @JsonIgnore
-  public SourceBill getWaveSourceBill() {
-    return new SourceBill(WaveBill.CAPTION, getWaveBillUuid(), getWaveBillNumber());
-  }
-
   @Override
   public void validate() {
     Assert.assertArgumentNotNull(method, "method");
     Assert.assertArgumentNotNull(state, "state");
     Assert.assertArgumentNotNull(pickOrder, "pickOrder");
-    Assert.assertArgumentNotNull(waveBillNumber, "waveBillNumber");
+    Assert.assertArgumentNotNull(sourceBill, "sourceBill");
     Assert.assertArgumentNotNull(type, "type");
     Assert.assertArgumentNotNull(customer, "customer");
     Assert.assertArgumentNotNull(deliveryType, "deliveryType");

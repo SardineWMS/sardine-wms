@@ -64,6 +64,21 @@ public class WaveQueryHandler {
 
   private List<Article> articles;
 
+  /**
+   * 构造拣货所需的信息
+   * <p>
+   * 查询这些商品在存储位。拣货存储位上的库存<br>
+   * 查询拣货分区<br>
+   * 查询商品配置<br>
+   * 查询商品<br>
+   * 查询并锁定配单明细
+   * 
+   * @param waveBillNumber
+   *          波次单号
+   * @param articleUuids
+   *          拣货商品ID集合
+   * @throws WMSException
+   */
   public void buildCache(String waveBillNumber, List<String> articleUuids) throws WMSException {
     stockMajorInfos = queryStocks(articleUuids);
     areas = queryPickAreas();
@@ -75,13 +90,6 @@ public class WaveQueryHandler {
       throw new WMSException("商品发生变化，请重新启动！");
   }
 
-  /**
-   * 批量查询商品存储位和拣货存储位上的库存
-   * 
-   * @param articleUuids
-   *          商品集合
-   * @return 库存集合
-   */
   private List<StockMajorInfo> queryStocks(List<String> articleUuids) {
     if (CollectionUtils.isEmpty(articleUuids))
       return new ArrayList<StockMajorInfo>();
@@ -94,8 +102,6 @@ public class WaveQueryHandler {
   /**
    * 查找当前上商品的存储位和拣货存储位库存
    * 
-   * @param sourceStocks
-   *          库存集合
    * @param articleUuid
    *          商品id
    * @return 库存集合

@@ -33,22 +33,149 @@
 		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
 			jdbcType="VARCHAR" />
 	</resultMap>
-
-	<resultMap type="com.hd123.sardine.wms.api.out.wave.WaveBillItem"
-		id="WaveBillItemMap">
+	
+	<resultMap type="com.hd123.sardine.wms.api.out.alcntc.WaveAlcNtcItem"
+		id="WaveAlcNtcItemMap">
+		<result column="alcNtcBillUuid" property="alcNtcBillUuid" jdbcType="VARCHAR" />
+		<result column="alcNtcBillNumber" property="alcNtcBillNumber" jdbcType="VARCHAR" />
+		<result column="customeruuid" property="customer.uuid"
+			jdbcType="VARCHAR" />
+		<result column="customercode" property="customer.code"
+			jdbcType="VARCHAR" />
+		<result column="customername" property="customer.name"
+			jdbcType="VARCHAR" />
+	    <result column="wrhuuid" property="wrh.uuid"
+			jdbcType="VARCHAR" />
+		<result column="wrhcode" property="wrh.code"
+			jdbcType="VARCHAR" />
+		<result column="wrhname" property="wrh.name"
+			jdbcType="VARCHAR" />
+		<result column="customerType" property="customerType" jdbcType="VARCHAR" />
+		<result column="deliveryType" property="deliveryType" jdbcType="VARCHAR" />
+		<result column="altNtcItemUuid" property="altNtcItemUuid" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="articleUuid" property="articleUuid" jdbcType="VARCHAR" />
+		<result column="alcQty " property="alcQty"
+			jdbcType="DECIMAL" />
+		<result column="orderNo" property="orderNo"
+			jdbcType="VARCHAR" />
+			<result column="waveBillNumber" property="waveBillNumber" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="PickRuleMap" type="com.hd123.sardine.wms.api.out.wave.PickRule">
+		<result column="customeruuid" property="customer.uuid"
+			jdbcType="VARCHAR" />
+		<result column="customercode" property="customer.code"
+			jdbcType="VARCHAR" />
+		<result column="customername" property="customer.name"
+			jdbcType="VARCHAR" />
+	    <result column="deliveryType" property="deliveryType"
+			jdbcType="VARCHAR" />
+		<result column="operateMethod" property="operateMethod"
+			jdbcType="VARCHAR" />
+		<result column="type" property="type"
+			jdbcType="VARCHAR" />
+	    <result column="pickAreauuid" property="pickArea.uuid"
+			jdbcType="VARCHAR" />
+		<result column="pickAreacode" property="pickArea.code"
+			jdbcType="VARCHAR" />
+		<result column="pickAreaname" property="pickArea.name"
+			jdbcType="VARCHAR" />
+		<result column="volume" property="volume" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<resultMap id="WavePickUpItemMap" type="com.hd123.sardine.wms.api.out.wave.WavePickUpItem">
+		<result column="customeruuid" property="customer.uuid"
+			jdbcType="VARCHAR" />
+		<result column="customercode" property="customer.code"
+			jdbcType="VARCHAR" />
+		<result column="customername" property="customer.name"
+			jdbcType="VARCHAR" />
+	    <result column="deliveryType" property="deliveryType"
+			jdbcType="VARCHAR" />
+		<result column="operateMethod" property="operateMethod"
+			jdbcType="VARCHAR" />
+		<result column="type" property="type"
+			jdbcType="VARCHAR" />
+	    <result column="pickAreauuid" property="pickArea.uuid"
+			jdbcType="VARCHAR" />
+		<result column="pickAreacode" property="pickArea.code"
+			jdbcType="VARCHAR" />
+		<result column="pickAreaname" property="pickArea.name"
+			jdbcType="VARCHAR" />
+		<result column="binCode" property="binCode" jdbcType="VARCHAR" />
+		<result column="containerBarcode" property="containerBarcode" jdbcType="VARCHAR" />
+		<result column="articleUuid" property="articleUuid" jdbcType="VARCHAR" />
+		<result column="munit" property="munit" jdbcType="VARCHAR" />
+		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+		<result column="qty" property="qty" jdbcType="DECIMAL" />
+		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
+		<result column="itemVolume" property="itemVolume" jdbcType="DECIMAL" />
+		<result column="volume" property="volume" jdbcType="DECIMAL" />
+		<result column="alcNtcBillItemUuid" property="alcNtcBillItemUuid" jdbcType="VARCHAR" />
+		<result column="waveBillNumber" property="waveBillNumber" jdbcType="VARCHAR" />
+		<result column="waveUuid" property="waveUuid" jdbcType="VARCHAR" />
+		<result column="binUsage" property="binUsage" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="pickOrder" property="pickOrder" jdbcType="VARCHAR" />
+	</resultMap>
+	
+    <resultMap id="RplTaskMap" type="Task">
 		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
-		<result column="waveBillUuid" property="waveBillUuid" jdbcType="VARCHAR" />
-		<result column="line" property="line" jdbcType="INTEGER" />
-		<result column="alcNtcBillNumber" property="alcNtcBillNumber"
+		<result column="taskNo" property="taskNo" jdbcType="VARCHAR" />
+		<result column="taskType" property="taskType" jdbcType="VARCHAR" />
+		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
+		<result column="articlecode" property="article.code" jdbcType="VARCHAR" />
+		<result column="articlename" property="article.name" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+		<result column="qty" property="qty" jdbcType="DECIMAL" />
+		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
+		<result column="realQty" property="realQty" jdbcType="DECIMAL" />
+		<result column="realCaseQtyStr" property="realCaseQtyStr"
 			jdbcType="VARCHAR" />
-		<result column="alcNtcBillState" property="alcNtcBillState"
+		<result column="productionDate" property="productionDate"
+			jdbcType="DATE" />
+		<result column="validDate" property="validDate" jdbcType="DATE" />
+		<result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
+		<result column="supplierUuid" property="supplier.uuid"
 			jdbcType="VARCHAR" />
-		<result column="customerUuid" property="customer.uuid"
+		<result column="supplierCode" property="supplier.code"
 			jdbcType="VARCHAR" />
-		<result column="customerCode" property="customer.code"
+		<result column="supplierName" property="supplier.name"
 			jdbcType="VARCHAR" />
-		<result column="customerName" property="customer.name"
+		<result column="fromBinCode" property="fromBinCode" jdbcType="VARCHAR" />
+		<result column="fromContainerBarcode" property="fromContainerBarcode"
 			jdbcType="VARCHAR" />
+		<result column="toBinCode" property="toBinCode" jdbcType="VARCHAR" />
+		<result column="toContainerBarcode" property="toContainerBarcode"
+			jdbcType="VARCHAR" />
+		<result column="owner" property="owner" jdbcType="VARCHAR" />
+		<result column="sourceBillType" property="sourceBillType"
+			jdbcType="VARCHAR" />
+		<result column="sourceBillNumber" property="sourceBillNumber"
+			jdbcType="VARCHAR" />
+		<result column="sourceBillUuid" property="sourceBillUuid"
+			jdbcType="VARCHAR" />
+		<result column="sourceBillLine" property="sourceBillLine"
+			jdbcType="INTEGER" />
+		<result column="creatorUuid" property="creator.uuid" jdbcType="VARCHAR" />
+		<result column="creatorcode" property="creator.code" jdbcType="VARCHAR" />
+		<result column="creatorname" property="creator.name" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="operatorUuid" property="operator.uuid"
+			jdbcType="VARCHAR" />
+		<result column="operatorcode" property="operator.code"
+			jdbcType="VARCHAR" />
+		<result column="operatorname" property="operator.name"
+			jdbcType="VARCHAR" />
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="beginOperateTime" property="beginOperateTime"
+			jdbcType="TIMESTAMP" />
+		<result column="endOperateTime" property="endOperateTime"
+			jdbcType="TIMESTAMP" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<insert id="insert" parameterType="com.hd123.sardine.wms.api.out.wave.WaveBill">
@@ -62,12 +189,6 @@
 			</if>
 			<if test="serialArch != null and serialArch.uuid != null">
 				serialArchUuid,
-			</if>
-			<if test="serialArch != null and serialArch.code != null">
-				serialArchCode,
-			</if>
-			<if test="serialArch != null and serialArch.name != null">
-				serialArchName,
 			</if>
 			<if test="waveType != null">
 				waveType,
@@ -124,12 +245,6 @@
 			</if>
 			<if test="serialArch != null and serialArch.uuid != null">
 				#{serialArch.uuid,jdbcType=VARCHAR},
-			</if>
-			<if test="serialArch != null and serialArch.code != null">
-				#{serialArch.code,jdbcType=VARCHAR},
-			</if>
-			<if test="serialArch != null and serialArch.name != null">
-				#{serialArch.name,jdbcType=VARCHAR},
 			</if>
 			<if test="waveType != null">
 				#{waveType,jdbcType=VARCHAR},
@@ -192,12 +307,6 @@
 			<if test="serialArch != null and serialArch.uuid != null">
 				serialArchUuid=#{serialArch.uuid,jdbcType=VARCHAR},
 			</if>
-			<if test="serialArch != null and serialArch.code != null">
-				serialArchCode=#{serialArch.code,jdbcType=VARCHAR},
-			</if>
-			<if test="serialArch != null and serialArch.name != null">
-				serialArchName=#{serialArch.name,jdbcType=VARCHAR},
-			</if>
 			<if test="waveType != null">
 				waveType=#{waveType,jdbcType=VARCHAR},
 			</if>
@@ -236,13 +345,23 @@
 	</update>
 
 	<select id="get" parameterType="java.lang.String" resultMap="WaveBillMap">
-		select * from db_proxy.sardine_wavebill t where
+		select t.*, s.code serialArchCode,s.name serialArchName  from db_proxy.sardine_wavebill t,db_proxy.sardine_serialarch  s 
+		where t.SERIALARCHUUID  = s.uuid and 
 		t.uuid=#{uuid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getByBillNumber" parameterType="java.uti.Map" resultMap="WaveBillMap">
+		select t.*, s.code serialArchCode,s.name serialArchName 
+		from db_proxy.sardine_wavebill t,db_proxy.sardine_serialarch  s 
+		where t.SERIALARCHUUID  = s.uuid and 
+		t.billNumber=#{billNumber,jdbcType=VARCHAR} and
+		t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
 	</select>
 
 	<select id="queryByPage" parameterType="PageQueryDefinition"
 		resultMap="WaveBillMap">
-		select * from db_proxy.sardine_wavebill t where 1=1
+		select t.*, s.code serialArchCode,s.name serialArchName  from db_proxy.sardine_wavebill t,db_proxy.sardine_serialarch  s 
+		where t.SERIALARCHUUID  = s.uuid
 		<if test="companyUuid != null">
 			and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
 		</if>
@@ -257,73 +376,353 @@
 			and t.wavetype =#{type}
 		</if>
 	</select>
-
-	<insert id="insertItem" parameterType="com.hd123.sardine.wms.api.out.wave.WaveBillItem">
-		insert into db_proxy.sardine_wavebillitem
+	
+	<select id="queryWaveAlcNtcItems" parameterType="java.util.Map" resultMap="WaveAlcNtcItemMap">
+	  select from db_proxy.sardine_waveAlcntcitem t 
+	  where t.waveBillnumber = #{waveBillNumber, jdbcType=VARCHAR}
+	    and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+	    and t.articleUuid in 
+	    <foreach collection="articleUuids" item="item" index="index" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+	</select>
+	
+	<update id="updateWaveAlcNtcItemsState" parameterType="java.util.Map">
+	  update db_proxy.sardine_waveAlcntcitem t 
+	  set t.state = 'Done' 
+	  where t.waveBillnumber = #{waveBillNumber, jdbcType=VARCHAR}
+	    and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+	    and t.articleUuid in 
+	    <foreach collection="articleUuids" item="item" index="index" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+	</update>
+	
+	<delete id="removeWaveAlcNtcItems" parameterType="java.util.Map">
+	  delete from db_proxy.sardine_waveAlcntcitem where waveBillNumber = 
+	  #{waveBillNumber, jdbcType=VARCHAR} and companyUuid = 
+	  #{companyUuid, jdbcType=VARCHAR}
+	</delete>
+	
+	<insert id="saveWaveAlcNtcItems" parameterType="java.util.Map">
+	  insert into ...
+	</insert>
+	
+	<select id="queryWaveArticleUuids" parameterType="java.util.Map" resultType="java.lang.String">
+	  select distinct t.articleuuid from db_proxy.sardine_waveAlcntcitem t where t.waveBillNumber = 
+	  #{waveBillNumber, jdbcType=VARCHAR} and t.companyUuid = 
+	  #{companyUuid, jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="saveWavePickUpItems" parameterType="com.hd123.sardine.wms.api.out.wave.WavePickUpItem">
+	   insert into db_proxy.sardine_wavepickupitem(
+	    customeruuid,
+	    customerCode,
+	    customername,
+	    deliveryType,
+	    operateMethod,
+	    type,
+	    pickAreauuid,
+	    pickAreacode,
+	    pickAreaname,
+	    bincode,
+	    containerbarcode,
+	    articleuuid,
+	    munit,
+	    qpcStr,
+	    qty,
+	    caseQtyStr,
+	    itemVolume,
+	    volume,
+	    alcNtcBillItemUuid,
+	    waveBillNumber,
+	    waveUuid,
+	    binUsage,
+	    companyUuid,
+	    pickOrder
+	   ) values (
+	    #{customer.uuid, jdbcType=VARCHAR},
+	    #{customer.code, jdbcType=VARCHAR},
+	    #{customer.name, jdbcType=VARCHAR},
+	    #{deliveryType, jdbcType=VARCHAR},
+	    #{operateMethod, jdbcType=VARCHAR},
+	    #{type, jdbcType=VARCHAR},
+	    #{pickArea.uuid, jdbcType=VARCHAR},
+	    #{pickArea.code, jdbcType=VARCHAR},
+	    #{pickArea.name, jdbcType=VARCHAR},
+	    #{binCode, jdbcType=VARCHAR},
+	    #{containerBarcode, jdbcType=VARCHAR},
+	    #{articleUuid, jdbcType=VARCHAR},
+	    #{munit, jdbcType=VARCHAR},
+	    #{qpcStr, jdbcType=VARCHAR},
+	    #{qty, jdbcType=DECIMAL},
+	    #{caseQtyStr, jdbcType=VARCHAR},
+	    #{itemVolume, jdbcType=DECIMAL},
+	    #{volume, jdbcType=DECIMAL},
+	    #{alcNtcBillItemUuid, jdbcType=VARCHAR},
+	    #{waveBillNumber, jdbcType=VARCHAR},
+	    #{waveUuid, jdbcType=VARCHAR},
+	    #{binUsage, jdbcType=VARCHAR},
+	    #{companyUuid, jdbcType=VARCHAR},
+	    #{pickOrder, jdbcType=VARCHAR}
+	   )
+	</insert>
+	
+	<select id="queryPickRules" parameterType="java.lang.String" resultMap="PickRuleMap">
+	  select distinct t.customeruuid, t.customercode, t.customername, t.deliveryType,
+	        t.operateMethod, t.type, t.pickareauuid, t.pickareacode, t.pickareaname,
+	        t.volume, t.waveuuid from db_proxy.sardine_wavepickupitem t 
+	  where t.waveUuid = #{uuid, jdbcType=VARCHAR}
+	</select>
+	
+	<select id="queryPickItem" parameterType="java.lang.String" resultMap="WavePickUpItemMap">
+	  select t.* from db_proxy.sardine_wavepickupitem t 
+	  where t.waveUuid = #{uuid, jdbcType=VARCHAR}
+	</select>
+	
+	<select id="queryPickItemByPickRule" parameterType="com.hd123.sardine.wms.api.out.wave.PickRule" resultMap="WavePickUpItemMap">
+	  select t.* from db_proxy.sardine_wavepickupitem t 
+	  where t.waveUuid = #{waveUuid, jdbcType=VARCHAR}
+	    and t.customerUuid = #{customer.uuid, jdbcType=VARCHAR}
+	    and t.deliveryType = #{deliveryType, jdbcType=VARCHAR}
+	    and t.operateMethod = #{operateMethod, jdbcType=VARCHAR}
+	    and t.type = #{type, jdbcType=VARCHAR}
+	    and t.pickAreauuid = #{pickArea.uuid, jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="removeWavePickUpItems" parameterType="java.lang.String">
+	  delete from db_proxy.sardine_wavepickupitem where waveuuid = #{waveUuid, jdbcType=VARCHAR}
+	</delete>
+	
+	<insert id="insertRplTasks" parameterType="Task">
+		insert into db_proxy.sardine_rpltask
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-			<if test="uuid != null and uuid != ''">
+			<if test="uuid != null">
 				uuid,
 			</if>
-			<if test="waveBillUuid != null">
-				waveBillUuid,
+			<if test="taskNo != null">
+				taskNo,
 			</if>
-			<if test="line != null">
-				line,
+			<if test="taskType != null">
+				taskType,
 			</if>
-			<if test="alcNtcBillNumber != null">
-				alcNtcBillNumber,
+			<if test="article != null and article.uuid != null">
+				articleuuid,
 			</if>
-			<if test="alcNtcBillState != null">
-				alcNtcBillState,
+			<if test="state != null">
+				state,
 			</if>
-			<if test="customer != null and customer.uuid != null">
-				customeruuid,
+			<if test="qpcStr != null">
+				qpcStr,
 			</if>
-			<if test="customer != null and customer.code != null">
-				customercode,
+			<if test="qty != null">
+				qty,
 			</if>
-			<if test="customer != null and customer.name != null">
-				customername
+			<if test="caseQtyStr != null">
+				caseQtyStr,
+			</if>
+			<if test="realQty != null">
+				realQty,
+			</if>
+			<if test="realCaseQtyStr != null">
+				realCaseQtyStr,
+			</if>
+			<if test="productionDate != null">
+				productionDate,
+			</if>
+			<if test="validDate != null">
+				validDate,
+			</if>
+			<if test="stockBatch != null">
+				stockBatch,
+			</if>
+			<if test="supplier != null and supplier.uuid != null">
+				supplieruuid,
+			</if>
+			<if test="fromBinCode != null">
+				fromBinCode,
+			</if>
+			<if test="fromContainerBarcode != null">
+				fromContainerBarcode,
+			</if>
+			<if test="toBinCode != null">
+				toBinCode,
+			</if>
+			<if test="toContainerBarcode != null">
+				toContainerBarcode,
+			</if>
+			<if test="owner != null">
+				owner,
+			</if>
+			<if test="sourceBillType != null">
+				sourceBillType,
+			</if>
+			<if test="sourceBillNumber != null">
+				sourceBillNumber,
+			</if>
+			<if test="sourceBillUuid != null">
+				sourceBillUuid,
+			</if>
+			<if test="sourceBillLine != null">
+				sourceBillLine,
+			</if>
+			<if test="creator != null and creator.uuid != null">
+				creatoruuid,
+			</if>
+			<if test="creator != null and creator.code != null">
+				creatorcode,
+			</if>
+			<if test="creator != null and creator.name != null">
+				creatorname,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="operator != null and operator.uuid != null">
+				operatoruuid,
+			</if>
+			<if test="operator != null and operator.code != null">
+				operatorcode,
+			</if>
+			<if test="operator != null and operator.name != null">
+				operatorname,
+			</if>
+			<if test="createTime != null">
+				createTime,
+			</if>
+			<if test="beginOperateTime != null">
+				beginOperateTime,
+			</if>
+			<if test="endOperateTime != null">
+				endOperateTime,
+			</if>
+			<if test="companyUuid != null">
+				companyUuid,
+			</if>
+			<if test="version != null">
+				version,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
-			<if test="uuid != null and uuid != ''">
+			<if test="uuid != null">
 				#{uuid,jdbcType=VARCHAR},
 			</if>
-			<if test="waveBillUuid != null">
-				#{waveBillUuid,jdbcType=VARCHAR},
+			<if test="taskNo != null">
+				#{taskNo,jdbcType=VARCHAR},
 			</if>
-			<if test="line != null">
-				#{line,jdbcType=INTEGER},
+			<if test="taskType != null">
+				#{taskType,jdbcType=VARCHAR},
 			</if>
-			<if test="alcNtcBillNumber != null">
-				#{alcNtcBillNumber,jdbcType=VARCHAR},
+			<if test="article != null and article.uuid != null">
+				#{article.uuid,jdbcType=VARCHAR},
 			</if>
-			<if test="alcNtcBillState != null">
-				#{alcNtcBillState,jdbcType=VARCHAR},
+			<if test="state != null">
+				#{state,jdbcType=VARCHAR},
 			</if>
-			<if test="customer != null and customer.uuid != null">
-				#{customer.uuid,jdbcType=VARCHAR},
+			<if test="qpcStr != null">
+				#{qpcStr,jdbcType=VARCHAR},
 			</if>
-			<if test="customer != null and customer.code != null">
-				#{customer.code,jdbcType=VARCHAR},
+			<if test="qty != null">
+				#{qty,jdbcType=DECIMAL},
 			</if>
-			<if test="customer != null and customer.name != null">
-				#{customer.name,jdbcType=VARCHAR}
+			<if test="caseQtyStr != null">
+				#{caseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="realQty != null">
+				#{realQty,jdbcType=DECIMAL},
+			</if>
+			<if test="realCaseQtyStr != null">
+				#{realCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="productionDate != null">
+				#{productionDate,jdbcType=DATE},
+			</if>
+			<if test="validDate != null">
+				#{validDate,jdbcType=DATE},
+			</if>
+			<if test="stockBatch != null">
+				#{stockBatch,jdbcType=VARCHAR},
+			</if>
+			<if test="supplier != null and supplier.uuid != null">
+				#{supplier.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="fromBinCode != null">
+				#{fromBinCode,jdbcType=VARCHAR},
+			</if>
+			<if test="fromContainerBarcode != null">
+				#{fromContainerBarcode,jdbcType=VARCHAR},
+			</if>
+			<if test="toBinCode != null">
+				#{toBinCode,jdbcType=VARCHAR},
+			</if>
+			<if test="toContainerBarcode != null">
+				#{toContainerBarcode,jdbcType=VARCHAR},
+			</if>
+			<if test="owner != null">
+				#{owner,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillType != null">
+				#{sourceBillType,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillNumber != null">
+				#{sourceBillNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillUuid != null">
+				#{sourceBillUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillLine != null">
+				#{sourceBillLine,jdbcType=INTEGER},
+			</if>
+			<if test="creator != null and creator.uuid != null">
+				#{creator.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="creator != null and creator.code != null">
+				#{creator.code,jdbcType=VARCHAR},
+			</if>
+			<if test="creator != null and creator.name != null">
+				#{creator.name,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=VARCHAR},
+			</if>
+			<if test="operator != null and operator.uuid != null">
+				#{operator.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="operator != null and operator.code != null">
+				#{operator.code,jdbcType=VARCHAR},
+			</if>
+			<if test="operator != null and operator.name != null">
+				#{operator.name,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="beginOperateTime != null">
+				#{beginOperateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endOperateTime != null">
+				#{endOperateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="companyUuid != null">
+				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				#{version,jdbcType=LONGVARCHAR},
 			</if>
 		</trim>
 	</insert>
-
-	<select id="getItemsByWaveBillUuid" parameterType="java.lang.String"
-		resultMap="WaveBillItemMap">
-		select t.* from db_proxy.sardine_wavebillitem t where
-		t.wavebilluuid=#{waveBillUuid,jdbcType=VARCHAR}
-		order by line
+	
+	<select id="queryRplTasks" parameterType="java.lang.String" resultMap="RplTaskMap">
+	  select t.* from db_proxy.sardine_rpltask t where t.sourcebilluuid = #{waveUuid, jdbcType=VARCHAR}
 	</select>
-
-	<delete id="removeItems" parameterType="java.lang.String">
-		delete from
-		db_proxy.sardine_wavebillitem where
-		waveBilluuid=#{waveBillUuid,jdbcType=VARCHAR}
+	
+	<insert id="insertRplTaskToTask" parameterType="java.lang.String">
+	  insert into db_proxy.sardine_task ...
+	</insert>
+	
+	<delete id="removeRplTasks" parameterType="java.lang.String">
+	  delete from db_proxy.sardine_waverpltask where waveuuid = #{waveUuid, jdbcType=VARCHAR}
 	</delete>
 </mapper>

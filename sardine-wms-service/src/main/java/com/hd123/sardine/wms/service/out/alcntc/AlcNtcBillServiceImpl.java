@@ -27,14 +27,12 @@ import com.hd123.sardine.wms.api.basicInfo.article.ArticleQpc;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleService;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
 import com.hd123.sardine.wms.api.basicInfo.bin.Wrh;
-import com.hd123.sardine.wms.api.ia.user.CompanyService;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBill;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillItem;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillService;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillState;
 import com.hd123.sardine.wms.api.out.alcntc.DeliveryArticleInfo;
 import com.hd123.sardine.wms.api.out.alcntc.DeliverySystem;
-import com.hd123.sardine.wms.api.out.alcntc.WaveAlcNtcItem;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
@@ -66,8 +64,6 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
   private ArticleService articleService;
   @Autowired
   private BinService binService;
-  @Autowired
-  private CompanyService companyService;
 
   @Override
   public String insert(AlcNtcBill alcNtcBill) throws IllegalArgumentException, WMSException {
@@ -285,11 +281,12 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
       throw new WMSException("配单" + billNumber + "不存在");
     PersistenceUtils.checkVersion(version, bill, AlcNtcBill.CAPTION, billNumber);
 
-//    if (AlcNtcBillState.initial.equals(bill.getState()) == false
-//        && StringUtil.isNullOrBlank(bill.getTaskBillNumber()) == false)
-//      throw new WMSException("配单状态不是初始，不能加入波次");
+     if (AlcNtcBillState.initial.equals(bill.getState()) == false
+     && StringUtil.isNullOrBlank(bill.getWaveBillNumber()) == false)
+     throw new WMSException("配单状态不是初始，不能加入波次");
     if (AlcNtcBillState.initial.equals(bill.getState()))
-      bill.setState(AlcNtcBillState.inAlc);
+      bill.setState(AlcNtcBillState.used);
+    
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     dao.update(bill);
 
@@ -313,7 +310,7 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
       throw new WMSException("配单" + billNumber + "不是待配货状态，不能踢出波次");
 
     bill.setState(AlcNtcBillState.initial);
-//    bill.setTaskBillNumber(null);
+    bill.setWaveBillNumber(null);
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
 
     dao.update(bill);
@@ -347,18 +344,8 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
     logger.log(EntityLogger.EVENT_REMOVE, "删除配单");
   }
 
-//  @Override
-//  public void pickUp(List<DeliveryArticleInfo> infos)
-//      throws IllegalArgumentException, WMSException {
-//    Assert.assertArgumentNotNull(infos, "infos");
-//
-//    updateAlcNtcItemRealQty(infos);
-//    updateAlcNtc(infos);
-//
-//  }
-
   private void updateAlcNtc(List<DeliveryArticleInfo> infos) {
-    List<AlcNtcBill> alcNtcs = new ArrayList<>();
+    List<AlcNtcBill> alcNtcs = new ArrayList<AlcNtcBill>();
     for (DeliveryArticleInfo info : infos) {
       AlcNtcBill bill = dao.getByItemUuid(info.getItemUuid());
       assert bill != null;
@@ -374,13 +361,12 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
       }
     });
 
-    Set<String> billNumbers = new HashSet<>();
+    Set<String> billNumbers = new HashSet<String>();
     for (AlcNtcBill alcNtcBill : alcNtcs) {
       if (billNumbers.contains(alcNtcBill.getBillNumber()))
         continue;
       // TODO 判断对应拣货单是否拣货完成，待拣货服务
     }
-
   }
 
   private void updateAlcNtcItemRealQty(List<DeliveryArticleInfo> infos) {
@@ -426,30 +412,9 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
     return result;
   }
 
-//  @Override
-//  public List<AlcNtcBill> getByTaskBillNumber(String taskBillNumber) {
-//    if (StringUtil.isNullOrBlank(taskBillNumber))
-//      return new ArrayList<>();
-//    return dao.getByTaskBillNumber(taskBillNumber);
-//  }
-
   @Override
   public void pickUp(String itemUuid, BigDecimal qty)
       throws IllegalArgumentException, WMSException {
-    // TODO Auto-generated method stub
-    
-  }
 
-  @Override
-  public List<String> queryArticleByWaveBillNumber(String waveBillNumber) {
-    // TODO Auto-generated method stub
-    return null;
   }
-
-  @Override
-  public List<WaveAlcNtcItem> queryAlcNtcItems(String waveBillNumber, List<String> articleUuids) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
 }

@@ -652,7 +652,6 @@ public class PickUpGenerator {
       pickItem.setDeliveryType(processItem.getDeliveryType());
       pickItem.setOperateMethod(pickBin.operateMethod);
       pickItem.setPickArea(pickBin.pickArea);
-      pickItem.setQpc(pickBin.qpc);
       pickItem.setQpcStr(pickBin.pickQpcStr);
       if (alcItem.getAlcQty().compareTo(pickQty) >= 0)
         pickItem.setQty(pickQty);

@@ -23,7 +23,6 @@ import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.api.stock.StockShiftRule;
 import com.hd123.sardine.wms.api.stock.StockState;
-import com.hd123.sardine.wms.api.task.TaskService;
 import com.hd123.sardine.wms.common.entity.SourceBill;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
@@ -38,9 +37,6 @@ public class AcceptanceHandler {
 
   @Autowired
   private StockService stockService;
-
-  @Autowired
-  private TaskService taskService;
 
   @Autowired
   private StockBatchUtils stockBatchUtils;

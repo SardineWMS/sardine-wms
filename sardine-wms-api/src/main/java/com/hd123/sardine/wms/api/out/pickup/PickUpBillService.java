@@ -95,7 +95,7 @@ public interface PickUpBillService {
    * @param operCtx
    * @throws WMSException
    */
-  void audit(String billNumber) throws WMSException;
+  void audit(String uuid, long version) throws WMSException;
 
   /**
    * 波次单回滚时删除拣货单和拣货单明细
@@ -103,5 +103,5 @@ public interface PickUpBillService {
    * @param waveUuid
    *          波次单UUID
    */
-  void removeByWaveUuid(String waveUuid);
+  void removeByWaveUuid(String waveUuid) throws WMSException;
 }
