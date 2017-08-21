@@ -30,6 +30,10 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.baidu.unbiz</groupId>
 			<artifactId>fluent-validator-jsr303</artifactId>
 			<exclusions>

@@ -278,7 +278,7 @@
 	<update id="approveByWaveBillNumber" parameterType="java.util.Map">
 		update db_proxy.sardine_pickupbill 
 		set state = #{state, jdbcType=VARCHAR}, 
-		    LASTMODIFYTIME = #{date, jdbcTYPE=DATE},
+		    LASTMODIFYTIME = #{date, jdbcType=DATE},
 		    LASTMODIFYID = #{user.uuid, jdbcType=VARCHAR},
 		    LASTMODIFYCODE = #{user.code, jdbcType=VARCHAR},
 		    LASTMODIFYNAME = #{user.name, jdbcType=VARCHAR}

@@ -35,7 +35,7 @@ public class ApplicationContextUtil {
   private static ThreadLocal<Boolean> MANAGECONTAINER_LOCAL = new ThreadLocal<Boolean>();
 
   private static ThreadLocal<OperateContext> OPERATECONTEXT_LOCAL = new ThreadLocal<OperateContext>();
-
+  
   /**
    * 获取公司ID
    * 

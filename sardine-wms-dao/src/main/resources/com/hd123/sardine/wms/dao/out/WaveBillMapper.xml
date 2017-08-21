@@ -350,7 +350,7 @@
 		t.uuid=#{uuid,jdbcType=VARCHAR}
 	</select>
 	
-	<select id="getByBillNumber" parameterType="java.uti.Map" resultMap="WaveBillMap">
+	<select id="getByBillNumber" parameterType="java.util.Map" resultMap="WaveBillMap">
 		select t.*, s.code serialArchCode,s.name serialArchName 
 		from db_proxy.sardine_wavebill t,db_proxy.sardine_serialarch  s 
 		where t.SERIALARCHUUID  = s.uuid and 
