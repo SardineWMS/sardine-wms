@@ -117,7 +117,7 @@ public class AlcNtcBillController extends BaseController {
       definition.put(AlcNtcBillService.QUERY_STATE_EQUALS,
           StringUtil.isNullOrBlank(state) ? null : AlcNtcBillState.valueOf(state));
       definition.put(AlcNtcBillService.QUERY_CUSTOMERCODE_LIKE, customer);
-      definition.put(AlcNtcBillService.QUERY_TASKBILLNUMBER_LIKE, taskBillNumber);
+      definition.put(AlcNtcBillService.QUERY_WAVEBILLNUMBER_LIKE, taskBillNumber);
       definition.put(AlcNtcBillService.QUEYR_SOURCEBILLNUMBER_LIKE, sourceBillNumber);
       definition.put(AlcNtcBillService.QUERY_WRH_EQUALS, wrh);
       definition.put(AlcNtcBillService.QUERY_DELIVERYMODE, deliveryMode);

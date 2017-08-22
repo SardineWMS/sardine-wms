@@ -190,6 +190,12 @@
 			<if test="serialArch != null and serialArch.uuid != null">
 				serialArchUuid,
 			</if>
+			<if test="serialArch != null and serialArch.code != null">
+				serialArchcode,
+			</if>
+			<if test="serialArch != null and serialArch.name != null">
+				serialArchname,
+			</if>
 			<if test="waveType != null">
 				waveType,
 			</if>
@@ -245,6 +251,12 @@
 			</if>
 			<if test="serialArch != null and serialArch.uuid != null">
 				#{serialArch.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="serialArch != null and serialArch.code != null">
+				#{serialArch.code,jdbcType=VARCHAR},
+			</if>
+			<if test="serialArch != null and serialArch.name != null">
+				#{serialArch.name,jdbcType=VARCHAR},
 			</if>
 			<if test="waveType != null">
 				#{waveType,jdbcType=VARCHAR},
@@ -306,6 +318,12 @@
 		<set>
 			<if test="serialArch != null and serialArch.uuid != null">
 				serialArchUuid=#{serialArch.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="serialArch != null and serialArch.code != null">
+				serialArchcode=#{serialArch.code,jdbcType=VARCHAR},
+			</if>
+			<if test="serialArch != null and serialArch.name != null">
+				serialArchname=#{serialArch.name,jdbcType=VARCHAR},
 			</if>
 			<if test="waveType != null">
 				waveType=#{waveType,jdbcType=VARCHAR},
@@ -381,6 +399,7 @@
 	  select from db_proxy.sardine_waveAlcntcitem t 
 	  where t.waveBillnumber = #{waveBillNumber, jdbcType=VARCHAR}
 	    and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+	    and t.state = 'Initial'
 	    and t.articleUuid in 
 	    <foreach collection="articleUuids" item="item" index="index" open="("
 				separator="," close=")">
@@ -393,6 +412,7 @@
 	  set t.state = 'Done' 
 	  where t.waveBillnumber = #{waveBillNumber, jdbcType=VARCHAR}
 	    and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+	    and t.state = 'Initial'
 	    and t.articleUuid in 
 	    <foreach collection="articleUuids" item="item" index="index" open="("
 				separator="," close=")">
@@ -407,13 +427,23 @@
 	</delete>
 	
 	<insert id="saveWaveAlcNtcItems" parameterType="java.util.Map">
-	  insert into ...
+	  insert into db_proxy.sardine_waveAlcntcitem(
+alcNtcBillUuid, alcNtcBillNumber,state, CUSTOMERUUID, CUSTOMERCODE, 
+CUSTOMERNAME, CUSTOMERTYPE ,WRHUUID, WRHCODE,WRHNAME,DELIVERYMODE,ARTICLEUUID,
+ARTICLECODE,ARTICLENAME,ARTICLESPEC,alcqty, waveuuid,wavebillnumber, companyuuid
+) select a.uuid alcNtcBillUuid, a.BILLNUMBER alcNtcBillNumber,'Initial', a.CUSTOMERUUID, a.CUSTOMERCODE, 
+a.CUSTOMERNAME, c.CUSTOMERTYPE ,a.WRHUUID, a.WRHCODE,a.WRHNAME,a.DELIVERYMODE,ai.ARTICLEUUID,
+ai.ARTICLECODE,ai.ARTICLENAME,ai.ARTICLESPEC,ai.QTY alcqty, #{waveUuid, jdbcType=VARCHAR}, 
+#{waveBillNumber, jdbcType=VARCHAR}, a.companyuuid from db_proxy.sardine_alcntcbill a, db_proxy.sardine_alcntcbillitem ai, 
+db_proxy.sardine_customer c where 
+a.uuid = ai.ALCNTCBILLUUID and a.CUSTOMERUUID = c.uuid and 
+a.waveBillNumber = #{waveBillNumber, jdbcType=VARCHAR} and a.companyuuid = #{companyUuid,jdbcType=VARCHAR}
 	</insert>
 	
 	<select id="queryWaveArticleUuids" parameterType="java.util.Map" resultType="java.lang.String">
 	  select distinct t.articleuuid from db_proxy.sardine_waveAlcntcitem t where t.waveBillNumber = 
 	  #{waveBillNumber, jdbcType=VARCHAR} and t.companyUuid = 
-	  #{companyUuid, jdbcType=VARCHAR}
+	  #{companyUuid, jdbcType=VARCHAR} and t.state = 'Initial'
 	</select>
 	
 	<insert id="saveWavePickUpItems" parameterType="com.hd123.sardine.wms.api.out.wave.WavePickUpItem">

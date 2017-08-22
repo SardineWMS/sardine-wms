@@ -10,7 +10,6 @@
 package com.hd123.sardine.wms.api.out.alcntc;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
@@ -28,7 +27,7 @@ public interface AlcNtcBillService {
   public static final String QUERY_BILLNUMBER_LIKE = "billNumber";
   public static final String QUERY_STATE_EQUALS = "state";
   public static final String QUERY_CUSTOMERCODE_LIKE = "customerCode";
-  public static final String QUERY_TASKBILLNUMBER_LIKE = "taskBillNumber";
+  public static final String QUERY_WAVEBILLNUMBER_LIKE = "waveBillNumber";
   public static final String QUEYR_SOURCEBILLNUMBER_LIKE = "sourceBillNumber";
   public static final String QUERY_WRH_EQUALS = "wrh";
   public static final String QUERY_DELIVERYMODE = "deliveryMode";

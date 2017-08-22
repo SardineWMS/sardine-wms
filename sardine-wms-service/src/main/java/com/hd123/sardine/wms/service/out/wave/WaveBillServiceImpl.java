@@ -79,8 +79,8 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
 
     dao.insert(bill);
-    dao.saveWaveAlcNtcItems(bill.getBillNumber());
     waveHandler.joinWave(bill, null);
+    dao.saveWaveAlcNtcItems(bill.getUuid(), bill.getBillNumber());
 
     logger.injectContext(this, bill.getUuid(), WaveBill.class.getName(),
         ApplicationContextUtil.getOperateContext());
@@ -107,10 +107,10 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
 
     dao.update(bill);
-    dao.removeWaveAlcNtcItems(bill.getBillNumber());
-    dao.saveWaveAlcNtcItems(bill.getBillNumber());
-
     waveHandler.joinWave(bill, waveBill);
+    
+    dao.removeWaveAlcNtcItems(bill.getBillNumber());
+    dao.saveWaveAlcNtcItems(bill.getUuid(), bill.getBillNumber());
 
     logger.injectContext(this, waveBill.getUuid(), WaveBill.class.getName(),
         ApplicationContextUtil.getOperateContext());
@@ -143,6 +143,10 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     if (StringUtil.isNullOrBlank(uuid))
       return null;
     WaveBill bill = dao.get(uuid);
+    if (bill == null)
+      return bill;
+    bill.setNtcItems(waveHandler.queryWaveNtcItems(bill.getBillNumber()));
+    // bill.setPickItems(waveHandler.queryPickUpBillItems(bill.getBillNumber()));
     return bill;
   }
 
@@ -151,6 +155,10 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     if (StringUtil.isNullOrBlank(billNumber))
       return null;
     WaveBill bill = dao.getByBillNumber(billNumber);
+    if (bill == null)
+      return bill;
+    bill.setNtcItems(waveHandler.queryWaveNtcItems(bill.getBillNumber()));
+    // bill.setPickItems(waveHandler.queryPickUpBillItems(bill.getBillNumber()));
     return bill;
   }
 
@@ -300,13 +308,13 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
 
     if (waveBill.getState().equals(WaveBillState.started) == false)
       throw new WMSException("只有启动启动完成的波次可以确认！");
-    
+
     pickUpBillService.approveByWaveBillNumber(waveBill.getBillNumber());
     dao.insertRplTaskToTask(uuid);
     dao.removeRplTasks(uuid);
     dao.removeWaveAlcNtcItems(waveBill.getBillNumber());
     dao.removeWavePickUpItems(uuid);
-    
+
     waveBill.setState(WaveBillState.inAlc);
     waveBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     dao.update(waveBill);

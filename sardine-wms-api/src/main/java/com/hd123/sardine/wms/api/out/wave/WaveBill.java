@@ -36,8 +36,25 @@ public class WaveBill extends StandardEntity {
     private String remark;
     private WaveBillState state;
     private String companyUuid;
+    
+    private List<WaveNtcItem> ntcItems = new ArrayList<WaveNtcItem>();
+    private List<WavePickUpBillItem> pickItems = new ArrayList<WavePickUpBillItem>();
 
-    private List<WaveBillItem> items = new ArrayList<>();
+    public List<WaveNtcItem> getNtcItems() {
+      return ntcItems;
+    }
+
+    public void setNtcItems(List<WaveNtcItem> ntcItems) {
+      this.ntcItems = ntcItems;
+    }
+
+    public List<WavePickUpBillItem> getPickItems() {
+      return pickItems;
+    }
+
+    public void setPickItems(List<WavePickUpBillItem> pickItems) {
+      this.pickItems = pickItems;
+    }
 
     public String getBillNumber() {
         return billNumber;
@@ -77,16 +94,6 @@ public class WaveBill extends StandardEntity {
         this.remark = remark;
     }
 
-    public List<WaveBillItem> getItems() {
-        return items;
-    }
-
-    /** 波次单明细 */
-    public void setItems(List<WaveBillItem> items) {
-        Assert.assertArgumentNotNull(items, "items");
-        this.items = items;
-    }
-
     public WaveBillState getState() {
         return state;
     }
@@ -108,21 +115,21 @@ public class WaveBill extends StandardEntity {
     }
 
     public void validate() {
-        Assert.assertArgumentNotNull(items, "items");
+        Assert.assertArgumentNotNull(ntcItems, "ntcItems");
         Assert.assertArgumentNotNull(serialArch, "serialArch");
         Assert.assertArgumentNotNull(waveType, "waveType");
         Assert.assertArgumentNotNull(companyUuid, "companyUuid");
 
-        if (CollectionUtils.isEmpty(items))
+        if (CollectionUtils.isEmpty(ntcItems))
             throw new IllegalArgumentException("明细行不能为空");
 
-        for (int i = 0; i < items.size(); i++) {
-            WaveBillItem item = items.get(i);
+        for (int i = 0; i < ntcItems.size(); i++) {
+            WaveNtcItem item = ntcItems.get(i);
             item.validate();
-            for (int j = i + 1; j < items.size(); j++) {
-                WaveBillItem jItem = items.get(j);
+            for (int j = i + 1; j < ntcItems.size(); j++) {
+              WaveNtcItem jItem = ntcItems.get(j);
                 jItem.validate();
-                if (item.getAlcNtcBillNumber().equals(jItem.getAlcNtcBillNumber())) {
+                if (item.getNtcBillNumber().equals(jItem.getNtcBillNumber())) {
                     throw new IllegalArgumentException("第" + i + "行与第" + j + "行，明细重复");
                 }
             }

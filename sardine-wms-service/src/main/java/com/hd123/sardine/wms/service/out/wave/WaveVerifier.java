@@ -17,7 +17,7 @@ import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBill;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillService;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillState;
 import com.hd123.sardine.wms.api.out.wave.WaveBill;
-import com.hd123.sardine.wms.api.out.wave.WaveBillItem;
+import com.hd123.sardine.wms.api.out.wave.WaveNtcItem;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArch;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArchService;
 import com.hd123.sardine.wms.common.entity.UCN;
@@ -44,17 +44,17 @@ public class WaveVerifier {
 
     waveBill.setSerialArch(new UCN(arch.getUuid(), arch.getCode(), arch.getName()));
 
-    for (WaveBillItem waveItem : waveBill.getItems()) {
-      AlcNtcBill alcNtcBill = alcNtcService.getByBillNumber(waveItem.getAlcNtcBillNumber());
+    for (WaveNtcItem waveItem : waveBill.getNtcItems()) {
+      AlcNtcBill alcNtcBill = alcNtcService.getByBillNumber(waveItem.getNtcBillNumber());
       if (alcNtcBill == null)
-        throw new WMSException("配货通知单" + waveItem.getAlcNtcBillNumber() + "不存在！");
+        throw new WMSException("配货通知单" + waveItem.getNtcBillNumber() + "不存在！");
       if (alcNtcBill.getState().equals(AlcNtcBillState.initial) == false
           && alcNtcBill.getState().equals(AlcNtcBillState.used) == false)
-        throw new WMSException("配货通知单" + waveItem.getAlcNtcBillNumber() + "状态不是初始或者已使用！");
+        throw new WMSException("配货通知单" + waveItem.getNtcBillNumber() + "状态不是初始或者已使用！");
       if (StringUtil.isNullOrBlank(alcNtcBill.getWaveBillNumber()) == false
           && StringUtil.isNullOrBlank(waveBill.getBillNumber()) == false
           && alcNtcBill.getWaveBillNumber().equals(waveBill.getBillNumber()) == false)
-        throw new WMSException("配货通知单" + waveItem.getAlcNtcBillNumber() + "已被波次单"
+        throw new WMSException("配货通知单" + waveItem.getNtcBillNumber() + "已被波次单"
             + alcNtcBill.getWaveBillNumber() + "占用！");
     }
   }

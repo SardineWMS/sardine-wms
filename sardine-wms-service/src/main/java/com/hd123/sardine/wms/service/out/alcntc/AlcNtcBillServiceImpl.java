@@ -279,7 +279,7 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
       throw new WMSException("配单状态不是初始，不能加入波次");
     if (AlcNtcBillState.initial.equals(bill.getState()))
       bill.setState(AlcNtcBillState.used);
-
+    bill.setWaveBillNumber(waveBillNumber);
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     dao.update(bill);
 
@@ -299,8 +299,8 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
       throw new WMSException("配单" + billNumber + "不存在");
     PersistenceUtils.checkVersion(version, bill, AlcNtcBill.class.getName(), billNumber);
 
-    if (AlcNtcBillState.inAlc.equals(bill.getState()) == false)
-      throw new WMSException("配单" + billNumber + "不是待配货状态，不能踢出波次");
+    if (AlcNtcBillState.used.equals(bill.getState()) == false)
+      throw new WMSException("配单" + billNumber + "不是已使用状态，不能踢出波次");
 
     bill.setState(AlcNtcBillState.initial);
     bill.setWaveBillNumber(null);

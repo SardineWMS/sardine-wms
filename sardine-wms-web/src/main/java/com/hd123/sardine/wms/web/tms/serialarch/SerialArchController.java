@@ -40,6 +40,7 @@ import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
@@ -327,6 +328,7 @@ public class SerialArchController extends BaseController {
     try {
       PageQueryDefinition definition = new PageQueryDefinition();
       definition.setPageSize(0);
+      definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<SerialArch> result = service.query(definition);
       resp.setObj(result.getRecords());
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

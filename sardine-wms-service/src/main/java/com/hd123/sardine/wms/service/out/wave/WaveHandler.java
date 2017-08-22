@@ -18,16 +18,20 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBill;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillService;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillState;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBillFilter;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillItem;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillState;
 import com.hd123.sardine.wms.api.out.wave.PickRule;
 import com.hd123.sardine.wms.api.out.wave.WaveBill;
-import com.hd123.sardine.wms.api.out.wave.WaveBillItem;
 import com.hd123.sardine.wms.api.out.wave.WaveBinUsage;
+import com.hd123.sardine.wms.api.out.wave.WaveNtcItem;
+import com.hd123.sardine.wms.api.out.wave.WavePickUpBillItem;
 import com.hd123.sardine.wms.api.out.wave.WavePickUpItem;
 import com.hd123.sardine.wms.api.stock.StockComponent;
 import com.hd123.sardine.wms.api.stock.StockService;
@@ -38,6 +42,8 @@ import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.common.entity.SourceBill;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
+import com.hd123.sardine.wms.common.query.PageQueryDefinition;
+import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.DateHelper;
 import com.hd123.sardine.wms.common.utils.StockConstants;
@@ -58,6 +64,9 @@ public class WaveHandler {
   private StockService stockService;
 
   @Autowired
+  private PickUpBillService pickUpBillService;
+
+  @Autowired
   private StockBatchUtils stockBatchUtils;
 
   @Autowired
@@ -66,13 +75,62 @@ public class WaveHandler {
   @Autowired
   private TaskHandler taskHandler;
 
+  public List<WaveNtcItem> queryWaveNtcItems(String waveBillNumber) {
+    if (StringUtil.isNullOrBlank(waveBillNumber))
+      return new ArrayList<WaveNtcItem>();
+
+    PageQueryDefinition definition = new PageQueryDefinition();
+    definition.setPageSize(0);
+    definition.put(AlcNtcBillService.QUERY_WAVEBILLNUMBER_LIKE, waveBillNumber);
+    definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    PageQueryResult<AlcNtcBill> ntcBills = alcNtcService.query(definition);
+    List<WaveNtcItem> ntcItems = new ArrayList<WaveNtcItem>();
+    for (AlcNtcBill ntcBill : ntcBills.getRecords()) {
+      WaveNtcItem ntcItem = new WaveNtcItem();
+      ntcItem.setCustomer(ntcBill.getCustomer());
+      ntcItem.setDeliveryType(ntcBill.getDeliveryMode());
+      ntcItem.setNtcBillNumber(ntcBill.getBillNumber());
+      ntcItem.setNtcBillState(ntcBill.getState());
+      ntcItem.setNtcBillUuid(ntcBill.getUuid());
+      ntcItem.setWaveBillNumber(waveBillNumber);
+      ntcItems.add(ntcItem);
+    }
+    return ntcItems;
+  }
+
+  public List<WavePickUpBillItem> queryPickUpBillItems(String waveBillNumber) {
+    if (StringUtil.isNullOrBlank(waveBillNumber))
+      return new ArrayList<WavePickUpBillItem>();
+
+    PickUpBillFilter filter = new PickUpBillFilter();
+    filter.setPageSize(0);
+    filter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    filter.setWaveBillNumberLike(waveBillNumber);
+    PageQueryResult<PickUpBill> result = pickUpBillService.query(filter);
+    List<WavePickUpBillItem> pickItems = new ArrayList<WavePickUpBillItem>();
+    for (PickUpBill pickBill : result.getRecords()) {
+      WavePickUpBillItem pickItem = new WavePickUpBillItem();
+      pickItem.setCustomer(pickBill.getCustomer());
+      pickItem.setDeliveryType(pickBill.getDeliveryType());
+      pickItem.setMethod(pickBill.getMethod());
+      pickItem.setPickArea(pickBill.getPickArea());
+      pickItem.setPickOrder(pickBill.getPickOrder());
+      pickItem.setPickUpBillNumber(pickBill.getBillNumber());
+      pickItem.setPickUpBillState(pickBill.getState());
+      pickItem.setType(pickBill.getType());
+      pickItem.setWaveBillNumber(waveBillNumber);
+      pickItems.add(pickItem);
+    }
+    return pickItems;
+  }
+
   public void joinWave(WaveBill waveBill, WaveBill oldBill) throws WMSException {
     Assert.assertArgumentNotNull(waveBill, "waveBill");
 
-    for (WaveBillItem waveItem : waveBill.getItems()) {
-      AlcNtcBill alcNtcBill = alcNtcService.getByBillNumber(waveItem.getAlcNtcBillNumber());
+    for (WaveNtcItem waveItem : waveBill.getNtcItems()) {
+      AlcNtcBill alcNtcBill = alcNtcService.getByBillNumber(waveItem.getNtcBillNumber());
       if (alcNtcBill == null)
-        throw new WMSException("配货通知单" + waveItem.getAlcNtcBillNumber() + "不存在！");
+        throw new WMSException("配货通知单" + waveItem.getNtcBillNumber() + "不存在！");
       if (alcNtcBill.getState().equals(AlcNtcBillState.used)
           && alcNtcBill.getWaveBillNumber().equals(waveBill.getBillNumber()))
         continue;
@@ -83,23 +141,23 @@ public class WaveHandler {
     if (oldBill == null)
       return;
 
-    for (WaveBillItem waveItem : oldBill.getItems()) {
-      if (contain(waveBill.getItems(), waveItem))
+    for (WaveNtcItem waveItem : oldBill.getNtcItems()) {
+      if (contain(waveBill.getNtcItems(), waveItem))
         continue;
 
-      AlcNtcBill alcNtcBill = alcNtcService.getByBillNumber(waveItem.getAlcNtcBillNumber());
+      AlcNtcBill alcNtcBill = alcNtcService.getByBillNumber(waveItem.getNtcBillNumber());
       if (alcNtcBill == null)
-        throw new WMSException("配货通知单" + waveItem.getAlcNtcBillNumber() + "不存在！");
+        throw new WMSException("配货通知单" + waveItem.getNtcBillNumber() + "不存在！");
       alcNtcService.leaveWave(alcNtcBill.getBillNumber(), alcNtcBill.getVersion());
     }
   }
 
-  private boolean contain(List<WaveBillItem> nowItems, WaveBillItem item) {
+  private boolean contain(List<WaveNtcItem> nowItems, WaveNtcItem item) {
     assert nowItems != null;
     assert item != null;
 
-    for (WaveBillItem waveItem : nowItems) {
-      if (waveItem.getAlcNtcBillNumber().equals(item.getAlcNtcBillNumber()))
+    for (WaveNtcItem waveItem : nowItems) {
+      if (waveItem.getNtcBillNumber().equals(item.getNtcBillNumber()))
         return true;
     }
     return false;
@@ -107,11 +165,11 @@ public class WaveHandler {
 
   public void leaveWave(WaveBill bill) throws WMSException {
     assert bill != null;
-    for (WaveBillItem item : bill.getItems()) {
-      AlcNtcBill alcNtcBill = alcNtcService.getByBillNumber(item.getAlcNtcBillNumber());
+    for (WaveNtcItem item : bill.getNtcItems()) {
+      AlcNtcBill alcNtcBill = alcNtcService.getByBillNumber(item.getNtcBillNumber());
       if (alcNtcBill == null)
         throw new IllegalArgumentException(
-            MessageFormat.format("通知单{0}不存在 ", item.getAlcNtcBillNumber()));
+            MessageFormat.format("通知单{0}不存在 ", item.getNtcBillNumber()));
 
       alcNtcService.leaveWave(alcNtcBill.getBillNumber(), alcNtcBill.getVersion());
     }

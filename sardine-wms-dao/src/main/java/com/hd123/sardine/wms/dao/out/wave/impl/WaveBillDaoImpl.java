@@ -79,12 +79,13 @@ public class WaveBillDaoImpl extends BaseDaoImpl<WaveBill> implements WaveBillDa
   }
 
   @Override
-  public void saveWaveAlcNtcItems(String waveBillNumber) {
-    if (StringUtil.isNullOrBlank(waveBillNumber))
+  public void saveWaveAlcNtcItems(String waveUuid, String waveBillNumber) {
+    if (StringUtil.isNullOrBlank(waveUuid) || StringUtil.isNullOrBlank(waveBillNumber))
       return;
 
     Map<String, Object> map = ApplicationContextUtil.map();
     map.put("waveBillNumber", waveBillNumber);
+    map.put("waveUuid", waveUuid);
     insert(SAVEWAVEALCNTCITEMS, map);
   }
 
