@@ -13,7 +13,6 @@ import java.util.List;
 
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBill;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillItem;
-import com.hd123.sardine.wms.api.out.alcntc.WaveAlcNtcItem;
 import com.hd123.sardine.wms.common.dao.BaseDao;
 
 /**
@@ -35,9 +34,5 @@ public interface AlcNtcBillDao extends BaseDao<AlcNtcBill> {
 
   AlcNtcBill getByItemUuid(String itemUuid);
 
-  List<AlcNtcBill> getByTaskBillNumber(String taskBillNumber);
-
-  List<String> queryArticleByWaveBillNumber(String waveBillNumber);
-
-  List<WaveAlcNtcItem> queryWaveAlcNtcItems(String waveBillNumber, String articleUuid);
+  List<AlcNtcBill> getByWaveBillNumber(String waveBillNumber);
 }

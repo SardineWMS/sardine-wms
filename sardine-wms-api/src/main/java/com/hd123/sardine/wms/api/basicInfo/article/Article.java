@@ -32,7 +32,7 @@ import com.hd123.sardine.wms.common.utils.StockConstants;
  */
 public class Article extends StandardEntity {
   private static final long serialVersionUID = 4329860271781901045L;
-
+  
   private String companyUuid;
   private String code;
   private String name;

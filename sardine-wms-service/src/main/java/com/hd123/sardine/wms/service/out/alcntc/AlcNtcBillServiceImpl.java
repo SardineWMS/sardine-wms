@@ -33,7 +33,6 @@ import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillService;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillState;
 import com.hd123.sardine.wms.api.out.alcntc.DeliveryArticleInfo;
 import com.hd123.sardine.wms.api.out.alcntc.DeliverySystem;
-import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -77,6 +76,7 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
     refreshInVaildQpcStr(alcNtcBill);
 
     alcNtcBill.setUuid(UUIDGenerator.genUUID());
+    alcNtcBill.refreshTotalInfo();
     alcNtcBill.setBillNumber(
         billNumberGenerator.allocateNextBillNumber(AlcNtcBill.class.getSimpleName()));
     alcNtcBill.setState(AlcNtcBillState.initial);
@@ -145,6 +145,7 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
 
     verifyArticleAndWrh(alcNtcBill);
     refreshInVaildQpcStr(alcNtcBill);
+    alcNtcBill.refreshTotalInfo();
     alcNtcBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     for (AlcNtcBillItem item : alcNtcBill.getItems()) {
       item.setAlcNtcBillUuid(alcNtcBill.getUuid());
@@ -246,13 +247,7 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
     AlcNtcBill alcNtcBill = dao.get(uuid);
     if (alcNtcBill == null)
       return null;
-    Wrh wrh = binService.getWrh(alcNtcBill.getWrh().getUuid());
-    alcNtcBill.setWrh(new UCN(wrh.getUuid(), wrh.getCode(), wrh.getName()));
     alcNtcBill.setItems(dao.queryItems(uuid));
-    for (AlcNtcBillItem item : alcNtcBill.getItems()) {
-      Article article = articleService.get(item.getArticle().getUuid());
-      item.setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
-    }
     return alcNtcBill;
   }
 
@@ -263,8 +258,6 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
     AlcNtcBill alcNtcBill = dao.getByBillNumber(billNumber);
     if (alcNtcBill == null)
       return null;
-    Wrh wrh = binService.getWrh(alcNtcBill.getWrh().getUuid());
-    alcNtcBill.setWrh(new UCN(wrh.getUuid(), wrh.getCode(), wrh.getName()));
     alcNtcBill.setItems(dao.queryItems(alcNtcBill.getUuid()));
     return alcNtcBill;
   }
@@ -281,12 +274,12 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
       throw new WMSException("配单" + billNumber + "不存在");
     PersistenceUtils.checkVersion(version, bill, AlcNtcBill.CAPTION, billNumber);
 
-     if (AlcNtcBillState.initial.equals(bill.getState()) == false
-     && StringUtil.isNullOrBlank(bill.getWaveBillNumber()) == false)
-     throw new WMSException("配单状态不是初始，不能加入波次");
+    if (AlcNtcBillState.initial.equals(bill.getState()) == false
+        && StringUtil.isNullOrBlank(bill.getWaveBillNumber()) == false)
+      throw new WMSException("配单状态不是初始，不能加入波次");
     if (AlcNtcBillState.initial.equals(bill.getState()))
       bill.setState(AlcNtcBillState.used);
-    
+
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     dao.update(bill);
 

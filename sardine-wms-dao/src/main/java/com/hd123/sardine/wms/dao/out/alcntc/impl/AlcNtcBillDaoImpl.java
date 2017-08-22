@@ -17,7 +17,6 @@ import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBill;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillItem;
-import com.hd123.sardine.wms.api.out.alcntc.WaveAlcNtcItem;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.dao.out.alcntc.AlcNtcBillDao;
@@ -92,24 +91,11 @@ public class AlcNtcBillDaoImpl extends BaseDaoImpl<AlcNtcBill> implements AlcNtc
   }
 
   @Override
-  public List<AlcNtcBill> getByTaskBillNumber(String taskBillNumber) {
-    if (StringUtil.isNullOrBlank(taskBillNumber))
+  public List<AlcNtcBill> getByWaveBillNumber(String waveBillNumber) {
+    if (StringUtil.isNullOrBlank(waveBillNumber))
       return new ArrayList<>();
     Map<String, Object> map = ApplicationContextUtil.map();
-    map.put("taskBillNumber", taskBillNumber);
+    map.put("waveBillNumber", waveBillNumber);
     return getSqlSession().selectList(generateStatement(MAPPER_GETBYTASKBILLNUMBER), map);
   }
-
-  @Override
-  public List<String> queryArticleByWaveBillNumber(String waveBillNumber) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public List<WaveAlcNtcItem> queryWaveAlcNtcItems(String waveBillNumber, String articleUuid) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
 }

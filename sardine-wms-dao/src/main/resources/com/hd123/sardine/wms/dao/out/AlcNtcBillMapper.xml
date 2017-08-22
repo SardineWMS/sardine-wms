@@ -16,7 +16,9 @@
 		<result column="sourcebilltype" property="sourceBillType"
 			jdbcType="VARCHAR" />
 		<result column="wrhuuid" property="wrh.uuid" jdbcType="VARCHAR" />
-		<result column="companyuuid" property="company.uuid" jdbcType="VARCHAR" />
+		<result column="wrhcode" property="wrh.code" jdbcType="VARCHAR" />
+		<result column="wrhname" property="wrh.name" jdbcType="VARCHAR" />
+		<result column="companyuuid" property="companyUuid" jdbcType="VARCHAR" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
 		<result column="version" property="version" jdbcType="LONGVARCHAR" />
 		<result column="customeruuid" property="customer.uuid"
@@ -25,7 +27,7 @@
 			jdbcType="VARCHAR" />
 		<result column="customername" property="customer.name"
 			jdbcType="VARCHAR" />
-		<result column="taskBillNumber" property="taskBillNumber"
+		<result column="waveBillNumber" property="waveBillNumber"
 			jdbcType="VARCHAR" />
 		<result column="totalcaseqtystr" property="totalCaseQtyStr"
 			jdbcType="VARCHAR" />
@@ -59,6 +61,9 @@
 			jdbcType="VARCHAR" />
 		<result column="line" property="line" jdbcType="DECIMAL" />
 		<result column="articleuuid" property="article.uuid" jdbcType="VARCHAR" />
+		<result column="articlecode" property="article.code" jdbcType="VARCHAR" />
+		<result column="articlename" property="article.name" jdbcType="VARCHAR" />
+		<result column="articlespec" property="articleSpec" jdbcType="VARCHAR" />
 		<result column="qpcstr" property="qpcStr" jdbcType="VARCHAR" />
 		<result column="munit" property="munit" jdbcType="VARCHAR" />
 		<result column="qty" property="qty" jdbcType="DECIMAL" />
@@ -70,7 +75,6 @@
 		<result column="realcaseqtystr" property="realCaseQtyStr"
 			jdbcType="VARCHAR" />
 		<result column="price" property="price" jdbcType="DECIMAL" />
-		<result column="amount" property="amount" jdbcType="DECIMAL" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
 	</resultMap>
 
@@ -97,6 +101,15 @@
 			</if>
 			<if test="article != null and article.uuid != null">
 				articleUuid,
+			</if>
+			<if test="article != null and article.code != null">
+				articlecode,
+			</if>
+			<if test="article != null and article.name != null">
+				articlename,
+			</if>
+			<if test="articleSpec != null">
+				articleSpec,
 			</if>
 			<if test="qpcStr != null">
 				qpcStr,
@@ -125,9 +138,6 @@
 			<if test="price != null">
 				price,
 			</if>
-			<if test="amount != null">
-				amount,
-			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uuid != null and uuid != ''">
@@ -141,6 +151,15 @@
 			</if>
 			<if test="article != null and article.uuid != null">
 				#{article.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="article != null and article.code != null">
+				#{article.code,jdbcType=VARCHAR},
+			</if>
+			<if test="article != null and article.name != null">
+				#{article.name,jdbcType=VARCHAR},
+			</if>
+			<if test="articleSpec != null">
+				#{articleSpec,jdbcType=VARCHAR},
 			</if>
 			<if test="qpcStr != null">
 				#{qpcStr,jdbcType=VARCHAR},
@@ -169,9 +188,6 @@
 			<if test="price != null">
 				#{price,jdbcType=DECIMAL},
 			</if>
-			<if test="amount != null">
-				#{amount,jdbcType=DECIMAL},
-			</if>
 		</trim>
 	</insert>
 
@@ -198,6 +214,12 @@
 	<update id="updateItem" parameterType="com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillItem">
 		update db_proxy.sardine_alcntcbillitem
 		<set>
+		    <if test="planQty != null">
+				planQty=#{planQty,jdbcType=DECIMAL},
+			</if>
+			<if test="planCaseQtyStr != null">
+				planCaseQtyStr=#{planCaseQtyStr,jdbcType=VARCHAR},
+			</if>
 			<if test="realQty != null">
 				realQty=#{realQty,jdbcType=DECIMAL},
 			</if>
@@ -247,7 +269,13 @@
 			<if test="wrh != null and wrh.uuid != null">
 				wrhUuid,
 			</if>
-			<if test="company != null and company.uuid != null">
+			<if test="wrh != null and wrh.code != null">
+				wrhcode,
+			</if>
+			<if test="wrh != null and wrh.name != null">
+				wrhname,
+			</if>
+			<if test="companyUuid != null">
 				companyUuid,
 			</if>
 			<if test="remark != null">
@@ -265,14 +293,17 @@
 			<if test="customer != null and customer.name != null">
 				customerName,
 			</if>
-			<if test="taskBillNumber != null">
-				taskBillNumber,
+			<if test="waveBillNumber != null">
+				waveBillNumber,
 			</if>
 			<if test="totalCaseQtyStr != null">
 				totalCaseQtyStr,
 			</if>
 			<if test="totalAmount != null">
 				totalAmount,
+			</if>
+			<if test="realAmount != null">
+				realAmount,
 			</if>
 			<if test="planTotalCaseQtyStr != null">
 				planTotalCaseQtyStr,
@@ -339,8 +370,14 @@
 			<if test="wrh != null and wrh.uuid != null">
 				#{wrh.uuid,jdbcType=VARCHAR},
 			</if>
-			<if test="company != null and company.uuid != null">
-				#{company.uuid,jdbcType=VARCHAR},
+			<if test="wrh != null and wrh.code != null">
+				#{wrh.code,jdbcType=VARCHAR},
+			</if>
+			<if test="wrh != null and wrh.name != null">
+				#{wrh.name,jdbcType=VARCHAR},
+			</if>
+			<if test="companyUuid != null">
+				#{companyUuid,jdbcType=VARCHAR},
 			</if>
 			<if test="remark != null">
 				#{remark,jdbcType=VARCHAR},
@@ -357,14 +394,17 @@
 			<if test="customer != null and customer.name != null">
 				#{customer.name,jdbcType=VARCHAR},
 			</if>
-			<if test="taskBillNumber != null">
-				#{taskBillNumber,jdbcType=VARCHAR},
+			<if test="waveBillNumber != null">
+				#{waveBillNumber,jdbcType=VARCHAR},
 			</if>
 			<if test="totalCaseQtyStr != null">
 				#{totalCaseQtyStr,jdbcType=VARCHAR},
 			</if>
 			<if test="totalAmount != null">
 				#{totalAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="realAmount != null">
+				#{realAmount,jdbcType=DECIMAL},
 			</if>
 			<if test="planTotalCaseQtyStr != null">
 				#{planTotalCaseQtyStr,jdbcType=VARCHAR},
@@ -411,6 +451,9 @@
 			<if test="state != null">
 				state=#{state,jdbcType=VARCHAR},
 			</if>
+			<if test="waveBillNumber != null">
+				waveBillNumber=#{waveBillNumber,jdbcType=VARCHAR},
+			</if>
 			<if test="deliveryReason != null">
 				deliveryReason=#{deliveryReason,jdbcType=VARCHAR},
 			</if>
@@ -429,8 +472,14 @@
 			<if test="wrh != null and wrh.uuid != null">
 				wrhUuid=#{wrh.uuid,jdbcType=VARCHAR},
 			</if>
-			<if test="company != null and company.uuid != null">
-				companyUuid=#{company.uuid,jdbcType=VARCHAR},
+			<if test="wrh != null and wrh.code != null">
+				wrhcode=#{wrh.code,jdbcType=VARCHAR},
+			</if>
+			<if test="wrh != null and wrh.name != null">
+				wrhname=#{wrh.name,jdbcType=VARCHAR},
+			</if>
+			<if test="companyUuid != null">
+				companyUuid=#{companyUuid,jdbcType=VARCHAR},
 			</if>
 			<if test="remark != null">
 				remark=#{remark,jdbcType=VARCHAR},
@@ -450,6 +499,9 @@
 			</if>
 			<if test="totalAmount != null">
 				totalAmount =#{totalAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="realAmount != null">
+				realAmount =#{realAmount,jdbcType=DECIMAL},
 			</if>
 			<if test="planTotalCaseQtyStr != null">
 				planTotalCaseQtyStr=#{planTotalCaseQtyStr,jdbcType=VARCHAR},
@@ -536,6 +588,7 @@
 	<select id="getByTaskBillNumber" parameterType="java.util.Map"
 		resultMap="AlcNtcBillMap">
 		select t.* from db_proxy.sardine_alcntcbill t where
-		t.taskbillnumber=#{taskBillNumber,jdbcType=VARCHAR}
+		t.wavebillnumber=#{waveBillNumber,jdbcType=VARCHAR}
+		and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
 	</select>
 </mapper>

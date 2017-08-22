@@ -69,6 +69,7 @@ public class AlcNtcBillController extends BaseController {
       resp.setObj(bill);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
+      e.printStackTrace();
       return new ErrorRespObject("获取配单失败：" + e.getMessage());
     }
     return resp;

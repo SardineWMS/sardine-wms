@@ -27,6 +27,7 @@ public class AlcNtcBillItem extends Entity {
   private String alcNtcBillUuid;
   private int line;
   private UCN article;
+  private String articleSpec;
   private String qpcStr;
   private String munit;
   private AlcNtcBillItemState state = AlcNtcBillItemState.initial;
@@ -63,6 +64,14 @@ public class AlcNtcBillItem extends Entity {
 
   public void setArticle(UCN article) {
     this.article = article;
+  }
+  
+  public String getArticleSpec() {
+    return articleSpec;
+  }
+
+  public void setArticleSpec(String articleSpec) {
+    this.articleSpec = articleSpec;
   }
 
   /** 商品规格 */
@@ -156,6 +165,7 @@ public class AlcNtcBillItem extends Entity {
 
   public void validate() {
     Assert.assertArgumentNotNull(article, "article");
+    Assert.assertArgumentNotNull(articleSpec, "articleSpec");
     Assert.assertArgumentNotNull(qpcStr, "qpcStr");
     Assert.assertArgumentNotNull(munit, "munit");
     Assert.assertArgumentNotNull(caseQtyStr, "caseQtyStr");
