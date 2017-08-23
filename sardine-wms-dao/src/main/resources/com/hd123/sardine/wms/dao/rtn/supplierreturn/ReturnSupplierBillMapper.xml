@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+	namespace="com.hd123.sardine.wms.dao.rtn.returnsupplier.impl.ReturnSupplierBillDaoImpl">
+	<resultMap
+		type="com.hd123.sardine.wms.api.rtn.returnsupplier.ReturnSupplierBill"
+		id="ReturnSupplierBillMap">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="billNumber" property="billNumber" jdbcType="VARCHAR" />
+		<result column="rtnSupplierNtcBillNumber" property="rtnSupplierNtcBillNumber"
+			jdbcType="VARCHAR" />
+		<result column="supplierUuid" property="supplier.uuid"
+			jdbcType="VARCHAR" />
+		<result column="supplierCode" property="supplier.code"
+			jdbcType="VARCHAR" />
+		<result column="supplierName" property="supplier.name"
+			jdbcType="VARCHAR" />
+		<result column="wrhUuid" property="wrh.uuid" jdbcType="VARCHAR" />
+		<result column="wrhCode" property="wrh.code" jdbcType="VARCHAR" />
+		<result column="wrhName" property="wrh.name" jdbcType="VARCHAR" />
+		<result column="returnerUuid" property="returner.uuid"
+			jdbcType="VARCHAR" />
+		<result column="returnerCode" property="returner.code"
+			jdbcType="VARCHAR" />
+		<result column="returnerName" property="returner.name"
+			jdbcType="VARCHAR" />
+		<result column="method" property="method" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="totalCaseQty" property="totalCaseQty" jdbcType="VARCHAR" />
+		<result column="totalAmount" property="totalAmount" jdbcType="DECIMAL" />
+		<result column="returnSupplierDate" property="returnSupplierDate"
+			jdbcType="TIMESTAMP" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="createdtime " property="createInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="createdID" property="createInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="createdcode" property="createInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="createdName" property="createInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="lastModifytime" property="lastModifyInfo.time"
+			jdbcType="TIMESTAMP" />
+		<result column="lastModifyid" property="lastModifyInfo.operator.id"
+			jdbcType="VARCHAR" />
+		<result column="lastModifycode" property="lastModifyInfo.operator.code"
+			jdbcType="VARCHAR" />
+		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap
+		type="com.hd123.sardine.wms.api.rtn.returnsupplier.ReturnSupplierBillItem"
+		id="ReturnSupplierBillItemMap">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="returnSupplierBillUuid" property="returnSupplierBillUuid"
+			jdbcType="VARCHAR" />
+		<result column="line" property="line" jdbcType="INTEGER" />
+		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
+		<result column="articleCode" property="article.code" jdbcType="VARCHAR" />
+		<result column="articleName" property="article.name" jdbcType="VARCHAR" />
+		<result column="spec" property="spec" jdbcType="VARCHAR" />
+		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+		<result column="munit" property="munit" jdbcType="VARCHAR" />
+		<result column="binCode" property="binCode" jdbcType="VARCHAR" />
+		<result column="containerBarcode" property="containerBarcode"
+			jdbcType="VARCHAR" />
+		<result column="productionDate" property="productionDate"
+			jdbcType="TIMESTAMP" />
+		<result column="validDate" property="validDate" jdbcType="VARCHAR" />
+		<result column="returnSupplierDate" property="returnSupplierDate"
+			jdbcType="TIMESTAMP" />
+		<result column="qty" property="qty" jdbcType="DECIMAL" />
+		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
+		<result column="amount" property="amount" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<insert id="insert"
+		parameterType="com.hd123.sardine.wms.api.rtn.returnsupplier.ReturnSupplierBill">
+		insert into db_proxy.sardine_returnSupplierBill
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				uuid,
+			</if>
+			<if test="companyUuid != null">
+				companyUuid,
+			</if>
+			<if test="billNumber != null">
+				billNumber,
+			</if>
+			<if test="vehicleNum != null">
+				rtnSupplierNtcBillNumber,
+			</if>
+			<if test="supplier != null and supplier.uuid != null">
+				supplierUuid,
+			</if>
+			<if test="supplier != null and supplier.code != null">
+				supplierCode,
+			</if>
+			<if test="supplier != null and supplier.name != null">
+				supplierName,
+			</if>
+			<if test="wrh != null and wrh.uuid != null">
+				wrhUuid,
+			</if>
+			<if test="wrh != null and wrh.code != null">
+				wrhCode,
+			</if>
+			<if test="wrh != null and wrh.name != null">
+				wrhName,
+			</if>
+			<if test="returner != null and returner.uuid != null">
+				returnerUuid,
+			</if>
+			<if test="returner != null and returner.code != null">
+				returnerCode,
+			</if>
+			<if test="returner != null and returner.name != null">
+				returnerName,
+			</if>
+			<if test="method != null">
+				method,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="totalCaseQty != null">
+				totalCaseQty,
+			</if>
+			<if test="totalAmount != null">
+				totalAmount,
+			</if>
+			<if test="returnSupplierDate != null ">
+				returnSupplierDate,
+			</if>
+			version,
+			CREATEDTIME,
+			CREATEDID,
+			CREATEDCODE,
+			CREATEDNAME,
+			LASTMODIFYTIME,
+			LASTMODIFYID,
+			LASTMODIFYCODE,
+			LASTMODIFYNAME,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="companyUuid != null">
+				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="billNumber != null">
+				#{billNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="rtnSupplierNtcBillNumber != null">
+				#{rtnSupplierNtcBillNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="supplier != null and supplier.uuid != null">
+				#{supplier.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="supplier != null and supplier.code != null">
+				#{supplier.code,jdbcType=VARCHAR},
+			</if>
+			<if test="supplier != null and supplier.name != null">
+				#{supplier.name,jdbcType=VARCHAR},
+			</if>
+			<if test="wrh != null and wrh.uuid != null">
+				#{wrh.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="wrh != null and wrh.code != null">
+				#{wrh.code,jdbcType=VARCHAR},
+			</if>
+			<if test="wrh != null and wrh.name != null">
+				#{wrh.name,jdbcType=VARCHAR},
+			</if>
+			<if test="returner != null and returner.uuid != null">
+				#{returner.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="returner != null and returner.code != null">
+				#{returner.code,jdbcType=VARCHAR},
+			</if>
+			<if test="returner != null and returner.name != null">
+				#{returner.name,jdbcType=VARCHAR},
+			</if>
+			<if test="method != null">
+				#{method,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=VARCHAR},
+			</if>
+			<if test="totalCaseQty != null">
+				#{totalCaseQty,jdbcType=VARCHAR},
+			</if>
+			<if test="totalAmount != null">
+				#{totalAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="returnSupplierDate != null">
+				#{returnSupplierDate,jdbcType=TIMESTAMP},
+			</if>
+			#{version,jdbcType=LONGVARCHAR},
+			#{createInfo.time,jdbcType=TIMESTAMP},
+			#{createInfo.operator.id,jdbcType=VARCHAR},
+			#{createInfo.operator.code,jdbcType=VARCHAR},
+			#{createInfo.operator.fullName,jdbcType=VARCHAR},
+			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		</trim>
+	</insert>
+
+	<update id="update"
+		parameterType="com.hd123.sardine.wms.api.rtn.returnsupplier.ReturnSupplierBill">
+		update db_proxy.sardine_returnSupplierBill
+		<set>
+			<if test="state != null">
+				state = #{state,jdbcType=VARCHAR},
+			</if>
+			LASTMODIFYTIME =
+			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			LASTMODIFYID =
+			#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			LASTMODIFYCODE =
+			#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			LASTMODIFYNAME =
+			#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			version =
+			#{version, jdbcType=LONGVARCHAR} + 1
+		</set>
+		<where>
+			UUID = #{uuid,jdbcType=VARCHAR} and version =
+			#{version,jdbcType=LONGVARCHAR}
+		</where>
+	</update>
+
+	<select id="get" parameterType="java.lang.String" resultMap="ReturnSupplierBillMap">
+		select t.* from
+		db_proxy.sardine_returnSupplierBill t where
+		t.uuid=#{uuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getByBillNumber" parameterType="java.util.Map"
+		resultMap="ReturnSupplierBillMap">
+		select t.* from
+		db_proxy.sardine_returnSupplierBill t where
+		t.billNumber=#{billNumber,jdbcType=VARCHAR}
+		and
+		t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
+	</select>
+
+	<select id="queryByPage" parameterType="PageQueryDefinition"
+		resultMap="ReturnSupplierBillMap">
+		select t.* from
+		db_proxy.sardine_returnSupplierBill t where
+		1=1
+		<if test="companyUuid != null">
+			and t.companyuuid=#{companyUuid,jdbcType=VARCHAR}
+		</if>
+		<if test="billNumber != null and billNumber != ''">
+			and t.billNumber like CONCAT(CONCAT('%',
+			#{billNumber,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="state != null">
+			and t.state = #{state,jdbcType=VARCHAR}
+		</if>
+		<if
+			test="rtnSupplierNtcBillNumber != null and rtnSupplierNtcBillNumber != ''">
+			and t.rtnSupplierNtcBillNumber like CONCAT(CONCAT('%',
+			#{rtnSupplierNtcBillNumber,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="supplierCode != null and supplierCode != ''">
+			and t.supplierCode like CONCAT(CONCAT('%',
+			#{supplierCode,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="supplierName != null and supplierName != ''">
+			and t.supplierName like CONCAT(CONCAT('%',
+			#{supplierName,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="wrhUuid != null">
+			and t.wrhUuid = #{wrhUuid,jdbcType=VARCHAR}
+		</if>
+		<if test="operateMethod != null">
+			and t.operateMethod = #{operateMethod,jdbcType=VARCHAR}
+		</if>
+		<if test="returnerCode != null and returnerCode != ''">
+			and t.returnerCode like CONCAT(CONCAT('%',
+			#{returnerCode,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="returnerName != null and returnerName != ''">
+			and t.returnerName like CONCAT(CONCAT('%',
+			#{returnerName,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="articleCode != null and articleCode != ''">
+			and EXISTS (select 1 from
+			db_proxy.sardine_returnSupplierBillItem i
+			and i.articleCode like
+			CONCAT(CONCAT('%',
+			#{customerName,jdbcType=VARCHAR}),
+			'%')
+			)
+		</if>
+		<if test="binCode != null and binCode != ''">
+			and EXISTS (select 1 from
+			db_proxy.sardine_returnSupplierBillItem i
+			and i.binCode like
+			CONCAT(CONCAT('%',
+			#{binCode,jdbcType=VARCHAR}),
+			'%')
+			)
+		</if>
+		<if test="containerBarcode != null and containerBarcode != ''">
+			and EXISTS (select 1 from
+			db_proxy.sardine_returnSupplierBillItem i
+			and i.containerBarcode like
+			CONCAT(CONCAT('%',
+			#{containerBarcode,jdbcType=VARCHAR}),
+			'%')
+			)
+		</if>
+		<if test="returnSupplierDateLessThanOrEqual != null ">
+			and t.returnSupplierDate  <![CDATA[<=]]>
+			#{returnSupplierDateLessThanOrEqual,jdbcType=TIMESTAMP}
+		</if>
+		<if test="returnSupplierDateGreaterThanOrEqual != null ">
+			and t.returnSupplierDate >=
+			#{returnSupplierDateGreaterThanOrEqual,jdbcType=TIMESTAMP}
+		</if>
+		<if test="sortField != null and sortField == 'billNumber'">
+			order by t.billNumber ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'state'">
+			order by t.state ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'rtnSupplierNtcBillNumber'">
+			order by t.rtnSupplierNtcBillNumber ${orderDir}
+		</if>
+		<if test="sortField != null and sortField == 'supplier'">
+			order by t.supplierCode ${supplier}
+		</if>
+	</select>
+
+	<insert id="insertItems"
+		parameterType="com.hd123.sardine.wms.api.rtn.returnsupplier.ReturnSupplierBillItem">
+		insert into db_proxy.sardine_returnSupplierBillItem
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null and uuid != ''">
+				uuid,
+			</if>
+			<if test="returnSupplierBillUuid != null and returnSupplierBillUuid != ''">
+				returnSupplierBillUuid,
+			</if>
+			<if test="line != null">
+				line,
+			</if>
+			<if test="article != null and article.uuid != ''">
+				articleUuid,
+			</if>
+			<if test="article != null and article.code != ''">
+				articleCode,
+			</if>
+			<if test="article != null and article.name != ''">
+				articleName,
+			</if>
+			<if test="spec != null">
+				spec,
+			</if>
+			<if test="qpcStr != null and qpcStr != ''">
+				qpcStr,
+			</if>
+			<if test="binCode != null and binCode != ''">
+				binCode,
+			</if>
+			<if test="containerBarcode != null and containerBarcode != ''">
+				containerBarcode,
+			</if>
+			<if test="qty != null">
+				qty,
+			</if>
+			<if test="caseQtyStr != null and caseQtyStr != ''">
+				caseQtyStr,
+			</if>
+			<if test="productionDate != null '">
+				productionDate,
+			</if>
+			<if test="validDate != null ">
+				validDate,
+			</if>
+			<if test="returnSupplierDate != null ">
+				returnSupplierDate,
+			</if>
+			<if test="amount != null ">
+				amount,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null and uuid != ''">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="returnSupplierBillUuid != null and returnSupplierBillUuid != ''">
+				#{returnSupplierBillUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="line != null">
+				#{line,jdbcType=INTEGER},
+			</if>
+			<if test="article != null and article.uuid != ''">
+				#{article.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="article != null and article.code != ''">
+				#{article.code,jdbcType=VARCHAR},
+			</if>
+			<if test="article != null and article.name != ''">
+				#{article.name,jdbcType=VARCHAR},
+			</if>
+			<if test="spec != null">
+				#{spec,jdbcType=VARCHAR},
+			</if>
+			<if test="qpcStr != null and qpcStr != ''">
+				#{qpcStr,jdbcType=VARCHAR},
+			</if>
+			<if test="munit != null and munit != ''">
+				#{munit,jdbcType=VARCHAR},
+			</if>
+			<if test="binCode != null and binCode != ''">
+				#{binCode,jdbcType=VARCHAR},
+			</if>
+			<if test="containerBarcode != null and containerBarcode != ''">
+				#{containerBarcode,jdbcType=VARCHAR},
+			</if>
+			<if test="qty != null ">
+				#{qty,jdbcType=DECIMAL},
+			</if>
+			<if test="caseQtyStr != null and caseQtyStr != ''">
+				#{caseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="productionDate != null and productionDate != ''">
+				#{productionDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="validDate != null and validDate != ''">
+				#{validDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="returnSupplierDate != null">
+				#{returnSupplierDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="amount != null ">
+				#{amount,jdbcType=DECIMAL},
+			</if>
+		</trim>
+	</insert>
+
+	<select id="queryItems" parameterType="java.lang.String"
+		resultMap="ReturnSupplierBillItemMap">
+		select t.* from db_proxy.sardine_returnSupplierBillItem t
+		where
+		t.returnSupplierBillUuid=#{uuid,jdbcType=VARCHAR}
+	</select>
+
+
+</mapper>
