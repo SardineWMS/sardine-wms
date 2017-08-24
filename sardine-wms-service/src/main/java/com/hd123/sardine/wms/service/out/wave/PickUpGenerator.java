@@ -20,12 +20,14 @@ import java.util.Set;
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.article.Article;
+import com.hd123.sardine.wms.api.basicInfo.article.ArticleQpc;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.ArticleConfig;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.pickarea.PickArea;
 import com.hd123.sardine.wms.api.basicInfo.pickarea.RplQtyMode;
 import com.hd123.sardine.wms.api.out.alcntc.WaveAlcNtcItem;
+import com.hd123.sardine.wms.api.out.pickup.PickType;
 import com.hd123.sardine.wms.api.out.wave.WaveBinUsage;
 import com.hd123.sardine.wms.api.out.wave.WavePickUpItem;
 import com.hd123.sardine.wms.api.stock.StockMajorInfo;
@@ -33,6 +35,7 @@ import com.hd123.sardine.wms.api.stock.StockState;
 import com.hd123.sardine.wms.common.entity.OperateMode;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.common.utils.ScopeUtils;
 import com.hd123.sardine.wms.common.utils.StockConstants;
@@ -75,14 +78,17 @@ public class PickUpGenerator {
    *          not null, not empty
    * @throws IllegalArgumentException
    */
-  public PickUpGenerator(Article article, String waveBillNumber, String companyUuid) {
+  public PickUpGenerator(Article article, String waveBillNumber,
+      String companyUuid) {
     Assert.assertArgumentNotNull(article, "article");
+//    Assert.assertArgumentNotNull(waveUuid, "waveUuid");
     Assert.assertArgumentNotNull(waveBillNumber, "waveBillNumber");
     Assert.assertArgumentNotNull(companyUuid, "companyUuid");
 
     this.article = article;
     this.waveBillNumber = waveBillNumber;
     this.companyUuid = companyUuid;
+//    this.waveUuid = waveUuid;
   }
 
   public void setStocks(List<StockMajorInfo> infos) {
@@ -157,6 +163,7 @@ public class PickUpGenerator {
         waveStock.setContainerBarcode(majorInfo.getContainerBarcode());
         waveStock.setProduceDate(majorInfo.getProductionDate());
         waveStock.setQpcStr(majorInfo.getQpcStr());
+        waveStock.setMunit(majorInfo.getMunit());
         waveStock.setWarehouse(majorInfo.getWarehouse());
         waveStock.setWholeContainerUsable(
             isWholeContainerPickUsable(majorInfo.getBinCode(), majorInfo.getContainerBarcode()));
@@ -354,8 +361,6 @@ public class PickUpGenerator {
             : articleConfig.getFixedPickBin();
     Collections.sort(waveStocks);
     for (WaveStock waveStock : waveStocks) {
-      if (fixBin == null && waveStock.getWaveBinUsage().equals(WaveBinUsage.StorageBin))
-        continue;
       WavePickBin pickBin = null;
       if (waveStock.getWaveBinUsage().equals(WaveBinUsage.StorageBin)) {
         pickBin = findWavePickBin(fixBin, waveStock.getQpcStr(), WaveBinUsage.FixBin,
@@ -367,7 +372,7 @@ public class PickUpGenerator {
 
       if (pickBin == null) {
         pickBin = new WavePickBin();
-        if (waveStock.getWaveBinUsage().equals(WaveBinUsage.StorageBin)) {
+        if (Objects.equals(waveStock.getBinCode(), fixBin)) {
           pickBin.binCode = fixBin;
           pickBin.binUsage = WaveBinUsage.FixBin;
         } else {
@@ -375,12 +380,15 @@ public class PickUpGenerator {
           pickBin.binUsage = waveStock.getWaveBinUsage();
         }
         pickBin.pickQpcStr = waveStock.getQpcStr();
+        pickBin.munit = waveStock.getMunit();
         pickBin.warehouse = waveStock.getWarehouse();
 
         if (waveStock.getWaveBinUsage().equals(WaveBinUsage.DynamicPickBin)) {
           dynamicPickBins.add(pickBin);
         } else if (waveStock.getWaveBinUsage().equals(WaveBinUsage.FixBin)) {
           fixBins.add(pickBin);
+        } else {
+          storageBins.add(pickBin);
         }
 
         refreshPickConfig(pickBin);
@@ -488,6 +496,10 @@ public class PickUpGenerator {
       for (WaveStock stock : waveStocks) {
         if (item.needPickUp() == false)
           return;
+
+        if (StringUtil.isNullOrBlank(stock.getContainerBarcode())
+            || Objects.equals(stock.getContainerBarcode(), Container.VIRTUALITY_CONTAINER))
+          continue;
 
         if (pickBin.binCode.equals(stock.getBinCode()) == false)
           continue;
@@ -654,29 +666,49 @@ public class PickUpGenerator {
         break;
 
       WavePickUpItem pickItem = new WavePickUpItem();
-      pickItem.setAlcNtcBillItemUuid(alcItem.getAltNtcItemUuid());
+      pickItem.setAlcNtcBillItemUuid(alcItem.getAlcNtcItemUuid());
       pickItem.setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
       pickItem.setArticleSpec(article.getSpec());
       pickItem.setBinCode(pickBin.binCode);
       pickItem.setContainerBarcode(containerBarcode);
-      pickItem.setDeliveryType(processItem.getDeliveryType());
+      pickItem.setDeliveryType(alcItem.getDeliveryType());
       pickItem.setOperateMethod(pickBin.operateMethod);
       pickItem.setPickArea(pickBin.pickArea);
       pickItem.setQpcStr(pickBin.pickQpcStr);
+      pickItem.setMunit(pickBin.munit);
       if (alcItem.getAlcQty().compareTo(pickQty) >= 0)
         pickItem.setQty(pickQty);
       else
         pickItem.setQty(alcItem.getAlcQty());
       pickItem.setCaseQtyStr(QpcHelper.qtyToCaseQtyStr(pickItem.getQty(), pickItem.getQpcStr()));
       pickItem.setCustomer(processItem.getCustomer());
-      // pickItem.setType(pickBin.);
       pickItem.setVolume(pickBin.splitVolume);
       pickItem.setWaveBillNumber(waveBillNumber);
       pickItem.setBinUsage(pickBin.binUsage);
+      pickItem.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+      if (pickBin.binUsage.equals(WaveBinUsage.StorageBin))
+        pickItem.setType(PickType.WholeContainer);
+      else
+        pickItem.setType(PickType.PartContainer);
+      pickItem.setItemVolume(caculateVolume(pickItem.getQpcStr(), pickItem.getQty()));
       result.add(pickItem);
 
       pickQty = pickQty.subtract(pickItem.getQty());
     }
+  }
+
+  private BigDecimal caculateVolume(String qpcStr, BigDecimal qty) {
+    assert qpcStr != null;
+    assert qty != null;
+
+    for (ArticleQpc qpc : article.getQpcs()) {
+      if (Objects.equals(qpc.getQpcStr(), qpcStr)) {
+        BigDecimal volumn = qpc.getLength().multiply(qpc.getWidth()).multiply(qpc.getHeight());
+        BigDecimal itemVolumn = qty.divide(QpcHelper.qpcStrToQpc(qpcStr)).multiply(volumn);
+        return itemVolumn;
+      }
+    }
+    return BigDecimal.ZERO;
   }
 
   private List<WaveAlcNtcItem> findAlcNtcItems(WaveProcessorItem processItem) {
@@ -818,6 +850,7 @@ public class PickUpGenerator {
     public String binCode;
     public WaveBinUsage binUsage;
     public String pickQpcStr;
+    public String munit;
     public BigDecimal pickQty = BigDecimal.ZERO;
     public OperateMode rplMode;
     public RplQtyMode rplQtyMode;

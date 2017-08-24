@@ -20,6 +20,8 @@ import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.task.TaskService;
 import com.hd123.sardine.wms.api.task.TaskState;
 import com.hd123.sardine.wms.api.task.TaskType;
+import com.hd123.sardine.wms.api.task.TaskView;
+import com.hd123.sardine.wms.common.entity.OperateMode;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -121,6 +123,7 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
     task.setRealQty(task.getQty());
     task.setRealCaseQtyStr(task.getCaseQtyStr());
     task.setEndOperateTime(new Date());
+    task.setType(OperateMode.ManualBill);
     taskDao.update(task);
 
     taskHandler.shiftStock(task);
@@ -201,5 +204,11 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
     logger.injectContext(this, uuid, Task.class.getName(),
         ApplicationContextUtil.getOperateContext());
     logger.log(EntityLogger.EVENT_ADDNEW, "执行上架指令");
+  }
+
+  @Override
+  public PageQueryResult<TaskView> query() {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

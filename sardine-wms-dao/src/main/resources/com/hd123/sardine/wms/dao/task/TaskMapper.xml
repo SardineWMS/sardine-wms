@@ -417,7 +417,7 @@
 				t.realQty = #{realQty, jdbcType=DECIMAL},
 			</if>
 			<if test="realCaseQtyStr != null">
-				t.state = #{realCaseQtyStr, jdbcType=VARCHAR},
+				t.realCaseQtyStr = #{realCaseQtyStr, jdbcType=VARCHAR},
 			</if>
 			<if test="productionDate != null">
 				t.productionDate = #{productionDate, jdbcType=DATE},
@@ -470,7 +470,7 @@
 
 	<select id="get" parameterType="java.util.Map" resultMap="BaseResultMap">
 		select t.* from
-		db_proxy.sardine_task t,
+		db_proxy.sardine_task t
 		where t.uuid = #{uuid, jdbcType=VARCHAR}
 	</select>
 

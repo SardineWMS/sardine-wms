@@ -384,9 +384,10 @@
         end as 'operator', 
         i.PICKTIME as 'operateTime',
         p.SOUCEBILLUUID,
-        p.SORCEBILLNUMBER,
-        p.SORCEBILLTYPE from sardine_pickupbill p, sardine_pickupbillitem i where p.uuid = i.pickupbilluuid 
-                                                                              and p.waveBillNumber = #{waveBillNumber, jdbcType=VARCHAR}
+        p.SOURCEBILLNUMBER,
+        p.SOURCEBILLTYPE from db_proxy.sardine_pickupbill p, db_proxy.sardine_pickupbillitem i where p.uuid = i.pickupbilluuid 
+                                                                              and p.sourceBillNumber = #{waveBillNumber, jdbcType=VARCHAR}
+                                                                              and p.sourcebilltype = '波次单'
                                                                               and p.companyUuid = #{companyUuid, jdbcType=VARCHAR}
 	</select>
 </mapper>

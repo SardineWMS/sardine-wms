@@ -42,7 +42,6 @@ import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.api.stock.StockShiftIn;
 import com.hd123.sardine.wms.api.stock.StockShiftRule;
 import com.hd123.sardine.wms.api.stock.StockState;
-import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.common.entity.SourceBill;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -51,7 +50,6 @@ import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.DateHelper;
 import com.hd123.sardine.wms.common.utils.StockConstants;
 import com.hd123.sardine.wms.dao.out.wave.WaveBillDao;
-import com.hd123.sardine.wms.service.task.TaskHandler;
 import com.hd123.sardine.wms.service.util.StockBatchUtils;
 
 /**
@@ -74,9 +72,6 @@ public class WaveHandler {
 
   @Autowired
   private WaveBillDao waveBillDao;
-
-  @Autowired
-  private TaskHandler taskHandler;
 
   /**
    * 获取波次单时查询波次单下的配单明细
@@ -193,6 +188,9 @@ public class WaveHandler {
     if (CollectionUtils.isEmpty(pickResult))
       return;
 
+    for (WavePickUpItem item : pickResult)
+      item.setWaveUuid(waveBillUuid);
+
     waveBillDao.saveWavePickUpItems(pickResult);
 
     List<StockShiftRule> lockRules = new ArrayList<StockShiftRule>();
@@ -237,10 +235,6 @@ public class WaveHandler {
       stockService.changeState(sourceBill, lockRules, StockState.normal, StockState.locked);
     if (shiftIns.isEmpty() == false)
       stockService.shiftIn(sourceBill, shiftIns);
-
-    List<Task> rplTasks = waveBillDao.queryRplTasks(waveBillUuid);
-    for (Task task : rplTasks)
-      taskHandler.releaseStock(task);
   }
 
   /**

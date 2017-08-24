@@ -45,6 +45,7 @@
 		<result column="operatebillType" property="stockComponent.operateBill.billType"
 			jdbcType="VARCHAR" />
 		<result column="qty" property="stockComponent.qty" jdbcType="DECIMAL" />
+		<result column="price" property="stockComponent.price" jdbcType="DECIMAL" />
 		<result column="qpcStr" property="stockComponent.qpcStr"
 			jdbcType="VARCHAR" />
 		<result column="munit" property="stockComponent.munit"
@@ -516,15 +517,14 @@
 
 	<select id="queryMajorInfo" resultMap="StockMajorInfoMap"
 		parameterType="StockMajorFilter">
-		SELECT * FROM db_proxy.sardine_stock s
-		WHERE
-		s.companyuuid =
-		#{companyUuid}
-		AND s.binUSAGE IN ('StorageBin',
+		SELECT s.*, b.binusage, b.wrhuuid warehouseuuid, b.wrhcode warehousecode, b.wrhname warehousename FROM db_proxy.sardine_stock s, db_proxy.sardine_bin b
+		WHERE s.bincode = b.code and s.companyUuid = b.companyUuid and
+		s.companyuuid = #{companyUuid}
+		AND b.binUSAGE IN ('StorageBin',
 		'PickUpStorageBin')
 		<if test="articleUuids != null">
 			AND
-			ST.ARTICLEUUID IN
+			S.ARTICLEUUID IN
 			<foreach collection="articleUuids" item="item" index="index"
 				open="(" separator="," close=")">
 				#{item}

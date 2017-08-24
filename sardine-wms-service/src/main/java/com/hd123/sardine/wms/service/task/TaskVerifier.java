@@ -165,8 +165,8 @@ public class TaskVerifier {
       throw new WMSException("指令目标货位为空，无法上架！");
 
     Bin toBin = binService.getBinByCode(task.getToBinCode());
-    if (ApplicationContextUtil.manageContainer() && (BinUsage.StorageBin.equals(toBin.getUsage())
-        || BinUsage.SupplierStorageBin.equals(toBin.getUsage()))) {
+    if (BinUsage.StorageBin.equals(toBin.getUsage())
+        || BinUsage.SupplierStorageBin.equals(toBin.getUsage())) {
       if (StringUtil.isNullOrBlank(toContainerBarcode))
         throw new WMSException("当前仓库管理容器，目标容器不能为空！");
       if (Objects.equals(toContainerBarcode, task.getFromContainerBarcode()))
@@ -181,6 +181,7 @@ public class TaskVerifier {
           && toContainer.getPosition().equals(task.getToBinCode()) == false)
         throw new WMSException("上架的目标容器已被其他货位使用，请更换！");
       containerService.lock(toContainer.getUuid(), toContainer.getVersion());
+      task.setToContainerBarcode(toContainerBarcode);
     } else {
       task.setToContainerBarcode(Container.VIRTUALITY_CONTAINER);
     }

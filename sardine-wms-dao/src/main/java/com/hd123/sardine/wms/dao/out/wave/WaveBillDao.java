@@ -15,7 +15,6 @@ import com.hd123.sardine.wms.api.out.alcntc.WaveAlcNtcItem;
 import com.hd123.sardine.wms.api.out.wave.PickRule;
 import com.hd123.sardine.wms.api.out.wave.WaveBill;
 import com.hd123.sardine.wms.api.out.wave.WavePickUpItem;
-import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.common.dao.BaseDao;
 
 /**
@@ -42,15 +41,7 @@ public interface WaveBillDao extends BaseDao<WaveBill> {
   
   List<WavePickUpItem> queryPickItem(String waveUuid);
   
-  void insertRplTasks(List<Task> rplTasks);
-  
-  List<Task> queryRplTasks(String waveUuid);
-  
-  void insertRplTaskToTask(String waveUuid);
-  
   List<WavePickUpItem> queryPickItemByPickRule(PickRule pickRule);
-  
-  void removeRplTasks(String waveUuid);
   
   void removeWavePickUpItems(String waveUuid);
 }

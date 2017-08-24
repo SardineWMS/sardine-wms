@@ -29,7 +29,7 @@ public class WaveAlcNtcItem implements Serializable {
   private UCN wrh;
   private String deliveryType;
 
-  private String altNtcItemUuid;
+  private String alcNtcItemUuid;
   private String articleUuid;
 
   private BigDecimal alcQty;
@@ -37,6 +37,15 @@ public class WaveAlcNtcItem implements Serializable {
   private String orderNo;
   
   private String waveUuid;
+  private String companyUuid;
+
+  public String getCompanyUuid() {
+    return companyUuid;
+  }
+
+  public void setCompanyUuid(String companyUuid) {
+    this.companyUuid = companyUuid;
+  }
 
   public String getWaveUuid() {
     return waveUuid;
@@ -94,12 +103,12 @@ public class WaveAlcNtcItem implements Serializable {
     this.deliveryType = deliveryType;
   }
 
-  public String getAltNtcItemUuid() {
-    return altNtcItemUuid;
+  public String getAlcNtcItemUuid() {
+    return alcNtcItemUuid;
   }
 
-  public void setAltNtcItemUuid(String altNtcItemUuid) {
-    this.altNtcItemUuid = altNtcItemUuid;
+  public void setAlcNtcItemUuid(String alcNtcItemUuid) {
+    this.alcNtcItemUuid = alcNtcItemUuid;
   }
   
   public String getArticleUuid() {

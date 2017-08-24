@@ -20,7 +20,6 @@ import com.hd123.sardine.wms.api.out.alcntc.WaveAlcNtcItem;
 import com.hd123.sardine.wms.api.out.wave.PickRule;
 import com.hd123.sardine.wms.api.out.wave.WaveBill;
 import com.hd123.sardine.wms.api.out.wave.WavePickUpItem;
-import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.dao.out.wave.WaveBillDao;
@@ -30,21 +29,17 @@ import com.hd123.sardine.wms.dao.out.wave.WaveBillDao;
  *
  */
 public class WaveBillDaoImpl extends BaseDaoImpl<WaveBill> implements WaveBillDao {
-  public static final String MAPPER_GETBYBILLNUMBER = "getByBillNumber";
-  public static final String QUERYWAVEALCNTCITEMS = "queryWaveAlcNtcItems";
-  public static final String UPDATEWAVEALCNTCITEMSSTATE = "updateWaveAlcNtcItemsState";
-  public static final String SAVEWAVEALCNTCITEMS = "saveWaveAlcNtcItems";
-  public static final String REMOVEWAVEALCNTCITEMS = "removeWaveAlcNtcItems";
-  public static final String QUERYWAVEARTICLEUUIDS = "queryWaveArticleUuids";
-  public static final String SAVEWAVEPICKUPITEMS = "saveWavePickUpItems";
-  public static final String QUERYPICKRULES = "queryPickRules";
-  public static final String QUERYPICKITEM = "queryPickItem";
-  public static final String INSERTRPLTASKS = "insertRplTasks";
-  public static final String QUERYRPLTASKS = "queryRplTasks";
-  public static final String INSERTRPLTASKTOTASK = "insertRplTaskToTask";
-  public static final String QUERYPICKITEMBYPICKRULE = "queryPickItemByPickRule";
-  public static final String REMOVERPLTASKS = "removeRplTasks";
-  public static final String REMOVEWAVEPICKUPITEMS = "removeWavePickUpItems";
+  private static final String MAPPER_GETBYBILLNUMBER = "getByBillNumber";
+  private static final String QUERYWAVEALCNTCITEMS = "queryWaveAlcNtcItems";
+  private static final String UPDATEWAVEALCNTCITEMSSTATE = "updateWaveAlcNtcItemsState";
+  private static final String SAVEWAVEALCNTCITEMS = "saveWaveAlcNtcItems";
+  private static final String REMOVEWAVEALCNTCITEMS = "removeWaveAlcNtcItems";
+  private static final String QUERYWAVEARTICLEUUIDS = "queryWaveArticleUuids";
+  private static final String SAVEWAVEPICKUPITEMS = "saveWavePickUpItems";
+  private static final String QUERYPICKRULES = "queryPickRules";
+  private static final String QUERYPICKITEM = "queryPickItem";
+  private static final String QUERYPICKITEMBYPICKRULE = "queryPickItemByPickRule";
+  private static final String REMOVEWAVEPICKUPITEMS = "removeWavePickUpItems";
 
   @Override
   public WaveBill getByBillNumber(String billNumber) {
@@ -136,37 +131,10 @@ public class WaveBillDaoImpl extends BaseDaoImpl<WaveBill> implements WaveBillDa
   }
 
   @Override
-  public void insertRplTasks(List<Task> rplTasks) {
-    if (rplTasks.isEmpty())
-      return;
-
-    for (Task task : rplTasks)
-      insert(INSERTRPLTASKS, task);
-  }
-
-  @Override
-  public List<Task> queryRplTasks(String waveUuid) {
-    if (StringUtil.isNullOrBlank(waveUuid))
-      return new ArrayList<Task>();
-
-    return selectList(QUERYRPLTASKS, waveUuid);
-  }
-
-  @Override
-  public void insertRplTaskToTask(String waveUuid) {
-    selectList(INSERTRPLTASKTOTASK, waveUuid);
-  }
-
-  @Override
   public List<WavePickUpItem> queryPickItemByPickRule(PickRule pickRule) {
     if (pickRule == null)
       return new ArrayList<WavePickUpItem>();
     return selectList(QUERYPICKITEMBYPICKRULE, pickRule);
-  }
-
-  @Override
-  public void removeRplTasks(String waveUuid) {
-    delete(REMOVERPLTASKS, waveUuid);
   }
 
   @Override

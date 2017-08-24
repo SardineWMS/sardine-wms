@@ -34,6 +34,7 @@ public class WaveStock implements Serializable, Comparable<WaveStock> {
   private String containerBarcode;
   private String articleUuid;
   private String qpcStr;
+  private String munit;
   private BigDecimal usableQty = BigDecimal.ZERO;
   private BigDecimal pickQty = BigDecimal.ZERO;
   private Date produceDate;
@@ -100,6 +101,14 @@ public class WaveStock implements Serializable, Comparable<WaveStock> {
 
   public void setQpcStr(String qpcStr) {
     this.qpcStr = qpcStr;
+  }
+  
+  public String getMunit() {
+    return munit;
+  }
+
+  public void setMunit(String munit) {
+    this.munit = munit;
   }
 
   /** 仓位 */

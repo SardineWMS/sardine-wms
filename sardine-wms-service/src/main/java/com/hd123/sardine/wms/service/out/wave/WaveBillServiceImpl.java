@@ -314,8 +314,7 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
       throw new WMSException("只有启动启动完成的波次可以确认！");
 
     pickUpBillService.approveByWaveBillNumber(waveBill.getBillNumber());
-    dao.insertRplTaskToTask(uuid);
-    dao.removeRplTasks(uuid);
+    rplBillService.approveByWaveBillNumber(waveBill.getBillNumber());
     dao.removeWaveAlcNtcItems(waveBill.getBillNumber());
     dao.removeWavePickUpItems(uuid);
 

@@ -132,4 +132,6 @@ public interface TaskService {
    */
   void rtnShelf(String uuid, long version, String binCode, String containerBarcode, BigDecimal qty)
       throws WMSException;
+  
+  PageQueryResult<TaskView> query();
 }

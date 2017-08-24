@@ -45,7 +45,6 @@ public class Task extends VersionedEntity {
   private String productionBatch;
   private String stockBatch;
   private UCN supplier;
-  private UCN wrh;
   private String fromBinCode;
   private String fromContainerBarcode;
   private String toBinCode;
@@ -327,14 +326,6 @@ public class Task extends VersionedEntity {
 
   public void setTaskGroupNumber(String taskGroupNumber) {
     this.taskGroupNumber = taskGroupNumber;
-  }
-
-  public UCN getWrh() {
-    return wrh;
-  }
-
-  public void setWrh(UCN wrh) {
-    this.wrh = wrh;
   }
 
   public List<TaskStockItem> getItems() {

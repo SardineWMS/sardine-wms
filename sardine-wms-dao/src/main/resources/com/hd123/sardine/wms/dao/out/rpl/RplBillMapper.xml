@@ -262,7 +262,7 @@
 
 	<select id="queryByWaveBillNumber" resultMap="RplTaskViewMap"
 		parameterType="java.util.Map">
-		r.uuid, 
+		select r.uuid, 
         r.BILLNUMBER,
         r.COMPANYUUID,
         case when r.state = 'approved' then '待补货' 
