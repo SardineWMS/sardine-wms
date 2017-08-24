@@ -357,7 +357,6 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
 			task.setProductionDate(item.getProductionDate());
 			task.setQpcStr(item.getQpcStr());
 			task.setQty(item.getQty());
-			task.setSourceBillLine(item.getLine());
 			task.setSourceBillNumber(bill.getBillNumber());
 			task.setSourceBillType(ReturnBill.CAPTION);
 			task.setSourceBillUuid(bill.getUuid());

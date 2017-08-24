@@ -32,6 +32,8 @@ public class Task extends VersionedEntity {
   private String taskNo;
   private TaskType taskType;
   private UCN article;
+  private String articleSpec;
+  private String munit;
   private TaskState state;
   private String qpcStr;
   private BigDecimal qty;
@@ -40,6 +42,7 @@ public class Task extends VersionedEntity {
   private String realCaseQtyStr;
   private Date productionDate;
   private Date validDate;
+  private String productionBatch;
   private String stockBatch;
   private UCN supplier;
   private UCN wrh;
@@ -51,7 +54,6 @@ public class Task extends VersionedEntity {
   private String sourceBillType;
   private String sourceBillNumber;
   private String sourceBillUuid;
-  private int sourceBillLine;
   private String sourceBillLineUuid;
   private UCN creator;
   private OperateMode type;
@@ -85,6 +87,22 @@ public class Task extends VersionedEntity {
 
   public void setArticle(UCN article) {
     this.article = article;
+  }
+
+  public String getArticleSpec() {
+    return articleSpec;
+  }
+
+  public void setArticleSpec(String articleSpec) {
+    this.articleSpec = articleSpec;
+  }
+
+  public String getMunit() {
+    return munit;
+  }
+
+  public void setMunit(String munit) {
+    this.munit = munit;
   }
 
   public TaskState getState() {
@@ -149,6 +167,14 @@ public class Task extends VersionedEntity {
 
   public void setValidDate(Date validDate) {
     this.validDate = validDate;
+  }
+
+  public String getProductionBatch() {
+    return productionBatch;
+  }
+
+  public void setProductionBatch(String productionBatch) {
+    this.productionBatch = productionBatch;
   }
 
   public String getStockBatch() {
@@ -229,14 +255,6 @@ public class Task extends VersionedEntity {
 
   public void setSourceBillUuid(String sourceBillUuid) {
     this.sourceBillUuid = sourceBillUuid;
-  }
-
-  public int getSourceBillLine() {
-    return sourceBillLine;
-  }
-
-  public void setSourceBillLine(int sourceBillLine) {
-    this.sourceBillLine = sourceBillLine;
   }
 
   public UCN getCreator() {

@@ -56,6 +56,7 @@
 		<result column="articleuuid" property="article.uuid" jdbcType="VARCHAR" />
 		<result column="articlecode" property="article.code" jdbcType="VARCHAR" />
 		<result column="articlename" property="article.name" jdbcType="VARCHAR" />
+		<result column="articleSpec" property="articleSpec" jdbcType="VARCHAR" />
 		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
 		<result column="munit" property="munit" jdbcType="VARCHAR" />
 		<result column="qpc" property="qpc" jdbcType="DECIMAL" />
@@ -85,8 +86,20 @@
 			<if test="supplier.uuid != null">
 				supplierUuid,
 			</if>
+			<if test="supplier.code != null">
+				suppliercode,
+			</if>
+			<if test="supplier.name != null">
+				suppliername,
+			</if>
 			<if test="wrh.uuid != null">
 				wrhuuid,
+			</if>
+			<if test="wrh.code != null">
+				wrhcode,
+			</if>
+			<if test="wrh.name != null">
+				wrhname,
 			</if>
 			<if test="expireDate != null">
 				expireDate,
@@ -141,8 +154,20 @@
 			<if test="supplier != null and supplier.uuid != null">
 				#{supplier.uuid,jdbcType=VARCHAR},
 			</if>
+			<if test="supplier != null and supplier.code != null">
+				#{supplier.code,jdbcType=VARCHAR},
+			</if>
+			<if test="supplier != null and supplier.name != null">
+				#{supplier.name,jdbcType=VARCHAR},
+			</if>
 			<if test="wrh != null and wrh.uuid != null">
 				#{wrh.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="wrh != null and wrh.code != null">
+				#{wrh.code,jdbcType=VARCHAR},
+			</if>
+			<if test="wrh != null and wrh.name != null">
+				#{wrh.name,jdbcType=VARCHAR},
 			</if>
 			<if test="expireDate != null">
 				#{expireDate,jdbcType=DATE},
@@ -190,7 +215,11 @@
 		sourceBillNumber = #{sourceBillNumber, jdbcType=VARCHAR},
 		billType = #{billType, jdbcType=VARCHAR},
 		supplieruuid = #{supplier.uuid, jdbcType=VARCHAR},
+		suppliercode = #{supplier.code, jdbcType=VARCHAR},
+		suppliername = #{supplier.name, jdbcType=VARCHAR},
 		wrhuuid = #{wrh.uuid, jdbcType=VARCHAR},
+		wrhcode = #{wrh.code, jdbcType=VARCHAR},
+		wrhname = #{wrh.name, jdbcType=VARCHAR},
 		expireDate = #{expireDate, jdbcType=DATE},
 		bookedDate = #{bookedDate, jdbcType=DATE},
 		state = #{state, jdbcType=VARCHAR},
@@ -211,26 +240,16 @@
 
 	<select id="get" parameterType="java.util.Map" resultMap="BaseResultMap">
 		select
-		t.*, s.code suppliercode, s.name suppliername, w.code wrhcode, w.name
-		wrhname
-		from db_proxy.sardine_OrderBill t,
-		db_proxy.sardine_supplier s,
-		db_proxy.sardine_wrh w
-		where t.wrhuuid = w.uuid and t.supplieruuid =
-		s.uuid
-		and t.uuid = #{uuid, jdbcType=VARCHAR}
+		t.*
+		from db_proxy.sardine_OrderBill t
+		where t.uuid = #{uuid, jdbcType=VARCHAR}
 	</select>
 
 	<select id="getByBillNumber" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
-		select t.*, s.code suppliercode, s.name suppliername, w.code
-		wrhcode, w.name wrhname
-		from db_proxy.sardine_OrderBill t,
-		db_proxy.sardine_supplier s,
-		db_proxy.sardine_wrh w
-		where t.wrhuuid =
-		w.uuid and t.supplieruuid = s.uuid
-		and t.billnumber = #{billNumber,
+		select t.*
+		from db_proxy.sardine_OrderBill t
+		where t.billnumber = #{billNumber,
 		jdbcType=VARCHAR}
 		and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
 	</select>
@@ -243,13 +262,16 @@
 		version = #{version, jdbcType=LONGVARCHAR}
 	</delete>
 
-	<insert id="insertItems" parameterType="java.util.Map">
+	<insert id="insertItems" parameterType="OrderBillItem">
 		insert into
 		db_proxy.sardine_OrderBillItem(
 		uuid,
 		line,
 		orderBillUuid,
 		articleuuid,
+		articlecode,
+		articlename,
+		articlespec,
 		qpcStr,
 		munit,
 		qty,
@@ -259,17 +281,20 @@
 		price
 		)
 		values(
-		#{item.uuid, jdbcType=VARCHAR},
-		#{item.line, jdbcType=INTEGER},
-		#{item.orderBillUuid, jdbcType=VARCHAR},
-		#{item.article.uuid, jdbcType=VARCHAR},
-		#{item.qpcStr, jdbcType=VARCHAR},
-		#{item.munit, jdbcType=VARCHAR},
-		#{item.qty, jdbcType=DECIMAL},
-		#{item.caseQtyStr, jdbcType=VARCHAR},
-		#{item.receivedQty, jdbcType=DECIMAL},
-		#{item.receivedCaseQtyStr, jdbcType=VARCHAR},
-		#{item.price, jdbcType=DECIMAL}
+		#{uuid, jdbcType=VARCHAR},
+		#{line, jdbcType=INTEGER},
+		#{orderBillUuid, jdbcType=VARCHAR},
+		#{article.uuid, jdbcType=VARCHAR},
+		#{article.code, jdbcType=VARCHAR},
+		#{article.name, jdbcType=VARCHAR},
+		#{articleSpec, jdbcType=VARCHAR},
+		#{qpcStr, jdbcType=VARCHAR},
+		#{munit, jdbcType=VARCHAR},
+		#{qty, jdbcType=DECIMAL},
+		#{caseQtyStr, jdbcType=VARCHAR},
+		#{receivedQty, jdbcType=DECIMAL},
+		#{receivedCaseQtyStr, jdbcType=VARCHAR},
+		#{price, jdbcType=DECIMAL}
 		)
 	</insert>
 
@@ -290,29 +315,20 @@
 	</delete>
 
 	<select id="queryItems" parameterType="java.util.Map" resultMap="OrderBillItemMap">
-		select t.*, a.code articlecode, a.name articlename,(t.price * t.qty)
+		select t.*,(t.price * t.qty)
 		amount
-		from db_proxy.sardine_OrderBillItem t,
-		db_proxy.sardine_article a
-		where t.articleuuid = a.uuid
-		and t.orderBillUuid = #{orderBillUuid,
+		from db_proxy.sardine_OrderBillItem t
+		where t.orderBillUuid = #{orderBillUuid,
 		jdbcType=VARCHAR}
 	</select>
 
 	<select id="query" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
-		select t.*, s.code suppliercode, s.name suppliername, w.code wrhcode,
-		w.name wrhname from
-		db_proxy.sardine_OrderBill t,
-		db_proxy.sardine_wrh
-		w,
-		db_proxy.sardine_supplier s
-		where t.wrhuuid = w.uuid and
-		t.supplieruuid = s.uuid
-		and t.companyuuid = #{companyUuid,
-		jdbcType=VARCHAR}
+		select t.* from
+		db_proxy.sardine_OrderBill t
+		where t.companyuuid = #{companyUuid,jdbcType=VARCHAR}
 		<if test="supplierCode != null and supplierCode != ''">
-			and s.code = #{supplierCode, jdbcType=VARCHAR}
+			and t.suppliercode = #{supplierCode, jdbcType=VARCHAR}
 		</if>
 		<if test="supplierUuid != null and supplierUuid != ''">
 			and t.supplierUuid = #{supplierUuid, jdbcType=VARCHAR}
@@ -321,7 +337,7 @@
 			and t.wrhuuid = #{wrhUuid, jdbcType=VARCHAR}
 		</if>
 		<if test="wrhCode != null and wrhCode != ''">
-			and w.code = #{wrhCode, jdbcType=VARCHAR}
+			and t.wrhcode = #{wrhCode, jdbcType=VARCHAR}
 		</if>
 		<if test="state != null">
 			and t.state = #{state, jdbcType=VARCHAR}

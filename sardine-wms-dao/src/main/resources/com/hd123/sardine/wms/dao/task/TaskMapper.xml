@@ -9,7 +9,10 @@
 		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
 		<result column="articlecode" property="article.code" jdbcType="VARCHAR" />
 		<result column="articlename" property="article.name" jdbcType="VARCHAR" />
+		<result column="articleSpec" property="articleSpec" jdbcType="VARCHAR" />
+		<result column="munit" property="munit" jdbcType="VARCHAR" />
 		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="productionBatch" property="productionBatch" jdbcType="VARCHAR" />
 		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
 		<result column="qty" property="qty" jdbcType="DECIMAL" />
 		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
@@ -39,8 +42,6 @@
 			jdbcType="VARCHAR" />
 		<result column="sourceBillUuid" property="sourceBillUuid"
 			jdbcType="VARCHAR" />
-		<result column="sourceBillLine" property="sourceBillLine"
-			jdbcType="INTEGER" />
 		<result column="creatorUuid" property="creator.uuid" jdbcType="VARCHAR" />
 		<result column="creatorcode" property="creator.code" jdbcType="VARCHAR" />
 		<result column="creatorname" property="creator.name" jdbcType="VARCHAR" />
@@ -75,6 +76,18 @@
 			<if test="article != null and article.uuid != null">
 				articleuuid,
 			</if>
+			<if test="article != null and article.code != null">
+				articlecode,
+			</if>
+			<if test="article != null and article.name != null">
+				articlename,
+			</if>
+			<if test="articleSpec != null">
+				articleSpec,
+			</if>
+			<if test="munit != null">
+				munit,
+			</if>
 			<if test="state != null">
 				state,
 			</if>
@@ -99,11 +112,20 @@
 			<if test="validDate != null">
 				validDate,
 			</if>
+			<if test="productionBatch != null">
+				productionBatch,
+			</if>
 			<if test="stockBatch != null">
 				stockBatch,
 			</if>
 			<if test="supplier != null and supplier.uuid != null">
 				supplieruuid,
+			</if>
+			<if test="supplier != null and supplier.code != null">
+				suppliercode,
+			</if>
+			<if test="supplier != null and supplier.name != null">
+				suppliername,
 			</if>
 			<if test="fromBinCode != null">
 				fromBinCode,
@@ -129,8 +151,8 @@
 			<if test="sourceBillUuid != null">
 				sourceBillUuid,
 			</if>
-			<if test="sourceBillLine != null">
-				sourceBillLine,
+			<if test="sourceBillLineUuid != null">
+				sourceBillLineUuid,
 			</if>
 			<if test="creator != null and creator.uuid != null">
 				creatoruuid,
@@ -182,6 +204,18 @@
 			<if test="article != null and article.uuid != null">
 				#{article.uuid,jdbcType=VARCHAR},
 			</if>
+			<if test="article != null and article.code != null">
+				#{article.code,jdbcType=VARCHAR},
+			</if>
+			<if test="article != null and article.name != null">
+				#{article.name,jdbcType=VARCHAR},
+			</if>
+			<if test="articleSpec != null">
+				#{articleSpec,jdbcType=VARCHAR},
+			</if>
+			<if test="munit != null">
+				#{munit,jdbcType=VARCHAR},
+			</if>
 			<if test="state != null">
 				#{state,jdbcType=VARCHAR},
 			</if>
@@ -206,11 +240,20 @@
 			<if test="validDate != null">
 				#{validDate,jdbcType=DATE},
 			</if>
+			<if test="productionBatch != null">
+				#{productionBatch,jdbcType=VARCHAR},
+			</if>
 			<if test="stockBatch != null">
 				#{stockBatch,jdbcType=VARCHAR},
 			</if>
 			<if test="supplier != null and supplier.uuid != null">
 				#{supplier.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="supplier != null and supplier.code != null">
+				#{supplier.code,jdbcType=VARCHAR},
+			</if>
+			<if test="supplier != null and supplier.name != null">
+				#{supplier.name,jdbcType=VARCHAR},
 			</if>
 			<if test="fromBinCode != null">
 				#{fromBinCode,jdbcType=VARCHAR},
@@ -236,8 +279,8 @@
 			<if test="sourceBillUuid != null">
 				#{sourceBillUuid,jdbcType=VARCHAR},
 			</if>
-			<if test="sourceBillLine != null">
-				#{sourceBillLine,jdbcType=INTEGER},
+			<if test="sourceBillLineUuid != null">
+				#{sourceBillLineUuid,jdbcType=VARCHAR},
 			</if>
 			<if test="creator != null and creator.uuid != null">
 				#{creator.uuid,jdbcType=VARCHAR},
@@ -426,23 +469,16 @@
 	</update>
 
 	<select id="get" parameterType="java.util.Map" resultMap="BaseResultMap">
-		select t.*, s.code supplierCode,s.name suppliername, a.code
-		articlecode,a.name articlename from
+		select t.* from
 		db_proxy.sardine_task t,
-		db_proxy.sardine_article a,
-		db_proxy.sardine_supplier s
-		where t.articleuuid = a.uuid and t.supplieruuid = s.uuid
-		and t.uuid = #{uuid, jdbcType=VARCHAR}
+		where t.uuid = #{uuid, jdbcType=VARCHAR}
 	</select>
 
 	<select id="queryByList" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
-		select t.*, s.code supplierCode,s.name suppliername, a.code
-		articlecode,a.name articlename from
-		db_proxy.sardine_task t,
-		db_proxy.sardine_article a,
-		db_proxy.sardine_supplier s
-		where t.articleuuid = a.uuid and t.supplieruuid = s.uuid
+		select t.* from
+		db_proxy.sardine_task t
+		where 1=1
 		<if test="taskNoLike != null and taskNoLike != ''">
 			and t.taskNo = #{taskNoLike, jdbcType=VARCHAR}
 		</if>
@@ -456,7 +492,7 @@
 			and t.articleUuid = #{articleUuid, jdbcType=VARCHAR}
 		</if>
 		<if test="articleCode != null and articleCode != ''">
-			and a.code = #{articleCode, jdbcType=VARCHAR}
+			and t.articleCode = #{articleCode, jdbcType=VARCHAR}
 		</if>
 		<if test="fromBinCode != null">
 			and t.fromBinCode = #{fromBinCode, jdbcType=VARCHAR}

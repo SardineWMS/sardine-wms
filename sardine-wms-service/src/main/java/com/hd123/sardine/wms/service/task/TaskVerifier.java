@@ -148,7 +148,7 @@ public class TaskVerifier {
           sf.setBinCode(toBinCode);
           List<Stock> stocks = stockService.query(sf);
           for (Stock stock : stocks) {
-            if (stock.getStockComponent().getSupplierUuid()
+            if (stock.getStockComponent().getSupplier().getUuid()
                 .equals(task.getSupplier().getUuid()) == false)
               throw new WMSException("目标货位" + toBinCode + "存在其他供应商的库存，请使用其他货位！");
           }

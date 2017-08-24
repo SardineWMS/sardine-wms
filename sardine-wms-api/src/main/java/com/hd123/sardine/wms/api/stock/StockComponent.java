@@ -16,6 +16,7 @@ import java.util.Date;
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.common.entity.SourceBill;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.validator.Validator;
 
@@ -47,23 +48,56 @@ public class StockComponent implements Serializable, Validator {
 
   private String owner;
   private String companyUuid;
-  private String supplierUuid;
+  private UCN article;
+  private String articleSpec;
   private String binCode;
   private String containerBarcode;
-  private String articleUuid;
-  private String stockBatch;
   private Date productionDate;
   private Date validDate;
   private String productionBatch;
+  private String stockBatch;
+  private UCN supplier;
   private SourceBill sourceBill;
   private SourceBill operateBill = new SourceBill(DEFAULT_OPERATE_BILL, DEFAULT_OPERATE_BILL,
       DEFAULT_OPERATE_BILL);
   private StockState state = StockState.normal;
   private BigDecimal qty;
   private String qpcStr;
-  private String measureUnit;
+  private String munit;
   private Date instockTime = new Date();
   private BigDecimal price;
+  
+  public UCN getArticle() {
+    return article;
+  }
+
+  public void setArticle(UCN article) {
+    this.article = article;
+  }
+
+  public String getArticleSpec() {
+    return articleSpec;
+  }
+
+  public void setArticleSpec(String articleSpec) {
+    this.articleSpec = articleSpec;
+  }
+
+  public UCN getSupplier() {
+    return supplier;
+  }
+
+  public void setSupplier(UCN supplier) {
+    this.supplier = supplier;
+  }
+
+  public String getMunit() {
+    return munit;
+  }
+
+  public void setMunit(String munit) {
+    this.munit = munit;
+  }
 
   /** 货主 */
   public String getOwner() {
@@ -94,24 +128,6 @@ public class StockComponent implements Serializable, Validator {
     this.companyUuid = companyUuid;
   }
 
-  /** 供应商UUID */
-  public String getSupplierUuid() {
-    return supplierUuid;
-  }
-
-  /**
-   * 设置供应商
-   * 
-   * @param supplierUuid
-   *          not null, 最大长度不能超过{@link #LENGTH_UUID}。
-   * @throws IllegalArgumentException
-   */
-  public void setSupplierUuid(String supplierUuid) {
-    Assert.assertArgumentNotNull(supplierUuid, "supplierUuid");
-    Assert.assertStringNotTooLong(supplierUuid, LENGTH_UUID, "supplierUuid");
-    this.supplierUuid = supplierUuid;
-  }
-
   /** 货位代码 */
   public String getBinCode() {
     return binCode;
@@ -139,24 +155,6 @@ public class StockComponent implements Serializable, Validator {
     Assert.assertArgumentNotNull(containerBarcode, "containerBarcode");
     Assert.assertStringNotTooLong(containerBarcode, LENGTH_UUID, "containerBarcode");
     this.containerBarcode = containerBarcode;
-  }
-
-  /** 商品UUID */
-  public String getArticleUuid() {
-    return articleUuid;
-  }
-
-  /**
-   * 设置商品
-   * 
-   * @param productUuid
-   *          not null, 最大长度不能超过{@link #LENGTH_UUID}。
-   * @throws IllegalArgumentException
-   */
-  public void setArticleUuid(String articleUuid) {
-    Assert.assertArgumentNotNull(articleUuid, "articleUuid");
-    Assert.assertStringNotTooLong(articleUuid, LENGTH_UUID, "articleUuid");
-    this.articleUuid = articleUuid;
   }
 
   /** 批次 */
@@ -304,24 +302,6 @@ public class StockComponent implements Serializable, Validator {
     this.qpcStr = qpcStr;
   }
 
-  /** 计量单位 */
-  public String getMeasureUnit() {
-    return measureUnit;
-  }
-
-  /**
-   * 设置计量单位。
-   * 
-   * @param measureUnit
-   *          not null, 最大长度不能超过{@link #LENGTH_MEASURE_UNIT}。
-   * @throws IllegalArgumentException
-   */
-  public void setMeasureUnit(String measureUnit) {
-    Assert.assertArgumentNotNull(measureUnit, "measureUnit");
-    Assert.assertStringNotTooLong(measureUnit, LENGTH_MEASURE_UNIT, "measureUnit");
-    this.measureUnit = measureUnit;
-  }
-
   /** 入库时间 */
   public Date getInstockTime() {
     return instockTime;
@@ -350,10 +330,10 @@ public class StockComponent implements Serializable, Validator {
   @Override
   public void validate() {
     Assert.assertArgumentNotNull(companyUuid, "companyUuid");
-    Assert.assertArgumentNotNull(supplierUuid, "supplierUuid");
+    Assert.assertArgumentNotNull(supplier, "supplier");
     Assert.assertArgumentNotNull(binCode, "binCode");
     Assert.assertArgumentNotNull(containerBarcode, "containerBarcode");
-    Assert.assertArgumentNotNull(articleUuid, "articleUuid");
+    Assert.assertArgumentNotNull(article, "article");
     Assert.assertArgumentNotNull(stockBatch, "stockBatch");
     Assert.assertArgumentNotNull(productionDate, "productionDate");
     Assert.assertArgumentNotNull(validDate, "validDate");
@@ -365,7 +345,7 @@ public class StockComponent implements Serializable, Validator {
     Assert.assertArgumentNotNull(state, "state");
     Assert.assertArgumentNotNull(qpcStr, "qpcStr");
     Assert.assertArgumentNotNull(qty, "qty");
-    Assert.assertArgumentNotNull(measureUnit, "measureUnit");
+    Assert.assertArgumentNotNull(munit, "munit");
     Assert.assertArgumentNotNull(instockTime, "instockTime");
 
     if (StringUtil.isNullOrBlank(owner))

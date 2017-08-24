@@ -114,9 +114,7 @@ public class OrderBillDaoImpl extends SqlSessionDaoSupport implements OrderBillD
     Assert.assertArgumentNotNull(items, "items");
 
     for (OrderBillItem item : items) {
-      Map<String, Object> map = ApplicationContextUtil.map();
-      map.put("item", item);
-      getSqlSession().insert(generateStatement(MAPPER_INSERTITEMS), map);
+      getSqlSession().insert(generateStatement(MAPPER_INSERTITEMS), item);
     }
   }
 

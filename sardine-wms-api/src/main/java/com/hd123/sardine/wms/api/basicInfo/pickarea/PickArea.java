@@ -27,14 +27,14 @@ public class PickArea extends StandardEntity {
     public static final int LENGTH_CODE = 30;
     public static final int LENGTH_NAME = 100;
 
-    private String code;
-    private String name;
+    private String code = "-";
+    private String name = "-";
     private String binScope;
     private String storageArea;
-    private OperateMode pickMode;
-    private BigDecimal pickVolume;
-    private OperateMode rplMode;
-    private RplQtyMode rplQtyMode;
+    private OperateMode pickMode = OperateMode.APP;
+    private BigDecimal pickVolume = BigDecimal.ZERO;
+    private OperateMode rplMode = OperateMode.APP;
+    private RplQtyMode rplQtyMode = RplQtyMode.enoughShipments; 
     private String companyUuid;
     private String remark;
 

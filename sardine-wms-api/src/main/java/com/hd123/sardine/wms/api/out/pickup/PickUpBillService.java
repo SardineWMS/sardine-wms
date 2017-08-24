@@ -9,8 +9,10 @@
  */
 package com.hd123.sardine.wms.api.out.pickup;
 
+import java.util.List;
+
+import com.hd123.sardine.wms.api.task.TaskView;
 import com.hd123.sardine.wms.common.exception.WMSException;
-import com.hd123.sardine.wms.common.query.PageQueryResult;
 
 /**
  * 拣货单服务：接口
@@ -69,7 +71,7 @@ public interface PickUpBillService {
    * @throws IllegalArgumentException
    * @throws DBOperServiceException
    */
-  PageQueryResult<PickUpBill> query(PickUpBillFilter filter);
+  List<TaskView> queryPickTaskView(String waveBillNumber);
 
   /**
    * 批准该波次下的所有拣货单

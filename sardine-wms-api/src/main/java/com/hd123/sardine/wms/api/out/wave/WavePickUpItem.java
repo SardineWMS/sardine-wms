@@ -32,7 +32,8 @@ public class WavePickUpItem {
 
   private String binCode;
   private String containerBarcode;
-  private String articleUuid;
+  private UCN article;
+  private String articleSpec;
   private String munit;
   private String qpcStr;
   private BigDecimal qty;
@@ -74,12 +75,20 @@ public class WavePickUpItem {
     this.customer = customer;
   }
 
-  public String getArticleUuid() {
-    return articleUuid;
+  public UCN getArticle() {
+    return article;
   }
 
-  public void setArticleUuid(String articleUuid) {
-    this.articleUuid = articleUuid;
+  public void setArticle(UCN article) {
+    this.article = article;
+  }
+
+  public String getArticleSpec() {
+    return articleSpec;
+  }
+
+  public void setArticleSpec(String articleSpec) {
+    this.articleSpec = articleSpec;
   }
 
   public String getMunit() {

@@ -12,7 +12,9 @@ package com.hd123.sardine.wms.service.out.wave;
 import java.math.BigDecimal;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.sardine.wms.api.basicInfo.pickarea.RplQtyMode;
 import com.hd123.sardine.wms.api.out.wave.WaveBinUsage;
+import com.hd123.sardine.wms.common.entity.OperateMode;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.validator.Validator;
 
@@ -30,13 +32,38 @@ public class RplRequestInfo implements Validator {
   private BigDecimal stockQty = BigDecimal.ZERO;
   private BigDecimal needRplQty = BigDecimal.ZERO;
   private BigDecimal rplQty = BigDecimal.ZERO;
-  private BigDecimal qpc;
   private String qpcStr;
   private WaveBinUsage rplBinUsage;
   private UCN pickArea;
   private String waveBillNumber;
 
-  private String orgId;
+  private String companyUuid;
+  private OperateMode method;
+  private RplQtyMode rplQtyMode;
+
+  public RplQtyMode getRplQtyMode() {
+    return rplQtyMode;
+  }
+
+  public void setRplQtyMode(RplQtyMode rplQtyMode) {
+    this.rplQtyMode = rplQtyMode;
+  }
+
+  public OperateMode getMethod() {
+    return method;
+  }
+
+  public void setMethod(OperateMode method) {
+    this.method = method;
+  }
+
+  public String getCompanyUuid() {
+    return companyUuid;
+  }
+
+  public void setCompanyUuid(String companyUuid) {
+    this.companyUuid = companyUuid;
+  }
 
   public void setRplQty(BigDecimal rplQty) {
     this.rplQty = rplQty;
@@ -98,14 +125,6 @@ public class RplRequestInfo implements Validator {
     this.needRplQty = needRplQty;
   }
 
-  public String getOrgId() {
-    return orgId;
-  }
-
-  public void setOrgId(String orgId) {
-    this.orgId = orgId;
-  }
-
   /** 补货商品uuid */
   public String getArticleUuid() {
     return articleUuid;
@@ -124,15 +143,6 @@ public class RplRequestInfo implements Validator {
   public void setBinCode(String binCode) {
     Assert.assertArgumentNotNull(binCode, "binCode");
     this.binCode = binCode;
-  }
-
-  /** 补货规格 */
-  public BigDecimal getQpc() {
-    return qpc;
-  }
-
-  public void setQpc(BigDecimal qpc) {
-    this.qpc = qpc;
   }
 
   /** 补货规格 */

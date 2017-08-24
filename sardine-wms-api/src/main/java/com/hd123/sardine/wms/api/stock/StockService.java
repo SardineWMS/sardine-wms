@@ -102,17 +102,6 @@ public interface StockService {
   List<Stock> query(StockFilter filter);
 
   /**
-   * 查询库存详情，包含商品UCN、供应商UCN
-   * 
-   * @param filter
-   *          查询条件，not null
-   * @return 返回结果集
-   * @throws IllegalArgumentException
-   * @throws DBOperServiceException
-   */
-  List<StockExtendInfo> queryStockExtendInfo(StockFilter filter);
-
-  /**
    * 查询库存以及库存对应的货位信息
    * <p>
    * 该方法关联表众多，尽量不要使用该方法

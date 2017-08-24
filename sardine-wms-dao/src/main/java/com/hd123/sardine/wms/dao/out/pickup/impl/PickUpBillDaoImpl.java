@@ -16,7 +16,7 @@ import java.util.Map;
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
-import com.hd123.sardine.wms.api.out.pickup.PickUpBillFilter;
+import com.hd123.sardine.wms.api.task.TaskView;
 import com.hd123.sardine.wms.common.dao.NameSpaceSupport;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
@@ -32,7 +32,7 @@ public class PickUpBillDaoImpl extends NameSpaceSupport implements PickUpBillDao
   private static final String SAVEMODIFY = "saveModify";
   private static final String GET = "get";
   private static final String GETBYBILLNUMBER = "getByBillNumber";
-  private static final String QUERY = "query";
+  private static final String QUERYPICKTASKVIEW = "queryPickTaskView";
   private static final String QUERYBYWAVEUUID = "queryByWaveUuid";
   private static final String REMOVE = "remove";
   private static final String APPROVEBYWAVEBILLNUMBER = "approveByWaveBillNumber";
@@ -69,13 +69,6 @@ public class PickUpBillDaoImpl extends NameSpaceSupport implements PickUpBillDao
   }
 
   @Override
-  public List<PickUpBill> query(PickUpBillFilter filter) {
-    Assert.assertArgumentNotNull(filter, "filter");
-
-    return selectList(QUERY, filter);
-  }
-
-  @Override
   public List<PickUpBill> queryByWaveUuid(String waveUuid) {
     if (StringUtil.isNullOrBlank(waveUuid))
       return new ArrayList<PickUpBill>();
@@ -102,5 +95,15 @@ public class PickUpBillDaoImpl extends NameSpaceSupport implements PickUpBillDao
     Map<String, Object> map = ApplicationContextUtil.map();
     map.put("waveBillNumber", waveBillNumber);
     update(APPROVEBYWAVEBILLNUMBER, map);
+  }
+
+  @Override
+  public List<TaskView> queryPickTaskView(String waveBillNumber) {
+    if (StringUtil.isNullOrBlank(waveBillNumber))
+      return new ArrayList<TaskView>();
+
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("waveBillNumber", waveBillNumber);
+    return selectList(QUERYPICKTASKVIEW, map);
   }
 }

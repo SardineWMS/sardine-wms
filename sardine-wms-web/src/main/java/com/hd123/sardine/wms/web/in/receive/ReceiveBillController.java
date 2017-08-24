@@ -9,9 +9,6 @@
  */
 package com.hd123.sardine.wms.web.in.receive;
 
-import java.util.Date;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,11 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hd123.rumba.commons.lang.StringUtil;
-import com.hd123.sardine.wms.api.basicInfo.article.Article;
-import com.hd123.sardine.wms.api.basicInfo.article.ArticleService;
 import com.hd123.sardine.wms.api.in.receive.ReceiveBill;
-import com.hd123.sardine.wms.api.in.receive.ReceiveBillItem;
-import com.hd123.sardine.wms.api.in.receive.ReceiveBillMethod;
 import com.hd123.sardine.wms.api.in.receive.ReceiveBillService;
 import com.hd123.sardine.wms.api.in.receive.ReceiveBillState;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
@@ -47,9 +40,6 @@ public class ReceiveBillController extends BaseController {
 
   @Autowired
   private ReceiveBillService service;
-
-  @Autowired
-  private ArticleService articleService;
 
   @RequestMapping(value = "/query", method = RequestMethod.GET)
   public @ResponseBody RespObject query(

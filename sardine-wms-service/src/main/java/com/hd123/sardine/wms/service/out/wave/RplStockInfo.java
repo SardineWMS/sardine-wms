@@ -19,16 +19,18 @@ public class RplStockInfo {
 
   private String owner;
   private String companyUuid;
-  private String supplierUuid;
+  private UCN supplier;
   private String binCode;
   private String containerBarcode;
-  private String articleUuid;
+  private UCN article;
+  private String articleSpec;
   private String productionBatch;
   private String stockBatch;
   private BigDecimal qpc;
   private BigDecimal usableQty = BigDecimal.ZERO;
   private BigDecimal rplQty = BigDecimal.ZERO;
   private String qpcStr;
+  private String munit;
   private Date productionDate;
   private Date validDate;
 
@@ -36,6 +38,38 @@ public class RplStockInfo {
   private WaveBinUsage binUsage;
 
   private boolean wholeContainerRplUse;
+
+  public UCN getSupplier() {
+    return supplier;
+  }
+
+  public void setSupplier(UCN supplier) {
+    this.supplier = supplier;
+  }
+
+  public UCN getArticle() {
+    return article;
+  }
+
+  public void setArticle(UCN article) {
+    this.article = article;
+  }
+
+  public String getArticleSpec() {
+    return articleSpec;
+  }
+
+  public void setArticleSpec(String articleSpec) {
+    this.articleSpec = articleSpec;
+  }
+
+  public String getMunit() {
+    return munit;
+  }
+
+  public void setMunit(String munit) {
+    this.munit = munit;
+  }
 
   /** 增加已补货数量 */
   public void addRplQty(BigDecimal rplQty) {
@@ -82,21 +116,6 @@ public class RplStockInfo {
 
   public void setContainerBarcode(String containerBarcode) {
     this.containerBarcode = containerBarcode;
-  }
-
-  public String getArticleUuid() {
-    return articleUuid;
-  }
-
-  public void setArticleUuid(String articleUuid) {
-    this.articleUuid = articleUuid;
-  }
-  public String getSupplierUuid() {
-    return supplierUuid;
-  }
-
-  public void setSupplierUuid(String supplierUuid) {
-    this.supplierUuid = supplierUuid;
   }
 
   public String getBinCode() {

@@ -30,7 +30,6 @@ import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
-import com.hd123.sardine.wms.common.utils.ScopeUtils;
 import com.hd123.sardine.wms.dao.out.wave.WaveBillDao;
 
 /**
@@ -114,7 +113,7 @@ public class WaveQueryHandler {
       return result;
 
     for (StockMajorInfo info : stockMajorInfos) {
-      if (info.getArticleUuid().equals(articleUuid))
+      if (info.getArticle().getUuid().equals(articleUuid))
         result.add(info);
     }
     return result;
@@ -163,15 +162,8 @@ public class WaveQueryHandler {
     return pickAreaService.query(definition).getRecords();
   }
 
-  public PickArea findPickAreaByArticleUuid(String binCode) {
-    if (CollectionUtils.isEmpty(areas))
-      return null;
-
-    for (PickArea area : areas) {
-      if (ScopeUtils.contains(area.getBinScope(), binCode))
-        return area;
-    }
-    return null;
+  public List<PickArea> findPickAreas() {
+    return areas;
   }
 
   public List<WaveAlcNtcItem> findWaveAlcNtcItems(String articleUuid) {

@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hd123.rumba.commons.lang.StringUtil;
-import com.hd123.sardine.wms.api.stock.StockExtendInfo;
-import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.api.task.ArticleMoveRule;
 import com.hd123.sardine.wms.api.task.ContainerMoveRule;
@@ -91,11 +89,11 @@ public class TaskController extends BaseController {
     RespObject resp = new RespObject();
 
     try {
-      StockFilter stockFilter = new StockFilter();
-      stockFilter.setPageSize(0);
-      stockFilter.setArticleCode(articleCode);
-      List<StockExtendInfo> infos = stockService.queryStockExtendInfo(stockFilter);
-      resp.setObj(infos);
+//      StockFilter stockFilter = new StockFilter();
+//      stockFilter.setPageSize(0);
+//      stockFilter.setArticleCode(articleCode);
+//      List<StockExtendInfo> infos = stockService.queryStockExtendInfo(stockFilter);
+//      resp.setObj(infos);
     } catch (Exception e) {
       return new ErrorRespObject("分页查询失败：" + e.getMessage());
     }

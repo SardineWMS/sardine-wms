@@ -90,11 +90,12 @@ public class ReceiveHandler {
       shiftIn.setSourceLineUuid(item.getUuid());
       StockComponent stock = new StockComponent();
       shiftIn.setStockComponent(stock);
-      stock.setArticleUuid(item.getArticle().getUuid());
+      stock.setArticle(item.getArticle());
+      stock.setArticleSpec(item.getArticleSpec());
       stock.setBinCode(item.getBinCode());
       stock.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       stock.setContainerBarcode(item.getContainerBarcode());
-      stock.setMeasureUnit(item.getMunit());
+      stock.setMunit(item.getMunit());
       stock.setProductionDate(item.getProduceDate());
       stock.setQpcStr(item.getQpcStr());
       stock.setQty(item.getQty());
@@ -102,7 +103,7 @@ public class ReceiveHandler {
       stock.setSourceBill(sourceBill);
       stock.setProductionBatch(stockBatchUtils.genProductionBatch(item.getProduceDate()));
       stock.setStockBatch(item.getStockBatch());
-      stock.setSupplierUuid(receiveBill.getSupplier().getUuid());
+      stock.setSupplier(receiveBill.getSupplier());
       stock.setValidDate(item.getValidDate());
       shiftIns.add(shiftIn);
     }
@@ -201,19 +202,22 @@ public class ReceiveHandler {
         continue;
       Task task = new Task();
       task.setArticle(item.getArticle());
+      task.setArticleSpec(item.getArticleSpec());
+      task.setMunit(item.getMunit());
       task.setCaseQtyStr(item.getCaseQtyStr());
       task.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       task.setCreator(receiveBill.getReceiver());
       task.setFromBinCode(item.getBinCode());
       task.setFromContainerBarcode(item.getContainerBarcode());
       task.setOwner(ApplicationContextUtil.getCompanyUuid());
+      task.setProductionBatch(stockBatchUtils.genProductionBatch(item.getProduceDate()));
       task.setProductionDate(item.getProduceDate());
       task.setQpcStr(item.getQpcStr());
       task.setQty(item.getQty());
-      task.setSourceBillLine(item.getLine());
       task.setSourceBillNumber(receiveBill.getBillNumber());
       task.setSourceBillType("收货单");
       task.setSourceBillUuid(receiveBill.getUuid());
+      task.setSourceBillLineUuid(item.getUuid());
       task.setStockBatch(item.getStockBatch());
       task.setSupplier(receiveBill.getSupplier());
       task.setTaskType(TaskType.Putaway);

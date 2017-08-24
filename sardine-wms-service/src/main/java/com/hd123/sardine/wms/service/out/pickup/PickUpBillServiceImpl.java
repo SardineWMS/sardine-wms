@@ -9,6 +9,7 @@
  */
 package com.hd123.sardine.wms.service.out.pickup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
-import com.hd123.sardine.wms.api.out.pickup.PickUpBillFilter;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillItem;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillState;
+import com.hd123.sardine.wms.api.task.TaskView;
 import com.hd123.sardine.wms.common.exception.WMSException;
-import com.hd123.sardine.wms.common.query.PageQueryResult;
-import com.hd123.sardine.wms.common.query.PageQueryUtil;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.out.pickup.PickUpBillDao;
@@ -85,20 +84,9 @@ public class PickUpBillServiceImpl extends BaseWMSService implements PickUpBillS
   }
 
   @Override
-  public PageQueryResult<PickUpBill> query(PickUpBillFilter filter) {
-    Assert.assertArgumentNotNull(filter, "filter");
-
-    PageQueryResult<PickUpBill> qpr = new PageQueryResult<PickUpBill>();
-    List<PickUpBill> list = pickUpBillDao.query(filter);
-    PageQueryUtil.assignPageInfo(qpr, filter);
-    qpr.setRecords(list);
-    return qpr;
-  }
-
-  @Override
   public void approveByWaveBillNumber(String waveBillNumber) {
     Assert.assertArgumentNotNull(waveBillNumber, "waveBillNumber");
-    
+
     pickUpBillDao.approveByWaveBillNumber(waveBillNumber);
   }
 
@@ -120,5 +108,12 @@ public class PickUpBillServiceImpl extends BaseWMSService implements PickUpBillS
       pickUpBillDao.remove(bill.getUuid(), bill.getVersion());
       pickUpBillItemDao.removeByPickUpBill(bill.getUuid());
     }
+  }
+
+  @Override
+  public List<TaskView> queryPickTaskView(String waveBillNumber) {
+    if (StringUtil.isNullOrBlank(waveBillNumber))
+      return new ArrayList<TaskView>();
+    return pickUpBillDao.queryPickTaskView(waveBillNumber);
   }
 }

@@ -15,6 +15,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.sardine.wms.api.task.TaskView;
 import com.hd123.sardine.wms.common.entity.StandardEntity;
 import com.hd123.sardine.wms.common.entity.UCN;
 
@@ -38,7 +39,16 @@ public class WaveBill extends StandardEntity {
     private String companyUuid;
     
     private List<WaveNtcItem> ntcItems = new ArrayList<WaveNtcItem>();
-    private List<WavePickUpBillItem> pickItems = new ArrayList<WavePickUpBillItem>();
+    private List<TaskView> pickItems = new ArrayList<TaskView>();
+    private List<TaskView> rplItems = new ArrayList<TaskView>();
+
+    public List<TaskView> getRplItems() {
+      return rplItems;
+    }
+
+    public void setRplItems(List<TaskView> rplItems) {
+      this.rplItems = rplItems;
+    }
 
     public List<WaveNtcItem> getNtcItems() {
       return ntcItems;
@@ -48,11 +58,11 @@ public class WaveBill extends StandardEntity {
       this.ntcItems = ntcItems;
     }
 
-    public List<WavePickUpBillItem> getPickItems() {
+    public List<TaskView> getPickItems() {
       return pickItems;
     }
 
-    public void setPickItems(List<WavePickUpBillItem> pickItems) {
+    public void setPickItems(List<TaskView> pickItems) {
       this.pickItems = pickItems;
     }
 

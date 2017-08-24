@@ -29,11 +29,13 @@ public class StockMajorInfo extends Entity {
 
   private String owner;
   private String companyUuid;
-  private String supplierUuid;
+  private UCN supplier;
   private String binCode;
   private String containerBarcode;
-  private String articleUuid;
+  private UCN article;
+  private String articleSpec;
   private String munit;
+  private String productionBatch;
   private String stockBatch;
   private BigDecimal qty;
   private String qpcStr;
@@ -42,6 +44,38 @@ public class StockMajorInfo extends Entity {
   private StockState state;
   private UCN warehouse;
   private BinUsage binUsgae;
+
+  public UCN getSupplier() {
+    return supplier;
+  }
+
+  public void setSupplier(UCN supplier) {
+    this.supplier = supplier;
+  }
+
+  public UCN getArticle() {
+    return article;
+  }
+
+  public void setArticle(UCN article) {
+    this.article = article;
+  }
+
+  public String getArticleSpec() {
+    return articleSpec;
+  }
+
+  public void setArticleSpec(String articleSpec) {
+    this.articleSpec = articleSpec;
+  }
+
+  public String getProductionBatch() {
+    return productionBatch;
+  }
+
+  public void setProductionBatch(String productionBatch) {
+    this.productionBatch = productionBatch;
+  }
 
   public String getOwner() {
     return owner;
@@ -57,22 +91,6 @@ public class StockMajorInfo extends Entity {
 
   public void setCompanyUuid(String companyUuid) {
     this.companyUuid = companyUuid;
-  }
-
-  public String getSupplierUuid() {
-    return supplierUuid;
-  }
-
-  public void setSupplierUuid(String supplierUuid) {
-    this.supplierUuid = supplierUuid;
-  }
-
-  public String getArticleUuid() {
-    return articleUuid;
-  }
-
-  public void setArticleUuid(String articleUuid) {
-    this.articleUuid = articleUuid;
   }
 
   public String getBinCode() {

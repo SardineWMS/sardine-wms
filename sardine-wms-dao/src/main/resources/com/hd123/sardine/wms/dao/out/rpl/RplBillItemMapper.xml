@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.hd123.sardine.wms.dao.out.rpl.impl.RplBillItemDaoImpl">
+
+  <resultMap id="RplBillItemMap"
+    type="com.hd123.sardine.wms.api.out.rpl.RplBillItem">
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="line" property="line" jdbcType="INTEGER" />
+    <result column="rplUuid" property="rplUuid" jdbcType="VARCHAR" />
+    <result column="articleuuid" property="article.uuid"
+      jdbcType="VARCHAR" />
+    <result column="articleCode" property="article.code"
+      jdbcType="VARCHAR" />
+    <result column="articleName" property="article.name"
+      jdbcType="VARCHAR" />
+    <result column="articleSpec" property="articleSpec"
+      jdbcType="VARCHAR" />
+    <result column="munit" property="munit"
+      jdbcType="VARCHAR" />
+    <result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+    <result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
+    <result column="qty" property="qty" jdbcType="DECIMAL" />
+    <result column="realCaseQtyStr" property="realCaseQtyStr"
+      jdbcType="VARCHAR" />
+    <result column="realQty" property="realQty" jdbcType="DECIMAL" />
+    <result column="productionDate" property="productionDate"
+      jdbcType="TIMESTAMP" />
+    <result column="validDate" property="validDate" jdbcType="TIMESTAMP" />
+    <result column="productionBatch" property="productionBatch"
+      jdbcType="VARCHAR" />
+    <result column="fromBinCode" property="fromBinCode" jdbcType="VARCHAR" />
+    <result column="toBinCode" property="toBinCode" jdbcType="VARCHAR" />
+    <result column="containerBarcode" property="containerBarcode"
+      jdbcType="VARCHAR" />
+    <result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
+    <result column="supplierUuid" property="supplier.uuid"
+      jdbcType="VARCHAR" />
+    <result column="supplierCode" property="supplier.code"
+      jdbcType="VARCHAR" />
+    <result column="supplierName" property="supplier.name"
+      jdbcType="VARCHAR" />
+    <result column="owner" property="owner" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <insert id="saveNew" parameterType="com.hd123.sardine.wms.api.out.rpl.RplBillItem">
+    insert into db_proxy.sardine_RPLBillItem
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uuid != null">
+        uuid,
+      </if>
+      <if test="line != null">
+        line,
+      </if>
+      <if test="containerBarcode != null">
+        containerBarcode,
+      </if>
+      <if test="fromBinCode != null">
+        fromBinCode,
+      </if>
+      <if test="toBinCode != null">
+        toBinCode,
+      </if>
+      <if test="article.uuid != null">
+        articleUuid,
+      </if>
+      <if test="article.code != null">
+        articleCode,
+      </if>
+      <if test="article.name != null">
+        articleName,
+      </if>
+      <if test="articleSpec != null">
+        articleSpec,
+      </if>
+      <if test="qpcStr != null">
+        qpcStr,
+      </if>
+      <if test="caseQtyStr != null">
+        caseQtyStr,
+      </if>
+      <if test="qty != null">
+        qty,
+      </if>
+      <if test="realCaseQtyStr != null">
+        realCaseQtyStr,
+      </if>
+      <if test="realQty != null">
+        realQty,
+      </if>
+      <if test="productionDate != null">
+        productionDate,
+      </if>
+      <if test="validDate != null">
+        validDate,
+      </if>
+      <if test="productionBatch != null">
+        productionBatch,
+      </if>
+      <if test="stockBatch != null">
+        stockBatch,
+      </if>
+      <if test="supplier != null and supplier.uuid != null">
+        supplierUuid,
+      </if>
+      <if test="supplier != null and supplier.code != null">
+        supplierCode,
+      </if>
+      <if test="supplier != null and supplier.name != null">
+        supplierName,
+      </if>
+      <if test="owner != null">
+        owner,
+      </if>
+      <if test="rplUuid != null">
+        rplUuid,
+      </if>
+      <if test="munit != null">
+        munit,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uuid != null">
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="line != null">
+        #{line,jdbcType=INTEGER},
+      </if>
+      <if test="containerBarcode != null">
+        #{containerBarcode,jdbcType=VARCHAR},
+      </if>
+      <if test="fromBinCode != null">
+        #{fromBinCode,jdbcType=VARCHAR},
+      </if>
+      <if test="toBinCode != null">
+        #{toBinCode,jdbcType=VARCHAR},
+      </if>
+      <if test="article.uuid != null">
+        #{article.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="article.code != null">
+        #{article.code,jdbcType=VARCHAR},
+      </if>
+      <if test="article.name != null">
+        #{article.name,jdbcType=VARCHAR},
+      </if>
+      <if test="articleSpec != null">
+        #{articleSpec,jdbcType=VARCHAR},
+      </if>
+      <if test="qpcStr != null">
+        #{qpcStr,jdbcType=VARCHAR},
+      </if>
+      <if test="caseQtyStr != null">
+        #{caseQtyStr,jdbcType=VARCHAR},
+      </if>
+      <if test="qty != null">
+        #{qty,jdbcType=DECIMAL},
+      </if>
+      <if test="realCaseQtyStr != null">
+        #{realCaseQtyStr,jdbcType=VARCHAR},
+      </if>
+      <if test="realQty != null">
+        #{realQty,jdbcType=DECIMAL},
+      </if>
+      <if test="productionDate != null">
+        #{productionDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="validDate != null">
+        #{validDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productionBatch != null">
+        #{productionBatch,jdbcType=VARCHAR},
+      </if>
+      <if test="stockBatch != null">
+        #{stockBatch,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null and supplier.uuid != null">
+        #{supplier.uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null and supplier.code != null">
+        #{supplier.code,jdbcType=VARCHAR},
+      </if>
+      <if test="supplier != null and supplier.name != null">
+        #{supplier.name,jdbcType=VARCHAR},
+      </if>
+      <if test="owner != null">
+        #{owner,jdbcType=VARCHAR},
+      </if>
+      <if test="rplUuid != null">
+        #{rplUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="munit != null">
+        #{munit,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="saveModify" parameterType="com.hd123.sardine.wms.api.out.rpl.RplBillItem">
+    update db_proxy.sardine_rplbillitem
+    <set>
+      <if test="realCaseQtyStr != null">
+        realCaseQtyStr = #{realCaseQtyStr,jdbcType=VARCHAR},
+      </if>
+      <if test="realQty != null">
+        realQty = #{realQty,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <where>
+      UUID = #{uuid,jdbcType=VARCHAR}
+    </where>
+  </update>
+
+  <select id="queryByRplUuid" resultMap="RplBillItemMap"
+    parameterType="java.lang.String">
+    select t.* from db_proxy.sardine_rplbillitem t
+    where t.rpluuid =
+    #{rplUuid,jdbcType=VARCHAR} order by t.line
+  </select>
+  
+  <select id="queryRplItems" resultMap="RplBillItemMap"
+    parameterType="java.util.Map">
+    select t.* from db_proxy.sardine_rplbillitem t
+    where t.rpluuid in (select r.uuid from db_proxy.sardine_rplbill r where 
+      r.waveBillNumber = #{waveBillNumber,jdbcType=VARCHAR}
+    and r.companyUuid = #{companyUuid, jdbcType=VARCHAR} )
+  </select>
+
+  <delete id="removeByWaveBillNumber" parameterType="java.util.Map">
+    delete from
+    db_proxy.sardine_rplbillitem t
+    where t.rpluuid in (select r.uuid from db_proxy.sardine_rplbill r
+    where r.wavebillnumber = #{waveBillNumber,jdbcType=VARCHAR}
+      and r.companyuuid = #{companyUuid, jdbcType=VARCHAR})
+  </delete>
+</mapper>

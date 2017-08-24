@@ -33,7 +33,6 @@ import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillItem;
 import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillService;
 import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillState;
 import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillType;
-import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.common.entity.OperateInfo;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
@@ -57,8 +56,6 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
 	private DecIncInvBillDao billDao;
 	@Autowired
 	private BinService binService;
-	@Autowired
-	private StockService stockService;
 	@Autowired
 	private ArticleService articleService;
 	@Autowired

@@ -23,7 +23,7 @@ import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerState;
-import com.hd123.sardine.wms.api.stock.StockExtendInfo;
+import com.hd123.sardine.wms.api.stock.Stock;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
@@ -105,7 +105,7 @@ public class ContainerController extends BaseController {
             StockFilter filter = new StockFilter();
             filter.setContainerBarcode(containerBarcode);
             filter.setPageSize(0);
-            List<StockExtendInfo> stocks = stockService.queryStockExtendInfo(filter);
+            List<Stock> stocks = stockService.query(filter);
             resp.setObj(stocks);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {

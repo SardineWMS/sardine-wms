@@ -17,15 +17,14 @@ import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.hd123.rumba.commons.lang.Assert;
-import com.hd123.sardine.wms.api.basicInfo.article.Article;
 import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.ArticleConfig;
 import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.PickBinStockLimit;
-import com.hd123.sardine.wms.api.basicInfo.pickarea.PickArea;
 import com.hd123.sardine.wms.api.basicInfo.pickarea.RplQtyMode;
-import com.hd123.sardine.wms.api.task.Task;
-import com.hd123.sardine.wms.common.entity.UCN;
+import com.hd123.sardine.wms.api.out.rpl.RplBill;
+import com.hd123.sardine.wms.api.out.rpl.RplBillItem;
+import com.hd123.sardine.wms.api.out.rpl.RplBillState;
+import com.hd123.sardine.wms.api.out.rpl.RplType;
 import com.hd123.sardine.wms.common.exception.WMSException;
-import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
 
 /**
@@ -39,17 +38,13 @@ public class RplGenerator {
   private RplCollector collector;
 
   /** 补货单集合 */
-  private List<Task> rplTasks = new ArrayList<Task>();
+  private List<RplBill> rplBills = new ArrayList<RplBill>();
 
   /** 可用于补货的存储位库存信息 */
   private List<RplStockInfo> rplStockInfos = new ArrayList<RplStockInfo>();
 
   /** 整件拣货位补货信息 */
   private List<RplRequestInfo> rplInfos = new ArrayList<RplRequestInfo>();
-
-  private Article article;
-
-  private PickArea pickArea;
 
   private ArticleConfig articleConfig;
 
@@ -59,17 +54,12 @@ public class RplGenerator {
    * @param collector
    *          补货信息收集器，not null
    */
-  public RplGenerator(RplCollector collector, ArticleConfig articleConfig, PickArea pickArea,
-      Article article) {
+  public RplGenerator(RplCollector collector, ArticleConfig articleConfig) {
     Assert.assertArgumentNotNull(collector, "collector");
     Assert.assertArgumentNotNull(articleConfig, "articleConfig");
-    Assert.assertArgumentNotNull(pickArea, "pickArea");
-    Assert.assertArgumentNotNull(article, "article");
 
     this.collector = collector;
     this.articleConfig = articleConfig;
-    this.article = article;
-    this.pickArea = pickArea;
   }
 
   /**
@@ -91,43 +81,50 @@ public class RplGenerator {
   }
 
   /** 获取补货生成的补货单集合 */
-  public List<Task> getRplTasks() {
-    return rplTasks;
+  public List<RplBill> getRplResult() {
+    return rplBills;
   }
 
-  private void generateRplTask(List<RplStockInfo> infos, RplRequestInfo rplInfo,
-      BigDecimal rplQty) {
+  private void generateRplBill(List<RplStockInfo> infos, RplRequestInfo rplInfo, BigDecimal rplQty,
+      RplType type) {
     assert rplInfo != null;
     assert infos != null;
     assert rplQty != null;
+    assert type != null;
 
-    if (BigDecimal.ZERO.compareTo(rplQty) >= 0)
-      return;
+    RplBill rplBill = new RplBill();
+    rplBill.setMethod(rplInfo.getMethod());
+    rplBill.setPickArea(rplInfo.getPickArea());
+    rplBill.setState(RplBillState.inConfirm);
+    rplBill.setType(type);
 
     for (RplStockInfo info : infos) {
       if (BigDecimal.ZERO.compareTo(rplQty) >= 0)
         break;
-      Task task = new Task();
-      task.setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
-      task.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+      RplBillItem task = new RplBillItem();
+      task.setArticle(info.getArticle());
+      task.setArticleSpec(info.getArticleSpec());
       task.setFromBinCode(info.getBinCode());
-      task.setFromContainerBarcode(info.getContainerBarcode());
+      task.setContainerBarcode(info.getContainerBarcode());
       task.setProductionDate(info.getProductionDate());
       task.setQpcStr(info.getQpcStr());
       task.setStockBatch(info.getStockBatch());
-      task.setSupplier(new UCN(info.getSupplierUuid(), null, null));
+      task.setSupplier(info.getSupplier());
+      task.setProductionBatch(info.getProductionBatch());
       task.setValidDate(info.getValidDate());
       task.setToBinCode(rplInfo.getBinCode());
-      task.setToContainerBarcode(info.getContainerBarcode());
+      task.setOwner(info.getOwner());
+      task.setMunit(info.getMunit());
       if (rplQty.compareTo(info.getAvailableQty()) >= 0)
         task.setQty(info.getAvailableQty());
       else
         task.setQty(rplQty);
       task.setCaseQtyStr(QpcHelper.qtyToCaseQtyStr(task.getQty(), task.getQpcStr()));
-      rplTasks.add(task);
+      rplBill.getItems().add(task);
 
       rplQty = rplQty.subtract(task.getQty());
     }
+    rplBills.add(rplBill);
   }
 
   private List<RplStockInfo> findCanRplInfos(String qpcStr, String wrhUuid) {
@@ -192,7 +189,7 @@ public class RplGenerator {
         break;
       }
 
-      generateRplTask(infos, rplInfo, totalQty);
+      generateRplBill(infos, rplInfo, totalQty, RplType.WholeContainer);
     }
   }
 
@@ -215,8 +212,6 @@ public class RplGenerator {
     PickBinStockLimit limit = articleConfig == null ? null : articleConfig.getPickBinStockLimit();
     BigDecimal binHighQty = limit == null || limit.getHighQty() == null ? BigDecimal.ZERO
         : limit.getHighQty();
-    RplQtyMode rplConfig = pickArea == null || pickArea.getRplQtyMode() == null
-        ? RplQtyMode.enoughShipments : pickArea.getRplQtyMode();
     for (RplRequestInfo rplInfo : rplInfos) {
       if (rplInfo.needRpl() == false)
         continue;
@@ -225,14 +220,14 @@ public class RplGenerator {
           rplInfo.getWareHouse().getUuid());
       BigDecimal canRplQty = caculateTotalQty(infos);
       BigDecimal toRplQty = rplInfo.getNeedRplQty();
-      if (rplConfig.equals(RplQtyMode.highestStock)) {
+      if (rplInfo.getRplQtyMode().equals(RplQtyMode.highestStock)) {
         toRplQty = toRplQty.add(binHighQty);
       }
 
       if (canRplQty.compareTo(toRplQty) < 0)
         toRplQty = canRplQty;
 
-      generateRplTask(infos, rplInfo, toRplQty);
+      generateRplBill(infos, rplInfo, toRplQty, RplType.PartContainer);
     }
   }
 

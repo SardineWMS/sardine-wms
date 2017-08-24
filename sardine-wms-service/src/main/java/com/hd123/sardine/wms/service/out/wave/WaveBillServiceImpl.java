@@ -25,12 +25,13 @@ import com.hd123.sardine.wms.api.basicInfo.pickarea.PickArea;
 import com.hd123.sardine.wms.api.out.alcntc.WaveAlcNtcItem;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
+import com.hd123.sardine.wms.api.out.rpl.RplBill;
+import com.hd123.sardine.wms.api.out.rpl.RplBillService;
 import com.hd123.sardine.wms.api.out.wave.WaveBill;
 import com.hd123.sardine.wms.api.out.wave.WaveBillService;
 import com.hd123.sardine.wms.api.out.wave.WaveBillState;
 import com.hd123.sardine.wms.api.out.wave.WavePickUpItem;
 import com.hd123.sardine.wms.api.stock.StockMajorInfo;
-import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArch;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArchService;
 import com.hd123.sardine.wms.common.entity.UCN;
@@ -59,6 +60,8 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
   private SerialArchService serialArchService;
   @Autowired
   private PickUpBillService pickUpBillService;
+  @Autowired
+  private RplBillService rplBillService;
   @Autowired
   private WaveVerifier waveVerifier;
   @Autowired
@@ -108,7 +111,7 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
 
     dao.update(bill);
     waveHandler.joinWave(bill, waveBill);
-    
+
     dao.removeWaveAlcNtcItems(bill.getBillNumber());
     dao.saveWaveAlcNtcItems(bill.getUuid(), bill.getBillNumber());
 
@@ -146,7 +149,8 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     if (bill == null)
       return bill;
     bill.setNtcItems(waveHandler.queryWaveNtcItems(bill.getBillNumber()));
-    // bill.setPickItems(waveHandler.queryPickUpBillItems(bill.getBillNumber()));
+    bill.setPickItems(pickUpBillService.queryPickTaskView(bill.getBillNumber()));
+    bill.setRplItems(rplBillService.queryByWaveBillNumber(bill.getBillNumber()));
     return bill;
   }
 
@@ -158,7 +162,8 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     if (bill == null)
       return bill;
     bill.setNtcItems(waveHandler.queryWaveNtcItems(bill.getBillNumber()));
-    // bill.setPickItems(waveHandler.queryPickUpBillItems(bill.getBillNumber()));
+    bill.setPickItems(pickUpBillService.queryPickTaskView(bill.getBillNumber()));
+    bill.setRplItems(rplBillService.queryByWaveBillNumber(bill.getBillNumber()));
     return bill;
   }
 
@@ -204,18 +209,17 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
 
     waveQueryHandler.buildCache(billNumber, articleUuids);
     List<WavePickUpItem> pickResult = new ArrayList<WavePickUpItem>();
-    List<Task> rplTasks = new ArrayList<Task>();
+    List<RplBill> rplBills = new ArrayList<RplBill>();
     for (String articleUuid : articleUuids) {
       Article article = waveQueryHandler.findArticleByArticleUuid(articleUuid);
       List<StockMajorInfo> stocks = waveQueryHandler.findStockByArticleUuid(articleUuid);
       ArticleConfig articleConfig = waveQueryHandler.findArticleConfigByArticleUuid(articleUuid);
-      PickArea pickarea = waveQueryHandler.findPickAreaByArticleUuid(
-          articleConfig == null ? null : articleConfig.getFixedPickBin());
+      List<PickArea> pickareas = waveQueryHandler.findPickAreas();
       List<WaveAlcNtcItem> inAlcItems = waveQueryHandler.findWaveAlcNtcItems(articleUuid);
       PickUpGenerator pickUpGenerator = new PickUpGenerator(article, billNumber,
           ApplicationContextUtil.getCompanyUuid());
       pickUpGenerator.setArticleConfig(articleConfig);
-      pickUpGenerator.setPickareas(pickarea);
+      pickUpGenerator.setPickareas(pickareas);
       pickUpGenerator.setStocks(stocks);
       pickUpGenerator.setWaveAlcNtcItems(inAlcItems);
       pickUpGenerator.build();
@@ -228,14 +232,14 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
       if (articleConfig == null || StringUtil.isNullOrBlank(articleConfig.getFixedPickBin()))
         continue;
 
-      RplGenerator rplGenerator = new RplGenerator(pickUpGenerator.getRplCollector(), articleConfig,
-          pickarea, article);
+      RplGenerator rplGenerator = new RplGenerator(pickUpGenerator.getRplCollector(),
+          articleConfig);
       rplGenerator.build();
-      rplTasks.addAll(rplGenerator.getRplTasks());
+      rplBills.addAll(rplGenerator.getRplResult());
     }
 
     waveHandler.savePickResultAndStock(uuid, billNumber, pickResult);
-    waveHandler.saveRplResult(rplTasks);
+    waveHandler.saveRplResultAndStock(rplBills, uuid, billNumber);
   }
 
   @Override
@@ -289,7 +293,7 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     waveHandler.rollbackStock(uuid, waveBill.getBillNumber());
 
     pickUpBillService.removeByWaveUuid(uuid);
-    dao.removeRplTasks(uuid);
+    rplBillService.removeByWaveBillNumber(waveBill.getBillNumber());
     dao.removeWavePickUpItems(uuid);
 
     waveBill.setState(WaveBillState.initial);

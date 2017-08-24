@@ -17,11 +17,11 @@ import java.util.Map;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.api.stock.Stock;
-import com.hd123.sardine.wms.api.stock.StockExtendInfo;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockMajorFilter;
 import com.hd123.sardine.wms.api.stock.StockMajorInfo;
 import com.hd123.sardine.wms.common.dao.NameSpaceSupport;
+import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.dao.stock.StockDao;
 import com.hd123.sardine.wms.dao.stock.StockOperLog;
 
@@ -31,7 +31,6 @@ import com.hd123.sardine.wms.dao.stock.StockOperLog;
  */
 public class StockDaoImpl extends NameSpaceSupport implements StockDao {
   private static final String QUERYSTOCKS = "queryStocks";
-  private static final String QUERYSTOCKEXTENDINFO = "queryStockExtendInfo";
   private static final String QUERYMAJORINFO = "queryMajorInfo";
   private static final String INSERTSTOCK = "insertStock";
   private static final String UPDATESTOCK = "updateStock";
@@ -43,13 +42,6 @@ public class StockDaoImpl extends NameSpaceSupport implements StockDao {
     Assert.assertArgumentNotNull(filter, "filter");
 
     return selectList(QUERYSTOCKS, filter);
-  }
-
-  @Override
-  public List<StockExtendInfo> queryStockExtendInfo(StockFilter filter) {
-    Assert.assertArgumentNotNull(filter, "filter");
-
-    return selectList(QUERYSTOCKEXTENDINFO, filter);
   }
 
   @Override
@@ -78,7 +70,9 @@ public class StockDaoImpl extends NameSpaceSupport implements StockDao {
     map.put("qty", qty);
     map.put("modifyDate", modifyDate);
 
-    update(UPDATESTOCK, map);
+    int i = update(UPDATESTOCK, map);
+    if (i < 1)
+      throw new VersionConflictException("库存发生变化，请重新提交！");
   }
 
   @Override
@@ -89,7 +83,9 @@ public class StockDaoImpl extends NameSpaceSupport implements StockDao {
     map.put("uuid", uuid);
     map.put("version", version);
 
-    delete(REMOVESTOCK, map);
+    int i= delete(REMOVESTOCK, map);
+    if (i < 1)
+      throw new VersionConflictException("库存发生变化，请重新提交！");
   }
 
   @Override

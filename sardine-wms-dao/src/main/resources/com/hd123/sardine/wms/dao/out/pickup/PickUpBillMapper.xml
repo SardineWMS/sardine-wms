@@ -53,6 +53,33 @@
 		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
 			jdbcType="VARCHAR" />
 	</resultMap>
+	
+	<resultMap id="PickTaskViewMap" type="com.hd123.sardine.wms.api.task.TaskView">
+		<result column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="billNumber" property="billNumber" jdbcType="VARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="owner" property="owner" jdbcType="VARCHAR" />
+		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
+		<result column="articleCode" property="article.code" jdbcType="VARCHAR" />
+		<result column="articleName" property="article.name" jdbcType="VARCHAR" />
+		<result column="articlespec" property="articlespec" jdbcType="VARCHAR" />
+		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+		<result column="munit" property="munit" jdbcType="VARCHAR" />
+		<result column="fromBinCode" property="fromBinCode" jdbcType="VARCHAR" />
+		<result column="fromContainerBarcode" property="fromContainerBarcode" jdbcType="VARCHAR" />
+		<result column="toBinCode" property="toBinCode" jdbcType="VARCHAR" />
+		<result column="toContainerBarcode" property="toContainerBarcode" jdbcType="VARCHAR" />
+		<result column="qty" property="qty" jdbcType="DECIMAL" />
+		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
+		<result column="realQty" property="realQty" jdbcType="DECIMAL" />
+		<result column="realCaseQtyStr" property="realCaseQtyStr" jdbcType="VARCHAR" />
+		<result column="operator" property="operator" jdbcType="VARCHAR" />
+		<result column="operateTime" property="operateTime" jdbcType="TIMESTAMP" />
+		<result column="sourceBillUuid" property="sourceBill.billUuid" jdbcType="VARCHAR" />
+		<result column="sourceBillNumber" property="sourceBill.billNumber" jdbcType="VARCHAR" />
+		<result column="sourceBillType" property="sourceBill.billType" jdbcType="VARCHAR" />
+	</resultMap>
 
 	<insert id="saveNew" parameterType="com.hd123.sardine.wms.api.out.pickup.PickUpBill">
 		insert into db_proxy.sardine_pickupbill
@@ -325,4 +352,41 @@
 		where t.uuid = #{uuid,jdbcType=VARCHAR} 
 		 and  t.version = #{version,jdbcType=LONGVARCHAR}
 	</delete>
+	
+	<select id="queryPickTaskView" parameterType="java.util.Map" resultMap="PickTaskViewMap">
+	   select i.uuid, 
+        p.billnumber, 
+        p.companyuuid,
+        case when i.state = 'initial' then '待拣货'
+             when i.state = 'inProgress' then '拣货中'
+             when i.state = 'finished' then '拣货完成'
+             when i.state = 'exception' then '拣货异常'
+             when i.state = 'skip' then '拣货跳过'
+             when i.state = 'stockOut' then '拣货缺货'
+        end as 'state',
+        p.customercode + '[' + p.customername + ']' as 'owner',
+        i.articleuuid, 
+        i.ARTICLECODE,
+        i.ARTICLENAME,
+        i.ARTICLESPEC,
+        i.QPCSTR,
+        i.munit,
+        i.sourcebincode as 'fromBinCode',
+        i.sourceContainerBarcode as 'fromContainerBarcode',
+        '' as 'toBinCode', 
+        '' as 'toContainerBarcode', 
+        i.qty, 
+        i.CASEQTYSTR,
+        i.realqty,
+        i.REALCASEQTYSTR,
+        case when i.PICKTIME then '[' + i.PICKERCODE + ']' + i.PICKERNAME
+             else null 
+        end as 'operator', 
+        i.PICKTIME as 'operateTime',
+        p.SOUCEBILLUUID,
+        p.SORCEBILLNUMBER,
+        p.SORCEBILLTYPE from sardine_pickupbill p, sardine_pickupbillitem i where p.uuid = i.pickupbilluuid 
+                                                                              and p.waveBillNumber = #{waveBillNumber, jdbcType=VARCHAR}
+                                                                              and p.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+	</select>
 </mapper>

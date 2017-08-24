@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.api.out.acceptance.AcceptanceBill;
 import com.hd123.sardine.wms.api.out.acceptance.AcceptanceBillItem;
-import com.hd123.sardine.wms.api.stock.StockExtendInfo;
+import com.hd123.sardine.wms.api.stock.Stock;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.api.stock.StockShiftRule;
@@ -56,12 +56,12 @@ public class AcceptanceHandler {
           stockBatchUtils.genProductionBatch(acceptanceItem.getProductionDate()));
       stockFilter.setQpcStr(acceptanceItem.getQpcStr());
       stockFilter.setSupplierUuid(acceptanceItem.getSupplier().getUuid());
-      List<StockExtendInfo> infos = stockService.queryStockExtendInfo(stockFilter);
+      List<Stock> stocks = stockService.query(stockFilter);
       BigDecimal acceptanceQty = acceptanceItem.getQty();
-      for (StockExtendInfo info : infos) {
+      for (Stock stock : stocks) {
         if (BigDecimal.ZERO.compareTo(acceptanceQty) >= 0)
           break;
-        if (info.getQty().compareTo(BigDecimal.ZERO) <= 0)
+        if (stock.getStockComponent().getQty().compareTo(BigDecimal.ZERO) <= 0)
           continue;
 
         StockShiftRule outRule = new StockShiftRule();
@@ -70,9 +70,9 @@ public class AcceptanceHandler {
         outRule.setArticleUuid(acceptanceItem.getArticle().getUuid());
         outRule.setBinCode(acceptanceItem.getBinCode());
         outRule.setContainerBarcode(acceptanceItem.getContainerBarCode());
-        outRule.setStockBatch(info.getStockBatch());
-        if (acceptanceQty.compareTo(info.getQty()) >= 0) {
-          outRule.setQty(info.getQty());
+        outRule.setStockBatch(stock.getStockComponent().getStockBatch());
+        if (acceptanceQty.compareTo(stock.getStockComponent().getQty()) >= 0) {
+          outRule.setQty(stock.getStockComponent().getQty());
         } else {
           outRule.setQty(acceptanceQty);
         }

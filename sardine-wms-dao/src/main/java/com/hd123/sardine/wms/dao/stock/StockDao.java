@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.hd123.sardine.wms.api.stock.Stock;
-import com.hd123.sardine.wms.api.stock.StockExtendInfo;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockMajorFilter;
 import com.hd123.sardine.wms.api.stock.StockMajorInfo;
@@ -32,17 +31,6 @@ public interface StockDao {
    * @return 库存列表
    */
   List<Stock> queryStocks(StockFilter filter);
-
-  /**
-   * 查询库存详情，包含商品UCN、供应商UCN
-   * 
-   * @param filter
-   *          查询条件，not null
-   * @return 返回结果集
-   * @throws IllegalArgumentException
-   * @throws DBOperServiceException
-   */
-  List<StockExtendInfo> queryStockExtendInfo(StockFilter filter);
 
   /**
    * 查询库存

@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hd123.rumba.commons.lang.StringUtil;
-import com.hd123.sardine.wms.api.stock.StockExtendInfo;
+import com.hd123.sardine.wms.api.stock.Stock;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
@@ -96,13 +96,13 @@ public class UtilController extends BaseController {
       filter.setContainerBarcode(containerBarcode);
       filter.setBinCode(binCode);
       BigDecimal totalQty = BigDecimal.ZERO;
-      List<StockExtendInfo> stocks = stockService.queryStockExtendInfo(filter);
+      List<Stock> stocks = stockService.query(filter);
       List<Date> productionDates = new ArrayList<Date>();
       List<String> qpcStrs = new ArrayList<>();
-      for (StockExtendInfo stockExtendInfo : stocks) {
-        totalQty = stockExtendInfo.getQty().add(totalQty);
-        productionDates.add(stockExtendInfo.getProductionDate());
-        qpcStrs.add(stockExtendInfo.getQpcStr());
+      for (Stock stockExtendInfo : stocks) {
+        totalQty = stockExtendInfo.getStockComponent().getQty().add(totalQty);
+        productionDates.add(stockExtendInfo.getStockComponent().getProductionDate());
+        qpcStrs.add(stockExtendInfo.getStockComponent().getQpcStr());
       }
       String caseQtyStr = null;
       if (StringUtil.isNullOrBlank(qpcStr) == false)
@@ -110,7 +110,7 @@ public class UtilController extends BaseController {
       Map<String, Object> map = new HashMap<String, Object>();
       map.put("totalQty", totalQty);
       map.put("caseQtyStr", caseQtyStr);
-      map.put("price", stocks.size() > 0 ? stocks.get(0).getPrice() : 0);
+      map.put("price", stocks.size() > 0 ? stocks.get(0).getStockComponent().getPrice() : 0);
       map.put("productionDates", productionDates);
       map.put("qpcStrs", qpcStrs);
       resp.setObj(map);
@@ -153,7 +153,7 @@ public class UtilController extends BaseController {
       filter.setContainerBarcode(containerBarcode);
       filter.setQpcStr(qpcStr);
       filter.setPageSize(0);
-      List<StockExtendInfo> stocks = stockService.queryStockExtendInfo(filter);
+      List<Stock> stocks = stockService.query(filter);
 
       resp.setObj(stocks);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

@@ -92,6 +92,11 @@ public class ReceiveVerifier {
             + item.getQty());
 
       item.setOrderBillLineUuid(orderItem.getUuid());
+      item.setArticle(orderItem.getArticle());
+      item.setArticleSpec(orderItem.getArticleSpec());
+      item.setQpcStr(orderItem.getQpcStr());
+      item.setMunit(orderItem.getMunit());
+      item.setPrice(orderItem.getPrice());
       item.setCaseQtyStr(QpcHelper.qtyToCaseQtyStr(item.getQty(), item.getQpcStr()));
       totalCaseQtyStr = QpcHelper.caseQtyStrAdd(totalCaseQtyStr, item.getCaseQtyStr());
     }

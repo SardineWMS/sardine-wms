@@ -9,6 +9,8 @@
  */
 package com.hd123.sardine.wms.common.utils;
 
+import com.hd123.sardine.wms.common.entity.UCN;
+
 /**
  * 库存属性为空时，使用该常量代替
  * 
@@ -23,7 +25,7 @@ public class StockConstants {
   /** 用于不管理容器的货位和未知容器的库存 */
   public static final String VISUAL_STOCK_CONTAINERBARCODE = "-";
   /** 用于未知供应商的库存 */
-  public static final String VISUAL_STOCK_SUPPLIERUUID = "-";
+  public static final UCN VISUAL_STOCK_SUPPLIER = new UCN("-", "-", "-");
   /** 用于未知批次的库存 */
   public static final String VISUAL_STOCK_STOCKBATCH = "-";
 }

@@ -32,7 +32,7 @@ import com.hd123.sardine.wms.api.basicInfo.config.categorystorageareaconfig.Cate
 import com.hd123.sardine.wms.api.basicInfo.config.categorystorageareaconfig.CategoryStorageAreaConfigService;
 import com.hd123.sardine.wms.api.basicInfo.config.pickareastorageareaconfig.PickAreaStorageAreaConfigService;
 import com.hd123.sardine.wms.api.in.putaway.PutawayService;
-import com.hd123.sardine.wms.api.stock.StockExtendInfo;
+import com.hd123.sardine.wms.api.stock.Stock;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.common.exception.WMSException;
@@ -95,12 +95,12 @@ public class PutawayServiceImpl implements PutawayService {
     StockFilter stockFilter = new StockFilter();
     stockFilter.setContainerBarcode(containerBarcode);
     stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-    List<StockExtendInfo> infos = stockService.queryStockExtendInfo(stockFilter);
-    if (infos.isEmpty())
+    List<Stock> stocks = stockService.query(stockFilter);
+    if (stocks.isEmpty())
       return null;
 
-    return fetchPutawayTargetBinByArticle(infos.get(0).getArticle().getUuid(),
-        infos.get(0).getQty());
+    return fetchPutawayTargetBinByArticle(stocks.get(0).getStockComponent().getArticle().getUuid(),
+        stocks.get(0).getStockComponent().getQty());
   }
 
   @Override
@@ -218,18 +218,18 @@ public class PutawayServiceImpl implements PutawayService {
     stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     stockFilter.setArticleUuid(articleUuid);
     stockFilter.setBinCode(articleConfig.getFixedPickBin());
-    List<StockExtendInfo> infos = stockService.queryStockExtendInfo(stockFilter);
-    if (allocateTotalQty(infos).add(qty).compareTo(highQty) > 0)
+    List<Stock> stocks = stockService.query(stockFilter);
+    if (allocateTotalQty(stocks).add(qty).compareTo(highQty) > 0)
       return getTargetBinWhenStorageBin(articleUuid);
     return articleConfig.getFixedPickBin();
   }
 
-  private BigDecimal allocateTotalQty(List<StockExtendInfo> infos) {
-    assert infos != null;
+  private BigDecimal allocateTotalQty(List<Stock> stocks) {
+    assert stocks != null;
 
     BigDecimal totalQty = BigDecimal.ZERO;
-    for (StockExtendInfo info : infos) {
-      totalQty = totalQty.add(info.getQty());
+    for (Stock stock : stocks) {
+      totalQty = totalQty.add(stock.getStockComponent().getQty());
     }
     return totalQty;
   }

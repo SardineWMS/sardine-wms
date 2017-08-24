@@ -21,7 +21,6 @@ import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.api.stock.Stock;
 import com.hd123.sardine.wms.api.stock.StockChangeDirection;
 import com.hd123.sardine.wms.api.stock.StockChangement;
-import com.hd123.sardine.wms.api.stock.StockExtendInfo;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockMajorFilter;
 import com.hd123.sardine.wms.api.stock.StockMajorInfo;
@@ -56,7 +55,7 @@ public class StockServiceImpl implements StockService {
     stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     for (StockShiftIn shiftIn : stocks) {
       stockFilter.setPageSize(0);
-      stockFilter.setArticleUuid(shiftIn.getStockComponent().getArticleUuid());
+      stockFilter.setArticleUuid(shiftIn.getStockComponent().getArticle().getUuid());
       stockFilter.setBinCode(shiftIn.getStockComponent().getBinCode());
       stockFilter.setContainerBarcode(shiftIn.getStockComponent().getContainerBarcode());
       stockFilter.setOperateBillUuid(shiftIn.getStockComponent().getOperateBill() == null ? null
@@ -67,7 +66,7 @@ public class StockServiceImpl implements StockService {
       stockFilter.setSourceBillUuid(shiftIn.getStockComponent().getSourceBill().getBillUuid());
       stockFilter.setState(shiftIn.getStockComponent().getState());
       stockFilter.setStockBatch(shiftIn.getStockComponent().getStockBatch());
-      stockFilter.setSupplierUuid(shiftIn.getStockComponent().getSupplierUuid());
+      stockFilter.setSupplierUuid(shiftIn.getStockComponent().getSupplier().getUuid());
       List<Stock> existsStocks = stockDao.queryStocks(stockFilter);
 
       StockOperLog log = null;
@@ -101,7 +100,7 @@ public class StockServiceImpl implements StockService {
 
     StockOperLog log = new StockOperLog();
     log.setUuid(UUIDGenerator.genUUID());
-    log.setArticleUuid(stock.getStockComponent().getArticleUuid());
+    log.setArticleUuid(stock.getStockComponent().getArticle().getUuid());
     log.setBinCode(stock.getStockComponent().getBinCode());
     log.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     log.setContainerBarcode(stock.getStockComponent().getContainerBarcode());
@@ -114,7 +113,7 @@ public class StockServiceImpl implements StockService {
     log.setProductionBatch(stock.getStockComponent().getProductionBatch());
     log.setStockBatch(stock.getStockComponent().getStockBatch());
     log.setStockUuid(stock.getUuid());
-    log.setSupplierUuid(stock.getStockComponent().getSupplierUuid());
+    log.setSupplierUuid(stock.getStockComponent().getSupplier().getUuid());
 
     return log;
   }
@@ -259,12 +258,6 @@ public class StockServiceImpl implements StockService {
     if (stocks != null && stocks.isEmpty() == false)
       result = stocks;
     return result;
-  }
-
-  @Override
-  public List<StockExtendInfo> queryStockExtendInfo(StockFilter filter) {
-    Assert.assertArgumentNotNull(filter, "filter");
-    return stockDao.queryStockExtendInfo(filter);
   }
 
   @Override

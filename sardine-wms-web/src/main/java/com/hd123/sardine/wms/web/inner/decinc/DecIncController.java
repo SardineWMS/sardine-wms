@@ -31,7 +31,7 @@ import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillItem;
 import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillService;
 import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillState;
 import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillType;
-import com.hd123.sardine.wms.api.stock.StockExtendInfo;
+import com.hd123.sardine.wms.api.stock.Stock;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.common.entity.UCN;
@@ -220,11 +220,11 @@ public class DecIncController extends BaseController {
       filter.setContainerBarcode(containerBarcode);
       filter.setQpcStr(qpcStr);
       filter.setPageSize(0);
-      List<StockExtendInfo> stocks = stockService.queryStockExtendInfo(filter);
+      List<Stock> stocks = stockService.query(filter);
 
       Set<UCN> suppliers = new HashSet<>();
-      for (StockExtendInfo info : stocks) {
-        suppliers.add(info.getSupplier());
+      for (Stock info : stocks) {
+        suppliers.add(info.getStockComponent().getSupplier());
       }
       resp.setObj(suppliers);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

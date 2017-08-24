@@ -26,6 +26,18 @@ import com.hd123.sardine.wms.common.entity.UCN;
 public class OrderBillItem extends Entity {
   private static final long serialVersionUID = -3943087270888461290L;
 
+  private int line;
+  private String orderBillUuid;
+  private UCN article;
+  private String articleSpec;
+  private String qpcStr;
+  private String munit;
+  private BigDecimal qty;
+  private String caseQtyStr;
+  private BigDecimal receivedQty;
+  private String receivedCaseQtyStr;
+  private BigDecimal price;
+
   /** 行号 */
   public int getLine() {
     return line;
@@ -116,16 +128,13 @@ public class OrderBillItem extends Entity {
     this.price = price;
   }
 
-  private int line;
-  private String orderBillUuid;
-  private UCN article;
-  private String qpcStr;
-  private String munit;
-  private BigDecimal qty;
-  private String caseQtyStr;
-  private BigDecimal receivedQty;
-  private String receivedCaseQtyStr;
-  private BigDecimal price;
+  public String getArticleSpec() {
+    return articleSpec;
+  }
+
+  public void setArticleSpec(String articleSpec) {
+    this.articleSpec = articleSpec;
+  }
 
   public void validate() {
     Assert.assertArgumentNotNull(article, "article");
