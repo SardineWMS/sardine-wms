@@ -62,7 +62,8 @@ public class UserController extends BaseController {
   }
 
   @RequestMapping(value = "/getbycode", method = RequestMethod.GET)
-  public @ResponseBody RespObject getByCode(@RequestParam(value = "userCode") String userCode) {
+  public @ResponseBody RespObject getByCode(@RequestParam(value = "userCode") String userCode,
+          @RequestParam(value = "token") String token) {
     RespObject resp = new RespObject();
     try {
       User user = userService.getByCode(userCode);
