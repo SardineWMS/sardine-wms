@@ -10,8 +10,10 @@
 package com.hd123.sardine.wms.service.basicInfo.config.articleconfig;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
@@ -182,6 +184,8 @@ public class ArticleConfigServiceImpl implements ArticleConfigService {
 
   @Override
   public List<ArticleConfig> queryArticleConfigByArticleUuids(List<String> articleUuids) {
-    return null;
+    if (CollectionUtils.isEmpty(articleUuids))
+      return new ArrayList<ArticleConfig>();
+    return articleConfigDao.queryArticleConfigByArticleUuids(articleUuids);
   }
 }

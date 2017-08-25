@@ -75,6 +75,11 @@ public class StockServiceImpl implements StockService {
         stock.setUuid(UUIDGenerator.genUUID());
         stock.setStockComponent(shiftIn.getStockComponent());
         stock.setModified(new Date());
+        if (stock.getStockComponent().getState().equals(StockState.normal) == false) {
+          stock.getStockComponent().setOperateBill(sourceBill);
+        } else {
+          stock.getStockComponent().setOperateBill(new SourceBill("-", "-", "-"));
+        }
         stockDao.insertStock(stock);
 
         log = createLog(stock);
@@ -158,6 +163,8 @@ public class StockServiceImpl implements StockService {
       List<Stock> existsStocks = stockDao.queryStocks(stockFilter);
       BigDecimal shiftOutQty = shiftRule.getQty();
       for (Stock stock : existsStocks) {
+        if (BigDecimal.ZERO.compareTo(shiftOutQty) >= 0)
+          break;
         StockChangement changement = new StockChangement();
         changement.setDirection(StockChangeDirection.shiftOut);
         changement.setStockComponent(stock.getStockComponent());

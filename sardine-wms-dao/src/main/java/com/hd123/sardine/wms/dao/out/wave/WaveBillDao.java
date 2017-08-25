@@ -28,12 +28,16 @@ public interface WaveBillDao extends BaseDao<WaveBill> {
   List<WaveAlcNtcItem> queryWaveAlcNtcItems(String waveBillNumber, List<String> articleUuids);
 
   int updateWaveAlcNtcItemsState(String waveBillNumber, List<String> articleUuids);
+  
+  void rollbackWaveAlcNtcItemState(String waveBillNumber);
 
   void removeWaveAlcNtcItems(String waveBillNumber);
   
   void saveWaveAlcNtcItems(String waveUuid, String waveBillNumber);
 
   List<String> queryWaveArticleUuids(String waveBillUuid);
+  
+  void updateWaveAlcNtcItemPickOrder(String serialarchUuid, String waveUuid);
   
   void saveWavePickUpItems(List<WavePickUpItem> pickResult);
   

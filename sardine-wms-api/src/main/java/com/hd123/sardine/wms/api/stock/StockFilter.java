@@ -49,7 +49,7 @@ public class StockFilter extends PageQueryDefinition {
 
   public void setState(StockState state) {
     this.state = state;
-    put("state", state == null ? null : state.name());
+    put("state", state == null ? null : state);
   }
 
   public String getOperateBillUuid() {

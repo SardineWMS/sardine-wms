@@ -37,6 +37,7 @@ public class RplBill extends StandardEntity implements Validator {
   private String waveBillUuid;
   private RplType type = RplType.WholeContainer;
   private UCN rpler;
+  private String remark;
 
   private List<RplBillItem> items = new ArrayList<RplBillItem>();
 
@@ -119,6 +120,14 @@ public class RplBill extends StandardEntity implements Validator {
 
   public void setRpler(UCN rpler) {
     this.rpler = rpler;
+  }
+  
+  public String getRemark() {
+    return remark;
+  }
+
+  public void setRemark(String remark) {
+    this.remark = remark;
   }
 
   public List<RplBillItem> getItems() {

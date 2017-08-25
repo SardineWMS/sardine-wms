@@ -10,12 +10,14 @@
 package com.hd123.sardine.wms.dao.out.pickup.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBillState;
 import com.hd123.sardine.wms.api.task.TaskView;
 import com.hd123.sardine.wms.common.dao.NameSpaceSupport;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
@@ -94,6 +96,9 @@ public class PickUpBillDaoImpl extends NameSpaceSupport implements PickUpBillDao
 
     Map<String, Object> map = ApplicationContextUtil.map();
     map.put("waveBillNumber", waveBillNumber);
+    map.put("state", PickUpBillState.approved);
+    map.put("user", ApplicationContextUtil.getLoginUser());
+    map.put("date", new Date());
     update(APPROVEBYWAVEBILLNUMBER, map);
   }
 

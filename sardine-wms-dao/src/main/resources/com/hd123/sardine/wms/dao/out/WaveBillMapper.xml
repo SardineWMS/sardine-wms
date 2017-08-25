@@ -56,7 +56,7 @@
 		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
 		<result column="articleUuid" property="articleUuid" jdbcType="VARCHAR" />
 		<result column="alcQty " property="alcQty" jdbcType="DECIMAL" />
-		<result column="orderNo" property="orderNo" jdbcType="VARCHAR" />
+		<result column="pickOrder" property="pickOrder" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<resultMap id="PickRuleMap" type="com.hd123.sardine.wms.api.out.wave.PickRule">
@@ -364,6 +364,13 @@
 			#{item}
 		</foreach>
 	</update>
+	
+	<update id="rollbackWaveAlcNtcItemState" parameterType="java.util.Map">
+	     update db_proxy.sardine_waveAlcntcitem
+	       set state = 'Initial'
+	     where waveBillnumber = #{waveBillNumber, jdbcType=VARCHAR}
+		   and companyUuid = #{companyUuid, jdbcType=VARCHAR}
+	</update>
 
 	<delete id="removeWaveAlcNtcItems" parameterType="java.util.Map">
 		delete from db_proxy.sardine_waveAlcntcitem where waveBillNumber =
@@ -385,11 +392,19 @@
 		#{waveUuid, jdbcType=VARCHAR},
 		#{waveBillNumber, jdbcType=VARCHAR}, a.companyuuid, ai.uuid from db_proxy.sardine_alcntcbill a,
 		db_proxy.sardine_alcntcbillitem ai,
-		db_proxy.sardine_customer c where
-		a.uuid = ai.ALCNTCBILLUUID and a.CUSTOMERUUID = c.uuid and
+		db_proxy.sardine_customer c  where
+		a.uuid = ai.ALCNTCBILLUUID and a.CUSTOMERUUID = c.uuid and  
 		a.waveBillNumber = #{waveBillNumber, jdbcType=VARCHAR} and a.companyuuid =
 		#{companyUuid,jdbcType=VARCHAR}
 	</insert>
+	
+	<update id="updateWaveAlcNtcItemPickOrder" parameterType="java.util.Map">
+	    update db_proxy.sardine_wavealcntcitem t set t.pickorder = (select concat_ws('-', l.code, c.LINEORDER) from 
+	    db_proxy.sardine_serialarchline l, db_proxy.sardine_serialarchlinecustomer c where 
+      l.UUID = c.SERIALARCHLINEUUID and l.SERIALARCHUUID = #{serialarchUuid, jdbcType=VARCHAR}
+           and c.CUSTOMERUUID = t.CUSTOMERUUID)
+        where t.waveUuid = #{waveUuid, jdbcType=VARCHAR}
+	</update>
 
 	<select id="queryWaveArticleUuids" parameterType="java.util.Map"
 		resultType="java.lang.String">

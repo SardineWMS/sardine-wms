@@ -63,7 +63,7 @@
 		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
 		<result column="articleCode" property="article.code" jdbcType="VARCHAR" />
 		<result column="articleName" property="article.name" jdbcType="VARCHAR" />
-		<result column="articlespec" property="articlespec" jdbcType="VARCHAR" />
+		<result column="articleSpec" property="articleSpec" jdbcType="VARCHAR" />
 		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
 		<result column="munit" property="munit" jdbcType="VARCHAR" />
 		<result column="fromBinCode" property="fromBinCode" jdbcType="VARCHAR" />
@@ -120,6 +120,12 @@
 			<if test="customer != null and customer.uuid != null">
 				customeruuid,
 			</if>
+			<if test="customer != null and customer.code != null">
+				customercode,
+			</if>
+			<if test="customer != null and customer.name != null">
+				customername,
+			</if>
 			<if test="picker != null and picker.uuid != null">
 				pickeruuid,
 			</if>
@@ -173,13 +179,13 @@
 				#{method,jdbcType=VARCHAR},
 			</if>
 			<if test="sourceBill != null and sourceBill.billUuid != null">
-				#{sourceBillUuid,jdbcType=VARCHAR},
+				#{sourceBill.billUuid,jdbcType=VARCHAR},
 			</if>
 			<if test="sourceBill != null and sourceBill.billNumber != null">
-				#{sourceBillNumber,jdbcType=VARCHAR},
+				#{sourceBill.billNumber,jdbcType=VARCHAR},
 			</if>
 			<if test="sourceBill != null and sourceBill.billType != null">
-				#{sourceBillType,jdbcType=VARCHAR},
+				#{sourceBill.billType,jdbcType=VARCHAR},
 			</if>
 			<if test="pickOrder != null">
 				#{pickOrder,jdbcType=VARCHAR},
@@ -189,6 +195,12 @@
 			</if>
 			<if test="customer != null and customer.uuid != null">
 				#{customer.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="customer != null and customer.code != null">
+				#{customer.code,jdbcType=VARCHAR},
+			</if>
+			<if test="customer != null and customer.name != null">
+				#{customer.name,jdbcType=VARCHAR},
 			</if>
 			<if test="picker != null and picker.uuid != null">
 				#{picker.uuid,jdbcType=VARCHAR},
@@ -347,10 +359,10 @@
 		</if>
 	</select>
 
-	<delete id="remove" parameterType="java.lang.String">
-		delete from db_proxy.sardine_pickupbill t
-		where t.uuid = #{uuid,jdbcType=VARCHAR} 
-		 and  t.version = #{version,jdbcType=LONGVARCHAR}
+	<delete id="remove" parameterType="java.util.Map">
+		delete from db_proxy.sardine_pickupbill
+		where uuid = #{uuid,jdbcType=VARCHAR} 
+		 and version = #{version,jdbcType=LONGVARCHAR}
 	</delete>
 	
 	<select id="queryPickTaskView" parameterType="java.util.Map" resultMap="PickTaskViewMap">
@@ -364,7 +376,7 @@
              when i.state = 'skip' then '拣货跳过'
              when i.state = 'stockOut' then '拣货缺货'
         end as 'state',
-        p.customercode + '[' + p.customername + ']' as 'owner',
+        concat('[', p.customercode, ']', p.customername) as 'owner',
         i.articleuuid, 
         i.ARTICLECODE,
         i.ARTICLENAME,
@@ -373,17 +385,17 @@
         i.munit,
         i.sourcebincode as 'fromBinCode',
         i.sourceContainerBarcode as 'fromContainerBarcode',
-        '' as 'toBinCode', 
-        '' as 'toContainerBarcode', 
+        '-' as 'toBinCode', 
+        '-' as 'toContainerBarcode', 
         i.qty, 
         i.CASEQTYSTR,
         i.realqty,
         i.REALCASEQTYSTR,
-        case when i.PICKTIME then '[' + i.PICKERCODE + ']' + i.PICKERNAME
+        case when i.PICKTIME then concat('[', i.PICKERCODE, ']', i.PICKERNAME)
              else null 
         end as 'operator', 
         i.PICKTIME as 'operateTime',
-        p.SOUCEBILLUUID,
+        p.SOURCEBILLUUID,
         p.SOURCEBILLNUMBER,
         p.SOURCEBILLTYPE from db_proxy.sardine_pickupbill p, db_proxy.sardine_pickupbillitem i where p.uuid = i.pickupbilluuid 
                                                                               and p.sourceBillNumber = #{waveBillNumber, jdbcType=VARCHAR}

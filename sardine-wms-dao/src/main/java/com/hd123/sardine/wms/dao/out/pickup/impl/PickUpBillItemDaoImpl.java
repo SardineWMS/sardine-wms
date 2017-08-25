@@ -36,7 +36,7 @@ public class PickUpBillItemDaoImpl extends NameSpaceSupport implements PickUpBil
 
   @Override
   public void saveNew(List<PickUpBillItem> items) {
-    if (CollectionUtils.isNotEmpty(items))
+    if (CollectionUtils.isEmpty(items))
       return;
 
     for (PickUpBillItem item : items) {

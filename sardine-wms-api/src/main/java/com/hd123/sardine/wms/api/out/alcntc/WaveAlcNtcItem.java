@@ -34,7 +34,7 @@ public class WaveAlcNtcItem implements Serializable {
 
   private BigDecimal alcQty;
   private BigDecimal pickQty = BigDecimal.ZERO;
-  private String orderNo;
+  private String pickOrder;
   
   private String waveUuid;
   private String companyUuid;
@@ -135,12 +135,12 @@ public class WaveAlcNtcItem implements Serializable {
     this.pickQty = pickQty;
   }
 
-  public String getOrderNo() {
-    return orderNo;
+  public String getPickOrder() {
+    return pickOrder;
   }
 
-  public void setOrderNo(String orderNo) {
-    this.orderNo = orderNo;
+  public void setPickOrder(String pickOrder) {
+    this.pickOrder = pickOrder;
   }
 
   public void addPickQty(BigDecimal pickQty2) {

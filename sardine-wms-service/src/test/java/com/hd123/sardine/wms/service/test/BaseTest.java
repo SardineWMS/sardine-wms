@@ -9,7 +9,6 @@ package com.hd123.sardine.wms.service.test;
  * 2017年8月21日 - zhangsai - 创建。
  */
 
-
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,7 @@ import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 @ContextConfiguration(locations = {
     "/applicationContext*.xml" })
 @Rollback
-@Transactional  
+@Transactional
 public class BaseTest {
 
   @Autowired

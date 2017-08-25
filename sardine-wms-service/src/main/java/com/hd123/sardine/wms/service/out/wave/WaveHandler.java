@@ -214,10 +214,13 @@ public class WaveHandler {
         StockShiftIn shiftIn = new StockShiftIn();
         StockComponent sc = new StockComponent();
         sc.setArticle(pickItem.getArticle());
+        sc.setArticleSpec(pickItem.getArticleSpec());
         sc.setBinCode(pickItem.getBinCode());
         sc.setCompanyUuid(pickItem.getCompanyUuid());
         sc.setContainerBarcode(pickItem.getContainerBarcode());
+        sc.setQpcStr(pickItem.getQpcStr());
         sc.setMunit(pickItem.getMunit());
+        sc.setQty(pickItem.getQty());
         sc.setOwner(ApplicationContextUtil.getCompanyUuid());
         sc.setPrice(BigDecimal.ZERO);
         sc.setProductionDate(DateHelper.strToDate(StockConstants.VISUAL_MAXDATE));
@@ -344,6 +347,9 @@ public class WaveHandler {
         billItem.setQpcStr(pickItem.getQpcStr());
         billItem.setSourceBinCode(pickItem.getBinCode());
         billItem.setSourceContainerBarcode(pickItem.getContainerBarcode());
+        billItem.setQty(pickItem.getQty());
+        billItem.setCaseQtyStr(pickItem.getCaseQtyStr());
+        billItem.setArticleSpec(pickItem.getArticleSpec());
 
         PickUpBill bill = findPickUpBill(bills, pickItem.getVolume(), pickItem.getItemVolume());
         if (bill == null) {
@@ -449,6 +455,8 @@ public class WaveHandler {
     stockService.shiftIn(sourceBill, shiftIns);
 
     for (RplBill rplBill : rplBills) {
+      rplBill.setWaveBillNumber(waveBillNumber);
+      rplBill.setWaveBillUuid(waveUuid);
       rplBillService.saveNew(rplBill);
     }
   }

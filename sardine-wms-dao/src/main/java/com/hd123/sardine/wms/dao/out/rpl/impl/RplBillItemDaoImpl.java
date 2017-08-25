@@ -54,7 +54,7 @@ public class RplBillItemDaoImpl extends NameSpaceSupport implements RplBillItemD
       return;
 
     Map<String, Object> map = ApplicationContextUtil.map();
-    map.put(waveBillNumber, "waveBillNumber");
+    map.put("waveBillNumber", waveBillNumber);
     delete(REMOVEBYWAVEBILLNUMBER, map);
   }
 

@@ -227,8 +227,8 @@
 
   <delete id="removeByWaveBillNumber" parameterType="java.util.Map">
     delete from
-    db_proxy.sardine_rplbillitem t
-    where t.rpluuid in (select r.uuid from db_proxy.sardine_rplbill r
+    db_proxy.sardine_rplbillitem
+    where rpluuid in (select r.uuid from db_proxy.sardine_rplbill r
     where r.wavebillnumber = #{waveBillNumber,jdbcType=VARCHAR}
       and r.companyuuid = #{companyUuid, jdbcType=VARCHAR})
   </delete>

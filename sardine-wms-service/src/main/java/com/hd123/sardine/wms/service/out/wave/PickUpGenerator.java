@@ -78,17 +78,16 @@ public class PickUpGenerator {
    *          not null, not empty
    * @throws IllegalArgumentException
    */
-  public PickUpGenerator(Article article, String waveBillNumber,
-      String companyUuid) {
+  public PickUpGenerator(Article article, String waveBillNumber, String companyUuid) {
     Assert.assertArgumentNotNull(article, "article");
-//    Assert.assertArgumentNotNull(waveUuid, "waveUuid");
+    // Assert.assertArgumentNotNull(waveUuid, "waveUuid");
     Assert.assertArgumentNotNull(waveBillNumber, "waveBillNumber");
     Assert.assertArgumentNotNull(companyUuid, "companyUuid");
 
     this.article = article;
     this.waveBillNumber = waveBillNumber;
     this.companyUuid = companyUuid;
-//    this.waveUuid = waveUuid;
+    // this.waveUuid = waveUuid;
   }
 
   public void setStocks(List<StockMajorInfo> infos) {
@@ -361,24 +360,23 @@ public class PickUpGenerator {
             : articleConfig.getFixedPickBin();
     Collections.sort(waveStocks);
     for (WaveStock waveStock : waveStocks) {
-      WavePickBin pickBin = null;
-      if (waveStock.getWaveBinUsage().equals(WaveBinUsage.StorageBin)) {
-        pickBin = findWavePickBin(fixBin, waveStock.getQpcStr(), WaveBinUsage.FixBin,
-            waveStock.getWarehouse().getUuid());
-      } else {
-        findWavePickBin(waveStock.getBinCode(), waveStock.getQpcStr(), waveStock.getWaveBinUsage(),
-            waveStock.getWarehouse().getUuid());
-      }
+      WavePickBin pickBin = findWavePickBin(waveStock.getBinCode(), waveStock.getQpcStr(),
+          waveStock.getWaveBinUsage(), waveStock.getWarehouse().getUuid());
 
       if (pickBin == null) {
         pickBin = new WavePickBin();
         if (Objects.equals(waveStock.getBinCode(), fixBin)) {
           pickBin.binCode = fixBin;
           pickBin.binUsage = WaveBinUsage.FixBin;
-        } else {
+        } else if (StringUtil.isNullOrBlank(waveStock.getContainerBarcode()) == false && Objects
+            .equals(waveStock.getContainerBarcode(), Container.VIRTUALITY_CONTAINER) == false) {
           pickBin.binCode = waveStock.getBinCode();
-          pickBin.binUsage = waveStock.getWaveBinUsage();
-        }
+          pickBin.binUsage = WaveBinUsage.StorageBin;
+        } else if (waveStock.getWaveBinUsage().equals(WaveBinUsage.DynamicPickBin)) {
+          pickBin.binCode = waveStock.getBinCode();
+          pickBin.binUsage = WaveBinUsage.DynamicPickBin;
+        } else
+          continue;
         pickBin.pickQpcStr = waveStock.getQpcStr();
         pickBin.munit = waveStock.getMunit();
         pickBin.warehouse = waveStock.getWarehouse();
@@ -394,6 +392,25 @@ public class PickUpGenerator {
         refreshPickConfig(pickBin);
       }
     }
+
+    for (WaveStock waveStock : waveStocks) {
+      if (waveStock.getWaveBinUsage().equals(WaveBinUsage.DynamicPickBin)
+          || waveStock.getWaveBinUsage().equals(WaveBinUsage.FixBin))
+        continue;
+
+      WavePickBin pickBin = findWavePickBin(fixBin, waveStock.getQpcStr(), WaveBinUsage.FixBin,
+          waveStock.getWarehouse().getUuid());
+      if (pickBin == null) {
+        pickBin = new WavePickBin();
+        pickBin.binCode = fixBin;
+        pickBin.binUsage = WaveBinUsage.FixBin;
+        pickBin.munit = waveStock.getMunit();
+        pickBin.pickQpcStr = waveStock.getQpcStr();
+        pickBin.warehouse = waveStock.getWarehouse();
+        refreshPickConfig(pickBin);
+        fixBins.add(pickBin);
+      }
+    }
   }
 
   private void refreshPickConfig(WavePickBin pickBin) {
@@ -403,7 +420,8 @@ public class PickUpGenerator {
     if (area == null)
       area = new PickArea();
 
-    pickBin.pickArea = new UCN(area.getUuid(), area.getCode(), area.getName());
+    pickBin.pickArea = new UCN(area.getUuid() == null ? "-" : area.getUuid(), area.getCode(),
+        area.getName());
     pickBin.operateMethod = area.getPickMode();
     pickBin.splitVolume = area.getPickVolume();
     pickBin.rplMode = area.getRplMode();
@@ -691,6 +709,7 @@ public class PickUpGenerator {
       else
         pickItem.setType(PickType.PartContainer);
       pickItem.setItemVolume(caculateVolume(pickItem.getQpcStr(), pickItem.getQty()));
+      pickItem.setPickOrder(alcItem.getPickOrder());
       result.add(pickItem);
 
       pickQty = pickQty.subtract(pickItem.getQty());
@@ -786,12 +805,27 @@ public class PickUpGenerator {
         if (majorInfo.isConformAlclmtdays(article.getAlcLmtDays()) == false)
           continue;
 
+        if (isWholeContainerPickUp(majorInfo.getBinCode(), majorInfo.getContainerBarcode()))
+          continue;
+
         RplStockInfo rplStockInfo = createRplStockInfo(majorInfo);
         rplStockInfo.setWholeContainerRplUse(isWholeContainerRplUsable(majorInfo.getBinCode(),
             majorInfo.getContainerBarcode(), majorInfo.getQpcStr()));
         rplStockInfos.add(rplStockInfo);
       }
       return rplStockInfos;
+    }
+
+    private boolean isWholeContainerPickUp(String binCode, String containerBarcode) {
+      assert binCode != null;
+
+      for (WavePickUpItem item : result) {
+        if (item.getBinCode().equals(binCode)
+            && item.getContainerBarcode().equals(containerBarcode))
+          return true;
+      }
+
+      return false;
     }
 
     private RplStockInfo createRplStockInfo(StockMajorInfo majorInfo) {

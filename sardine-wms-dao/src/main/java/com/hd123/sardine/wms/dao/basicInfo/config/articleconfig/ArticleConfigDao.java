@@ -28,5 +28,4 @@ public interface ArticleConfigDao {
   List<ArticleConfig> query(PageQueryDefinition definition);
 
   List<ArticleConfig> queryArticleConfigByArticleUuids(List<String> articleUuids);
-
 }

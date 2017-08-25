@@ -10,6 +10,7 @@
 package com.hd123.sardine.wms.dao.out.wave.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +41,8 @@ public class WaveBillDaoImpl extends BaseDaoImpl<WaveBill> implements WaveBillDa
   private static final String QUERYPICKITEM = "queryPickItem";
   private static final String QUERYPICKITEMBYPICKRULE = "queryPickItemByPickRule";
   private static final String REMOVEWAVEPICKUPITEMS = "removeWavePickUpItems";
+  private static final String UPDATEWAVEALCNTCITEMPICKORDER = "updateWaveAlcNtcItemPickOrder";
+  private static final String ROLLBACKWAVEALCNTCITEMSTATE = "rollbackWaveAlcNtcItemState";
 
   @Override
   public WaveBill getByBillNumber(String billNumber) {
@@ -88,7 +91,7 @@ public class WaveBillDaoImpl extends BaseDaoImpl<WaveBill> implements WaveBillDa
   public void removeWaveAlcNtcItems(String waveBillNumber) {
     if (StringUtil.isNullOrBlank(waveBillNumber))
       return;
-    
+
     Map<String, Object> map = ApplicationContextUtil.map();
     map.put("waveBillNumber", waveBillNumber);
     delete(REMOVEWAVEALCNTCITEMS, map);
@@ -101,7 +104,7 @@ public class WaveBillDaoImpl extends BaseDaoImpl<WaveBill> implements WaveBillDa
 
     Map<String, Object> map = ApplicationContextUtil.map();
     map.put("waveBillNumber", waveBillNumber);
-    
+
     return selectList(QUERYWAVEARTICLEUUIDS, map);
   }
 
@@ -140,5 +143,24 @@ public class WaveBillDaoImpl extends BaseDaoImpl<WaveBill> implements WaveBillDa
   @Override
   public void removeWavePickUpItems(String waveUuid) {
     delete(REMOVEWAVEPICKUPITEMS, waveUuid);
+  }
+
+  @Override
+  public void updateWaveAlcNtcItemPickOrder(String serialarchUuid, String waveUuid) {
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("serialarchUuid", serialarchUuid);
+    map.put("waveUuid", waveUuid);
+
+    update(UPDATEWAVEALCNTCITEMPICKORDER, map);
+  }
+
+  @Override
+  public void rollbackWaveAlcNtcItemState(String waveBillNumber) {
+    if (StringUtil.isNullOrBlank(waveBillNumber))
+      return;
+
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("waveBillNumber", waveBillNumber);
+    update(ROLLBACKWAVEALCNTCITEMSTATE, map);
   }
 }

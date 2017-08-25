@@ -40,7 +40,7 @@ public class TaskView extends Entity {
   private String toBinCode;
   private String toContainerBarcode;
   private BigDecimal qty;
-  private String caseQtystr;
+  private String caseQtyStr;
   private BigDecimal realQty;
   private String realCaseQtyStr;
   private String operator;
@@ -151,12 +151,12 @@ public class TaskView extends Entity {
     this.qty = qty;
   }
 
-  public String getCaseQtystr() {
-    return caseQtystr;
+  public String getCaseQtyStr() {
+    return caseQtyStr;
   }
 
-  public void setCaseQtystr(String caseQtystr) {
-    this.caseQtystr = caseQtystr;
+  public void setCaseQtyStr(String caseQtyStr) {
+    this.caseQtyStr = caseQtyStr;
   }
 
   public BigDecimal getRealQty() {

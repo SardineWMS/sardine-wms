@@ -49,9 +49,13 @@ public class PickUpBillServiceImpl extends BaseWMSService implements PickUpBillS
     pickUpBill.setBillNumber(
         billNumberGenerator.allocateNextBillNumber(PickUpBill.class.getSimpleName()));
     pickUpBill.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    pickUpBill.setCreateInfo(ApplicationContextUtil.getOperateInfo());
+    pickUpBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
 
-    for (PickUpBillItem pickItem : pickUpBill.getItems()) {
+    for (int i = 0; i < pickUpBill.getItems().size(); i++) {
+      PickUpBillItem pickItem = pickUpBill.getItems().get(i);
       pickItem.setUuid(UUIDGenerator.genUUID());
+      pickItem.setLine(i + 1);
       pickItem.setPickUpBillUuid(pickUpBill.getUuid());
     }
 

@@ -4,6 +4,7 @@
 <mapper namespace="com.hd123.sardine.wms.dao.stock.impl.StockDaoImpl">
 	<resultMap id="StockMap" type="Stock">
 		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
 		<result column="owner" property="stockComponent.owner"
 			jdbcType="VARCHAR" />
 		<result column="companyUuid" property="stockComponent.companyUuid"
@@ -57,7 +58,6 @@
 		<result column="instockTime" property="stockComponent.instockTime"
 			jdbcType="TIMESTAMP" />
 		<result column="modified" property="modified" jdbcType="TIMESTAMP" />
-		<result column="version" property="version" jdbcType="LONGVARCHAR" />
 	</resultMap>
 
 	<resultMap id="StockMajorInfoMap" type="StockMajorInfo">
@@ -445,6 +445,9 @@
 		<if test="companyUuid != null and companyUuid != ''">
 			and t.companyUuid = #{companyUuid}
 		</if>
+		<if test="state != null">
+			and t.state = #{state,jdbcType=VARCHAR}
+		</if>
 		<if test="supplierUuid != null and supplierUuid != ''">
 			and t.supplierUuid = #{supplierUuid}
 		</if>
@@ -466,51 +469,17 @@
 		<if test="productionBatch != null and productionBatch != ''">
 			and t.productionBatch = #{productionBatch}
 		</if>
-		<if test="sourceBill != null and sourceBill.billUuid != null">
-			and t.billUuid = #{sourceBill.billUuid}
+		<if test="sourceBillUuid != null">
+			and t.billUuid = #{sourceBillUuid}
 		</if>
-		<if test="sourceBill != null and sourceBill.billNumber != null">
-			and t.billNumber = #{sourceBill.billNumber}
+		<if test="sourceBillNumber != null">
+			and t.billNumber = #{sourceBillNumber}
 		</if>
 		<if test="sourceBill != null and sourceBill.billType != null">
 			and t.billType = #{sourceBill.billType}
 		</if>
-		<if test="operateBill != null and operateBill.billUuid != null">
-			and t.OPERATEBILLUUID = #{operateBill.billUuid}
-		</if>
-		<if test="operateBill != null and operateBill.billNumber != null">
-			and t.OPERATEBILLNUMBER = #{operateBill.billNumber}
-		</if>
-		<if test="operateBill != null and operateBill.billType != null">
-			and t.OPERATEBILLTYPE = #{operateBill.billType}
-		</if>
-		<if test="states != null">
-			and t.state in
-			<foreach collection="states" item="item" index="index" open="("
-				separator="," close=")">
-				#{item}
-			</foreach>
-		</if>
-		<if test="containerBarcodes != null">
-			and t.containerBarCode in
-			<foreach collection="containerBarcodes" item="item" index="index"
-				open="(" separator="," close=")">
-				#{item}
-			</foreach>
-		</if>
-		<if test="binCodes != null">
-			and t.bincode in
-			<foreach collection="binCodes" item="item" index="index"
-				open="(" separator="," close=")">
-				#{item}
-			</foreach>
-		</if>
-		<if test="articleUuids != null">
-			and t.articleUuid in
-			<foreach collection="articleUuids" item="item" index="index"
-				open="(" separator="," close=")">
-				#{item}
-			</foreach>
+		<if test="operateBillUuid != null">
+			and t.OPERATEBILLUUID = #{operateBillUuid}
 		</if>
 		ORDER BY INSTOCKTIME
 	</select>

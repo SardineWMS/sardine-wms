@@ -17,8 +17,10 @@ import java.util.Objects;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.ArticleConfig;
 import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.PickBinStockLimit;
+import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.pickarea.RplQtyMode;
 import com.hd123.sardine.wms.api.out.rpl.RplBill;
 import com.hd123.sardine.wms.api.out.rpl.RplBillItem;
@@ -69,7 +71,7 @@ public class RplGenerator {
    * @return 补货单集合
    */
   public void build() throws WMSException {
-    List<RplRequestInfo> rplInfos = collector.getRplInfos();
+    rplInfos = collector.getRplInfos();
     if (rplInfos.isEmpty())
       return;
 
@@ -142,7 +144,7 @@ public class RplGenerator {
       if (info.getQpcStr().equals(qpcStr) == false)
         continue;
 
-      infos.addAll(findStockInfos(info.getBinCode(), info.getContainerBarcode(), qpcStr));
+      infos.add(info);
     }
 
     return infos;
@@ -177,6 +179,10 @@ public class RplGenerator {
       if (rplStockInfo.getQpcStr().equals(rplInfo.getQpcStr()) == false) {
         continue;
       }
+
+      if (StringUtil.isNullOrBlank(rplStockInfo.getContainerBarcode())
+          || Objects.equals(rplStockInfo.getContainerBarcode(), Container.VIRTUALITY_CONTAINER))
+        continue;
 
       List<RplStockInfo> infos = findStockInfos(rplStockInfo.getBinCode(),
           rplStockInfo.getContainerBarcode(), rplStockInfo.getQpcStr());

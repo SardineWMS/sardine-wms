@@ -51,7 +51,7 @@
 		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
 		<result column="articleCode" property="article.code" jdbcType="VARCHAR" />
 		<result column="articleName" property="article.name" jdbcType="VARCHAR" />
-		<result column="articlespec" property="articlespec" jdbcType="VARCHAR" />
+		<result column="articleSpec" property="articleSpec" jdbcType="VARCHAR" />
 		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
 		<result column="munit" property="munit" jdbcType="VARCHAR" />
 		<result column="fromBinCode" property="fromBinCode" jdbcType="VARCHAR" />
@@ -265,7 +265,8 @@
 		select r.uuid, 
         r.BILLNUMBER,
         r.COMPANYUUID,
-        case when r.state = 'approved' then '待补货' 
+        case when r.state = 'inConfirm' then '待确认' 
+             when r.state = 'approved' then '待补货' 
              when r.state = 'audited' then '补货完成' 
              when r.state = 'exception' then '补货异常' 
              when r.state = 'inProgress' then '补货中' 
@@ -278,14 +279,14 @@
         ri.QPCSTR,
         ri.munit,
         ri.FROMBINCODE,
-        ri.CONTAINERBARCODE,
+        ri.CONTAINERBARCODE fromContainerBarcode,
         ri.TOBINCODE,
-        '' as 'tocontainerbarcode',
+        '-' as 'tocontainerbarcode',
         ri.QTY,
         ri.CASEQTYSTR,
         ri.REALQTY,
         ri.REALCASEQTYSTR,
-        case when r.RPLERUUID then '[' + r.RPLERCODE + ']' + r.RPLERNAME
+        case when r.RPLERUUID then concat('[', r.RPLERCODE, ']', r.RPLERNAME)
              else null 
         end as 'operator', 
         case when r.RPLERUUID then r.LASTMODIFYTIME
@@ -302,7 +303,7 @@
 
 	<delete id="removeByWaveBillNumber" parameterType="java.util.Map">
 		delete from
-		WMSRPLBill
+		db_proxy.sardine_RPLBill
 		where
 		wavebillnumber = #{waveBillNumber,jdbcType=VARCHAR}
 		and companyUuid = #{companyUuid, jdbcType=VARCHAR}

@@ -84,6 +84,7 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     dao.insert(bill);
     waveHandler.joinWave(bill, null);
     dao.saveWaveAlcNtcItems(bill.getUuid(), bill.getBillNumber());
+    dao.updateWaveAlcNtcItemPickOrder(bill.getSerialArch().getUuid(), bill.getUuid());
 
     logger.injectContext(this, bill.getUuid(), WaveBill.class.getName(),
         ApplicationContextUtil.getOperateContext());
@@ -114,6 +115,7 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
 
     dao.removeWaveAlcNtcItems(bill.getBillNumber());
     dao.saveWaveAlcNtcItems(bill.getUuid(), bill.getBillNumber());
+    dao.updateWaveAlcNtcItemPickOrder(bill.getSerialArch().getUuid(), bill.getUuid());
 
     logger.injectContext(this, waveBill.getUuid(), WaveBill.class.getName(),
         ApplicationContextUtil.getOperateContext());
@@ -295,6 +297,7 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     pickUpBillService.removeByWaveUuid(uuid);
     rplBillService.removeByWaveBillNumber(waveBill.getBillNumber());
     dao.removeWavePickUpItems(uuid);
+    dao.rollbackWaveAlcNtcItemState(waveBill.getBillNumber());
 
     waveBill.setState(WaveBillState.initial);
     waveBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
