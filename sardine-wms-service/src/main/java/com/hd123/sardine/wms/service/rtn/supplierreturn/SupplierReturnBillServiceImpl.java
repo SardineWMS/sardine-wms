@@ -67,7 +67,7 @@ public class SupplierReturnBillServiceImpl extends BaseWMSService implements Ret
     public PageQueryResult<ReturnSupplierBill> query(PageQueryDefinition definition)
             throws IllegalArgumentException {
         Assert.assertArgumentNotNull(definition, "definition");
-
+        definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
         List<ReturnSupplierBill> list = dao.query(definition);
         PageQueryResult<ReturnSupplierBill> pqr = new PageQueryResult<>();
         PageQueryUtil.assignPageInfo(pqr, definition);

@@ -224,6 +224,7 @@ public class ReturnNtcBillServiceImpl extends BaseWMSService implements ReturnNt
   @Override
   public PageQueryResult<ReturnNtcBill> query(PageQueryDefinition definition) {
     Assert.assertArgumentNotNull(definition, "definition");
+    definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     List<ReturnNtcBill> list = dao.query(definition);
     PageQueryResult<ReturnNtcBill> pqr = new PageQueryResult<>();
     PageQueryUtil.assignPageInfo(pqr, definition);
@@ -409,7 +410,6 @@ public class ReturnNtcBillServiceImpl extends BaseWMSService implements ReturnNt
         ApplicationContextUtil.getOperateInfo().getOperator().getCode(),
         ApplicationContextUtil.getOperateInfo().getOperator().getFullName()));
     rtnBill.setWrh(bill.getWrh());
-    ReturnBillItem rtnItem = new ReturnBillItem();
     List<ReturnNtcBillItem> items = bill.getItems();
     List<ReturnBillItem> rtnItems = new ArrayList<>();
     items.sort(new Comparator<ReturnNtcBillItem>() {
@@ -422,6 +422,7 @@ public class ReturnNtcBillServiceImpl extends BaseWMSService implements ReturnNt
     for (ReturnNtcBillItem item : items) {
       if (item.getRealQty().compareTo(item.getQty()) >= 0)
         continue;
+      ReturnBillItem rtnItem = new ReturnBillItem();
       rtnItem.setArticle(item.getArticle());
       rtnItem.setCaseQtyStr(QpcHelper.subtract(item.getCaseQtyStr(), item.getRealCaseQtyStr()));
       rtnItem.setLine(item.getLine());
