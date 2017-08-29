@@ -190,7 +190,7 @@ public class ReturnBill extends StandardEntity {
                 if (item.getArticle().getUuid().equals(jItem.getArticle().getUuid())
                         && item.getQpcStr().equals(jItem.getQpcStr())
                         && item.getSupplier().getUuid().equals(jItem.getSupplier().getUuid()))
-                    throw new IllegalArgumentException("第" + i + "行" + "与第" + j + "行商品规格重复");
+                    throw new IllegalArgumentException("第" + i+1 + "行" + "与第" + j+1 + "行商品规格重复");
             }
         }
     }
