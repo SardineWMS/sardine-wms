@@ -22,6 +22,7 @@ import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.article.Article;
 import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.ArticleConfig;
 import com.hd123.sardine.wms.api.basicInfo.pickarea.PickArea;
+import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillService;
 import com.hd123.sardine.wms.api.out.alcntc.WaveAlcNtcItem;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
@@ -68,6 +69,8 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
   private WaveHandler waveHandler;
   @Autowired
   private WaveQueryHandler waveQueryHandler;
+  @Autowired
+  private AlcNtcBillService alcNtcBillService;
 
   @Override
   public String saveNew(WaveBill bill) throws IllegalArgumentException, WMSException {
@@ -324,5 +327,7 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     waveBill.setState(WaveBillState.inAlc);
     waveBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     dao.update(waveBill);
+
+    alcNtcBillService.refreshAlcNtcBillItemPlanCaseQtyStr(waveBill.getBillNumber());
   }
 }

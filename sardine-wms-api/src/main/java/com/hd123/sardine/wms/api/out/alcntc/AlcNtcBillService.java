@@ -191,4 +191,13 @@ public interface AlcNtcBillService {
    */
   void pickUp(String itemUuid, BigDecimal qty) throws IllegalArgumentException, WMSException;
 
+  /**
+   * 根据波次单刷新配单明细计划数量
+   * 
+   * @param waveBillNumber
+   *          波次单号，not null，
+   * @throws WMSException
+   */
+  void refreshAlcNtcBillItemPlanCaseQtyStr(String waveBillNumber) throws WMSException;
+
 }

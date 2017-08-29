@@ -591,4 +591,27 @@
 		t.wavebillnumber=#{waveBillNumber,jdbcType=VARCHAR}
 		and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
 	</select>
+	
+	<update id="refreshAlcNtcBillItemPlanQty" parameterType="java.lang.String">
+		UPDATE
+		db_proxy.sardine_alcntcbillitem a SET PLANQTY =
+		(SELECT SUM(t.qty) from
+		db_proxy.sardine_pickupbillitem t where t.ALCNTCBILLITEMUUID =
+		a.uuid)
+		where
+		a.ALCNTCBILLUUID in (SELECT n.uuid from db_proxy.sardine_wavebill
+		w,db_proxy.sardine_alcntcbill n WHERE
+		w.billnumber=#{waveBillNumber,jdbcType=VARCHAR} AND
+		n.WAVEBILLNUMBER=w.billnumber)
+	</update>
+
+	<update id="refreshAlcNtcBillItemPlanCaseQtyStr" parameterType="java.lang.String">
+		UPDATE db_proxy.sardine_alcntcbillitem a SET PLANCASEQTYSTR =(SELECT
+		SARDINE_CALCULATECASEQTYSTR
+		(a.PLANQTY,a.QPCSTR))
+		where a.ALCNTCBILLUUID
+		in (SELECT n.uuid from db_proxy.sardine_wavebill w,db_proxy.sardine_alcntcbill n WHERE
+		w.billnumber=#{waveBillNumber,jdbcType=VARCHAR} AND
+		n.WAVEBILLNUMBER=w.billnumber)
+	</update>
 </mapper>

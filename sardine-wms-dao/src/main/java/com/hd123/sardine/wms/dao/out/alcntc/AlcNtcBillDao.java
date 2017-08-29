@@ -35,4 +35,8 @@ public interface AlcNtcBillDao extends BaseDao<AlcNtcBill> {
   AlcNtcBill getByItemUuid(String itemUuid);
 
   List<AlcNtcBill> getByWaveBillNumber(String waveBillNumber);
+
+  void refreshAlcNtcBillItemPlanCaseQtyStr(String waveBillNumber);
+
+  void refreshAlcNtcBillItemPlanQty(String waveBillNumber);
 }

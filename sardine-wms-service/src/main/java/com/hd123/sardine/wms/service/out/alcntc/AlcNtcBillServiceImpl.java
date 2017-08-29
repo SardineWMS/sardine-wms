@@ -410,4 +410,12 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
       throws IllegalArgumentException, WMSException {
 
   }
+
+  @Override
+  public void refreshAlcNtcBillItemPlanCaseQtyStr(String waveBillNumber) throws WMSException {
+    Assert.assertArgumentNotNull(waveBillNumber, "waveBillNumber");
+
+    dao.refreshAlcNtcBillItemPlanQty(waveBillNumber);
+    dao.refreshAlcNtcBillItemPlanCaseQtyStr(waveBillNumber);
+  }
 }

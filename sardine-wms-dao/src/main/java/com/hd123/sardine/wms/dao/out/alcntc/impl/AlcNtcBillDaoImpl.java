@@ -34,6 +34,8 @@ public class AlcNtcBillDaoImpl extends BaseDaoImpl<AlcNtcBill> implements AlcNtc
   public static final String MAPPER_UPDATEITEM = "updateItem";
   public static final String MAPPER_GETBYITEMUUID = "getByItemUuid";
   public static final String MAPPER_GETBYTASKBILLNUMBER = "getByTaskBillNumber";
+  private static final String REFRESHALCNTCBILLITEMPLANQTY = "refreshAlcNtcBillItemPlanQty";
+  private static final String REFRESHALCNTCBILLITEMPLANCASEQTYSTR = "refreshAlcNtcBillItemPlanCaseQtyStr";
 
   @Override
   public AlcNtcBill getByBillNumber(String billNumber) {
@@ -97,5 +99,25 @@ public class AlcNtcBillDaoImpl extends BaseDaoImpl<AlcNtcBill> implements AlcNtc
     Map<String, Object> map = ApplicationContextUtil.map();
     map.put("waveBillNumber", waveBillNumber);
     return getSqlSession().selectList(generateStatement(MAPPER_GETBYTASKBILLNUMBER), map);
+  }
+
+  @Override
+  public void refreshAlcNtcBillItemPlanCaseQtyStr(String waveBillNumber) {
+    Assert.assertArgumentNotNull(waveBillNumber, "waveBillNumber");
+
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("waveBillNumber", waveBillNumber);
+    update(REFRESHALCNTCBILLITEMPLANCASEQTYSTR, map);
+
+  }
+
+  @Override
+  public void refreshAlcNtcBillItemPlanQty(String waveBillNumber) {
+    Assert.assertArgumentNotNull(waveBillNumber, "waveBillNumber");
+
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("waveBillNumber", waveBillNumber);
+    update(REFRESHALCNTCBILLITEMPLANQTY, map);
+
   }
 }
