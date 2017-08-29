@@ -28,4 +28,6 @@ public interface RplBillItemDao {
   void saveModify(RplBillItem item);
 
   List<RplBillItem> queryRplItems(String waveBillNumber);
+  
+  List<RplBillItem> queryByUuids(List<String> uuids);
 }

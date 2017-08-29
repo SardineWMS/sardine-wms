@@ -10,8 +10,11 @@
 package com.hd123.sardine.wms.dao.out.rpl.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
@@ -30,6 +33,7 @@ public class RplBillItemDaoImpl extends NameSpaceSupport implements RplBillItemD
   private static String SAVEMODIFY = "saveModify";
   private static String REMOVEBYWAVEBILLNUMBER = "removeByWaveBillNumber";
   private static String QUERYRPLITEMS = "queryRplItems";
+  private static final String QUERYBYUUIDS = "queryByUuids";
 
   @Override
   public void saveNew(List<RplBillItem> items) {
@@ -71,5 +75,14 @@ public class RplBillItemDaoImpl extends NameSpaceSupport implements RplBillItemD
     Map<String, Object> map = ApplicationContextUtil.map();
     map.put("waveBillNumber", waveBillNumber);
     return selectList(QUERYRPLITEMS, map);
+  }
+
+  @Override
+  public List<RplBillItem> queryByUuids(List<String> uuids) {
+    if (CollectionUtils.isEmpty(uuids))
+      return new ArrayList<RplBillItem>();
+    Map<String, List<String>> map = new HashMap<String, List<String>>();
+    map.put("uuids", uuids);
+    return selectList(QUERYBYUUIDS, map);
   }
 }

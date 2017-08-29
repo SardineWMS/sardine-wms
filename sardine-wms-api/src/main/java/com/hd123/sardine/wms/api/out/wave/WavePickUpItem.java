@@ -23,6 +23,8 @@ import com.hd123.sardine.wms.common.entity.UCN;
  */
 
 public class WavePickUpItem {
+  private String alcNtcBillUuid;
+  private String alcNtcBillNumber;
   private UCN customer;
   private String deliveryType;
 
@@ -50,6 +52,22 @@ public class WavePickUpItem {
   private WaveBinUsage binUsage;
   private String companyUuid;
   private String pickOrder;
+
+  public String getAlcNtcBillUuid() {
+    return alcNtcBillUuid;
+  }
+
+  public void setAlcNtcBillUuid(String alcNtcBillUuid) {
+    this.alcNtcBillUuid = alcNtcBillUuid;
+  }
+
+  public String getAlcNtcBillNumber() {
+    return alcNtcBillNumber;
+  }
+
+  public void setAlcNtcBillNumber(String alcNtcBillNumber) {
+    this.alcNtcBillNumber = alcNtcBillNumber;
+  }
 
   public String getPickOrder() {
     return pickOrder;

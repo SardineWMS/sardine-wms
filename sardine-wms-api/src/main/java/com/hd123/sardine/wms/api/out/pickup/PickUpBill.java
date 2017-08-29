@@ -38,7 +38,6 @@ public class PickUpBill extends StandardEntity implements Validator {
   private UCN customer;
   private String deliveryType;
 
-  private UCN picker;
   private OperateMode method;
   private PickType type;
   private UCN pickArea;
@@ -48,6 +47,8 @@ public class PickUpBill extends StandardEntity implements Validator {
   private String companyUuid;
   private String remark;
   
+  private List<PickUpBillItem> items = new ArrayList<PickUpBillItem>();
+  
   public String getRemark() {
     return remark;
   }
@@ -55,8 +56,6 @@ public class PickUpBill extends StandardEntity implements Validator {
   public void setRemark(String remark) {
     this.remark = remark;
   }
-
-  private List<PickUpBillItem> items = new ArrayList<PickUpBillItem>();
 
   public String getCompanyUuid() {
     return companyUuid;
@@ -109,15 +108,6 @@ public class PickUpBill extends StandardEntity implements Validator {
 
   public void setCustomer(UCN customer) {
     this.customer = customer;
-  }
-
-  /** 拣货人 */
-  public UCN getPicker() {
-    return picker;
-  }
-
-  public void setPicker(UCN picker) {
-    this.picker = picker;
   }
 
   /** 操作方式 */

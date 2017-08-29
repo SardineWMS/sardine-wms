@@ -84,4 +84,5 @@ public interface ShipBillService {
     void finish(String uuid, long version)
             throws IllegalArgumentException, VersionConflictException, WMSException;
 
+    
 }

@@ -217,6 +217,16 @@
     #{rplUuid,jdbcType=VARCHAR} order by t.line
   </select>
   
+  <select id="queryByUuids" resultMap="RplBillItemMap"
+    parameterType="java.util.Map">
+    select t.* from db_proxy.sardine_rplbillitem t
+    where t.uuid in
+    <foreach collection="uuids" item="item" index="index"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
+  </select>
+  
   <select id="queryRplItems" resultMap="RplBillItemMap"
     parameterType="java.util.Map">
     select t.* from db_proxy.sardine_rplbillitem t

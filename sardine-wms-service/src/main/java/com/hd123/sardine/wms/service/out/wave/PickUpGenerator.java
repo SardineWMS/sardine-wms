@@ -684,6 +684,8 @@ public class PickUpGenerator {
         break;
 
       WavePickUpItem pickItem = new WavePickUpItem();
+      pickItem.setAlcNtcBillNumber(alcItem.getAlcNtcBillNumber());
+      pickItem.setAlcNtcBillUuid(alcItem.getAlcNtcBillUuid());
       pickItem.setAlcNtcBillItemUuid(alcItem.getAlcNtcItemUuid());
       pickItem.setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
       pickItem.setArticleSpec(article.getSpec());

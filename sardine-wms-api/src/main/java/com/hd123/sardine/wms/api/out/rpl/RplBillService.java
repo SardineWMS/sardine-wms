@@ -12,6 +12,7 @@ package com.hd123.sardine.wms.api.out.rpl;
 import java.util.List;
 
 import com.hd123.sardine.wms.api.task.TaskView;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
 
 /**
@@ -88,4 +89,15 @@ public interface RplBillService {
    *          波次单号
    */
   void removeByWaveBillNumber(String waveBillNumber);
+
+  /**
+   * 补货
+   * 
+   * @param rplItemUuids
+   *          补货单明细UUID集合， not null
+   * @param rpler
+   *          补货人，为空时取当前登录人
+   * @throws WMSException
+   */
+  void rpl(List<String> rplItemUuids, UCN rpler) throws WMSException;
 }

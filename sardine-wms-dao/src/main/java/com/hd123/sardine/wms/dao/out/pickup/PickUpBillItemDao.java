@@ -29,4 +29,6 @@ public interface PickUpBillItemDao {
   void removeByPickUpBill(String pickUpBillUuid);
 
   void removeByWaveBillNumber(String waveBillNumber);
+  
+  List<PickUpBillItem> queryByUuids(List<String> uuids);
 }

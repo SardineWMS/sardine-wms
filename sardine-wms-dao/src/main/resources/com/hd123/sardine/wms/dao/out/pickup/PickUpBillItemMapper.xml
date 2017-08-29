@@ -161,12 +161,22 @@
 
   <select id="queryByPickUpBill" resultMap="PickUpBillItemMap"
     parameterType="java.lang.String">
-    select t.*, a.code articleCode, a.name articleName, a.spec articleSpec
-    from db_proxy.sardine_pickupbillitem t,
-         db_proxy.sardine_article a
-    where t.articleuuid = a.uuid and t.pickUpBillUuid
+    select t.*
+    from db_proxy.sardine_pickupbillitem t
+    where t.pickUpBillUuid
     =
     #{pickUpBillUuid,jdbcType=VARCHAR} order by t.line
+  </select>
+  
+  <select id="queryByUuids" resultMap="PickUpBillItemMap"
+    parameterType="java.util.Map">
+    select t.*
+    from db_proxy.sardine_pickupbillitem t
+    where t.uuid in
+    <foreach collection="uuids" item="item" index="index"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
   </select>
 
   <delete id="removeByPickUpBill" parameterType="java.lang.String">

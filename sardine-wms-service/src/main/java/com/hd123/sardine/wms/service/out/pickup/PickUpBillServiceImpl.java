@@ -10,8 +10,11 @@
 package com.hd123.sardine.wms.service.out.pickup;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
@@ -21,6 +24,7 @@ import com.hd123.sardine.wms.api.out.pickup.PickUpBillItem;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillState;
 import com.hd123.sardine.wms.api.task.TaskView;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
@@ -39,6 +43,12 @@ public class PickUpBillServiceImpl extends BaseWMSService implements PickUpBillS
 
   @Autowired
   private PickUpBillItemDao pickUpBillItemDao;
+
+  @Autowired
+  private PickUpBillVerifier pickUpBillVerifier;
+
+  @Autowired
+  private PickUpBillHandler pickUpBillHandler;
 
   @Override
   public void saveNew(PickUpBill pickUpBill) throws WMSException {
@@ -119,5 +129,25 @@ public class PickUpBillServiceImpl extends BaseWMSService implements PickUpBillS
     if (StringUtil.isNullOrBlank(waveBillNumber))
       return new ArrayList<TaskView>();
     return pickUpBillDao.queryPickTaskView(waveBillNumber);
+  }
+
+  @Override
+  public void pick(List<String> pickItemUuids, String toBinCode, String containerBarcode,
+      UCN picker) throws WMSException {
+    if (CollectionUtils.isEmpty(pickItemUuids))
+      return;
+    Assert.assertArgumentNotNull(toBinCode, "toBinCode");
+    Assert.assertArgumentNotNull(containerBarcode, "containerBarcode");
+
+    pickUpBillVerifier.verifyPickBinAndContainer(toBinCode, containerBarcode);
+
+    List<PickUpBillItem> pickUpItems = pickUpBillItemDao.queryByUuids(pickItemUuids);
+    pickUpBillHandler.updatePickUpBillItem(pickUpItems, toBinCode, containerBarcode, picker);
+    Set<String> pickUpBillUuids = new HashSet<String>();
+    for (PickUpBillItem item : pickUpItems)
+      pickUpBillUuids.add(item.getPickUpBillUuid());
+    List<PickUpBill> bills = pickUpBillHandler.updatePickUpBill(pickUpBillUuids);
+    pickUpBillHandler.stockOutAndGenerStockItem(pickUpItems, bills, toBinCode, containerBarcode);
+    pickUpBillHandler.manageBinAndContainer(pickUpItems, toBinCode, containerBarcode);
   }
 }

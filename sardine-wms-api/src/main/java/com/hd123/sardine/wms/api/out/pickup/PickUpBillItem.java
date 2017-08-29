@@ -16,6 +16,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
+import com.hd123.sardine.wms.api.out.wave.WaveBinUsage;
 import com.hd123.sardine.wms.common.entity.Entity;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.validator.Validator;
@@ -28,9 +29,14 @@ public class PickUpBillItem extends Entity implements Validator {
   private static final long serialVersionUID = -2636761783201988340L;
 
   private int line;
+  private String alcNtcBillUuid;
+  private String alcNtcBillNumber;
   private String pickUpBillUuid;
   private String sourceBinCode;
   private String sourceContainerBarcode = Container.VIRTUALITY_CONTAINER;
+  private String toBinCode;
+  private String toContainerBarcode;
+  private WaveBinUsage binUsage;
   private UCN article;
   private String articleSpec;
   private String munit;
@@ -45,6 +51,31 @@ public class PickUpBillItem extends Entity implements Validator {
   private String alcNtcBillItemUuid;
   private Date pickTime;
   private String remark;
+  private UCN picker;
+
+  public String getAlcNtcBillUuid() {
+    return alcNtcBillUuid;
+  }
+
+  public void setAlcNtcBillUuid(String alcNtcBillUuid) {
+    this.alcNtcBillUuid = alcNtcBillUuid;
+  }
+
+  public String getAlcNtcBillNumber() {
+    return alcNtcBillNumber;
+  }
+
+  public void setAlcNtcBillNumber(String alcNtcBillNumber) {
+    this.alcNtcBillNumber = alcNtcBillNumber;
+  }
+
+  public UCN getPicker() {
+    return picker;
+  }
+
+  public void setPicker(UCN picker) {
+    this.picker = picker;
+  }
 
   public int getLine() {
     return line;
@@ -61,6 +92,14 @@ public class PickUpBillItem extends Entity implements Validator {
 
   public void setPickUpBillUuid(String pickUpBillUuid) {
     this.pickUpBillUuid = pickUpBillUuid;
+  }
+
+  public WaveBinUsage getBinUsage() {
+    return binUsage;
+  }
+
+  public void setBinUsage(WaveBinUsage binUsage) {
+    this.binUsage = binUsage;
   }
 
   /** 商品 */
@@ -171,6 +210,22 @@ public class PickUpBillItem extends Entity implements Validator {
   public void setSourceContainerBarcode(String sourceContainerBarcode) {
     Assert.assertArgumentNotNull(sourceContainerBarcode, "sourceContainerBarcode");
     this.sourceContainerBarcode = sourceContainerBarcode;
+  }
+
+  public String getToBinCode() {
+    return toBinCode;
+  }
+
+  public void setToBinCode(String toBinCode) {
+    this.toBinCode = toBinCode;
+  }
+
+  public String getToContainerBarcode() {
+    return toContainerBarcode;
+  }
+
+  public void setToContainerBarcode(String toContainerBarcode) {
+    this.toContainerBarcode = toContainerBarcode;
   }
 
   public String getArticleSpec() {

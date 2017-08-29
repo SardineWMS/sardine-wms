@@ -20,6 +20,7 @@ import com.hd123.sardine.wms.api.out.rpl.RplBill;
 import com.hd123.sardine.wms.api.out.rpl.RplBillItem;
 import com.hd123.sardine.wms.api.out.rpl.RplBillService;
 import com.hd123.sardine.wms.api.task.TaskView;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
@@ -118,5 +119,10 @@ public class RplBillServiceImpl extends BaseWMSService implements RplBillService
 
     rplBillItemDao.removeByWaveBillNumber(waveBillNumber);
     rplBillDao.removeByWaveBillNumber(waveBillNumber);
+  }
+
+  @Override
+  public void rpl(List<String> rplItemUuids, UCN rpler) throws WMSException {
+    
   }
 }
