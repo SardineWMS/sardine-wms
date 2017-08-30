@@ -15,6 +15,7 @@
 		<result column="position" property="position" jdbcType="VARCHAR" />
 		<result column="toPosition" property="toPosition" jdbcType="VARCHAR" />
 		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
 		<result column="createdtime" property="createInfo.time"
 			jdbcType="TIMESTAMP" />
@@ -55,7 +56,7 @@
 		resultMap="BaseResultMap">
 		select t.*
 		from db_proxy.sardine_container t
-		where 1=1
+		where companyuuid = #{companyUuid, jdbcType=VARCHAR}
 		<if test="barcode != null">
 			and t.barcode like CONCAT(CONCAT('%', #{barcode}),
 			'%')
@@ -65,9 +66,6 @@
 		</if>
 		<if test="toPosition != null">
 			and t.toPosition = #{toPosition,jdbcType=VARCHAR}
-		</if>
-		<if test="companyUuid != null">
-			and t.companyUuid = #{companyUuid,jdbcType=VARCHAR}
 		</if>
 		<if test="state != null">
 			and t.state = #{state,jdbcType=VARCHAR}
@@ -86,6 +84,9 @@
 			</if>
 			<if test="barcode != null">
 				barcode,
+			</if>
+			<if test="state != null">
+				state,
 			</if>
 			<if test="containerType != null and containerType.uuid != null">
 				containerTypeUuid,
@@ -145,6 +146,9 @@
 			</if>
 			<if test="barcode != null">
 				#{barcode,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=VARCHAR},
 			</if>
 			<if test="containerType != null and containerType.uuid != null">
 				#{containerType.uuid,jdbcType=VARCHAR},

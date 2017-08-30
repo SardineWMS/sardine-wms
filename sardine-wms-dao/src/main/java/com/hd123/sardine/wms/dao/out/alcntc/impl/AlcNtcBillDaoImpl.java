@@ -26,16 +26,17 @@ import com.hd123.sardine.wms.dao.out.alcntc.AlcNtcBillDao;
  *
  */
 public class AlcNtcBillDaoImpl extends BaseDaoImpl<AlcNtcBill> implements AlcNtcBillDao {
-  public static final String MAPPER_GETBYBILLNUMBER = "getByBillNumber";
-  public static final String MAPPER_INSERTITEMS = "insertItems";
-  public static final String MAPPER_REMOVEITEMSBYALCNTCUUID = "removeItemsByAlcNtcUuid";
-  public static final String MAPPER_QUERYITEMSBYALCNTCUUID = "queryItemsByAlcNtcUuid";
-  public static final String MAPPER_GETITEMBYUUID = "getItemByUuid";
-  public static final String MAPPER_UPDATEITEM = "updateItem";
-  public static final String MAPPER_GETBYITEMUUID = "getByItemUuid";
-  public static final String MAPPER_GETBYTASKBILLNUMBER = "getByTaskBillNumber";
+  private static final String MAPPER_GETBYBILLNUMBER = "getByBillNumber";
+  private static final String MAPPER_INSERTITEMS = "insertItems";
+  private static final String MAPPER_REMOVEITEMSBYALCNTCUUID = "removeItemsByAlcNtcUuid";
+  private static final String MAPPER_QUERYITEMSBYALCNTCUUID = "queryItemsByAlcNtcUuid";
+  private static final String MAPPER_GETITEMBYUUID = "getItemByUuid";
+  private static final String MAPPER_UPDATEITEM = "updateItem";
+  private static final String MAPPER_GETBYITEMUUID = "getByItemUuid";
+  private static final String MAPPER_GETBYTASKBILLNUMBER = "getByTaskBillNumber";
   private static final String REFRESHALCNTCBILLITEMPLANQTY = "refreshAlcNtcBillItemPlanQty";
   private static final String REFRESHALCNTCBILLITEMPLANCASEQTYSTR = "refreshAlcNtcBillItemPlanCaseQtyStr";
+  private static final String INALC = "inAlc";
 
   @Override
   public AlcNtcBill getByBillNumber(String billNumber) {
@@ -118,6 +119,14 @@ public class AlcNtcBillDaoImpl extends BaseDaoImpl<AlcNtcBill> implements AlcNtc
     Map<String, Object> map = ApplicationContextUtil.map();
     map.put("waveBillNumber", waveBillNumber);
     update(REFRESHALCNTCBILLITEMPLANQTY, map);
+  }
 
+  @Override
+  public void inAlc(String waveBillNumber) {
+    Assert.assertArgumentNotNull(waveBillNumber, "waveBillNumber");
+
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("waveBillNumber", waveBillNumber);
+    update(INALC, map);
   }
 }

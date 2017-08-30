@@ -159,7 +159,7 @@ public class BillNumberGenerator {
       maxContainerBarcode = billNumberDao.getMaxSequenceValueForUpdate(prefix, companyUuid);
     }
     if (StringUtil.isNullOrBlank(maxContainerBarcode)) {
-      nextContainerBarcode = prefix + String.format("%0" + length + "d", START_CONTAINERBARCODE);
+      nextContainerBarcode = prefix + String.format("%0" + length + "d", Long.valueOf(START_CONTAINERBARCODE));
       billNumberDao.insertSequence(prefix, nextContainerBarcode, companyUuid);
     } else {
       nextContainerBarcode = prefix + String.format("%0" + length + "d",

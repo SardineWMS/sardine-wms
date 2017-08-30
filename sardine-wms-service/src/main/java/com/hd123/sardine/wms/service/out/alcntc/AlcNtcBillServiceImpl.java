@@ -365,6 +365,7 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
   public void refreshAlcNtcBillItemPlanCaseQtyStr(String waveBillNumber) throws WMSException {
     Assert.assertArgumentNotNull(waveBillNumber, "waveBillNumber");
 
+    dao.inAlc(waveBillNumber);
     dao.refreshAlcNtcBillItemPlanQty(waveBillNumber);
     dao.refreshAlcNtcBillItemPlanCaseQtyStr(waveBillNumber);
   }

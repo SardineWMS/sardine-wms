@@ -119,8 +119,8 @@ public class PickUpBillServiceImpl extends BaseWMSService implements PickUpBillS
 
     List<PickUpBill> pickUpBills = pickUpBillDao.queryByWaveUuid(waveUuid);
     for (PickUpBill bill : pickUpBills) {
-      if (bill.getState().equals(PickUpBillState.inConfirm) == false)
-        throw new WMSException("拣货单状态不是待确认，不能删除！");
+//      if (bill.getState().equals(PickUpBillState.inConfirm) == false)
+//        throw new WMSException("拣货单状态不是待确认，不能删除！");
 
       pickUpBillDao.remove(bill.getUuid(), bill.getVersion());
       pickUpBillItemDao.removeByPickUpBill(bill.getUuid());

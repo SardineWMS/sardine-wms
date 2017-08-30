@@ -553,9 +553,9 @@
 			and t.customerCode like
 			CONCAT(CONCAT('%',#{customerCode,jdbcType=VARCHAR}),'%')
 		</if>
-		<if test="taskBillNumber != null">
-			and t.taskBillNumber like
-			CONCAT(CONCAT('%',#{taskBillNumber}),'%')
+		<if test="waveBillNumber != null">
+			and t.waveBillNumber like
+			CONCAT(CONCAT('%',#{waveBillNumber}),'%')
 		</if>
 		<if test="sourceBillNumber != null">
 			and t.sourceBillNumber like
@@ -592,17 +592,15 @@
 		and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
 	</select>
 	
-	<update id="refreshAlcNtcBillItemPlanQty" parameterType="java.lang.String">
+	<update id="refreshAlcNtcBillItemPlanQty" parameterType="java.util.Map">
 		UPDATE
 		db_proxy.sardine_alcntcbillitem a SET PLANQTY =
 		(SELECT SUM(t.qty) from
 		db_proxy.sardine_pickupbillitem t where t.ALCNTCBILLITEMUUID =
 		a.uuid)
 		where
-		a.ALCNTCBILLUUID in (SELECT n.uuid from db_proxy.sardine_wavebill
-		w,db_proxy.sardine_alcntcbill n WHERE
-		w.billnumber=#{waveBillNumber,jdbcType=VARCHAR} AND
-		n.WAVEBILLNUMBER=w.billnumber)
+		a.ALCNTCBILLUUID in (SELECT n.uuid from db_proxy.sardine_alcntcbill n WHERE
+		n.WAVEBILLNUMBER=#{waveBillNumber,jdbcType=VARCHAR} AND n.companyuuid = #{companyUuid, jdbcType=VARCHAR})
 	</update>
 
 	<update id="refreshAlcNtcBillItemPlanCaseQtyStr" parameterType="java.lang.String">
@@ -610,8 +608,12 @@
 		SARDINE_CALCULATECASEQTYSTR
 		(a.PLANQTY,a.QPCSTR))
 		where a.ALCNTCBILLUUID
-		in (SELECT n.uuid from db_proxy.sardine_wavebill w,db_proxy.sardine_alcntcbill n WHERE
-		w.billnumber=#{waveBillNumber,jdbcType=VARCHAR} AND
-		n.WAVEBILLNUMBER=w.billnumber)
+		in (SELECT n.uuid from db_proxy.sardine_alcntcbill n WHERE
+		n.WAVEBILLNUMBER= #{waveBillNumber, jdbcType=VARCHAR} and n.companyuuid = #{companyUuid, jdbcType=VARCHAR}) 
+	</update>
+	
+	<update id="inAlc" parameterType="java.util.Map">
+	    update db_proxy.sardine_alcntcbill set state = 'inAlc' where 
+	    WAVEBILLNUMBER = #{waveBillNumber, jdbcType=VARCHAR} and companyuuid = #{companyUuid, jdbcType=VARCHAR}
 	</update>
 </mapper>

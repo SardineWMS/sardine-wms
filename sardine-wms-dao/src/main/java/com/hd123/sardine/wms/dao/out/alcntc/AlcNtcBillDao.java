@@ -39,4 +39,6 @@ public interface AlcNtcBillDao extends BaseDao<AlcNtcBill> {
   void refreshAlcNtcBillItemPlanCaseQtyStr(String waveBillNumber);
 
   void refreshAlcNtcBillItemPlanQty(String waveBillNumber);
+
+  void inAlc(String waveBillNumber);
 }
