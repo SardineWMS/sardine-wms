@@ -58,8 +58,8 @@ public class StockServiceImpl implements StockService {
       stockFilter.setArticleUuid(shiftIn.getStockComponent().getArticle().getUuid());
       stockFilter.setBinCode(shiftIn.getStockComponent().getBinCode());
       stockFilter.setContainerBarcode(shiftIn.getStockComponent().getContainerBarcode());
-      stockFilter.setOperateBillUuid(shiftIn.getStockComponent().getOperateBill() == null ? null
-          : shiftIn.getStockComponent().getOperateBill().getBillUuid());
+      stockFilter.setOperateBillUuid(shiftIn.getStockComponent().getOperateBill() == null
+          ? Stock.VISUAL_STOCKINFO : shiftIn.getStockComponent().getOperateBill().getBillUuid());
       stockFilter.setOwner(shiftIn.getStockComponent().getOwner());
       stockFilter.setProductionBatch(shiftIn.getStockComponent().getProductionBatch());
       stockFilter.setQpcStr(shiftIn.getStockComponent().getQpcStr());
@@ -249,6 +249,12 @@ public class StockServiceImpl implements StockService {
       StockShiftIn shiftIn = new StockShiftIn();
       shiftIn.setStockComponent(changement.getStockComponent());
       shiftIn.getStockComponent().setState(toState);
+      if (StockState.normal.equals(toState) == false) {
+        shiftIn.getStockComponent().setOperateBill(sourceBill);
+      } else {
+        shiftIn.getStockComponent().setOperateBill(
+            new SourceBill(Stock.VISUAL_STOCKINFO, Stock.VISUAL_STOCKINFO, Stock.VISUAL_STOCKINFO));
+      }
       shiftIns.add(shiftIn);
     }
     shiftIn(sourceBill, shiftIns);

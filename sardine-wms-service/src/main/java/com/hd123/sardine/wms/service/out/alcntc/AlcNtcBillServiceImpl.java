@@ -10,13 +10,7 @@
 package com.hd123.sardine.wms.service.out.alcntc;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,7 +25,6 @@ import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBill;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillItem;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillService;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillState;
-import com.hd123.sardine.wms.api.out.alcntc.DeliveryArticleInfo;
 import com.hd123.sardine.wms.api.out.alcntc.DeliverySystem;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
@@ -337,78 +330,35 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
     logger.log(EntityLogger.EVENT_REMOVE, "删除配单");
   }
 
-  private void updateAlcNtc(List<DeliveryArticleInfo> infos) {
-    List<AlcNtcBill> alcNtcs = new ArrayList<AlcNtcBill>();
-    for (DeliveryArticleInfo info : infos) {
-      AlcNtcBill bill = dao.getByItemUuid(info.getItemUuid());
-      assert bill != null;
-      alcNtcs.add(bill);
-
-    }
-
-    Collections.sort(alcNtcs, new Comparator<AlcNtcBill>() {
-
-      @Override
-      public int compare(AlcNtcBill o1, AlcNtcBill o2) {
-        return o1.getBillNumber().compareTo(o2.getBillNumber());
-      }
-    });
-
-    Set<String> billNumbers = new HashSet<String>();
-    for (AlcNtcBill alcNtcBill : alcNtcs) {
-      if (billNumbers.contains(alcNtcBill.getBillNumber()))
-        continue;
-      // TODO 判断对应拣货单是否拣货完成，待拣货服务
-    }
-  }
-
-  private void updateAlcNtcItemRealQty(List<DeliveryArticleInfo> infos) {
-    List<DeliveryArticleInfo> list = merge(infos);
-
-    Collections.sort(list, new Comparator<DeliveryArticleInfo>() {
-
-      @Override
-      public int compare(DeliveryArticleInfo o1, DeliveryArticleInfo o2) {
-        return o1.getItemUuid().compareTo(o2.getItemUuid());
-      }
-    });
-
-    for (DeliveryArticleInfo info : infos) {
-      AlcNtcBillItem item = dao.getItemByUuid(info.getItemUuid());
-
-      if (item.getRealQty() == null)
-        item.setRealQty(info.getQty());
-      else
-        item.setRealQty(item.getRealQty().add(info.getQty()));
-
-      if (item.getRealQty().compareTo(item.getPlanQty()) > 0)
-        continue;
-      item.setRealCaseQtyStr(QpcHelper.qtyToCaseQtyStr(item.getRealQty(), item.getQpcStr()));
-      dao.updateItem(item);
-    }
-
-  }
-
-  private List<DeliveryArticleInfo> merge(List<DeliveryArticleInfo> infos) {
-    List<DeliveryArticleInfo> result = new ArrayList<>();
-    for (DeliveryArticleInfo info : infos) {
-      boolean find = false;
-      for (DeliveryArticleInfo delivery : result) {
-        if (Objects.equals(info.getItemUuid(), delivery.getItemUuid())) {
-          delivery.setQty(delivery.getQty().add(info.getQty()));
-          find = true;
-        }
-      }
-      if (find == false)
-        result.add(info);
-    }
-    return result;
-  }
-
   @Override
   public void pickUp(String itemUuid, BigDecimal qty)
       throws IllegalArgumentException, WMSException {
+    Assert.assertArgumentNotNull(itemUuid, "itemUuid");
+    Assert.assertArgumentNotNull(qty, "qty");
 
+    AlcNtcBill ntcBill = dao.getByItemUuid(itemUuid);
+    if (ntcBill == null)
+      throw new WMSException("拣货的配货通知单不存在！");
+    List<AlcNtcBillItem> items = dao.queryItems(ntcBill.getUuid());
+    boolean finish = true;
+    for (AlcNtcBillItem item : items) {
+      if (item.getUuid().equals(itemUuid)) {
+        if (item.getRealQty() == null)
+          item.setRealQty(BigDecimal.ZERO);
+        item.setRealQty(item.getRealQty().add(qty));
+        item.setRealCaseQtyStr(QpcHelper.qtyToCaseQtyStr(item.getRealQty(), item.getQpcStr()));
+        dao.updateItem(item);
+      }
+
+      if (item.getRealQty() == null && item.getRealQty().compareTo(item.getPlanQty()) < 0)
+        finish = false;
+    }
+    if (finish)
+      ntcBill.setState(AlcNtcBillState.finished);
+    else
+      ntcBill.setState(AlcNtcBillState.inProgress);
+    ntcBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(ntcBill);
   }
 
   @Override

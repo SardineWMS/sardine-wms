@@ -9,6 +9,7 @@
  */
 package com.hd123.sardine.wms.api.out.pickup;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.hd123.sardine.wms.api.task.TaskView;
@@ -120,5 +121,39 @@ public interface PickUpBillService {
    * @throws WMSException
    */
   void pick(List<String> pickItemUuids, String toBinCode, String containerBarcode, UCN picker)
+      throws WMSException;
+
+  /**
+   * 单个拣货明细执行可修改拣货数量
+   * 
+   * @param itemUuid
+   *          拣货单明细UUID。 not null
+   * @param toBinCode
+   *          目标货位，not null
+   * @param containerBarcode
+   *          目标容器， not null
+   * @param picker
+   *          拣货员，为空取当前登录人
+   * @param qty
+   *          拣货数量，为空取拣货单明细数量
+   * @throws WMSException
+   */
+  void pick(String itemUuid, String toBinCode, String containerBarcode,
+      UCN picker, BigDecimal qty) throws WMSException;
+
+  /**
+   * 整托拣
+   * 
+   * @param containerBarcode
+   *          拣货来源容器， not null
+   * @param toBinCode
+   *          拣货目标货位， not null
+   * @param toContainerBarcode
+   *          拣货目标容器，为空时使用来源容器
+   * @param picker
+   *          拣货员
+   * @throws WMSException
+   */
+  void pick(String containerBarcode, String toBinCode, String toContainerBarcode, UCN picker)
       throws WMSException;
 }

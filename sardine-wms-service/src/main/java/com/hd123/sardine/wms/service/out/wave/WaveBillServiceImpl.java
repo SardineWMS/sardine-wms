@@ -323,11 +323,10 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     rplBillService.approveByWaveBillNumber(waveBill.getBillNumber());
     dao.removeWaveAlcNtcItems(waveBill.getBillNumber());
     dao.removeWavePickUpItems(uuid);
+    alcNtcBillService.refreshAlcNtcBillItemPlanCaseQtyStr(waveBill.getBillNumber());
 
     waveBill.setState(WaveBillState.inAlc);
     waveBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     dao.update(waveBill);
-
-    alcNtcBillService.refreshAlcNtcBillItemPlanCaseQtyStr(waveBill.getBillNumber());
   }
 }

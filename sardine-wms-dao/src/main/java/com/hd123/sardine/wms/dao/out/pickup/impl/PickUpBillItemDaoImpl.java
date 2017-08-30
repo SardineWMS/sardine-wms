@@ -35,6 +35,7 @@ public class PickUpBillItemDaoImpl extends NameSpaceSupport implements PickUpBil
   private static final String REMOVEBYPICKUPBILL = "removeByPickUpBill";
   private static final String REMOVEBYWAVEBILLNUMBER = "removeByWaveBillNumber";
   private static final String QUERYBYUUIDS = "queryByUuids";
+  private static final String QUERYBYSOURCECONTAINERBARCODE = "queryBySourceContainerBarcode";
 
   @Override
   public void saveNew(List<PickUpBillItem> items) {
@@ -86,5 +87,15 @@ public class PickUpBillItemDaoImpl extends NameSpaceSupport implements PickUpBil
     Map<String, List<String>> map = new HashMap<String, List<String>>();
     map.put("uuids", uuids);
     return selectList(QUERYBYUUIDS, map);
+  }
+
+  @Override
+  public List<PickUpBillItem> queryBySourceContainerBarcode(String sourceContainerBarcode) {
+    if (StringUtil.isNullOrBlank(sourceContainerBarcode))
+      return new ArrayList<PickUpBillItem>();
+
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("sourceContainerBarcode", sourceContainerBarcode);
+    return selectList(QUERYBYSOURCECONTAINERBARCODE, map);
   }
 }

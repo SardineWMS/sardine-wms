@@ -81,6 +81,10 @@
 
 	<resultMap id="WavePickUpItemMap"
 		type="com.hd123.sardine.wms.api.out.wave.WavePickUpItem">
+		<result column="alcNtcBillUuid" property="alcNtcBillUuid"
+			jdbcType="VARCHAR" />
+		<result column="alcNtcBillNumber" property="alcNtcBillNumber"
+			jdbcType="VARCHAR" />
 		<result column="customeruuid" property="customer.uuid"
 			jdbcType="VARCHAR" />
 		<result column="customercode" property="customer.code"
@@ -342,9 +346,12 @@
 	<select id="queryWaveAlcNtcItems" parameterType="java.util.Map"
 		resultMap="WaveAlcNtcItemMap">
 		select t.* from db_proxy.sardine_waveAlcntcitem t
-		where t.waveBillnumber = #{waveBillNumber, jdbcType=VARCHAR}
-		and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
-		and t.state = 'Initial'
+		where
+		t.waveBillnumber = #{waveBillNumber, jdbcType=VARCHAR}
+		and
+		t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+		and t.state =
+		'Initial'
 		and t.articleUuid in
 		<foreach collection="articleUuids" item="item" index="index"
 			open="(" separator="," close=")">
@@ -355,67 +362,93 @@
 	<update id="updateWaveAlcNtcItemsState" parameterType="java.util.Map">
 		update db_proxy.sardine_waveAlcntcitem t
 		set t.state = 'Done'
-		where t.waveBillnumber = #{waveBillNumber, jdbcType=VARCHAR}
-		and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
-		and t.state = 'Initial'
+		where
+		t.waveBillnumber = #{waveBillNumber, jdbcType=VARCHAR}
+		and
+		t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+		and t.state =
+		'Initial'
 		and t.articleUuid in
 		<foreach collection="articleUuids" item="item" index="index"
 			open="(" separator="," close=")">
 			#{item}
 		</foreach>
 	</update>
-	
+
 	<update id="rollbackWaveAlcNtcItemState" parameterType="java.util.Map">
-	     update db_proxy.sardine_waveAlcntcitem
-	       set state = 'Initial'
-	     where waveBillnumber = #{waveBillNumber, jdbcType=VARCHAR}
-		   and companyUuid = #{companyUuid, jdbcType=VARCHAR}
+		update
+		db_proxy.sardine_waveAlcntcitem
+		set state = 'Initial'
+		where
+		waveBillnumber = #{waveBillNumber, jdbcType=VARCHAR}
+		and companyUuid =
+		#{companyUuid, jdbcType=VARCHAR}
 	</update>
 
 	<delete id="removeWaveAlcNtcItems" parameterType="java.util.Map">
-		delete from db_proxy.sardine_waveAlcntcitem where waveBillNumber =
+		delete from
+		db_proxy.sardine_waveAlcntcitem where waveBillNumber =
 		#{waveBillNumber, jdbcType=VARCHAR} and companyUuid =
-		#{companyUuid, jdbcType=VARCHAR}
+		#{companyUuid,
+		jdbcType=VARCHAR}
 	</delete>
 
 	<insert id="saveWaveAlcNtcItems" parameterType="java.util.Map">
-		insert into db_proxy.sardine_waveAlcntcitem(
-		alcNtcBillUuid, alcNtcBillNumber,state, CUSTOMERUUID, CUSTOMERCODE,
-		CUSTOMERNAME, CUSTOMERTYPE ,WRHUUID, WRHCODE,WRHNAME,DELIVERYMODE,ARTICLEUUID,
+		insert into
+		db_proxy.sardine_waveAlcntcitem(
+		alcNtcBillUuid,
+		alcNtcBillNumber,state, CUSTOMERUUID, CUSTOMERCODE,
+		CUSTOMERNAME,
+		CUSTOMERTYPE ,WRHUUID, WRHCODE,WRHNAME,DELIVERYMODE,ARTICLEUUID,
 		ARTICLECODE,ARTICLENAME,ARTICLESPEC,alcqty, waveuuid,wavebillnumber,
 		companyuuid, alcntcitemuuid
-		) select a.uuid alcNtcBillUuid, a.BILLNUMBER
-		alcNtcBillNumber,'Initial', a.CUSTOMERUUID, a.CUSTOMERCODE,
+		) select a.uuid alcNtcBillUuid,
+		a.BILLNUMBER
+		alcNtcBillNumber,'Initial', a.CUSTOMERUUID,
+		a.CUSTOMERCODE,
 		a.CUSTOMERNAME, c.CUSTOMERTYPE ,a.WRHUUID,
 		a.WRHCODE,a.WRHNAME,a.DELIVERYMODE,ai.ARTICLEUUID,
 		ai.ARTICLECODE,ai.ARTICLENAME,ai.ARTICLESPEC,ai.QTY alcqty,
 		#{waveUuid, jdbcType=VARCHAR},
-		#{waveBillNumber, jdbcType=VARCHAR}, a.companyuuid, ai.uuid from db_proxy.sardine_alcntcbill a,
+		#{waveBillNumber, jdbcType=VARCHAR},
+		a.companyuuid, ai.uuid from db_proxy.sardine_alcntcbill a,
 		db_proxy.sardine_alcntcbillitem ai,
-		db_proxy.sardine_customer c  where
-		a.uuid = ai.ALCNTCBILLUUID and a.CUSTOMERUUID = c.uuid and  
-		a.waveBillNumber = #{waveBillNumber, jdbcType=VARCHAR} and a.companyuuid =
+		db_proxy.sardine_customer c where
+		a.uuid = ai.ALCNTCBILLUUID and a.CUSTOMERUUID = c.uuid and
+		a.waveBillNumber = #{waveBillNumber, jdbcType=VARCHAR} and
+		a.companyuuid =
 		#{companyUuid,jdbcType=VARCHAR}
 	</insert>
-	
+
 	<update id="updateWaveAlcNtcItemPickOrder" parameterType="java.util.Map">
-	    update db_proxy.sardine_wavealcntcitem t set t.pickorder = (select concat_ws('-', l.code, c.LINEORDER) from 
-	    db_proxy.sardine_serialarchline l, db_proxy.sardine_serialarchlinecustomer c where 
-      l.UUID = c.SERIALARCHLINEUUID and l.SERIALARCHUUID = #{serialarchUuid, jdbcType=VARCHAR}
-           and c.CUSTOMERUUID = t.CUSTOMERUUID)
-        where t.waveUuid = #{waveUuid, jdbcType=VARCHAR}
+		update
+		db_proxy.sardine_wavealcntcitem t set t.pickorder = (select
+		concat_ws('-', l.code, c.LINEORDER) from
+		db_proxy.sardine_serialarchline l,
+		db_proxy.sardine_serialarchlinecustomer c where
+		l.UUID =
+		c.SERIALARCHLINEUUID and l.SERIALARCHUUID = #{serialarchUuid,
+		jdbcType=VARCHAR}
+		and c.CUSTOMERUUID = t.CUSTOMERUUID)
+		where t.waveUuid
+		= #{waveUuid, jdbcType=VARCHAR}
 	</update>
 
 	<select id="queryWaveArticleUuids" parameterType="java.util.Map"
 		resultType="java.lang.String">
-		select distinct t.articleuuid from db_proxy.sardine_waveAlcntcitem t where
+		select distinct t.articleuuid from
+		db_proxy.sardine_waveAlcntcitem t where
 		t.waveBillNumber =
 		#{waveBillNumber, jdbcType=VARCHAR} and t.companyUuid =
-		#{companyUuid, jdbcType=VARCHAR} and t.state = 'Initial'
+		#{companyUuid,
+		jdbcType=VARCHAR} and t.state = 'Initial'
 	</select>
 
 	<insert id="saveWavePickUpItems" parameterType="com.hd123.sardine.wms.api.out.wave.WavePickUpItem">
-		insert into db_proxy.sardine_wavepickupitem(
+		insert into
+		db_proxy.sardine_wavepickupitem(
+		alcntcbilluuid,
+		alcntcbillnumber,
 		customeruuid,
 		customerCode,
 		customername,
@@ -444,27 +477,40 @@
 		companyUuid,
 		pickOrder
 		) values (
-		#{customer.uuid, jdbcType=VARCHAR},
+		#{alcNtcBillUuid, jdbcType=VARCHAR},
+		#{alcNtcBillNumber, jdbcType=VARCHAR},
+		#{customer.uuid,
+		jdbcType=VARCHAR},
 		#{customer.code, jdbcType=VARCHAR},
-		#{customer.name, jdbcType=VARCHAR},
+		#{customer.name,
+		jdbcType=VARCHAR},
 		#{deliveryType, jdbcType=VARCHAR},
-		#{operateMethod, jdbcType=VARCHAR},
+		#{operateMethod,
+		jdbcType=VARCHAR},
 		#{type, jdbcType=VARCHAR},
-		#{pickArea.uuid, jdbcType=VARCHAR},
+		#{pickArea.uuid,
+		jdbcType=VARCHAR},
 		#{pickArea.code, jdbcType=VARCHAR},
-		#{pickArea.name, jdbcType=VARCHAR},
+		#{pickArea.name,
+		jdbcType=VARCHAR},
 		#{binCode, jdbcType=VARCHAR},
-		#{containerBarcode, jdbcType=VARCHAR},
+		#{containerBarcode,
+		jdbcType=VARCHAR},
 		#{article.uuid, jdbcType=VARCHAR},
-		#{article.code, jdbcType=VARCHAR},
+		#{article.code,
+		jdbcType=VARCHAR},
 		#{article.name, jdbcType=VARCHAR},
-		#{articleSpec, jdbcType=VARCHAR},
+		#{articleSpec,
+		jdbcType=VARCHAR},
 		#{munit, jdbcType=VARCHAR},
-		#{qpcStr, jdbcType=VARCHAR},
+		#{qpcStr,
+		jdbcType=VARCHAR},
 		#{qty, jdbcType=DECIMAL},
-		#{caseQtyStr, jdbcType=VARCHAR},
+		#{caseQtyStr,
+		jdbcType=VARCHAR},
 		#{itemVolume, jdbcType=DECIMAL},
-		#{volume, jdbcType=DECIMAL},
+		#{volume,
+		jdbcType=DECIMAL},
 		#{alcNtcBillItemUuid, jdbcType=VARCHAR},
 		#{waveBillNumber, jdbcType=VARCHAR},
 		#{waveUuid, jdbcType=VARCHAR},
@@ -476,32 +522,43 @@
 
 	<select id="queryPickRules" parameterType="java.lang.String"
 		resultMap="PickRuleMap">
-		select distinct t.customeruuid, t.customercode, t.customername,
+		select distinct t.customeruuid, t.customercode,
+		t.customername,
 		t.deliveryType,
-		t.operateMethod, t.type, t.pickareauuid, t.pickareacode, t.pickareaname,
-		t.volume, t.waveuuid from db_proxy.sardine_wavepickupitem t
-		where t.waveUuid = #{uuid, jdbcType=VARCHAR}
+		t.operateMethod, t.type, t.pickareauuid,
+		t.pickareacode, t.pickareaname,
+		t.volume, t.waveuuid from
+		db_proxy.sardine_wavepickupitem t
+		where t.waveUuid = #{uuid,
+		jdbcType=VARCHAR}
 	</select>
 
 	<select id="queryPickItem" parameterType="java.lang.String"
 		resultMap="WavePickUpItemMap">
 		select t.* from db_proxy.sardine_wavepickupitem t
-		where t.waveUuid = #{uuid, jdbcType=VARCHAR}
+		where
+		t.waveUuid = #{uuid, jdbcType=VARCHAR}
 	</select>
 
 	<select id="queryPickItemByPickRule" parameterType="com.hd123.sardine.wms.api.out.wave.PickRule"
 		resultMap="WavePickUpItemMap">
 		select t.* from db_proxy.sardine_wavepickupitem t
-		where t.waveUuid = #{waveUuid, jdbcType=VARCHAR}
-		and t.customerUuid = #{customer.uuid, jdbcType=VARCHAR}
-		and t.deliveryType = #{deliveryType, jdbcType=VARCHAR}
-		and t.operateMethod = #{operateMethod, jdbcType=VARCHAR}
+		where
+		t.waveUuid = #{waveUuid, jdbcType=VARCHAR}
+		and t.customerUuid =
+		#{customer.uuid, jdbcType=VARCHAR}
+		and t.deliveryType = #{deliveryType,
+		jdbcType=VARCHAR}
+		and t.operateMethod = #{operateMethod,
+		jdbcType=VARCHAR}
 		and t.type = #{type, jdbcType=VARCHAR}
-		and t.pickAreauuid = #{pickArea.uuid, jdbcType=VARCHAR}
+		and
+		t.pickAreauuid = #{pickArea.uuid, jdbcType=VARCHAR}
 	</select>
 
 	<delete id="removeWavePickUpItems" parameterType="java.lang.String">
-		delete from db_proxy.sardine_wavepickupitem where waveuuid = #{waveUuid,
+		delete from
+		db_proxy.sardine_wavepickupitem where waveuuid = #{waveUuid,
 		jdbcType=VARCHAR}
 	</delete>
 </mapper>
