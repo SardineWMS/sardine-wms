@@ -9,9 +9,12 @@
  */
 package com.hd123.sardine.wms.service.out.pickup;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -142,12 +145,53 @@ public class PickUpBillServiceImpl extends BaseWMSService implements PickUpBillS
     pickUpBillVerifier.verifyPickBinAndContainer(toBinCode, containerBarcode);
 
     List<PickUpBillItem> pickUpItems = pickUpBillItemDao.queryByUuids(pickItemUuids);
-    pickUpBillHandler.updatePickUpBillItem(pickUpItems, toBinCode, containerBarcode, picker);
+    pickUpBillHandler.updatePickUpBillItem(pickUpItems, toBinCode, containerBarcode, picker, null);
     Set<String> pickUpBillUuids = new HashSet<String>();
     for (PickUpBillItem item : pickUpItems)
       pickUpBillUuids.add(item.getPickUpBillUuid());
     List<PickUpBill> bills = pickUpBillHandler.updatePickUpBill(pickUpBillUuids);
     pickUpBillHandler.stockOutAndGenerStockItem(pickUpItems, bills, toBinCode, containerBarcode);
     pickUpBillHandler.manageBinAndContainer(pickUpItems, toBinCode, containerBarcode);
+  }
+
+  @Override
+  public void pick(String itemUuid, String toBinCode, String containerBarcode, UCN picker,
+      BigDecimal qty) throws WMSException {
+    Assert.assertArgumentNotNull(itemUuid, "itemUuid");
+    Assert.assertArgumentNotNull(toBinCode, "toBinCode");
+    Assert.assertArgumentNotNull(containerBarcode, "containerBarcode");
+
+    pickUpBillVerifier.verifyPickBinAndContainer(toBinCode, containerBarcode);
+
+    List<PickUpBillItem> pickUpItems = pickUpBillItemDao.queryByUuids(Arrays.asList(itemUuid));
+    pickUpBillHandler.updatePickUpBillItem(pickUpItems, toBinCode, containerBarcode, picker, qty);
+    Set<String> pickUpBillUuids = new HashSet<String>();
+    for (PickUpBillItem item : pickUpItems)
+      pickUpBillUuids.add(item.getPickUpBillUuid());
+    List<PickUpBill> bills = pickUpBillHandler.updatePickUpBill(pickUpBillUuids);
+    pickUpBillHandler.stockOutAndGenerStockItem(pickUpItems, bills, toBinCode, containerBarcode);
+    pickUpBillHandler.manageBinAndContainer(pickUpItems, toBinCode, containerBarcode);
+  }
+
+  @Override
+  public void pick(String containerBarcode, String toBinCode, String toContainerBarcode, UCN picker)
+      throws WMSException {
+    Assert.assertArgumentNotNull(containerBarcode, "containerBarcode");
+    Assert.assertArgumentNotNull(toBinCode, "toBinCode");
+
+    pickUpBillVerifier.verifyPickBinAndContainer(toBinCode,
+        Objects.equals(containerBarcode, toContainerBarcode) ? null : toContainerBarcode);
+
+    List<PickUpBillItem> pickUpItems = pickUpBillItemDao
+        .queryBySourceContainerBarcode(containerBarcode);
+    pickUpBillHandler.updatePickUpBillItem(pickUpItems, toBinCode, toContainerBarcode, picker,
+        null);
+    Set<String> pickUpBillUuids = new HashSet<String>();
+    for (PickUpBillItem item : pickUpItems)
+      pickUpBillUuids.add(item.getPickUpBillUuid());
+    List<PickUpBill> bills = pickUpBillHandler.updatePickUpBill(pickUpBillUuids);
+    pickUpBillHandler.stockOutAndGenerStockItem(pickUpItems, bills, toBinCode, toContainerBarcode);
+    pickUpBillHandler.manageBinAndContainer(pickUpItems, toBinCode,
+        Objects.equals(containerBarcode, toContainerBarcode) ? null : toContainerBarcode);
   }
 }

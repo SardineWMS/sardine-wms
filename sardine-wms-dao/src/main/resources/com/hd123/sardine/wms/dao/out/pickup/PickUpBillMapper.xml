@@ -19,9 +19,6 @@
 		<result column="sourceBillType" property="sourceBill.billType"
 			jdbcType="VARCHAR" />
 		<result column="pickOrder" property="pickOrder" jdbcType="VARCHAR" />
-		<result column="pickeruuid" property="picker.uuid" jdbcType="VARCHAR" />
-		<result column="pickercode" property="picker.code" jdbcType="VARCHAR" />
-		<result column="pickername" property="picker.name" jdbcType="VARCHAR" />
 		<result column="pickAreauuid" property="pickArea.uuid"
 			jdbcType="VARCHAR" />
 		<result column="pickAreacode" property="pickArea.code"
@@ -126,15 +123,6 @@
 			<if test="customer != null and customer.name != null">
 				customername,
 			</if>
-			<if test="picker != null and picker.uuid != null">
-				pickeruuid,
-			</if>
-			<if test="picker != null and picker.code != null">
-				pickercode,
-			</if>
-			<if test="picker != null and picker.name != null">
-				pickername,
-			</if>
 			<if test="pickArea != null and pickArea.uuid != null">
 				pickAreauuid,
 			</if>
@@ -202,15 +190,6 @@
 			<if test="customer != null and customer.name != null">
 				#{customer.name,jdbcType=VARCHAR},
 			</if>
-			<if test="picker != null and picker.uuid != null">
-				#{picker.uuid,jdbcType=VARCHAR},
-			</if>
-			<if test="picker != null and picker.code != null">
-				#{picker.code,jdbcType=VARCHAR},
-			</if>
-			<if test="picker != null and picker.name != null">
-				#{picker.name,jdbcType=VARCHAR},
-			</if>
 			<if test="pickArea != null and pickArea.uuid != null">
 				#{pickArea.uuid,jdbcType=VARCHAR},
 			</if>
@@ -246,24 +225,9 @@
 			<if test="method != null">
 				method = #{method,jdbcType=VARCHAR},
 			</if>
-			<if test="picker == null">
-				pickeruuid=null,
-				pickercode=null,
-				pickername=null,
-			</if>
 			<if test="remark != null">
 				remark = #{remark,jdbcType=VARCHAR},
 			</if>
-			<if test="picker != null and picker.uuid != null">
-				pickeruuid = #{picker.uuid,jdbcType=VARCHAR},
-			</if>
-			<if test="picker != null and picker.code != null">
-				pickercode = #{picker.code,jdbcType=VARCHAR},
-			</if>
-			<if test="picker != null and picker.name != null">
-				pickername = #{picker.name,jdbcType=VARCHAR},
-			</if>
-			pickOrderLevel = #{pickOrderLevel,jdbcType=VARCHAR},
 			version =
 			#{version,jdbcType=LONGVARCHAR} + 1,
 			<if test="lastModifyInfo != null and lastModifyInfo.time != null">

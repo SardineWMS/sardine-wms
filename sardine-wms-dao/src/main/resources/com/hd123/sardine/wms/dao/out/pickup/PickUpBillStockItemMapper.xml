@@ -10,7 +10,7 @@
     <result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
     <result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
     <result column="qty" property="qty" jdbcType="DECIMAL" />
-    <result column="containerBarcode" property="targetContainerBarcode"
+    <result column="targetContainerBarcode" property="targetContainerBarcode"
       jdbcType="VARCHAR" />
     <result column="articleUuid" property="articleUuid" jdbcType="VARCHAR" />
     <result column="stockBatch" property="stockBatch" jdbcType="VARCHAR" />
@@ -33,7 +33,7 @@
         uuid,
       </if>
       <if test="targetContainerBarcode != null">
-        containerBarcode,
+        targetContainerBarcode,
       </if>
       <if test="qpcStr != null">
         qpcStr,

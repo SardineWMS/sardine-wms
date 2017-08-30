@@ -12,6 +12,7 @@ package com.hd123.sardine.wms.service.out.pickup;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.bin.Bin;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
@@ -35,7 +36,6 @@ public class PickUpBillVerifier {
   public void verifyPickBinAndContainer(String toBinCode, String containerBarcode)
       throws WMSException {
     Assert.assertArgumentNotNull(toBinCode, "toBinCode");
-    Assert.assertArgumentNotNull(containerBarcode, "containerBarcode");
 
     Bin toBin = binService.getBinByCode(toBinCode);
     if (toBin == null)
@@ -43,12 +43,14 @@ public class PickUpBillVerifier {
     if (toBin.getUsage().equals(BinUsage.CollectBin) == false)
       throw new WMSException("拣货的目标货位" + toBinCode + "不是集货位！");
 
-    Container container = containerService.getByBarcode(containerBarcode);
-    if (container == null)
-      throw new WMSException("拣货的目标容器" + containerBarcode + "不存在！");
-    if (container.getState().equals(ContainerState.STACONTAINERIDLE) == false)
-      throw new WMSException("拣货的目标容器" + containerBarcode + "不是空闲容器！");
+    if (StringUtil.isNullOrBlank(containerBarcode) == false) {
+      Container container = containerService.getByBarcode(containerBarcode);
+      if (container == null)
+        throw new WMSException("拣货的目标容器" + containerBarcode + "不存在！");
+      if (container.getState().equals(ContainerState.STACONTAINERIDLE) == false)
+        throw new WMSException("拣货的目标容器" + containerBarcode + "不是空闲容器！");
 
-    containerService.lock(container.getUuid(), container.getVersion());
+      containerService.lock(container.getUuid(), container.getVersion());
+    }
   }
 }

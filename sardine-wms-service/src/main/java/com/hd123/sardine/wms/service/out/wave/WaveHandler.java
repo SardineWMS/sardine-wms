@@ -350,6 +350,9 @@ public class WaveHandler {
         billItem.setQty(pickItem.getQty());
         billItem.setCaseQtyStr(pickItem.getCaseQtyStr());
         billItem.setArticleSpec(pickItem.getArticleSpec());
+        billItem.setBinUsage(pickItem.getBinUsage());
+        billItem.setAlcNtcBillUuid(pickItem.getAlcNtcBillUuid());
+        billItem.setAlcNtcBillNumber(pickItem.getAlcNtcBillNumber());
 
         PickUpBill bill = findPickUpBill(bills, pickItem.getVolume(), pickItem.getItemVolume());
         if (bill == null) {

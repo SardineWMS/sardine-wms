@@ -31,4 +31,6 @@ public interface PickUpBillItemDao {
   void removeByWaveBillNumber(String waveBillNumber);
   
   List<PickUpBillItem> queryByUuids(List<String> uuids);
+  
+  List<PickUpBillItem> queryBySourceContainerBarcode(String sourceContainerBarcode);
 }

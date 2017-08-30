@@ -9,6 +9,7 @@
  */
 package com.hd123.sardine.wms.service.out.pickup;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,6 +28,7 @@ import com.hd123.sardine.wms.api.basicInfo.bin.BinState;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerState;
+import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillService;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillItem;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
@@ -76,8 +78,24 @@ public class PickUpBillHandler {
   @Autowired
   private ContainerService containerService;
 
+  @Autowired
+  private AlcNtcBillService alcNtcBillService;
+
+  /**
+   * 更新拣货单明细的实际拣货数量和状态，同时回写配单明细的实际数量
+   * 
+   * @param pickUpItems
+   *          拣货单明细，not null
+   * @param toBinCode
+   *          拣货的目标位置， not null
+   * @param toContainerBarcode
+   *          拣货的目标容器， not null
+   * @param picker
+   *          拣货人
+   * @throws WMSException
+   */
   public void updatePickUpBillItem(List<PickUpBillItem> pickUpItems, String toBinCode,
-      String toContainerBarcode, UCN picker) throws WMSException {
+      String toContainerBarcode, UCN picker, BigDecimal qty) throws WMSException {
     Assert.assertArgumentNotNull(toBinCode, "toBinCode");
     Assert.assertArgumentNotNull(toContainerBarcode, "toContainerBarcode");
     if (CollectionUtils.isEmpty(pickUpItems))
@@ -87,7 +105,10 @@ public class PickUpBillHandler {
       if (item.getState().equals(PickUpItemState.initial) == false)
         throw new WMSException("当前指令已处理，请刷新重试！");
       item.setState(PickUpItemState.finished);
-      item.setRealQty(item.getQty());
+      if (qty == null)
+        item.setRealQty(item.getQty());
+      else
+        item.setRealQty(qty);
       item.setRealCaseQtyStr(item.getCaseQtyStr());
       item.setPickTime(new Date());
       item.setToBinCode(toBinCode);
@@ -97,9 +118,18 @@ public class PickUpBillHandler {
       else
         item.setPicker(ApplicationContextUtil.getLoginUser());
       pickUpBillItemDao.updateRealQty(item);
+      alcNtcBillService.pickUp(item.getAlcNtcBillItemUuid(), item.getRealQty());
     }
   }
 
+  /**
+   * 更新拣货明细对应的拣货单状态，拣货完成的状态为已审核，否则 位进行中
+   * 
+   * @param uuids
+   *          拣货单UUID
+   * @return 修改后的拣货单集合
+   * @throws WMSException
+   */
   public List<PickUpBill> updatePickUpBill(Collection<String> uuids) throws WMSException {
     if (CollectionUtils.isEmpty(uuids))
       return new ArrayList<PickUpBill>();
@@ -130,10 +160,22 @@ public class PickUpBillHandler {
     return bills;
   }
 
+  /**
+   * 管理拣货的货位和容器
+   * <p>
+   * 根据拣货的来源货位和容器的库存情况，调整货位和容器的状态
+   * 
+   * @param pickUpItems
+   *          拣货单明细
+   * @param toBinCode
+   *          目标货位
+   * @param toContainerBarcode
+   *          目标容器
+   * @throws WMSException
+   */
   public void manageBinAndContainer(List<PickUpBillItem> pickUpItems, String toBinCode,
       String toContainerBarcode) throws WMSException {
     Assert.assertArgumentNotNull(toBinCode, "toBinCode");
-    Assert.assertArgumentNotNull(toContainerBarcode, "toContainerBarcode");
     if (CollectionUtils.isEmpty(pickUpItems))
       return;
 
@@ -143,13 +185,15 @@ public class PickUpBillHandler {
     if (BinState.free.equals(toBin.getState()))
       binService.changeState(toBin.getUuid(), toBin.getVersion(), BinState.using);
 
-    Container toContainer = containerService.getByBarcode(toContainerBarcode);
-    if (toContainer == null)
-      throw new WMSException("目标容器" + toContainerBarcode + "不存在！");
-    if (toContainer.getState().equals(ContainerState.STACONTAINERLOCK) == false)
-      throw new WMSException("目标容器" + toContainerBarcode + "被占用，请重试！");
-    containerService.change(toContainer.getUuid(), toContainer.getVersion(),
-        ContainerState.STACONTAINERUSEING, toBinCode);
+    if (StringUtil.isNullOrBlank(toContainerBarcode) == false) {
+      Container toContainer = containerService.getByBarcode(toContainerBarcode);
+      if (toContainer == null)
+        throw new WMSException("目标容器" + toContainerBarcode + "不存在！");
+      if (toContainer.getState().equals(ContainerState.STACONTAINERLOCK) == false)
+        throw new WMSException("目标容器" + toContainerBarcode + "被占用，请重试！");
+      containerService.change(toContainer.getUuid(), toContainer.getVersion(),
+          ContainerState.STACONTAINERUSEING, toBinCode);
+    }
 
     List<String> binCodes = new ArrayList<String>();
     List<String> containerBarcodes = new ArrayList<String>();
@@ -177,6 +221,19 @@ public class PickUpBillHandler {
     }
   }
 
+  /**
+   * 根据拣货单明细生成拣货单的库存明细并处理库存的转移
+   * 
+   * @param pickUpItems
+   *          拣货单明细， not null
+   * @param bills
+   *          拣货单集合
+   * @param toBinCode
+   *          目标货位
+   * @param toContainerBarcode
+   *          目标容器
+   * @throws WMSException
+   */
   public void stockOutAndGenerStockItem(List<PickUpBillItem> pickUpItems, List<PickUpBill> bills,
       String toBinCode, String toContainerBarcode) throws WMSException {
     Assert.assertArgumentNotNull(toBinCode, "toBinCode");
@@ -195,6 +252,7 @@ public class PickUpBillHandler {
       shiftRule.setOperateBillUuid(bill.getSourceBill().getBillUuid());
       shiftRule.setQpcStr(item.getQpcStr());
       shiftRule.setQty(item.getQty());
+      shiftRule.setOwner(ApplicationContextUtil.getCompanyUuid());
       if (item.getBinUsage().equals(WaveBinUsage.FixBin) == false) {
         shiftRule.setState(StockState.locked);
         stockService.changeState(bill.getSourceBill(), Arrays.asList(shiftRule), StockState.locked,

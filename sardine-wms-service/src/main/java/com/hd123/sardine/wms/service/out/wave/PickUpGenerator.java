@@ -712,6 +712,8 @@ public class PickUpGenerator {
         pickItem.setType(PickType.PartContainer);
       pickItem.setItemVolume(caculateVolume(pickItem.getQpcStr(), pickItem.getQty()));
       pickItem.setPickOrder(alcItem.getPickOrder());
+      pickItem.setAlcNtcBillUuid(alcItem.getAlcNtcBillUuid());
+      pickItem.setAlcNtcBillNumber(alcItem.getAlcNtcBillNumber());
       result.add(pickItem);
 
       pickQty = pickQty.subtract(pickItem.getQty());
