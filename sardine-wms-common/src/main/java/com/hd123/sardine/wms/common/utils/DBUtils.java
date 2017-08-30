@@ -35,6 +35,7 @@ public class DBUtils {
     }
     String seqNumber = containDBName.substring(containDBName.length() - 4, containDBName.length());
     int number = Integer.valueOf(seqNumber) % DB_COUNT;
-    return Constants.DB_PREFIX.concat(String.valueOf(number + 1));
+//    return Constants.DB_PREFIX.concat(String.valueOf(number + 1));
+    return "sardine1";
   }
 }
