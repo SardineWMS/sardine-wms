@@ -9,13 +9,15 @@
  */
 package com.hd123.sardine.wms.service.inner.decincinv;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,6 +27,7 @@ import com.hd123.sardine.wms.api.basicInfo.article.Article;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleService;
 import com.hd123.sardine.wms.api.basicInfo.bin.Bin;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
+import com.hd123.sardine.wms.api.basicInfo.bin.BinState;
 import com.hd123.sardine.wms.api.basicInfo.bin.Wrh;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
@@ -34,8 +37,14 @@ import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillItem;
 import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillService;
 import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillState;
 import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillType;
+import com.hd123.sardine.wms.api.stock.Stock;
+import com.hd123.sardine.wms.api.stock.StockComponent;
+import com.hd123.sardine.wms.api.stock.StockFilter;
+import com.hd123.sardine.wms.api.stock.StockService;
+import com.hd123.sardine.wms.api.stock.StockShiftIn;
+import com.hd123.sardine.wms.api.stock.StockShiftRule;
 import com.hd123.sardine.wms.common.entity.OperateInfo;
-import com.hd123.sardine.wms.common.entity.UCN;
+import com.hd123.sardine.wms.common.entity.SourceBill;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
@@ -62,6 +71,8 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
   @Autowired
   private ContainerService containerService;
   @Autowired
+  private StockService stockService;
+  @Autowired
   private EntityLogger logger;
 
   @Override
@@ -71,8 +82,6 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
     DecIncInvBill decIncInvBill = billDao.get(billUuid);
     if (decIncInvBill == null)
       return null;
-    Wrh wrh = binService.getWrh(decIncInvBill.getWrh().getUuid());
-    decIncInvBill.setWrh(new UCN(wrh.getUuid(), wrh.getCode(), wrh.getName()));
     decIncInvBill.setItems(billDao.queryItems(billUuid));
     return decIncInvBill;
   }
@@ -94,12 +103,6 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
 
     PageQueryResult<DecIncInvBill> pgr = new PageQueryResult<DecIncInvBill>();
     List<DecIncInvBill> list = billDao.query(definition);
-    for (DecIncInvBill decIncInvBill : list) {
-      Wrh wrh = binService.getWrh(decIncInvBill.getWrh().getUuid());
-      if (Objects.isNull(wrh))
-        continue;
-      decIncInvBill.setWrh(new UCN(wrh.getUuid(), wrh.getCode(), wrh.getName()));
-    }
     PageQueryUtil.assignPageInfo(pgr, definition);
     pgr.setRecords(list);
     return pgr;
@@ -184,10 +187,10 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
     PersistenceUtils.checkVersion(version, decIncInvBill, "损溢单", decIncInvBill.getBillNumber());
     verifyDecIncInvBill(decIncInvBill);
 
-    // if (DecIncInvBillType.Dec.equals(decIncInvBill.getType()))
-    // decInvStocks(decIncInvBill);
-    // else
-    // incInvStocks(decIncInvBill);
+    if (DecIncInvBillType.Dec.equals(decIncInvBill.getType()))
+      decInvStocks(decIncInvBill);
+    else
+      incInvStocks(decIncInvBill);
 
     decIncInvBill.setState(DecIncInvBillState.Audited);
     decIncInvBill
@@ -238,20 +241,21 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
   }
 
   private void verifyDecItem(DecIncInvBillItem item, String wrhUuid, StringBuffer errorMessage) {
-    /*
-     * Bin bin = binService.getBinByCode(item.getBinCode()); if (bin == null)
-     * errorMessage.append("第" + item.getLine() + "行明细，货位" + item.getBinCode() +
-     * "不存在"); else if (ObjectUtils.notEqual(bin.getWrh().getUuid(), wrhUuid))
-     * errorMessage.append("第" + item.getLine() + "行明细，货位" + item.getBinCode() +
-     * "所属仓位与损耗单仓位不一致"); List<StockExtendInfo> stocks = getStocks(item); if
-     * (CollectionUtils.isEmpty(stocks)) errorMessage.append("第" +
-     * item.getLine() + "行明细，没有对应的库存");
-     * 
-     * BigDecimal stockQty = BigDecimal.ZERO; for (StockExtendInfo stockInfo :
-     * stocks) stockQty = stockQty.add(stockInfo.getQty()); if
-     * (item.getQty().abs().compareTo(stockQty) > 0) errorMessage.append("第" +
-     * item.getLine() + "行明细，损耗数量不能大于库存数量" + stockQty);
-     */}
+    Bin bin = binService.getBinByCode(item.getBinCode());
+    if (bin == null)
+      errorMessage.append("第" + item.getLine() + "行明细，货位" + item.getBinCode() + "不存在");
+    else if (ObjectUtils.notEqual(bin.getWrh().getUuid(), wrhUuid))
+      errorMessage.append("第" + item.getLine() + "行明细，货位" + item.getBinCode() + "所属仓位与损耗单仓位不一致");
+    List<Stock> stocks = getStocks(item);
+    if (CollectionUtils.isEmpty(stocks))
+      errorMessage.append("第" + item.getLine() + "行明细，没有对应的库存");
+
+    BigDecimal stockQty = BigDecimal.ZERO;
+    for (Stock stock : stocks)
+      stockQty = stockQty.add(stock.getStockComponent().getQty());
+    if (item.getQty().abs().compareTo(stockQty) > 0)
+      errorMessage.append("第" + item.getLine() + "行明细，损耗数量不能大于库存数量" + stockQty);
+  }
 
   private void verifyIncItem(DecIncInvBillItem item, String wrhUuid, StringBuffer errorMessage) {
     Bin bin = binService.getBinByCode(item.getBinCode());
@@ -277,123 +281,123 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
 
   }
 
-  // private List<StockExtendInfo> getStocks(DecIncInvBillItem item) {
-  // StockFilter stockFilter = new StockFilter();
-  // stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-  // stockFilter.setBinCode(item.getBinCode());
-  // stockFilter.setContainerBarcode(item.getContainerBarCode());
-  // stockFilter.setArticleUuid(item.getArticle().getUuid());
-  // stockFilter.setSupplierUuid(item.getSupplier().getUuid());
-  // stockFilter.setQpcStr(item.getQpcStr());
-  // stockFilter.setStockBatch(item.getStockBatch());
-  // stockFilter.setPage(1);
-  // List<StockExtendInfo> stocks = stockService.queryStocks(stockFilter);
-  // return stocks;
-  // }
-  //
-  // private void decInvStocks(DecIncInvBill decIncInvBill) throws WMSException
-  // {
-  // List<ShiftOutRule> shiftOutRules = new ArrayList<>();
-  // Set<String> containerBarCodes = new HashSet<>();
-  // Set<String> binCodes = new HashSet<>();
-  // for (DecIncInvBillItem item : decIncInvBill.getItems()) {
-  // ShiftOutRule rule = new ShiftOutRule();
-  // rule.setBinCode(item.getBinCode());
-  // rule.setContainerBarcode(item.getBinCode());
-  // rule.setArticleUuid(item.getArticle().getUuid());
-  // rule.setSupplierUuid(item.getSupplier().getUuid());
-  // rule.setQty(item.getQty().abs());
-  // rule.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-  // rule.setStockBatch(item.getStockBatch());
-  // rule.setQpcStr(item.getQpcStr());
-  // shiftOutRules.add(rule);
-  // if (StringUtil.isNullOrBlank(item.getContainerBarCode()) == false
-  // && Container.VIRTUALITY_CONTAINER.equals(item.getContainerBarCode()) ==
-  // false)
-  // containerBarCodes.add(item.getContainerBarCode());
-  // binCodes.add(item.getBinCode());
-  // }
-  //
-  // stockService.shiftOut("损溢单", decIncInvBill.getBillNumber(), shiftOutRules);
-  //
-  // for (String containerBarCode : containerBarCodes) {
-  // StockFilter stockFilter = new StockFilter();
-  // stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-  // stockFilter.setContainerBarcode(containerBarCode);
-  // stockFilter.setPageSize(0);
-  // List<StockExtendInfo> stocks = stockService.queryStocks(stockFilter);
-  // if (CollectionUtils.isEmpty(stocks)) {
-  // Container container = containerService.getByBarcode(containerBarCode);
-  // containerService.change(container.getUuid(), container.getVersion(),
-  // ContainerState.STACONTAINERIDLE,
-  // Container.UNKNOWN_POSITION);
-  // }
-  // }
-  //
-  // for (String binCode : binCodes) {
-  // StockFilter stockFilter = new StockFilter();
-  // stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-  // stockFilter.setBinCode(binCode);
-  // List<StockExtendInfo> stocks = stockService.queryStocks(stockFilter);
-  // if (CollectionUtils.isEmpty(stocks)) {
-  // Bin bin = binService.getBinByCode(binCode);
-  // binService.changeState(bin.getUuid(), bin.getVersion(), BinState.free);
-  // }
-  //
-  // }
-  //
-  // }
-  //
-  // private void incInvStocks(DecIncInvBill decIncInvBill) throws WMSException
-  // {
-  // List<Stock> shiftInStocks = new ArrayList<>();
-  // Map<String, String> containerBinMap = new HashMap<>();
-  // Set<String> binCodes = new HashSet<>();
-  //
-  // for (DecIncInvBillItem item : decIncInvBill.getItems()) {
-  // Stock stock = new Stock();
-  // stock.setArticleUuid(item.getArticle().getUuid());
-  // stock.setBinCode(item.getBinCode());
-  // stock.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-  // stock.setContainerBarcode(item.getContainerBarCode());
-  // stock.setMeasureUnit(item.getMeasureUnit());
-  // stock.setProductionDate(item.getProductionDate());
-  // stock.setQpcStr(item.getQpcStr());
-  // stock.setQty(item.getQty());
-  // stock.setSourceBillNumber(decIncInvBill.getBillNumber());
-  // stock.setSourceBillType("损溢单");
-  // stock.setSourceBillUuid(decIncInvBill.getUuid());
-  // stock.setSourceLineNumber(item.getLine());
-  // stock.setSourceLineUuid(item.getUuid());
-  // stock.setStockBatch(item.getStockBatch());
-  // stock.setSupplierUuid(item.getSupplier().getUuid());
-  // stock.setValidDate(item.getExpireDate());
-  // stock.setPrice(item.getPrice());
-  // shiftInStocks.add(stock);
-  //
-  // if (StringUtil.isNullOrBlank(item.getContainerBarCode()) == false
-  // && Container.VIRTUALITY_CONTAINER.equals(item.getContainerBarCode()) ==
-  // false)
-  // containerBinMap.put(item.getContainerBarCode(), item.getBinCode());
-  // binCodes.add(item.getBinCode());
-  // }
-  // stockService.shiftIn("损溢单", decIncInvBill.getBillNumber(), shiftInStocks);
-  //
-  // for (String containerBarCode : containerBinMap.keySet()) {
-  // Container container = containerService.getByBarcode(containerBarCode);
-  // if (ContainerState.STACONTAINERIDLE.equals(container.getState())) {
-  // containerService.change(container.getUuid(), container.getVersion(),
-  // ContainerState.STACONTAINERUSEING,
-  // containerBinMap.get(containerBarCode));
-  // }
-  // }
-  //
-  // for (String binCode : binCodes) {
-  // Bin bin = binService.getBinByCode(binCode);
-  // if (BinState.free.equals(bin.getState())) {
-  // binService.changeState(bin.getUuid(), bin.getVersion(), BinState.using);
-  // }
-  // }
-  // }
+  private List<Stock> getStocks(DecIncInvBillItem item) {
+    StockFilter stockFilter = new StockFilter();
+    stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    stockFilter.setBinCode(item.getBinCode());
+    stockFilter.setContainerBarcode(item.getContainerBarCode());
+    stockFilter.setArticleUuid(item.getArticle().getUuid());
+    stockFilter.setSupplierUuid(item.getSupplier().getUuid());
+    stockFilter.setQpcStr(item.getQpcStr());
+    stockFilter.setStockBatch(item.getStockBatch());
+    stockFilter.setPage(1);
+    List<Stock> stocks = stockService.query(stockFilter);
+    return stocks;
+  }
+
+  private void decInvStocks(DecIncInvBill decIncInvBill) throws WMSException {
+    List<StockShiftRule> shiftOutRules = new ArrayList<>();
+    Set<String> containerBarCodes = new HashSet<>();
+    Set<String> binCodes = new HashSet<>();
+    for (DecIncInvBillItem item : decIncInvBill.getItems()) {
+      StockShiftRule rule = new StockShiftRule();
+      rule.setBinCode(item.getBinCode());
+      rule.setContainerBarcode(item.getBinCode());
+      rule.setArticleUuid(item.getArticle().getUuid());
+      rule.setSupplierUuid(item.getSupplier().getUuid());
+      rule.setQty(item.getQty().abs());
+      rule.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+      rule.setStockBatch(item.getStockBatch());
+      rule.setQpcStr(item.getQpcStr());
+      shiftOutRules.add(rule);
+      if (StringUtil.isNullOrBlank(item.getContainerBarCode()) == false
+          && Container.VIRTUALITY_CONTAINER.equals(item.getContainerBarCode()) == false)
+        containerBarCodes.add(item.getContainerBarCode());
+      binCodes.add(item.getBinCode());
+    }
+
+    stockService.shiftOut(new SourceBill(DecIncInvBill.CAPTION, decIncInvBill.getUuid(),
+        decIncInvBill.getBillNumber()), shiftOutRules);
+
+    for (String containerBarCode : containerBarCodes) {
+      StockFilter stockFilter = new StockFilter();
+      stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+      stockFilter.setContainerBarcode(containerBarCode);
+      stockFilter.setPageSize(0);
+      List<Stock> stocks = stockService.query(stockFilter);
+      if (CollectionUtils.isEmpty(stocks)) {
+        Container container = containerService.getByBarcode(containerBarCode);
+        containerService.change(container.getUuid(), container.getVersion(),
+            ContainerState.STACONTAINERIDLE, Container.UNKNOWN_POSITION);
+      }
+    }
+
+    for (String binCode : binCodes) {
+      StockFilter stockFilter = new StockFilter();
+      stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+      stockFilter.setBinCode(binCode);
+      List<Stock> stocks = stockService.query(stockFilter);
+      if (CollectionUtils.isEmpty(stocks)) {
+        Bin bin = binService.getBinByCode(binCode);
+        binService.changeState(bin.getUuid(), bin.getVersion(), BinState.free);
+      }
+
+    }
+
+  }
+
+  private void incInvStocks(DecIncInvBill decIncInvBill) throws WMSException {
+    List<StockShiftIn> shiftIns = new ArrayList<>();
+    Map<String, String> containerBinMap = new HashMap<>();
+    Set<String> binCodes = new HashSet<>();
+
+    for (DecIncInvBillItem item : decIncInvBill.getItems()) {
+      StockShiftIn shiftIn = new StockShiftIn();
+      StockComponent component = new StockComponent();
+      component.setArticle(item.getArticle());
+      component.setArticleSpec(item.getArticleSpec());
+      component.setBinCode(item.getBinCode());
+      component.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+      component.setContainerBarcode(item.getContainerBarCode());
+      component.setMunit(item.getMeasureUnit());
+      component.setPrice(item.getPrice());
+      component.setProductionBatch(stockBatchUtils.genProductionBatch(item.getProductionDate()));
+      component.setProductionDate(item.getProductionDate());
+      component.setQpcStr(item.getQpcStr());
+      component.setQty(item.getQty());
+      component.setSourceBill(new SourceBill(DecIncInvBill.CAPTION, decIncInvBill.getUuid(),
+          decIncInvBill.getBillNumber()));
+      component.setStockBatch(item.getStockBatch());
+      component.setSupplier(item.getSupplier());
+      component.setValidDate(item.getExpireDate());
+      component.setProductionDate(item.getProductionDate());
+      shiftIn.setStockComponent(component);
+      shiftIn.setSourceLineNumber(item.getLine());
+      shiftIn.setSourceLineUuid(item.getUuid());
+      shiftIns.add(shiftIn);
+
+      if (StringUtil.isNullOrBlank(item.getContainerBarCode()) == false
+          && Container.VIRTUALITY_CONTAINER.equals(item.getContainerBarCode()) == false)
+        containerBinMap.put(item.getContainerBarCode(), item.getBinCode());
+      binCodes.add(item.getBinCode());
+    }
+    stockService.shiftIn(new SourceBill(DecIncInvBill.CAPTION, decIncInvBill.getUuid(),
+        decIncInvBill.getBillNumber()), shiftIns);
+
+    for (String containerBarCode : containerBinMap.keySet()) {
+      Container container = containerService.getByBarcode(containerBarCode);
+      if (ContainerState.STACONTAINERIDLE.equals(container.getState())) {
+        containerService.change(container.getUuid(), container.getVersion(),
+            ContainerState.STACONTAINERUSEING, containerBinMap.get(containerBarCode));
+      }
+    }
+
+    for (String binCode : binCodes) {
+      Bin bin = binService.getBinByCode(binCode);
+      if (BinState.free.equals(bin.getState())) {
+        binService.changeState(bin.getUuid(), bin.getVersion(), BinState.using);
+      }
+    }
+  }
 
 }

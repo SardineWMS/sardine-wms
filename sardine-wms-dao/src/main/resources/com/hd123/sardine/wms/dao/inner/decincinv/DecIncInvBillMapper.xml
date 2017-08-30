@@ -9,8 +9,8 @@
 		<result column="version" property="version" jdbcType="LONGVARCHAR" />
 		<result column="billNumber" property="billNumber" jdbcType="VARCHAR" />
 		<result column="wrhuuid" property="wrh.uuid" jdbcType="VARCHAR" />
-		<!-- <result column="wrhcode" property="wrh.code" jdbcType="VARCHAR" /> 
-			<result column="wrhname" property="wrh.name" jdbcType="VARCHAR" /> -->
+		<result column="wrhcode" property="wrh.code" jdbcType="VARCHAR" /> 
+		<result column="wrhname" property="wrh.name" jdbcType="VARCHAR" />
 		<result column="operatoruuid" property="operator.uuid"
 			jdbcType="VARCHAR" />
 		<result column="operatorcode" property="operator.code"
@@ -71,6 +71,7 @@
 			jdbcType="VARCHAR" />
 		<result column="measureUnit" property="measureUnit" jdbcType="VARCHAR" />
 		<result column="reason" property="reason" jdbcType="VARCHAR" />
+		<result column="articleSpec" property="articleSpec" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<insert id="insert"
@@ -399,7 +400,7 @@
 
 	<select id="queryItems" resultMap="DecIncInvBillItemMap"
 		parameterType="java.lang.String">
-		select t.*, a.code articleCode, a.name articleName from
+		select t.*, a.code articleCode, a.name articleName,a.spec articleSpec,s.code suppliercode,s.name suppliername from
 		db_proxy.sardine_decIncInvBillItem t,
 		db_proxy.sardine_article a,
 		db_proxy.sardine_supplier s
