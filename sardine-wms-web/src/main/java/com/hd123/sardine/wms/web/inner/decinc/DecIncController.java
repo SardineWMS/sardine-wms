@@ -42,6 +42,7 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
@@ -82,6 +83,7 @@ public class DecIncController extends BaseController {
         }
         item.setAmount(item.getPrice().subtract(item.getQty()).abs());
       }
+      decIncInvBill.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       String uuid = service.saveNew(decIncInvBill);
       resp.setObj(uuid);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -116,7 +118,7 @@ public class DecIncController extends BaseController {
       definition.put(DecIncInvBillService.QUERY_WRHCODE_LIKE, wrh);
       definition.put(DecIncInvBillService.QUERY_TYPE_EQUALS,
           StringUtil.isNullOrBlank(type) ? null : DecIncInvBillType.valueOf(type));
-
+      definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<DecIncInvBill> result = service.query(definition);
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
