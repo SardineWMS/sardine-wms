@@ -88,6 +88,7 @@ public class ContainerServiceImpl extends BaseWMSService implements ContainerSer
 
     definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     PageQueryResult<Container> pgr = new PageQueryResult<Container>();
+    definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     List<Container> list = dao.query(definition);
     PageQueryUtil.assignPageInfo(pgr, definition);
     pgr.setRecords(list);
