@@ -127,4 +127,11 @@ public class PickAreaServiceImpl extends BaseWMSService implements PickAreaServi
   private void insertValidate() throws WMSException {
     // TODO 校验拣货分区对应的货位范围不能交叉
   }
+
+  @Override
+  public PickArea getByStorageArea(String storageArea) {
+    if (StringUtil.isNullOrBlank(storageArea))
+      return null;
+    return dao.getByStorageArea(storageArea);
+  }
 }

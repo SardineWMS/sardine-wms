@@ -16,6 +16,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.task.TaskService;
 import com.hd123.sardine.wms.api.task.TaskState;
@@ -147,7 +148,7 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
 
   @Override
   public void move(String uuid, long version, BigDecimal qty) {
-    
+
   }
 
   @Override
@@ -210,5 +211,12 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
   public PageQueryResult<TaskView> query() {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  @Override
+  public Task get(String uuid) {
+    if (StringUtil.isNullOrBlank(uuid))
+      return null;
+    return taskDao.get(uuid);
   }
 }

@@ -16,69 +16,78 @@ import com.hd123.sardine.wms.common.entity.StandardEntity;
  *
  */
 public class Supplier extends StandardEntity {
-    private static final long serialVersionUID = -760323364874715726L;
+  private static final long serialVersionUID = -760323364874715726L;
 
-    private String code;
-    private String name;
-    private SupplierState state=SupplierState.normal;
-    private String address;
-    private String phone;
-    private String remark;
-    private String companyUuid;
+  private String code;
+  private String name;
+  private SupplierState state = SupplierState.normal;
+  private String address;
+  private String phone;
+  private String remark;
+  private String companyUuid;
+  private String storageArea;
 
-    public String getCode() {
-        return code;
-    }
+  public String getCode() {
+    return code;
+  }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+  public void setCode(String code) {
+    this.code = code;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public SupplierState getState() {
-        return state;
-    }
+  public SupplierState getState() {
+    return state;
+  }
 
-    public void setState(SupplierState state) {
-        this.state = state;
-    }
+  public void setState(SupplierState state) {
+    this.state = state;
+  }
 
-    public String getAddress() {
-        return address;
-    }
+  public String getAddress() {
+    return address;
+  }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+  public void setAddress(String address) {
+    this.address = address;
+  }
 
-    public String getPhone() {
-        return phone;
-    }
+  public String getPhone() {
+    return phone;
+  }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
 
-    public String getRemark() {
-        return remark;
-    }
+  public String getRemark() {
+    return remark;
+  }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
+  public void setRemark(String remark) {
+    this.remark = remark;
+  }
 
-    public String getCompanyUuid() {
-        return companyUuid;
-    }
+  public String getCompanyUuid() {
+    return companyUuid;
+  }
 
-    public void setCompanyUuid(String companyUuid) {
-        this.companyUuid = companyUuid;
-    }
+  public void setCompanyUuid(String companyUuid) {
+    this.companyUuid = companyUuid;
+  }
+
+  public String getStorageArea() {
+    return storageArea;
+  }
+
+  public void setStorageArea(String storageArea) {
+    this.storageArea = storageArea;
+  }
 }

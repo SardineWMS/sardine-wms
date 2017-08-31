@@ -30,6 +30,7 @@ import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerState;
+import com.hd123.sardine.wms.api.in.putaway.PutawayService;
 import com.hd123.sardine.wms.api.rtn.customerreturn.ReturnBill;
 import com.hd123.sardine.wms.api.rtn.customerreturn.ReturnBillItem;
 import com.hd123.sardine.wms.api.rtn.customerreturn.ReturnBillService;
@@ -39,10 +40,15 @@ import com.hd123.sardine.wms.api.rtn.ntc.ReturnNtcBill;
 import com.hd123.sardine.wms.api.rtn.ntc.ReturnNtcBillItem;
 import com.hd123.sardine.wms.api.rtn.ntc.ReturnNtcBillService;
 import com.hd123.sardine.wms.api.rtn.ntc.ReturnNtcBillState;
+import com.hd123.sardine.wms.api.stock.StockComponent;
 import com.hd123.sardine.wms.api.stock.StockService;
+import com.hd123.sardine.wms.api.stock.StockShiftIn;
+import com.hd123.sardine.wms.api.stock.StockState;
 import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.task.TaskService;
 import com.hd123.sardine.wms.api.task.TaskType;
+import com.hd123.sardine.wms.common.entity.OperateMode;
+import com.hd123.sardine.wms.common.entity.SourceBill;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
@@ -74,6 +80,8 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
   private StockService stockService;
   @Autowired
   private TaskService taskService;
+  @Autowired
+  private PutawayService putawayService;
   @Autowired
   private EntityLogger logger;
 
@@ -360,13 +368,16 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
     for (ReturnBillItem item : bill.getItems()) {
       Task task = new Task();
       task.setArticle(item.getArticle());
+      task.setArticleSpec(item.getArticleSpec());
       task.setCaseQtyStr(item.getCaseQtyStr());
       task.setCompanyUuid(bill.getCompanyUuid());
       task.setCreator(ApplicationContextUtil.getLoginUser());
       task.setFromBinCode(item.getBinCode());
       task.setFromContainerBarcode(item.getContainerBarcode());
+      task.setMunit(item.getMunit());
       task.setOwner("");
       task.setProductionDate(item.getProductionDate());
+      task.setProductionBatch(stockBatchUtils.genProductionBatch(item.getProductionDate()));
       task.setQpcStr(item.getQpcStr());
       task.setQty(item.getQty());
       task.setSourceBillNumber(bill.getBillNumber());
@@ -376,21 +387,14 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
       task.setSupplier(item.getSupplier());
       task.setTaskType(TaskType.Putaway);
       task.setValidDate(item.getValidDate());
-      // TODO 上架算法
+      task.setToContainerBarcode(item.getContainerBarcode());
+      task.setToBinCode(ReturnType.goodReturn.equals(item.getReturnType())
+          ? putawayService.fetchPutawayTargetBinByContainer(item.getContainerBarcode()) : "-");// TODO
+      task.setType(OperateMode.ManualBill);
+      task.setTaskGroupNumber(item.getContainerBarcode());
       tasks.add(task);
     }
-
-    for (int i = 0; i < tasks.size(); i++) {
-      for (int j = i + 1; j < tasks.size(); j++) {
-        if (tasks.get(i).getFromContainerBarcode().equals(tasks.get(j).getFromContainerBarcode())) {
-          // tasks.get(i).setGroupNo("");// TODO
-          // tasks.get(j).setGroupNo("");
-        }
-      }
-    }
-
-    // taskService.insert(tasks);
-
+    taskService.insert(tasks);
   }
 
   private void returnWrh(ReturnBill bill) throws WMSException {
@@ -440,32 +444,39 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
   }
 
   private void shiftIn(ReturnBill bill) throws WMSException {
-    /*
-     * assert bill != null; assert bill.getItems() != null;
-     * 
-     * List<Stock> stocks = new ArrayList<>(); for (ReturnBillItem item :
-     * bill.getItems()) { Stock stock = new Stock(); StockComponent component =
-     * new StockComponent();
-     * 
-     * component.setArticle(item.getArticle());
-     * component.setBinCode(item.getBinCode());
-     * component.setCompanyUuid(bill.getCompanyUuid());
-     * component.setContainerBarcode(item.getContainerBarcode());
-     * component.setMunit(item.getMunit()); component.setPrice(item.getPrice());
-     * component.setProductionDate(item.getProductionDate());
-     * component.setQpcStr(item.getQpcStr()); component.setQty(item.getQty());
-     * component.setInstockTime(new Date());
-     * component.setSourceBillNumber(bill.getBillNumber());
-     * component.setSourceBillType("退仓单");
-     * component.setSourceBillUuid(bill.getUuid());
-     * component.setSourceLineNumber(item.getLine());
-     * component.setSourceLineUuid(item.getUuid());
-     * component.setStockBatch(item.getStockBatch());
-     * component.setSupplierUuid(item.getSupplier().getUuid());
-     * component.setValidDate(item.getValidDate()); stocks.add(stock); }
-     * stockService.shiftIn(ReturnBill.class.getName(), bill.getBillNumber(),
-     * stocks);
-     */}
+    assert bill != null;
+    assert bill.getItems() != null;
+
+    List<StockShiftIn> shiftIns = new ArrayList<>();
+    for (ReturnBillItem item : bill.getItems()) {
+      StockShiftIn shiftIn = new StockShiftIn();
+      StockComponent component = new StockComponent();
+      component.setArticle(item.getArticle());
+      component.setBinCode(item.getBinCode());
+      component.setCompanyUuid(bill.getCompanyUuid());
+      component.setContainerBarcode(item.getContainerBarcode());
+      component.setMunit(item.getMunit());
+      component.setPrice(item.getPrice());
+      component.setProductionDate(item.getProductionDate());
+      component.setQpcStr(item.getQpcStr());
+      component.setQty(item.getQty());
+      component
+          .setSourceBill(new SourceBill(ReturnBill.CAPTION, bill.getUuid(), bill.getBillNumber()));
+      component.setState(StockState.normal);
+      component.setStockBatch(item.getStockBatch());
+      component.setSupplier(item.getSupplier());
+      component.setValidDate(item.getValidDate());
+      component
+          .setProductionBatch(stockBatchUtils.genProductionBatch(component.getProductionDate()));
+      component.setArticleSpec(item.getArticleSpec());
+      shiftIn.setStockComponent(component);
+      shiftIn.setSourceLineNumber(item.getLine());
+      shiftIn.setSourceLineUuid(item.getUuid());
+      shiftIns.add(shiftIn);
+    }
+    stockService.shiftIn(new SourceBill(ReturnBill.CAPTION, bill.getUuid(), bill.getBillNumber()),
+        shiftIns);
+  }
 
   private StringBuffer verifyContainer(ReturnBill bill) {
     assert bill != null;

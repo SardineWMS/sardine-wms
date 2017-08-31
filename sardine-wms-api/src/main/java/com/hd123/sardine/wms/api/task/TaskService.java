@@ -132,6 +132,15 @@ public interface TaskService {
    */
   void rtnShelf(String uuid, long version, String binCode, String containerBarcode, BigDecimal qty)
       throws WMSException;
-  
+
   PageQueryResult<TaskView> query();
+
+  /**
+   * 通过UUID获取指令
+   * 
+   * @param uuid
+   * uuid,if null return null
+   * @return
+   */
+  Task get(String uuid);
 }

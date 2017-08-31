@@ -11,6 +11,7 @@ package com.hd123.sardine.wms.dao.basicInfo.supplier.impl;
 
 import java.util.Map;
 
+import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
@@ -23,6 +24,8 @@ import com.hd123.sardine.wms.dao.basicInfo.supplier.SupplierDao;
  */
 public class SupplierDaoImpl extends BaseDaoImpl<Supplier> implements SupplierDao {
   public static final String MAPPER_GETBYCODE = "getByCode";
+  public static final String MAPPER_INSERT_STORAGE_AREA = "insertStorageArea";
+  public static final String MAPPER_REMOVE_STORAGE_AREA = "removeStorageArea";
 
   @Override
   public Supplier getByCode(String code) {
@@ -31,5 +34,27 @@ public class SupplierDaoImpl extends BaseDaoImpl<Supplier> implements SupplierDa
     Map<String, Object> map = ApplicationContextUtil.mapWithParentCompanyUuid();
     map.put("code", code);
     return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE), map);
+  }
+
+  @Override
+  public void saveStorageArea(String supplierUuid, String storageArea) {
+    Assert.assertArgumentNotNull(supplierUuid, "supplierUuid");
+    Assert.assertArgumentNotNull(storageArea, "storageArea");
+
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("supplierUuid", supplierUuid);
+    map.put("storageArea", storageArea);
+
+    getSqlSession().insert(generateStatement(MAPPER_INSERT_STORAGE_AREA), map);
+
+  }
+
+  @Override
+  public void removeStorageArea(String supplierUuid) {
+    Assert.assertArgumentNotNull(supplierUuid, "supplierUuid");
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("supplierUuid", supplierUuid);
+    getSqlSession().delete(generateStatement(MAPPER_REMOVE_STORAGE_AREA), map);
+
   }
 }

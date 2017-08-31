@@ -17,5 +17,7 @@ import com.hd123.sardine.wms.common.dao.BaseDao;
  *
  */
 public interface PickAreaDao extends BaseDao<PickArea> {
-    PickArea getByCode(String code);
+  PickArea getByCode(String code);
+
+  PickArea getByStorageArea(String storageArea);
 }

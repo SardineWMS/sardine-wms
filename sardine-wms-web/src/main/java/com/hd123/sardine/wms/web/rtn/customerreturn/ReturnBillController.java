@@ -28,6 +28,7 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
@@ -97,6 +98,7 @@ public class ReturnBillController extends BaseController {
       @RequestParam(value = "token", required = true) String token, @RequestBody ReturnBill bill) {
     RespObject resp = new RespObject();
     try {
+      bill.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       String uuid = service.saveNew(bill);
       resp.setObj(uuid);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

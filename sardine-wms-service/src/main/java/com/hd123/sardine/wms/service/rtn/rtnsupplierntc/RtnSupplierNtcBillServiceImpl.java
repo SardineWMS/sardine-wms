@@ -69,7 +69,6 @@ public class RtnSupplierNtcBillServiceImpl extends BaseWMSService
   @Override
   public PageQueryResult<RtnSupplierNtcBill> query(PageQueryDefinition definition) {
     Assert.assertArgumentNotNull(definition, "definition");
-    definition.setCompanyUuid(ApplicationContextUtil.getCompanyCode());
     List<RtnSupplierNtcBill> list = dao.query(definition);
     PageQueryResult<RtnSupplierNtcBill> pqr = new PageQueryResult<>();
     PageQueryUtil.assignPageInfo(pqr, definition);

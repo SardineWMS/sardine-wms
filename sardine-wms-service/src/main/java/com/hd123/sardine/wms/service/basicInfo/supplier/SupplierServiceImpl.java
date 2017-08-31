@@ -115,6 +115,10 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
 
     supplier.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     dao.update(supplier);
+    if (StringUtil.isNullOrBlank(supplier.getStorageArea()) == false) {
+      dao.removeStorageArea(supplier.getUuid());
+      dao.saveStorageArea(supplier.getUuid(), supplier.getStorageArea());
+    }
 
     logger.injectContext(this, supplier.getUuid(), Supplier.class.getName(),
         ApplicationContextUtil.getOperateContext());

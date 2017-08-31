@@ -73,4 +73,21 @@ public interface PutawayService {
    */
   void verifyNewTargetBin(String newTargetBinCode, String articleUuid)
       throws IllegalArgumentException, WMSException;
+
+  /**
+   * 根据供应商获取供应商退货位
+   * <p>
+   * <li>根据供应商获取供应商的存储区域对应的货位范围。 如不存在则返回空。
+   * <li>如果货位范围内有该供应商的库存，则返回一个最小的有该供应商库存的。
+   * <li>如果货位范围内没有库存，则返回一个空闲的最小货位。
+   * 
+   * 
+   * @param supplierUuid
+   *          供应商UUID，if null return null
+   * @return 供应商退货位
+   * @throws IllegalArgumentException
+   * @throws WMSException
+   */
+  String fetchRtnPutawayTargetBinBySupplier(String supplierUuid)
+      throws IllegalArgumentException, WMSException;
 }

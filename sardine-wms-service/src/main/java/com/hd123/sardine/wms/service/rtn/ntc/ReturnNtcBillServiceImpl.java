@@ -26,6 +26,7 @@ import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.article.Article;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleService;
 import com.hd123.sardine.wms.api.basicInfo.article.DateCheckStandard;
+import com.hd123.sardine.wms.api.basicInfo.bin.Bin;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.api.basicInfo.bin.Wrh;
@@ -284,15 +285,21 @@ public class ReturnNtcBillServiceImpl extends BaseWMSService implements ReturnNt
     if (errorMsg.length() > 0)
       throw new WMSException(errorMsg.toString());
 
-    // String totalCaseQtyStr = BigDecimal.ZERO.toString();
     String realTotalCaseQrtStr = BigDecimal.ZERO.toString();
+    BigDecimal returnedAmount = bill.getTotalReturnedAmount();
     for (ReturnNtcBillItem item : bill.getItems()) {
+      if (returnInfo.containsKey(item.getUuid())) {
+        item.setRealQty(returnInfo.get(item.getUuid()));
+        item.setRealCaseQtyStr(QpcHelper.qtyToCaseQtyStr(item.getRealQty(), item.getQpcStr()));
+        realTotalCaseQrtStr = QpcHelper.caseQtyStrAdd(realTotalCaseQrtStr,
+            QpcHelper.qtyToCaseQtyStr(item.getRealQty(), item.getQpcStr()));
+        returnedAmount = returnedAmount.add(item.getRealQty().multiply(item.getPrice()));
+      }
       // QpcHelper.caseQtyStrAdd(totalCaseQtyStr,
       // QpcHelper.qtyToCaseQtyStr(item.getQty(), item.getQpcStr()));
-      realTotalCaseQrtStr = QpcHelper.caseQtyStrAdd(realTotalCaseQrtStr,
-          QpcHelper.qtyToCaseQtyStr(item.getRealQty(), item.getQpcStr()));
     }
     bill.setTotalReturnedCaseQtyStr(realTotalCaseQrtStr);
+    bill.setTotalReturnedAmount(returnedAmount);
     if (isReturned(bill) == false)
       bill.setState(ReturnNtcBillState.inProgress);
     else
@@ -300,6 +307,8 @@ public class ReturnNtcBillServiceImpl extends BaseWMSService implements ReturnNt
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
 
     dao.update(bill);
+    dao.removeItems(bill.getUuid());
+    dao.insertItems(bill.getItems());
 
     logger.injectContext(this, bill.getBillNumber(), ReturnNtcBill.class.getName(),
         ApplicationContextUtil.getOperateContext());
@@ -435,8 +444,10 @@ public class ReturnNtcBillServiceImpl extends BaseWMSService implements ReturnNt
       rtnItem.setReturnType(ReturnType.returnToSupplier);
       rtnItem.setSupplier(item.getSupplier());
       rtnItem.setContainerBarcode(Container.VIRTUALITY_CONTAINER);
-      rtnItem.setBinCode(binService
-          .getBinByWrhAndUsage(bill.getWrh().getUuid(), BinUsage.RtnReceiveTempBin).getCode());
+      Bin bin = binService.getBinByWrhAndUsage(bill.getWrh().getUuid(), BinUsage.RtnReceiveTempBin);
+      if (Objects.isNull(bin))
+        throw new WMSException("当前仓位下不存在退仓收货暂存位");
+      rtnItem.setBinCode(bin.getCode());
       Article article = articleService.get(item.getArticle().getUuid());
       boolean flag = DateCheckStandard.none.equals(article.getExpflag());
       rtnItem.setProductionDate(

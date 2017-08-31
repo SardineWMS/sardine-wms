@@ -16,7 +16,11 @@ import com.hd123.sardine.wms.common.dao.BaseDao;
  * @author fanqingqing
  *
  */
-public interface SupplierDao extends BaseDao<Supplier>{
+public interface SupplierDao extends BaseDao<Supplier> {
 
-    Supplier getByCode(String code);
+  Supplier getByCode(String code);
+
+  void saveStorageArea(String supplierUuid, String storageArea);
+
+  void removeStorageArea(String supplierUuid);
 }

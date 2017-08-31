@@ -28,19 +28,22 @@
 		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
 			jdbcType="VARCHAR" />
 		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+		<result column="storageArea" property="storageArea" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<select id="get" parameterType="String" resultMap="BaseResultMap">
 		select s.*
 		from db_proxy.sardine_supplier s
-		where s.uuid = #{uuid,jdbcType=VARCHAR}
+		where s.uuid =
+		#{uuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
 		select
 		s.*
 		from db_proxy.sardine_supplier s
-		where s.code = #{code,jdbcType=VARCHAR}
+		where s.code =
+		#{code,jdbcType=VARCHAR}
 		and
 		s.companyUuid=#{companyUuid,jdbcType=VARCHAR}
 	</select>
@@ -132,8 +135,11 @@
 
 	<select id="queryByPage" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
-		select s.*
+		select s.*,ss.storagearea storageArea
 		from db_proxy.sardine_supplier s
+		left join db_proxy.sardine_supplier_storagearea ss
+		on
+		s.uuid=ss.supplieruuid
 		where 1=1
 		<if test="code != null">
 			and s.code like CONCAT(CONCAT('%', #{code}),
@@ -156,4 +162,39 @@
 			order by s.name ${orderDir}
 		</if>
 	</select>
+
+	<insert id="insertStorageArea" parameterType="java.util.Map">
+		insert into db_proxy.sardine_supplier_storagearea
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="supplierUuid != null and supplierUuid != ''">
+				supplierUuid,
+			</if>
+			<if test="storageArea != null and storageArea != ''">
+				storageArea,
+			</if>
+			<if test="companyUuid != null and supplierUuid != ''">
+				companyUuid
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="supplierUuid != null and supplierUuid != ''">
+				#{supplierUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="storageArea != null and storageArea != ''">
+				#{storageArea,jdbcType=VARCHAR},
+			</if>
+			<if test="companyUuid != null and supplierUuid != ''">
+				#{companyUuid,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+
+	<delete id="removeStorageArea" parameterType="java.util.Map">
+		delete from
+		db_proxy.sardine_supplier_storagearea
+		where
+		supplieruuid=#{supplierUuid,jdbcType=VARCHAR}
+		and
+		companyuuid=#{companyUuid,jdbcType=VARCHAR}
+	</delete>
 </mapper>

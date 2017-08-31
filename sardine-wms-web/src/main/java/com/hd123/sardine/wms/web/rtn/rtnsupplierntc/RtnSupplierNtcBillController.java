@@ -83,6 +83,7 @@ public class RtnSupplierNtcBillController {
       definition.put(RtnSupplierNtcBillService.QUERY_SUPPLIERCODE_LIKE, supplierCode);
       definition.put(RtnSupplierNtcBillService.QUERY_SUPPLIERNAME_LIKE, supplierName);
       definition.put(RtnSupplierNtcBillService.QUERY_WRH_EQUALS, wrhCode);
+      definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<RtnSupplierNtcBill> result = service.query(definition);
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

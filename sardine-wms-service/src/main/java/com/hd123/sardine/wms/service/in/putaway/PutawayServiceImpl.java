@@ -10,8 +10,13 @@
 package com.hd123.sardine.wms.service.in.putaway;
 
 import java.math.BigDecimal;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
@@ -31,6 +36,10 @@ import com.hd123.sardine.wms.api.basicInfo.config.articleconfig.PickBinStockLimi
 import com.hd123.sardine.wms.api.basicInfo.config.categorystorageareaconfig.CategoryStorageAreaConfig;
 import com.hd123.sardine.wms.api.basicInfo.config.categorystorageareaconfig.CategoryStorageAreaConfigService;
 import com.hd123.sardine.wms.api.basicInfo.config.pickareastorageareaconfig.PickAreaStorageAreaConfigService;
+import com.hd123.sardine.wms.api.basicInfo.pickarea.PickArea;
+import com.hd123.sardine.wms.api.basicInfo.pickarea.PickAreaService;
+import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
+import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierService;
 import com.hd123.sardine.wms.api.in.putaway.PutawayService;
 import com.hd123.sardine.wms.api.stock.Stock;
 import com.hd123.sardine.wms.api.stock.StockFilter;
@@ -66,6 +75,12 @@ public class PutawayServiceImpl implements PutawayService {
 
   @Autowired
   private PickAreaStorageAreaConfigService pickAreaStorageAreaConfigService;
+
+  @Autowired
+  private SupplierService supplierService;
+
+  @Autowired
+  private PickAreaService pickAreaService;
 
   @Override
   public String fetchPutawayTargetBinByArticle(String articleUuid, BigDecimal qty)
@@ -233,4 +248,50 @@ public class PutawayServiceImpl implements PutawayService {
     }
     return totalQty;
   }
+
+  @Override
+  public String fetchRtnPutawayTargetBinBySupplier(String supplierUuid)
+      throws IllegalArgumentException, WMSException {
+    if (StringUtil.isNullOrBlank(supplierUuid))
+      return null;
+    Supplier supplier = supplierService.get(supplierUuid);
+    if (Objects.isNull(supplier))
+      throw new WMSException(MessageFormat.format("供应商{0}不存在", supplierUuid));
+    if (StringUtil.isNullOrBlank(supplier.getStorageArea()))
+      return null;
+    StockFilter filter = new StockFilter();
+    filter.setSupplierUuid(supplierUuid);
+    filter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+
+    PickArea pickArea = pickAreaService.getByStorageArea(supplier.getStorageArea());
+    if (Objects.isNull(pickArea) || StringUtil.isNullOrBlank(pickArea.getBinScope()))
+      return null;
+    List<String> binCodes = BinService.queryBinByScopeAndUsage(pickArea.getBinScope(),
+        BinUsage.SupplierStorageBin, null);
+    List<String> resultBinCodes = new ArrayList<>();
+    List<Stock> list = stockService.query(filter);
+    if (CollectionUtils.isEmpty(list) == false) {
+      for (Stock stock : list) {
+        String binCode = stock.getStockComponent().getBinCode();
+        if (binCodes.contains(binCode)) {
+          resultBinCodes.add(binCode);
+          continue;
+        }
+      }
+    } else {
+      resultBinCodes = binCodes;
+    }
+    if (CollectionUtils.isEmpty(resultBinCodes))
+      return null;
+    resultBinCodes.sort(new Comparator<String>() {
+
+      @Override
+      public int compare(String o1, String o2) {
+        return Integer.parseInt(o1) - Integer.parseInt(o2);
+      }
+    });
+
+    return resultBinCodes.get(0);
+  }
+
 }
