@@ -10,7 +10,9 @@
 package com.hd123.sardine.wms.web.inner.task;
 
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +31,14 @@ import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.task.TaskService;
 import com.hd123.sardine.wms.api.task.TaskState;
 import com.hd123.sardine.wms.api.task.TaskType;
+import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
@@ -73,6 +77,7 @@ public class TaskController extends BaseController {
           StringUtil.isNullOrBlank(taskType) ? null : TaskType.valueOf(taskType));
       definition.put(TaskService.QUERY_FIELD_STATE,
           StringUtil.isNullOrBlank(state) ? null : TaskState.valueOf(state));
+      definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<Task> result = taskService.query(definition);
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -89,11 +94,12 @@ public class TaskController extends BaseController {
     RespObject resp = new RespObject();
 
     try {
-//      StockFilter stockFilter = new StockFilter();
-//      stockFilter.setPageSize(0);
-//      stockFilter.setArticleCode(articleCode);
-//      List<StockExtendInfo> infos = stockService.queryStockExtendInfo(stockFilter);
-//      resp.setObj(infos);
+      // StockFilter stockFilter = new StockFilter();
+      // stockFilter.setPageSize(0);
+      // stockFilter.setArticleCode(articleCode);
+      // List<StockExtendInfo> infos =
+      // stockService.queryStockExtendInfo(stockFilter);
+      // resp.setObj(infos);
     } catch (Exception e) {
       return new ErrorRespObject("分页查询失败：" + e.getMessage());
     }
@@ -194,4 +200,26 @@ public class TaskController extends BaseController {
     }
     return resp;
   }
+
+  @RequestMapping(value = "/execute", method = RequestMethod.PUT)
+  public @ResponseBody RespObject execute(
+      @RequestParam(value = "uuid", required = true) String uuid,
+      @RequestParam(value = "version", required = true) long version) {
+    RespObject resp = new RespObject();
+    try {
+      Task task = taskService.get(uuid);
+      if (Objects.isNull(task))
+        throw new WMSException(MessageFormat.format("要执行的指令{0}不存在", uuid));
+      if (TaskType.Putaway.equals(task.getType()))
+        taskService.putaway(uuid, version, task.getToBinCode(), task.getToContainerBarcode());
+      if (TaskType.Move.equals(task.getType()))
+        taskService.move(uuid, version, task.getQty());
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+      return resp;
+    } catch (Exception e) {
+      return new ErrorRespObject("指令执行失败：" + e.getMessage());
+    }
+
+  }
+
 }

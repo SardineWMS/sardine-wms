@@ -518,5 +518,8 @@
 		<if test="operatorUuid != null and operatorUuid != ''">
 			and t.operatorUuid = #{operatorUuid, jdbcType=VARCHAR}
 		</if>
+		<if test="companyUuid != null and companyUuid != ''">
+			and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+		</if>
 	</select>
 </mapper>
