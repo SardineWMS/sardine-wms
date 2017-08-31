@@ -75,6 +75,7 @@ public class PickAreaController extends BaseController {
       @RequestParam(value = "token", required = true) String token, @RequestBody PickArea area) {
     RespObject resp = new RespObject();
     try {
+      area.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       String uuid = service.saveNew(area);
       resp.setObj(uuid);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
