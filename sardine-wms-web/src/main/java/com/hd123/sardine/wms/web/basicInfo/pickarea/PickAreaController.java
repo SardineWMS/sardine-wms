@@ -27,6 +27,7 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
@@ -57,6 +58,7 @@ public class PickAreaController extends BaseController {
       definition.setSortField(StringUtil.isNullOrBlank(sort) ? "code" : sort);
       definition.put(PickAreaService.QUERY_CODE_LIKE, code);
       definition.put(PickAreaService.QUERY_NAME_EQUALS, name);
+      definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<PickArea> qpr = service.query(definition);
       resp.setObj(qpr);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
