@@ -60,6 +60,7 @@ public class SerialArchController extends BaseController {
       @RequestParam(value = "token", required = true) String token, @RequestBody SerialArch arch) {
     RespObject resp = new RespObject();
     try {
+      arch.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       String uuid = service.saveNewSerialArch(arch);
       resp.setObj(uuid);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -93,6 +94,7 @@ public class SerialArchController extends BaseController {
       @RequestBody SerialArchLine line) {
     RespObject resp = new RespObject();
     try {
+      line.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       String uuid = service.saveNewSerialArchLine(line);
       resp.setObj(uuid);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
