@@ -207,7 +207,7 @@
 		</if>
 	</select>
 
-	<select id="getByStorageArea" parameterType="java.util.Map">
+	<select id="getByStorageArea" parameterType="java.util.Map" resultMap="BaseResultMap">
 		select t.* from
 		db_proxy.sardine_pickarea t where
 		t.companyUuid=#{companyUuid,jdbcType=VARCHAR}

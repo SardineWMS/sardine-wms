@@ -32,16 +32,21 @@
 	</resultMap>
 
 	<select id="get" parameterType="String" resultMap="BaseResultMap">
-		select s.*
-		from db_proxy.sardine_supplier s
-		where s.uuid =
+		select
+		s.*,ss.storageArea storageArea
+		from db_proxy.sardine_supplier s left
+		join db_proxy.sardine_supplier_storagearea ss
+		on s.uuid=ss.supplieruuid
+		where
+		s.uuid =
 		#{uuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
 		select
 		s.*
-		from db_proxy.sardine_supplier s
+		from db_proxy.sardine_supplier s left join db_proxy.sardine_supplier_storagearea ss
+		on s.uuid=ss.supplieruuid
 		where s.code =
 		#{code,jdbcType=VARCHAR}
 		and

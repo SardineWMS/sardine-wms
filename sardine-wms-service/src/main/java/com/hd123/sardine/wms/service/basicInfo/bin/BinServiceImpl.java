@@ -347,7 +347,7 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
     if (StringUtil.isNullOrBlank(binScope))
       return null;
 
-    String sql = ScopeUtils.scopeExpToSQLExp("u", binScope);
+    String sql = ScopeUtils.scopeExpToSQLExp("code", binScope);
     return binDao.queryBincodesByScope(sql, usage, state);
   }
 

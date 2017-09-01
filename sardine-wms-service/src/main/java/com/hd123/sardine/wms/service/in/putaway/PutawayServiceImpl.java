@@ -110,6 +110,7 @@ public class PutawayServiceImpl implements PutawayService {
     StockFilter stockFilter = new StockFilter();
     stockFilter.setContainerBarcode(containerBarcode);
     stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    stockFilter.setPageSize(0);
     List<Stock> stocks = stockService.query(stockFilter);
     if (stocks.isEmpty())
       return null;
@@ -262,7 +263,7 @@ public class PutawayServiceImpl implements PutawayService {
     StockFilter filter = new StockFilter();
     filter.setSupplierUuid(supplierUuid);
     filter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-
+    filter.setPageSize(0);
     PickArea pickArea = pickAreaService.getByStorageArea(supplier.getStorageArea());
     if (Objects.isNull(pickArea) || StringUtil.isNullOrBlank(pickArea.getBinScope()))
       return null;
@@ -278,6 +279,8 @@ public class PutawayServiceImpl implements PutawayService {
           continue;
         }
       }
+      if (CollectionUtils.isEmpty(resultBinCodes))
+        resultBinCodes = binCodes;
     } else {
       resultBinCodes = binCodes;
     }

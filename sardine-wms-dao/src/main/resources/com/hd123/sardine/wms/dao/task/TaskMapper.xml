@@ -528,5 +528,8 @@
 			#{articleCode,jdbcType=VARCHAR}),
 			'%')
 		</if>
+		<if test="companyUuid != null and companyUuid != ''">
+			and companyUuid=#{companyUuid,jdbcType=VARCHAR}
+		</if>
 	</select>
 </mapper>

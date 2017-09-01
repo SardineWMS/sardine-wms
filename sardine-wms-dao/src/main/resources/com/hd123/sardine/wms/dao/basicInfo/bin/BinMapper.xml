@@ -38,13 +38,13 @@
 	</select>
 	
 	<select id="queryBincodesByScope" parameterType="map" resultType="java.lang.String">
-		select u.*
+		select u.code
 		from db_proxy.sardine_bin u
 		where ${sql}
 		and
 		u.companyuuid = #{companyUuid,jdbcType=VARCHAR}
 		<if test="binUsage != null and binUsage != ''">
-		  and u.usage = #{binUsage, jdbcType=VARCHAR}
+		  and u.binusage = #{binUsage, jdbcType=VARCHAR}
 		</if>
 		<if test="state != null and state != ''">
 		  and u.state = #{state, jdbcType=VARCHAR}

@@ -232,10 +232,15 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
         errorMsg.append(MessageFormat.format("第{0}行的通知单明细不存在", item.getLine()));
         continue;
       }
-      if (bin.getCode().equals(item.getBinCode()) == false) {
-        errorMsg.append(MessageFormat.format("第{0}行的货位，不是当前仓位下的退仓收货暂存位", item.getLine()));
-        continue;
-      }
+      Bin supplierStorageBin = binService.getBinByCode(item.getBinCode());
+      if (Objects.isNull(supplierStorageBin))
+        throw new WMSException(MessageFormat.format("货位{0}不存在", item.getBinCode()));
+      if (ReturnType.returnToSupplier.equals(item.getReturnType())
+          && BinUsage.RtnReceiveTempBin.equals(supplierStorageBin.getUsage()) == false)
+        errorMsg.append(MessageFormat.format("货位{0}用途不是退仓收货暂存位", item.getBinCode()));
+      if (ReturnType.goodReturn.equals(item.getReturnType())
+          && BinUsage.ReceiveStorageBin.equals(supplierStorageBin.getUsage()) == false)
+        errorMsg.append(MessageFormat.format("货位{0}用途不是收货暂存位", item.getBinCode()));
       if (item.getQty().compareTo(ntcBillItem.getQty().subtract(ntcBillItem.getRealQty())) > 0) {
         errorMsg.append(MessageFormat.format("第{0}行中，退仓数量，不能大于可退数量", item.getLine()));
         continue;
@@ -387,9 +392,8 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
       task.setSupplier(item.getSupplier());
       task.setTaskType(TaskType.Putaway);
       task.setValidDate(item.getValidDate());
-      task.setToContainerBarcode(item.getContainerBarcode());
-      task.setToBinCode(ReturnType.goodReturn.equals(item.getReturnType())
-          ? putawayService.fetchPutawayTargetBinByContainer(item.getContainerBarcode()) : "-");// TODO
+      task.setToContainerBarcode(Container.VIRTUALITY_CONTAINER);
+//      task.setToBinCode(item.getBinCode());// TODO
       task.setType(OperateMode.ManualBill);
       task.setTaskGroupNumber(item.getContainerBarcode());
       tasks.add(task);
