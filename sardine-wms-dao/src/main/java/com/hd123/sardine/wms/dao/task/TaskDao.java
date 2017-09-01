@@ -13,6 +13,7 @@ import java.util.List;
 
 import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.task.TaskStockItem;
+import com.hd123.sardine.wms.api.task.TaskView;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 
 /**
@@ -27,7 +28,7 @@ public interface TaskDao {
 
   Task get(String uuid);
 
-  List<Task> query(PageQueryDefinition definition);
+  List<TaskView> query(PageQueryDefinition definition);
   
   void insertItem(TaskStockItem stockItem);
 }

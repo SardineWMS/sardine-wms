@@ -17,6 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
+import com.hd123.sardine.wms.api.out.rpl.RplBill;
+import com.hd123.sardine.wms.api.out.rpl.RplBillService;
 import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.task.TaskService;
 import com.hd123.sardine.wms.api.task.TaskState;
@@ -42,181 +46,189 @@ import com.hd123.sardine.wms.service.log.EntityLogger;
  */
 public class TaskServiceImpl extends BaseWMSService implements TaskService {
 
-  @Autowired
-  private TaskDao taskDao;
+    @Autowired
+    private TaskDao taskDao;
 
-  @Autowired
-  private TaskVerifier taskVerifier;
+    @Autowired
+    private TaskVerifier taskVerifier;
 
-  @Autowired
-  private TaskHandler taskHandler;
+    @Autowired
+    private TaskHandler taskHandler;
 
-  @Autowired
-  private EntityLogger logger;
+    @Autowired
+    private EntityLogger logger;
 
-  @Override
-  public void insert(List<Task> tasks)
-      throws IllegalArgumentException, VersionConflictException, WMSException {
-    Assert.assertArgumentNotNull(tasks, "tasks");
+    @Autowired
+    private PickUpBillService pickUpBillService;
 
-    if (tasks.isEmpty())
-      return;
+    @Autowired
+    private RplBillService rplBillService;
 
-    for (Task task : tasks) {
-      taskVerifier.verifySourceStock(task);
+    @Override
+    public void insert(List<Task> tasks)
+            throws IllegalArgumentException, VersionConflictException, WMSException {
+        Assert.assertArgumentNotNull(tasks, "tasks");
 
-      task.setUuid(UUIDGenerator.genUUID());
-      task.setTaskNo(billNumberGenerator.allocateNextBillNumber(task.getTaskType().name()));
-      task.setCreator(ApplicationContextUtil.getLoginUser());
-      task.setCreateTime(new Date());
-      task.setState(TaskState.Initial);
-      taskDao.insert(task);
+        if (tasks.isEmpty())
+            return;
 
-      taskHandler.lockStock(task);
+        for (Task task : tasks) {
+            taskVerifier.verifySourceStock(task);
 
-      logger.injectContext(this, task.getUuid(), Task.class.getName(),
-          ApplicationContextUtil.getOperateContext());
-      logger.log(EntityLogger.EVENT_ADDNEW, "新增" + task.getTaskType().getCaption());
+            task.setUuid(UUIDGenerator.genUUID());
+            task.setTaskNo(billNumberGenerator.allocateNextBillNumber(task.getTaskType().name()));
+            task.setCreator(ApplicationContextUtil.getLoginUser());
+            task.setCreateTime(new Date());
+            task.setState(TaskState.Initial);
+            taskDao.insert(task);
+
+            taskHandler.lockStock(task);
+
+            logger.injectContext(this, task.getUuid(), Task.class.getName(),
+                    ApplicationContextUtil.getOperateContext());
+            logger.log(EntityLogger.EVENT_ADDNEW, "新增" + task.getTaskType().getCaption());
+        }
     }
-  }
 
-  @Override
-  public void abort(String uuid, long version)
-      throws IllegalArgumentException, VersionConflictException, WMSException {
-    Assert.assertArgumentNotNull(uuid, "uuid");
+    @Override
+    public void abort(String uuid, long version)
+            throws IllegalArgumentException, VersionConflictException, WMSException {
+        Assert.assertArgumentNotNull(uuid, "uuid");
 
-    Task task = taskDao.get(uuid);
-    if (task == null)
-      throw new WMSException("作废的指令不存在！");
-    PersistenceUtils.checkVersion(version, task, "指令", task.getTaskNo());
+        PickUpBill pickUpBill = pickUpBillService.get(uuid);
+        if (pickUpBill != null)
+            throw new WMSException("拣货指令不能作废！");
+        RplBill rplBill = rplBillService.get(uuid);
+        if (rplBill != null)
+            throw new WMSException("补货指令不能作废！");
+        Task task = taskDao.get(uuid);
+        if (task == null)
+            throw new WMSException("作废的指令不存在！");
+        PersistenceUtils.checkVersion(version, task, "指令", task.getTaskNo());
+        if (task.getTaskType().equals(TaskType.Putaway)
+                || task.getTaskType().equals(TaskType.RtnPutaway))
+            throw new WMSException("上架或者退仓上架指令不能作废！");
+        if (TaskState.Initial.equals(task) == false)
+            throw new WMSException("当前状态的指令不能作废");
 
-    if (task.getTaskType().equals(TaskType.Putaway)
-        || task.getTaskType().equals(TaskType.RtnPutaway))
-      throw new WMSException("上架或者退仓上架指令不能作废！");
+        task.setState(TaskState.Aborted);
+        task.setOperator(ApplicationContextUtil.getLoginUser());
+        task.setBeginOperateTime(new Date());
+        task.setEndOperateTime(new Date());
+        taskDao.update(task);
 
-    task.setState(TaskState.Aborted);
-    task.setOperator(ApplicationContextUtil.getLoginUser());
-    task.setBeginOperateTime(new Date());
-    task.setEndOperateTime(new Date());
-    taskDao.update(task);
+        taskHandler.releaseStock(task);
 
-    taskHandler.releaseStock(task);
+        logger.injectContext(this, uuid, Task.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ABORT, "作废" + task.getTaskType().getCaption());
+    }
 
-    logger.injectContext(this, uuid, Task.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ABORT, "作废" + task.getTaskType().getCaption());
-  }
+    @Override
+    public void putaway(String uuid, long version, String toBinCode, String toContainerBarcode)
+            throws IllegalArgumentException, VersionConflictException, WMSException {
+        Assert.assertArgumentNotNull(uuid, "uuid");
 
-  @Override
-  public void putaway(String uuid, long version, String toBinCode, String toContainerBarcode)
-      throws IllegalArgumentException, VersionConflictException, WMSException {
-    Assert.assertArgumentNotNull(uuid, "uuid");
+        Task task = taskDao.get(uuid);
+        if (task == null || (TaskType.RtnPutaway.equals(task.getTaskType()) == false
+                && TaskType.Putaway.equals(task.getTaskType())) == false)
+            throw new WMSException("指定的指令不存在或不是" + TaskType.RtnPutaway.getCaption() + "、"
+                    + TaskType.Putaway.getCaption());
+        PersistenceUtils.checkVersion(version, task, "指令", task.getTaskNo());
+        taskVerifier.verifyAndRefreshPutawayTask(task, toBinCode, toContainerBarcode);
 
-    Task task = taskDao.get(uuid);
-    if (task == null)
-      throw new WMSException("指定的指令不存在！");
-    PersistenceUtils.checkVersion(version, task, "指令", task.getTaskNo());
+        task.setState(TaskState.Finished);
+        task.setOperator(ApplicationContextUtil.getLoginUser());
+        task.setRealQty(task.getQty());
+        task.setRealCaseQtyStr(task.getCaseQtyStr());
+        task.setEndOperateTime(new Date());
+        task.setType(OperateMode.ManualBill);
+        taskDao.update(task);
 
-    taskVerifier.verifyAndRefreshPutawayTask(task, toBinCode, toContainerBarcode);
+        taskHandler.shiftStock(task);
+        taskHandler.manageBinAndContainer(task);
 
-    task.setState(TaskState.Finished);
-    task.setOperator(ApplicationContextUtil.getLoginUser());
-    task.setRealQty(task.getQty());
-    task.setRealCaseQtyStr(task.getCaseQtyStr());
-    task.setEndOperateTime(new Date());
-    task.setType(OperateMode.ManualBill);
-    taskDao.update(task);
+        logger.injectContext(this, uuid, Task.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "执行上架指令");
+    }
 
-    taskHandler.shiftStock(task);
-    taskHandler.manageBinAndContainer(task);
+    @Override
+    public PageQueryResult<TaskView> query(PageQueryDefinition definition) {
+        Assert.assertArgumentNotNull(definition, "definition");
 
-    logger.injectContext(this, uuid, Task.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ADDNEW, "执行上架指令");
-  }
+        PageQueryResult<TaskView> pgr = new PageQueryResult<TaskView>();
+        List<TaskView> list = taskDao.query(definition);
+        PageQueryUtil.assignPageInfo(pgr, definition);
+        pgr.setRecords(list);
+        return pgr;
+    }
 
-  @Override
-  public PageQueryResult<Task> query(PageQueryDefinition definition) {
-    Assert.assertArgumentNotNull(definition, "definition");
+    @Override
+    public void move(String uuid, long version, BigDecimal qty) {
 
-    PageQueryResult<Task> pgr = new PageQueryResult<Task>();
-    List<Task> list = taskDao.query(definition);
-    PageQueryUtil.assignPageInfo(pgr, definition);
-    pgr.setRecords(list);
-    return pgr;
-  }
+    }
 
-  @Override
-  public void move(String uuid, long version, BigDecimal qty) {
+    @Override
+    public void rpl(String uuid, long version) throws WMSException {
+        Assert.assertArgumentNotNull(uuid, "uuid");
 
-  }
+        Task task = taskDao.get(uuid);
+        if (task == null)
+            throw new WMSException("指定的指令不存在！");
+        PersistenceUtils.checkVersion(version, task, "指令", task.getTaskNo());
 
-  @Override
-  public void rpl(String uuid, long version) throws WMSException {
-    Assert.assertArgumentNotNull(uuid, "uuid");
+        taskVerifier.verifyAndRefreshTaskState(task);
 
-    Task task = taskDao.get(uuid);
-    if (task == null)
-      throw new WMSException("指定的指令不存在！");
-    PersistenceUtils.checkVersion(version, task, "指令", task.getTaskNo());
+        task.setState(TaskState.Finished);
+        task.setOperator(ApplicationContextUtil.getLoginUser());
+        task.setRealQty(task.getQty());
+        task.setRealCaseQtyStr(task.getCaseQtyStr());
+        task.setEndOperateTime(new Date());
+        taskDao.update(task);
 
-    taskVerifier.verifyAndRefreshTaskState(task);
+        taskHandler.shiftStock(task);
+        taskHandler.manageBinAndContainer(task);
 
-    task.setState(TaskState.Finished);
-    task.setOperator(ApplicationContextUtil.getLoginUser());
-    task.setRealQty(task.getQty());
-    task.setRealCaseQtyStr(task.getCaseQtyStr());
-    task.setEndOperateTime(new Date());
-    taskDao.update(task);
+        logger.injectContext(this, uuid, Task.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "执行上架指令");
+    }
 
-    taskHandler.shiftStock(task);
-    taskHandler.manageBinAndContainer(task);
+    @Override
+    public void rtnShelf(String uuid, long version, String binCode, String containerBarcode,
+            BigDecimal qty) throws WMSException {
+        Assert.assertArgumentNotNull(uuid, "uuid");
 
-    logger.injectContext(this, uuid, Task.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ADDNEW, "执行上架指令");
-  }
+        Task task = taskDao.get(uuid);
+        if (task == null)
+            throw new WMSException("指定的指令不存在！");
+        PersistenceUtils.checkVersion(version, task, "指令", task.getTaskNo());
 
-  @Override
-  public void rtnShelf(String uuid, long version, String binCode, String containerBarcode,
-      BigDecimal qty) throws WMSException {
-    Assert.assertArgumentNotNull(uuid, "uuid");
+        taskVerifier.verifyAndRefreshUnShelveTask(task, binCode, containerBarcode);
 
-    Task task = taskDao.get(uuid);
-    if (task == null)
-      throw new WMSException("指定的指令不存在！");
-    PersistenceUtils.checkVersion(version, task, "指令", task.getTaskNo());
+        task.setState(TaskState.Finished);
+        task.setOperator(ApplicationContextUtil.getLoginUser());
+        if (qty != null)
+            task.setRealQty(qty);
+        else
+            task.setRealQty(qty);
+        task.setRealCaseQtyStr(QpcHelper.qtyToCaseQtyStr(task.getRealQty(), task.getQpcStr()));
+        task.setEndOperateTime(new Date());
+        taskDao.update(task);
 
-    taskVerifier.verifyAndRefreshUnShelveTask(task, binCode, containerBarcode);
+        taskHandler.shiftStock(task);
+        taskHandler.manageBinAndContainer(task);
 
-    task.setState(TaskState.Finished);
-    task.setOperator(ApplicationContextUtil.getLoginUser());
-    if (qty != null)
-      task.setRealQty(qty);
-    else
-      task.setRealQty(qty);
-    task.setRealCaseQtyStr(QpcHelper.qtyToCaseQtyStr(task.getRealQty(), task.getQpcStr()));
-    task.setEndOperateTime(new Date());
-    taskDao.update(task);
+        logger.injectContext(this, uuid, Task.class.getName(),
+                ApplicationContextUtil.getOperateContext());
+        logger.log(EntityLogger.EVENT_ADDNEW, "执行上架指令");
+    }
 
-    taskHandler.shiftStock(task);
-    taskHandler.manageBinAndContainer(task);
-
-    logger.injectContext(this, uuid, Task.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ADDNEW, "执行上架指令");
-  }
-
-  @Override
-  public PageQueryResult<TaskView> query() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public Task get(String uuid) {
-    if (StringUtil.isNullOrBlank(uuid))
-      return null;
-    return taskDao.get(uuid);
-  }
+    @Override
+    public Task get(String uuid) {
+        if (StringUtil.isNullOrBlank(uuid))
+            return null;
+        return taskDao.get(uuid);
+    }
 }

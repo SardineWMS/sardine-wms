@@ -12,7 +12,8 @@
 		<result column="articleSpec" property="articleSpec" jdbcType="VARCHAR" />
 		<result column="munit" property="munit" jdbcType="VARCHAR" />
 		<result column="state" property="state" jdbcType="VARCHAR" />
-		<result column="productionBatch" property="productionBatch" jdbcType="VARCHAR" />
+		<result column="productionBatch" property="productionBatch"
+			jdbcType="VARCHAR" />
 		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
 		<result column="qty" property="qty" jdbcType="DECIMAL" />
 		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
@@ -59,6 +60,40 @@
 			jdbcType="TIMESTAMP" />
 		<result column="version" property="version" jdbcType="LONGVARCHAR" />
 		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="TaskViewMap" type="TaskView">
+		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="version" property="version" jdbcType="LONGVARCHAR" />
+		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
+		<result column="billNumber" property="billNumber" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="VARCHAR" />
+		<result column="owner" property="owner" jdbcType="VARCHAR" />
+		<result column="articleUuid" property="article.uuid" jdbcType="VARCHAR" />
+		<result column="articlecode" property="article.code" jdbcType="VARCHAR" />
+		<result column="articlename" property="article.name" jdbcType="VARCHAR" />
+		<result column="articleSpec" property="articleSpec" jdbcType="VARCHAR" />
+		<result column="munit" property="munit" jdbcType="VARCHAR" />
+		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
+		<result column="qty" property="qty" jdbcType="DECIMAL" />
+		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
+		<result column="realQty" property="realQty" jdbcType="DECIMAL" />
+		<result column="realCaseQtyStr" property="realCaseQtyStr"
+			jdbcType="VARCHAR" />
+		<result column="fromBinCode" property="fromBinCode" jdbcType="VARCHAR" />
+		<result column="fromContainerBarcode" property="fromContainerBarcode"
+			jdbcType="VARCHAR" />
+		<result column="toBinCode" property="toBinCode" jdbcType="VARCHAR" />
+		<result column="toContainerBarcode" property="toContainerBarcode"
+			jdbcType="VARCHAR" />
+		<result column="sourceBillType" property="sourceBill.billType"
+			jdbcType="VARCHAR" />
+		<result column="sourceBillNumber" property="sourceBill.billNumber"
+			jdbcType="VARCHAR" />
+		<result column="sourceBillUuid" property="sourceBill.billUuid"
+			jdbcType="VARCHAR" />
+		<result column="operator" property="operator" jdbcType="VARCHAR" />
+		<result column="operateTime" property="operateTime" jdbcType="TIMESTAMP" />
 	</resultMap>
 
 	<insert id="insert" parameterType="Task">
@@ -320,7 +355,7 @@
 			</if>
 		</trim>
 	</insert>
-	
+
 	<insert id="insertItem" parameterType="TaskStockItem">
 		insert into db_proxy.sardine_taskItem
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -469,57 +504,29 @@
 	</update>
 
 	<select id="get" parameterType="java.util.Map" resultMap="BaseResultMap">
-		select t.* from
+		select
+		t.* from
 		db_proxy.sardine_task t
-		where t.uuid = #{uuid, jdbcType=VARCHAR}
+		where t.uuid = #{uuid,
+		jdbcType=VARCHAR}
 	</select>
 
 	<select id="queryByList" parameterType="PageQueryDefinition"
-		resultMap="BaseResultMap">
+		resultMap="TaskViewMap">
 		select t.* from
-		db_proxy.sardine_task t
+		db_proxy.sardine_task_view t
 		where 1=1
-		<if test="taskNoLike != null and taskNoLike != ''">
-			and t.taskNo = #{taskNoLike, jdbcType=VARCHAR}
-		</if>
-		<if test="type != null and type != ''">
-			and t.type = #{type, jdbcType=VARCHAR}
-		</if>
-		<if test="state != null">
-			and t.state = #{state, jdbcType=VARCHAR}
-		</if>
-		<if test="articleUuid != null and articleUuid != ''">
-			and t.articleUuid = #{articleUuid, jdbcType=VARCHAR}
+		<if test="states != null and states.size > 0">
+			and t.state in
+			<foreach collection="states" item="item" index="index" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
 		</if>
 		<if test="articleCode != null and articleCode != ''">
-			and t.articleCode = #{articleCode, jdbcType=VARCHAR}
-		</if>
-		<if test="fromBinCode != null">
-			and t.fromBinCode = #{fromBinCode, jdbcType=VARCHAR}
-		</if>
-		<if test="toBinCode != null">
-			and t.toBinCode = #{toBinCode, jdbcType=VARCHAR}
-		</if>
-		<if test="fromContainerBarcode != null">
-			and t.fromContainerBarcode = #{fromContainerBarcode, jdbcType=VARCHAR}
-		</if>
-		<if test="toContainerBarcode != null">
-			and t.toContainerBarcode = #{toContainerBarcode, jdbcType=VARCHAR}
-		</if>
-		<if test="supplierUuid != null and supplierUuid != ''">
-			and t.supplierUuid = #{supplierUuid, jdbcType=VARCHAR}
-		</if>
-		<if test="qpcStr != null and qpcStr != ''">
-			and t.qpcStr = #{qpcStr, jdbcType=VARCHAR}
-		</if>
-		<if test="creatorUuid != null">
-		    and t.creatorUuid = #{creatorUuid, jdbcType=VARCHAR}
-		</if>
-		<if test="operatorUuid != null and operatorUuid != ''">
-			and t.operatorUuid = #{operatorUuid, jdbcType=VARCHAR}
-		</if>
-		<if test="companyUuid != null and companyUuid != ''">
-			and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+			and t.articleCode like CONCAT(CONCAT('%',
+			#{articleCode,jdbcType=VARCHAR}),
+			'%')
 		</if>
 	</select>
 </mapper>

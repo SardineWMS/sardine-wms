@@ -142,7 +142,7 @@ public class TaskHandler {
       shiftRule.setSupplierUuid(task.getSupplier().getUuid());
       shiftRule.setQty(task.getQty());
       shiftRule.setState(StockState.locked);
-      shiftRule.setOperateBillUuid(task.getUuid());
+    //  shiftRule.setOperateBillUuid(task.getUuid());
       stockService.changeState(sourceBill, Arrays.asList(shiftRule), StockState.locked,
           StockState.normal);
     } else {
@@ -184,7 +184,7 @@ public class TaskHandler {
     shiftRule.setBinCode(task.getFromBinCode());
     shiftRule.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     shiftRule.setContainerBarcode(task.getFromContainerBarcode());
-    shiftRule.setOperateBillUuid(task.getUuid());
+  //  shiftRule.setOperateBillUuid(task.getUuid());
     shiftRule.setOwner(task.getOwner());
     shiftRule.setProductionBatch(stockBatchUtils.genProductionBatch(task.getProductionDate()));
     shiftRule.setQpcStr(task.getQpcStr());

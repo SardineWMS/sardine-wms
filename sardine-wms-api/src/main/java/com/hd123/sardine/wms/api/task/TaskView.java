@@ -12,9 +12,9 @@ package com.hd123.sardine.wms.api.task;
 import java.math.BigDecimal;
 import java.sql.Date;
 
-import com.hd123.sardine.wms.common.entity.Entity;
 import com.hd123.sardine.wms.common.entity.SourceBill;
 import com.hd123.sardine.wms.common.entity.UCN;
+import com.hd123.sardine.wms.common.entity.VersionedEntity;
 
 /**
  * 指令视图
@@ -24,7 +24,7 @@ import com.hd123.sardine.wms.common.entity.UCN;
  * @author zhangsai
  *
  */
-public class TaskView extends Entity {
+public class TaskView extends VersionedEntity {
   private static final long serialVersionUID = -4383562195138151127L;
 
   private String billNumber;

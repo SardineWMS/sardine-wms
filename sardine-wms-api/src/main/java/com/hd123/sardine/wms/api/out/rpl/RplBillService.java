@@ -99,5 +99,5 @@ public interface RplBillService {
    *          补货人，为空时取当前登录人
    * @throws WMSException
    */
-  void rpl(List<String> rplItemUuids, UCN rpler) throws WMSException;
+  void rpl(String rplBillUuid, long version,UCN rpler) throws WMSException;
 }

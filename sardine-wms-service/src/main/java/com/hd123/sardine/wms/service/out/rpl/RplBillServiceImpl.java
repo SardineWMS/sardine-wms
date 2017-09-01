@@ -19,10 +19,12 @@ import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.out.rpl.RplBill;
 import com.hd123.sardine.wms.api.out.rpl.RplBillItem;
 import com.hd123.sardine.wms.api.out.rpl.RplBillService;
+import com.hd123.sardine.wms.api.out.rpl.RplBillState;
 import com.hd123.sardine.wms.api.task.TaskView;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
+import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.out.rpl.RplBillDao;
 import com.hd123.sardine.wms.dao.out.rpl.RplBillItemDao;
@@ -34,95 +36,125 @@ import com.hd123.sardine.wms.service.ia.BaseWMSService;
  */
 public class RplBillServiceImpl extends BaseWMSService implements RplBillService {
 
-  @Autowired
-  private RplBillDao rplBillDao;
+    @Autowired
+    private RplBillDao rplBillDao;
 
-  @Autowired
-  private RplBillItemDao rplBillItemDao;
+    @Autowired
+    private RplBillItemDao rplBillItemDao;
 
-  @Override
-  public void saveNew(RplBill rplBill) throws WMSException {
-    Assert.assertArgumentNotNull(rplBill, "rplBill");
+    @Autowired
+    private RplBillHandler rplBillHandler;
 
-    rplBill.validate();
+    @Override
+    public void saveNew(RplBill rplBill) throws WMSException {
+        Assert.assertArgumentNotNull(rplBill, "rplBill");
 
-    rplBill.setUuid(UUIDGenerator.genUUID());
-    rplBill
-        .setBillNumber(billNumberGenerator.allocateNextBillNumber(RplBill.class.getSimpleName()));
-    rplBill.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-    rplBill.setCreateInfo(ApplicationContextUtil.getOperateInfo());
-    rplBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+        rplBill.validate();
 
-    for (int i = 0; i < rplBill.getItems().size(); i++) {
-      RplBillItem item = rplBill.getItems().get(i);
-      item.setUuid(UUIDGenerator.genUUID());
-      item.setLine(i + 1);
-      item.setRplUuid(rplBill.getUuid());
+        rplBill.setUuid(UUIDGenerator.genUUID());
+        rplBill.setBillNumber(
+                billNumberGenerator.allocateNextBillNumber(RplBill.class.getSimpleName()));
+        rplBill.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+        rplBill.setCreateInfo(ApplicationContextUtil.getOperateInfo());
+        rplBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+
+        for (int i = 0; i < rplBill.getItems().size(); i++) {
+            RplBillItem item = rplBill.getItems().get(i);
+            item.setUuid(UUIDGenerator.genUUID());
+            item.setLine(i + 1);
+            item.setRplUuid(rplBill.getUuid());
+        }
+
+        rplBillDao.saveNew(rplBill);
+        rplBillItemDao.saveNew(rplBill.getItems());
     }
 
-    rplBillDao.saveNew(rplBill);
-    rplBillItemDao.saveNew(rplBill.getItems());
-  }
+    @Override
+    public RplBill get(String uuid) {
+        if (StringUtil.isNullOrBlank(uuid))
+            return null;
 
-  @Override
-  public RplBill get(String uuid) {
-    if (StringUtil.isNullOrBlank(uuid))
-      return null;
+        RplBill rplBill = rplBillDao.get(uuid);
+        if (rplBill == null)
+            return null;
 
-    RplBill rplBill = rplBillDao.get(uuid);
-    if (rplBill == null)
-      return null;
+        rplBill.setItems(rplBillItemDao.queryByRplUuid(rplBill.getUuid()));
+        return rplBill;
+    }
 
-    rplBill.setItems(rplBillItemDao.queryByRplUuid(rplBill.getUuid()));
-    return rplBill;
-  }
+    @Override
+    public RplBill getByBillNumber(String billNumber) {
+        if (StringUtil.isNullOrBlank(billNumber))
+            return null;
 
-  @Override
-  public RplBill getByBillNumber(String billNumber) {
-    if (StringUtil.isNullOrBlank(billNumber))
-      return null;
+        RplBill rplBill = rplBillDao.getByBillNumber(billNumber);
+        if (rplBill == null)
+            return null;
 
-    RplBill rplBill = rplBillDao.getByBillNumber(billNumber);
-    if (rplBill == null)
-      return null;
+        rplBill.setItems(rplBillItemDao.queryByRplUuid(rplBill.getUuid()));
+        return rplBill;
+    }
 
-    rplBill.setItems(rplBillItemDao.queryByRplUuid(rplBill.getUuid()));
-    return rplBill;
-  }
+    @Override
+    public void approveByWaveBillNumber(String waveBillNumber) {
+        if (StringUtil.isNullOrBlank(waveBillNumber))
+            return;
 
-  @Override
-  public void approveByWaveBillNumber(String waveBillNumber) {
-    if (StringUtil.isNullOrBlank(waveBillNumber))
-      return;
+        rplBillDao.approve(waveBillNumber);
+    }
 
-    rplBillDao.approve(waveBillNumber);
-  }
+    @Override
+    public List<TaskView> queryByWaveBillNumber(String waveBillNumber) {
+        if (StringUtil.isNullOrBlank(waveBillNumber))
+            return new ArrayList<TaskView>();
+        return rplBillDao.queryByWaveBillNumber(waveBillNumber);
+    }
 
-  @Override
-  public List<TaskView> queryByWaveBillNumber(String waveBillNumber) {
-    if (StringUtil.isNullOrBlank(waveBillNumber))
-      return new ArrayList<TaskView>();
-    return rplBillDao.queryByWaveBillNumber(waveBillNumber);
-  }
+    @Override
+    public List<RplBillItem> queryRplItems(String waveBillNumber) {
+        if (StringUtil.isNullOrBlank(waveBillNumber))
+            return new ArrayList<RplBillItem>();
+        return rplBillItemDao.queryRplItems(waveBillNumber);
+    }
 
-  @Override
-  public List<RplBillItem> queryRplItems(String waveBillNumber) {
-    if (StringUtil.isNullOrBlank(waveBillNumber))
-      return new ArrayList<RplBillItem>();
-    return rplBillItemDao.queryRplItems(waveBillNumber);
-  }
+    @Override
+    public void removeByWaveBillNumber(String waveBillNumber) {
+        if (StringUtil.isNullOrBlank(waveBillNumber))
+            return;
 
-  @Override
-  public void removeByWaveBillNumber(String waveBillNumber) {
-    if (StringUtil.isNullOrBlank(waveBillNumber))
-      return;
+        rplBillItemDao.removeByWaveBillNumber(waveBillNumber);
+        rplBillDao.removeByWaveBillNumber(waveBillNumber);
+    }
 
-    rplBillItemDao.removeByWaveBillNumber(waveBillNumber);
-    rplBillDao.removeByWaveBillNumber(waveBillNumber);
-  }
+    @Override
+    public void rpl(String rplBillUuid, long version, UCN rpler) throws WMSException {
+        Assert.assertArgumentNotNull(rplBillUuid, "rplBillUuid");
+        Assert.assertArgumentNotNull(version, "version");
 
-  @Override
-  public void rpl(List<String> rplItemUuids, UCN rpler) throws WMSException {
-    
-  }
+        RplBill bill = rplBillDao.get(rplBillUuid);
+        if (bill == null)
+            throw new WMSException("补货指令不存在");
+        PersistenceUtils.checkVersion(version, bill, RplBill.CAPTION, rplBillUuid);
+        if (RplBillState.approved.equals(bill.getState()) == false)
+            throw new WMSException("补货指令对应的补货单状态不是" + RplBillState.approved.getCaption() + "。");
+
+        List<RplBillItem> items = rplBillItemDao.queryByRplUuid(bill.getUuid());
+        for (RplBillItem item : items) {
+            item.setRealQty(item.getQty());
+            item.setRealCaseQtyStr(item.getCaseQtyStr());
+            rplBillItemDao.saveModify(item);
+        }
+        bill.setItems(items);
+        bill.setState(RplBillState.audited);
+        bill.setRpler(rpler == null
+                ? new UCN(ApplicationContextUtil.getOperateInfo().getOperator().getId(),
+                        ApplicationContextUtil.getOperateInfo().getOperator().getCode(),
+                        ApplicationContextUtil.getOperateInfo().getOperator().getFullName())
+                : rpler);
+        bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+        rplBillDao.saveModify(bill);
+
+        rplBillHandler.shiftStock(bill);
+        rplBillHandler.manageBinAndContainer(bill);
+    }
 }
