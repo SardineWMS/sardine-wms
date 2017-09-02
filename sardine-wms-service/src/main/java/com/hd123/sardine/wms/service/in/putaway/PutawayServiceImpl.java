@@ -267,7 +267,10 @@ public class PutawayServiceImpl implements PutawayService {
     PickArea pickArea = pickAreaService.getByStorageArea(supplier.getStorageArea());
     if (Objects.isNull(pickArea) || StringUtil.isNullOrBlank(pickArea.getBinScope()))
       return null;
-    List<String> binCodes = BinService.queryBinByScopeAndUsage(pickArea.getBinScope(),
+    List<BinState> binStates = new ArrayList<>();
+    binStates.add(BinState.free);
+    binStates.add(BinState.using);
+    List<String> binCodes = BinService.queryBinByScopeAndUsageAndStates(pickArea.getBinScope(),
         BinUsage.SupplierStorageBin, null);
     List<String> resultBinCodes = new ArrayList<>();
     List<Stock> list = stockService.query(filter);

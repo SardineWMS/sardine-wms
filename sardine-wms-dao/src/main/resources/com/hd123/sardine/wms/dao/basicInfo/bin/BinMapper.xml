@@ -51,6 +51,25 @@
 		</if>
 		order by u.code
 	</select>
+	
+	<select id="queryBinCodesBuScopeAndStates" parameterType="map" resultType="java.lang.String">
+		select u.code
+		from db_proxy.sardine_bin u
+		where ${sql}
+		and
+		u.companyuuid = #{companyUuid,jdbcType=VARCHAR}
+		<if test="binUsage != null and binUsage != ''">
+		  and u.binusage = #{binUsage, jdbcType=VARCHAR}
+		</if>
+		<if test="binStates != null and binStates.size > 0">
+			and t.state in
+			<foreach collection="binStates" item="item" index="index" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		order by u.code
+	</select>
 
 	<insert id="insert" parameterType="Bin">
 		insert into

@@ -39,4 +39,6 @@ public interface BinDao {
   void changeState(String uuid, long version, BinState state);
 
   List<String> queryBincodesByScope(String sql, BinUsage binUsage, BinState state);
+
+  List<String> queryBincodesByScope(String sql, BinUsage binUsage, List<BinState> states);
 }
