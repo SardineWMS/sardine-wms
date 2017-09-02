@@ -390,10 +390,13 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
       task.setSourceBillUuid(bill.getUuid());
       task.setStockBatch(item.getStockBatch());
       task.setSupplier(item.getSupplier());
-      task.setTaskType(TaskType.Putaway);
+      task.setTaskType(ReturnType.goodReturn.equals(item.getReturnType()) ? TaskType.Putaway
+          : TaskType.RtnPutaway);
       task.setValidDate(item.getValidDate());
       task.setToContainerBarcode(Container.VIRTUALITY_CONTAINER);
-//      task.setToBinCode(item.getBinCode());// TODO
+      task.setToBinCode(ReturnType.goodReturn.equals(item.getReturnType())
+          ? putawayService.fetchPutawayTargetBinByContainer(item.getContainerBarcode())
+          : putawayService.fetchRtnPutawayTargetBinBySupplier(item.getSupplier().getUuid()));
       task.setType(OperateMode.ManualBill);
       task.setTaskGroupNumber(item.getContainerBarcode());
       tasks.add(task);
