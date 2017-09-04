@@ -143,10 +143,10 @@ public class BillNumberGenerator {
                     + FIRST_WAREHOUSE_FLOWCODE;
             billNumberDao.insertSequence(companyUuid, nextWarehouseUuid, companyUuid);
         } else {
-            String flowCode = maxWarehouseUuid.replaceAll(companyUuid, "");
+            String flowCode = maxWarehouseUuid.replaceAll(companyUuid + Constants.DC_PREFIX, "");
             String newFlowCode = String.format("%0" + WAREHOUSE_FLOWCODE_LENGTH + "d",
                     Long.valueOf(flowCode) + 1);
-            nextWarehouseUuid = companyUuid + newFlowCode;
+            nextWarehouseUuid = companyUuid + Constants.DC_PREFIX + newFlowCode;
             billNumberDao.updateSequenceValue(companyUuid, nextWarehouseUuid, companyUuid);
         }
         return nextWarehouseUuid;
