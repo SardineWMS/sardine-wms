@@ -242,7 +242,7 @@ public class BinController extends BaseController {
     return resp;
   }
 
-  @RequestMapping(value = "/delete", method = RequestMethod.PUT)
+  @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
   public @ResponseBody RespObject delete(@RequestParam(value = "uuid", required = true) String uuid,
       @RequestParam(value = "version", required = false) long version,
       @RequestParam(value = "token", required = true) String token) {

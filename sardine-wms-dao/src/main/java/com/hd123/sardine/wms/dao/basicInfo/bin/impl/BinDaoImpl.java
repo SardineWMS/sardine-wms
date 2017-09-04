@@ -9,6 +9,7 @@
  */
 package com.hd123.sardine.wms.dao.basicInfo.bin.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ public class BinDaoImpl extends NameSpaceSupport implements BinDao {
   private static final String GETBINBYWRHANDUSAGE = "getBinByWrhAndUsage";
   private static final String CHANGESTATE = "changeState";
   private static final String QUERYBINCODESBYSCOPE = "queryBincodesByScope";
+  private static final String QUERYBINCODESBYSCOPEANDSTATES = "queryBinCodesBuScopeAndStates";
 
   @Override
   public void insert(Bin bin) {
@@ -111,5 +113,21 @@ public class BinDaoImpl extends NameSpaceSupport implements BinDao {
     if (state != null)
       map.put("state", state.name());
     return selectList(QUERYBINCODESBYSCOPE, map);
+  }
+
+  @Override
+  public List<String> queryBincodesByScope(String sql, BinUsage binUsage, List<BinState> states) {
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("sql", sql);
+    if (binUsage != null)
+      map.put("binUsage", binUsage.name());
+    if (CollectionUtils.isEmpty(states) == false) {
+      List<String> binStates = new ArrayList<>();
+      for (BinState binState : states) {
+        binStates.add(binState.name());
+      }
+      map.put("binStates", binStates);
+    }
+    return selectList(QUERYBINCODESBYSCOPEANDSTATES, map);
   }
 }

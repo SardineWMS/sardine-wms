@@ -365,4 +365,14 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
         ApplicationContextUtil.getOperateContext());
     logger.log(EntityLogger.EVENT_MODIFY, "锁定货位");
   }
+
+  @Override
+  public List<String> queryBinByScopeAndUsageAndStates(String binScope, BinUsage usage,
+      List<BinState> states) {
+    if (StringUtil.isNullOrBlank(binScope))
+      return null;
+
+    String sql = ScopeUtils.scopeExpToSQLExp("code", binScope);
+    return binDao.queryBincodesByScope(sql, usage, states);
+  }
 }

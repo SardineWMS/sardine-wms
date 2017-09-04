@@ -516,8 +516,9 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
     if (Objects.isNull(ntcBill))
       throw new WMSException(
           MessageFormat.format("退仓单对应的退仓通知单{0}不存在", bill.getReturnNtcBillNumber()));
-    if (ReturnNtcBillState.initial.equals(ntcBill.getState()) == false)
-      throw new WMSException(MessageFormat.format("退仓单对应的退仓通知单{0}的状态是{1}，不是初始的，不能审核该退仓单",
+    if ((ReturnNtcBillState.initial.equals(ntcBill.getState())
+        || ReturnNtcBillState.inProgress.equals(ntcBill.getState())) == false)
+      throw new WMSException(MessageFormat.format("退仓单对应的退仓通知单{0}的状态是{1}，不是初始或进行中的，不能审核该退仓单",
           bill.getReturnNtcBillNumber(), ntcBill.getState().getCaption()));
     for (ReturnBillItem item : bill.getItems()) {
       ReturnNtcBillItem ntcBillItem = rtnNtcBillService.getItem(item.getReturnNtcBillItemUuid());
