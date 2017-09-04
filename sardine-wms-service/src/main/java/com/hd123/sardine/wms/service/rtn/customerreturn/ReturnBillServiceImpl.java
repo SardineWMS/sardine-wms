@@ -172,24 +172,25 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
           continue;
         Container jContainer = containerService.getByBarcode(jItem.getContainerBarcode());
         if (Objects.isNull(jContainer)) {
-          errorMsg.append(MessageFormat.format("第{0}行中，容器{1}不存在", j, item.getContainerBarcode()));
+          errorMsg
+              .append(MessageFormat.format("第{0}行中，容器{1}不存在", j + 1, item.getContainerBarcode()));
           continue;
         }
         if (ContainerState.STACONTAINERIDLE.equals(container.getState()) == false) {
-          errorMsg.append(
-              MessageFormat.format("第{0}行，容器状态是{1}，不是空闲状态", i, container.getState().getCaption()));
+          errorMsg.append(MessageFormat.format("第{0}行，容器状态是{1}，不是空闲状态", i + 1,
+              container.getState().getCaption()));
           continue;
         }
         if (item.getReturnType().equals(jItem.getReturnType())
             && ReturnType.returnToSupplier.equals(item.getReturnType())) {
-          if (item.getArticle().getUuid().equals(jItem.getArticle().getUuid())
-              && item.getSupplier().getUuid().equals(jItem.getSupplier().getUuid()) == false) {
-            errorMsg.append(MessageFormat.format("第{0}行和第{1}行，退货类型为退供应商时，不同供应商的商品不允许混载", i, j));
+          if (item.getSupplier().getUuid().equals(jItem.getSupplier().getUuid()) == false) {
+            errorMsg
+                .append(MessageFormat.format("第{0}行和第{1}行，退货类型为退供应商时，不同供应商的商品不允许混载", i + 1, j + 1));
             continue;
           }
         }
         if (item.getReturnType().equals(jItem.getReturnType()) == false) {
-          errorMsg.append(MessageFormat.format("第{0}行和第{1}行，好退和退供应商的商品不允许混载", i, j));
+          errorMsg.append(MessageFormat.format("第{0}行和第{1}行，好退和退供应商的商品不允许混载", i + 1, j + 1));
           continue;
         }
       }
