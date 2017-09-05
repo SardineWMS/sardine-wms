@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
 import com.hd123.sardine.wms.api.out.rpl.RplBillService;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.api.task.ArticleMoveRule;
@@ -56,6 +57,9 @@ public class TaskController extends BaseController {
 
     @Autowired
     private RplBillService rplBillService;
+
+    @Autowired
+    private PickUpBillService pickUpBillService;
 
     @Autowired
     private StockService stockService;
@@ -258,7 +262,7 @@ public class TaskController extends BaseController {
         return resp;
     }
 
-    @RequestMapping(value = "/execute", method = RequestMethod.PUT)
+    @RequestMapping(value = "/execute", method = RequestMethod.POST)
     public @ResponseBody RespObject execute(
             @RequestParam(value = "uuid", required = true) String uuid,
             @RequestParam(value = "version", required = true) long version) {
@@ -278,6 +282,25 @@ public class TaskController extends BaseController {
             return new ErrorRespObject("指令执行失败：" + e.getMessage());
         }
 
+    }
+
+    @RequestMapping(value = "/batchpick", method = RequestMethod.POST)
+    public @ResponseBody RespObject pick(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "toBinCode", required = true) String toBinCode,
+            @RequestParam(value = "toContainerBarcode", required = false) String toContainerBarcode,
+            @RequestBody List<String> pickItemUuids) {
+        RespObject resp = new RespObject();
+        try {
+            pickUpBillService.pick(pickItemUuids, toBinCode, toContainerBarcode,
+                    ApplicationContextUtil.getLoginUser());
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("拣货失败：" + e.getMessage());
+        }
+        return resp;
     }
 
 }
