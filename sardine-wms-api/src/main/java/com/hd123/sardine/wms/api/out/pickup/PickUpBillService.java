@@ -116,11 +116,11 @@ public interface PickUpBillService {
    *          拣货单明细UUID集合， not null
    * @param toBinCode
    *          拣货目标货位，集货位，not null
-   * @param containerBarcode
+   * @param toContainerBarcode
    *          拣货容器，not null
    * @throws WMSException
    */
-  void pick(List<String> pickItemUuids, String toBinCode, String containerBarcode, UCN picker)
+  void pick(List<String> pickItemUuids, String toBinCode, String toContainerBarcode, UCN picker)
       throws WMSException;
 
   /**
