@@ -18,12 +18,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.api.out.acceptance.AcceptanceBill;
 import com.hd123.sardine.wms.api.out.acceptance.AcceptanceBillItem;
+import com.hd123.sardine.wms.api.out.pickup.PickType;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBillItem;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBillState;
+import com.hd123.sardine.wms.api.out.wave.WaveBinUsage;
 import com.hd123.sardine.wms.api.stock.Stock;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.api.stock.StockShiftRule;
 import com.hd123.sardine.wms.api.stock.StockState;
+import com.hd123.sardine.wms.common.entity.OperateMode;
 import com.hd123.sardine.wms.common.entity.SourceBill;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
@@ -40,8 +48,11 @@ public class AcceptanceHandler {
 
   @Autowired
   private StockBatchUtils stockBatchUtils;
+  
+  @Autowired
+  private PickUpBillService pickUpBillService;
 
-  public void shiftInOnWayStock(AcceptanceBill acceptanceBill) throws WMSException {
+  public void lockStock(AcceptanceBill acceptanceBill) throws WMSException {
     Assert.assertArgumentNotNull(acceptanceBill, "acceptanceBill");
 
     StockFilter stockFilter = new StockFilter();
@@ -64,33 +75,38 @@ public class AcceptanceHandler {
         if (stock.getStockComponent().getQty().compareTo(BigDecimal.ZERO) <= 0)
           continue;
 
-        StockShiftRule outRule = new StockShiftRule();
-        outRule.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-        outRule.setOwner(ApplicationContextUtil.getCompanyUuid());
-        outRule.setArticleUuid(acceptanceItem.getArticle().getUuid());
-        outRule.setBinCode(acceptanceItem.getBinCode());
-        outRule.setContainerBarcode(acceptanceItem.getContainerBarCode());
-        outRule.setStockBatch(stock.getStockComponent().getStockBatch());
+        StockShiftRule lockRule = new StockShiftRule();
+        lockRule.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+        lockRule.setOwner(ApplicationContextUtil.getCompanyUuid());
+        lockRule.setArticleUuid(acceptanceItem.getArticle().getUuid());
+        lockRule.setBinCode(acceptanceItem.getBinCode());
+        lockRule.setContainerBarcode(acceptanceItem.getContainerBarCode());
+        lockRule.setStockBatch(stock.getStockComponent().getStockBatch());
         if (acceptanceQty.compareTo(stock.getStockComponent().getQty()) >= 0) {
-          outRule.setQty(stock.getStockComponent().getQty());
+          lockRule.setQty(stock.getStockComponent().getQty());
         } else {
-          outRule.setQty(acceptanceQty);
+          lockRule.setQty(acceptanceQty);
         }
-        acceptanceItem.setPlanQty(acceptanceItem.getPlanQty().add(outRule.getQty()));
+        acceptanceItem.setPlanQty(acceptanceItem.getPlanQty().add(lockRule.getQty()));
         acceptanceItem.setPlanCaseQtyStr(
             QpcHelper.qtyToCaseQtyStr(acceptanceItem.getPlanQty(), acceptanceItem.getQpcStr()));
-        acceptanceQty = acceptanceQty.subtract(outRule.getQty());
-        outRules.add(outRule);
+        acceptanceQty = acceptanceQty.subtract(lockRule.getQty());
+        outRules.add(lockRule);
       }
     }
     stockService.changeState(
         new SourceBill("要货单", acceptanceBill.getUuid(), acceptanceBill.getBillNumber()), outRules,
         StockState.normal, StockState.locked);
   }
+  
+  
 
-  public void shiftOutOnWayStock(AcceptanceBill acceptanceBill) throws WMSException {
+  public void rollBackStock(AcceptanceBill acceptanceBill)
+      throws WMSException {
     Assert.assertArgumentNotNull(acceptanceBill, "acceptanceBill");
 
+    SourceBill sourceBill = new SourceBill("要货单", acceptanceBill.getUuid(),
+        acceptanceBill.getBillNumber());
     List<StockShiftRule> outRules = new ArrayList<StockShiftRule>();
     for (AcceptanceBillItem acceptanceItem : acceptanceBill.getItems()) {
       if (acceptanceItem.getPlanQty().compareTo(BigDecimal.ZERO) <= 0)
@@ -105,83 +121,65 @@ public class AcceptanceHandler {
       outRule.setOperateBillUuid(acceptanceBill.getUuid());
       outRule.setQty(acceptanceItem.getPlanQty());
     }
-    stockService.changeState(
-        new SourceBill("要货单", acceptanceBill.getUuid(), acceptanceBill.getBillNumber()), outRules,
-        StockState.locked, StockState.normal);
+    stockService.changeState(sourceBill, outRules, StockState.locked, StockState.normal);
   }
 
-  public void generateAndSavePickUpTasks(AcceptanceBill acceptanceBill) throws WMSException {/*
+  public void generateAndSavePickUpTasks(AcceptanceBill acceptanceBill) throws WMSException {
     Assert.assertArgumentNotNull(acceptanceBill, "acceptanceBill");
 
-    List<Task> pickTasks = new ArrayList<>();
-    StockFilter stockFilter = new StockFilter();
-    stockFilter.setPageSize(0);
-    stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    List<PickUpBillItem> pickItems = new ArrayList<PickUpBillItem>();
     for (AcceptanceBillItem item : acceptanceBill.getItems()) {
-      Task task = new Task();
-      task.setArticle(item.getArticle());
-      task.setFromBinCode(item.getBinCode());
-      task.setFromContainerBarcode(item.getContainerBarCode());
-      task.setToBinCode(Bin.VIRTUALITY_BIN);
-      task.setToContainerBarcode(Container.VIRTUALITY_CONTAINER);
-      task.setProductionDate(item.getProductionDate());
-      task.setQpcStr(item.getQpcStr());
-      task.setSourceBillLine(item.getLine());
-      task.setSourceBillNumber(acceptanceBill.getBillNumber());
-      task.setSourceBillUuid(acceptanceBill.getUuid());
-      task.setSourceBillType(AcceptanceBill.CAPTION);
-      task.setSupplier(item.getSupplier());
-      task.setTaskType(TaskType.Pickup);
-      task.setValidDate(item.getValidDate());
-      task.setOwner(acceptanceBill.getCustomer().getUuid());
-      task.setCreator(ApplicationContextUtil.getLoginUser());
-      task.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-      if (item.getPlanQty().compareTo(BigDecimal.ZERO) <= 0) {
-        stockFilter.setBinCode(item.getBinCode());
-        stockFilter.setContainerBarcode(item.getContainerBarCode());
-        stockFilter.setArticleUuid(item.getArticle().getUuid());
-        stockFilter.setQpcStr(item.getQpcStr());
-        stockFilter.setSupplierUuid(item.getSupplier().getUuid());
-        stockFilter
-            .setProductionBatch(stockBatchUtils.genProductionBatch(item.getProductionDate()));
-        List<StockExtendInfo> infos = stockService.queryStockExtendInfo(stockFilter);
-        BigDecimal canAcceptanceQty = BigDecimal.ZERO;
-        for (StockExtendInfo info : infos) {
-          canAcceptanceQty = canAcceptanceQty.add(info.getQty());
-        }
-        if (item.getQty().compareTo(canAcceptanceQty) <= 0)
-          task.setQty(item.getQty());
-        else
-          task.setQty(canAcceptanceQty);
-        item.setPlanQty(item.getPlanQty().add(task.getQty()));
-        item.setPlanCaseQtyStr(QpcHelper.qtyToCaseQtyStr(item.getPlanQty(), item.getQpcStr()));
-      }
-      task.setCaseQtyStr(QpcHelper.qtyToCaseQtyStr(task.getQty(), task.getQpcStr()));
-      pickTasks.add(task);
+      if (item.getPlanQty().compareTo(BigDecimal.ZERO) <= 0)
+        continue;
+      PickUpBillItem pickItem = new PickUpBillItem();
+      pickItem.setAlcNtcBillItemUuid(item.getUuid());
+      pickItem.setAlcNtcBillNumber(acceptanceBill.getBillNumber());
+      pickItem.setAlcNtcBillUuid(acceptanceBill.getUuid());
+      pickItem.setArticle(item.getArticle());
+      pickItem.setArticleSpec(item.getArticleSpec());
+      pickItem.setMunit(item.getMunit());
+      pickItem.setBinUsage(WaveBinUsage.DynamicPickBin);
+      pickItem.setQpcStr(item.getQpcStr());
+      pickItem.setQty(item.getPlanQty());
+      pickItem.setSourceBinCode(item.getBinCode());
+      pickItem.setSourceContainerBarcode(item.getContainerBarCode());
+      pickItem.setCaseQtyStr(item.getPlanCaseQtyStr());
+      pickItems.add(pickItem);
     }
 
-    if (AcceptanceBillState.Approved.equals(acceptanceBill.getState()))
-      shiftInOnWayStock(acceptanceBill);
-    taskService.insert(pickTasks);
-  */}
-
-  public void abortUnFinishPickTasks(String acceptanceBillUuid) throws WMSException {/*
-    Assert.assertArgumentNotNull(acceptanceBillUuid, "acceptanceBillUuid");
-
-    PageQueryDefinition definition = new PageQueryDefinition();
-    definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-    definition.setPageSize(0);
-    definition.put(TaskService.QUERY_FIELD_SOURCEBILLUUID, acceptanceBillUuid);
-    definition.put(TaskService.QUERY_FIELD_TASKTYPE, TaskType.Pickup);
-    definition.put(TaskService.QUERY_FIELD_STATE, TaskState.Initial);
-    PageQueryResult<Task> initialTasks = taskService.query(definition);
-    for (Task task : initialTasks.getRecords()) {
-      taskService.abort(task.getUuid(), task.getVersion());
+    if (pickItems.isEmpty() == false) {
+      PickUpBill pickBill = new PickUpBill();
+      pickBill.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+      pickBill.setCustomer(acceptanceBill.getCustomer());
+      pickBill.setDeliveryType(acceptanceBill.getDeliveryType());
+      pickBill.setMethod(OperateMode.ManualBill);
+      pickBill.setPickArea(new UCN("-", "-", "-"));
+      pickBill.setPickOrder("-");
+      pickBill.setState(PickUpBillState.approved);
+      pickBill.setSourceBill(new SourceBill("领用单", acceptanceBill.getUuid(), acceptanceBill.getBillNumber()));
+      pickBill.setType(PickType.PartContainer);
+      pickBill.setItems(pickItems);
+      pickUpBillService.saveNew(pickBill);
     }
-    definition.put(TaskService.QUERY_FIELD_STATE, TaskState.InProgress);
-    PageQueryResult<Task> inProgressTasks = taskService.query(definition);
-    for (Task task : inProgressTasks.getRecords()) {
-      taskService.abort(task.getUuid(), task.getVersion());
-    }
-  */}
+  }
+
+  public void abortUnFinishPickTasks(String acceptanceBillUuid) throws WMSException {
+    /*
+     * Assert.assertArgumentNotNull(acceptanceBillUuid, "acceptanceBillUuid");
+     * 
+     * PageQueryDefinition definition = new PageQueryDefinition();
+     * definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+     * definition.setPageSize(0);
+     * definition.put(TaskService.QUERY_FIELD_SOURCEBILLUUID,
+     * acceptanceBillUuid); definition.put(TaskService.QUERY_FIELD_TASKTYPE,
+     * TaskType.Pickup); definition.put(TaskService.QUERY_FIELD_STATE,
+     * TaskState.Initial); PageQueryResult<Task> initialTasks =
+     * taskService.query(definition); for (Task task :
+     * initialTasks.getRecords()) { taskService.abort(task.getUuid(),
+     * task.getVersion()); } definition.put(TaskService.QUERY_FIELD_STATE,
+     * TaskState.InProgress); PageQueryResult<Task> inProgressTasks =
+     * taskService.query(definition); for (Task task :
+     * inProgressTasks.getRecords()) { taskService.abort(task.getUuid(),
+     * task.getVersion()); }
+     */}
 }

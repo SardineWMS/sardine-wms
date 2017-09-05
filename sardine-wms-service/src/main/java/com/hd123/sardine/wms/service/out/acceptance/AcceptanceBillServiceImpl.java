@@ -176,7 +176,7 @@ public class AcceptanceBillServiceImpl extends BaseWMSService implements Accepta
     if (AcceptanceBillState.Initial.equals(acceptanceBill.getState()) == false)
       throw new WMSException("领用单" + acceptanceBill.getBillNumber() + "状态不是初始，不能批准！");
 
-    acceptanceHandler.shiftInOnWayStock(acceptanceBill);
+    acceptanceHandler.lockStock(acceptanceBill);
     for (AcceptanceBillItem acceptanceItem : acceptanceBill.getItems()) {
       if (acceptanceItem.getPlanQty().compareTo(BigDecimal.ZERO) <= 0)
         continue;
@@ -235,15 +235,9 @@ public class AcceptanceBillServiceImpl extends BaseWMSService implements Accepta
       throw new WMSException("领用单不存在");
 
     PersistenceUtils.checkVersion(version, acceptanceBill, "领用单", acceptanceBill.getBillNumber());
-    if (AcceptanceBillState.Aborted.equals(acceptanceBill.getState())
-        || AcceptanceBillState.Finished.equals(acceptanceBill.getState()))
+    if (AcceptanceBillState.Initial.equals(acceptanceBill.getState()) == false)
       throw new WMSException("领用单" + acceptanceBill.getBillNumber() + "状态是"
           + acceptanceBill.getState().getCaption() + "，不能完成！");
-
-    if (AcceptanceBillState.Approved.equals(acceptanceBill.getState()))
-      acceptanceHandler.shiftOutOnWayStock(acceptanceBill);
-    if (AcceptanceBillState.InAlc.equals(acceptanceBill.getState()))
-      acceptanceHandler.abortUnFinishPickTasks(acceptanceBill.getUuid());
 
     acceptanceBill.setState(AcceptanceBillState.Finished);
     acceptanceBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
@@ -271,8 +265,8 @@ public class AcceptanceBillServiceImpl extends BaseWMSService implements Accepta
       throw new WMSException("领用单" + acceptanceBill.getBillNumber() + "状态不是初始或已批准，不能作废！");
 
     if (AcceptanceBillState.Approved.equals(acceptanceBill.getState()))
-      acceptanceHandler.shiftOutOnWayStock(acceptanceBill);
-
+      acceptanceHandler.rollBackStock(acceptanceBill);
+    
     acceptanceBill.setState(AcceptanceBillState.Aborted);
     acceptanceBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     billDao.update(acceptanceBill);

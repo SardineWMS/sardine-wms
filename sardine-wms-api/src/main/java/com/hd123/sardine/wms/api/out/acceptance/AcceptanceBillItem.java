@@ -28,6 +28,7 @@ public class AcceptanceBillItem extends Entity {
   private String acceptanceBillUuid;
   private int line;
   private UCN article;
+  private String articleSpec;
   private UCN supplier;
   private String munit = "-";
   private String qpcStr;
@@ -65,6 +66,14 @@ public class AcceptanceBillItem extends Entity {
 
   public void setArticle(UCN article) {
     this.article = article;
+  }
+  
+  public String getArticleSpec() {
+    return articleSpec;
+  }
+
+  public void setArticleSpec(String articleSpec) {
+    this.articleSpec = articleSpec;
   }
 
   public UCN getSupplier() {
