@@ -38,6 +38,7 @@ public class AcceptanceBillDaoImpl extends NameSpaceSupport implements Acceptanc
   private static final String MAPPER_QUERYITEMS = "queryItems";
   private static final String MAPPER_QUERY = "query";
   private static final String UPDATEITEM = "updateItem";
+  private static final String GETBYITEMUUID = "getByItemUuid";
 
   @Override
   public AcceptanceBill get(String uuid) {
@@ -120,5 +121,13 @@ public class AcceptanceBillDaoImpl extends NameSpaceSupport implements Acceptanc
     Assert.assertArgumentNotNull(item, "item");
 
     update(UPDATEITEM, item);
+  }
+
+  @Override
+  public AcceptanceBill getByItemUuid(String itemUuid) {
+    if (StringUtil.isNullOrBlank(itemUuid))
+      return null;
+
+    return selectOne(GETBYITEMUUID, itemUuid);
   }
 }

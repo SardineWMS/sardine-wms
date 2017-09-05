@@ -317,6 +317,15 @@
 	      realCaseQtyStr = #{realCaseQtyStr, jdbcType=VARCHAR}
 	  where uuid = #{uuid, jdbcType=VARCHAR}
 	</update>
+	
+	<select id="getByItemUuid" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		t.*
+		from 
+		db_proxy.sardine_acceptanceBill t
+		where t.uuid = (select ti.acceptanceBillUuid from db_proxy.sardine_acceptanceBillItem ti 
+		where ti.uuid = #{itemUuid, jdbcType=VARCHAR})
+	</select>
 
 	<select id="queryItems" parameterType="java.lang.String" resultMap="AcceptanceBillItemMap">
 		select t.*, a.code articlecode, a.name articlename,s.code suppliercode,s.name suppliername

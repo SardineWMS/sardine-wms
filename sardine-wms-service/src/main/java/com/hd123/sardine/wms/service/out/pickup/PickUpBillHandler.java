@@ -28,6 +28,7 @@ import com.hd123.sardine.wms.api.basicInfo.bin.BinState;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerState;
+import com.hd123.sardine.wms.api.out.acceptance.AcceptanceBillService;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillService;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillItem;
@@ -35,6 +36,7 @@ import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillState;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillStockItem;
 import com.hd123.sardine.wms.api.out.pickup.PickUpItemState;
+import com.hd123.sardine.wms.api.out.wave.WaveBill;
 import com.hd123.sardine.wms.api.out.wave.WaveBinUsage;
 import com.hd123.sardine.wms.api.stock.StockChangement;
 import com.hd123.sardine.wms.api.stock.StockComponent;
@@ -81,6 +83,9 @@ public class PickUpBillHandler {
   @Autowired
   private AlcNtcBillService alcNtcBillService;
 
+  @Autowired
+  private AcceptanceBillService acceptanceBillService;
+
   /**
    * 更新拣货单明细的实际拣货数量和状态，同时回写配单明细的实际数量
    * 
@@ -118,7 +123,14 @@ public class PickUpBillHandler {
       else
         item.setPicker(ApplicationContextUtil.getLoginUser());
       pickUpBillItemDao.updateRealQty(item);
-      alcNtcBillService.pickUp(item.getAlcNtcBillItemUuid(), item.getRealQty());
+
+      PickUpBill pickUpBill = pickUpBillDao.get(item.getPickUpBillUuid());
+      assert pickUpBill != null;
+
+      if (pickUpBill.getSourceBill().getBillType().equals(WaveBill.CAPTION))
+        alcNtcBillService.pickUp(item.getAlcNtcBillItemUuid(), item.getRealQty());
+      else
+        acceptanceBillService.pickUp(item.getAlcNtcBillItemUuid(), item.getRealQty());
     }
   }
 

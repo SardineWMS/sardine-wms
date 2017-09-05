@@ -10,7 +10,6 @@
 package com.hd123.sardine.wms.api.out.acceptance;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
@@ -165,11 +164,12 @@ public interface AcceptanceBillService {
   /**
    * 拣货回写要货单明细
    * 
-   * @param uuid
-   *          要货单UUID，not null
-   * @param itemPickQty
-   *          要货单明细UUID-->明细拣货数量
+   * @param itemUuid
+   *          领用单明细UUID， not null
+   * @param qty
+   *          明细拣货数量， not null
+   * @throws IllegalArgumentException
+   * @throws WMSException
    */
-  void pickUp(String uuid, Map<String, BigDecimal> itemPickQty)
-      throws IllegalArgumentException, VersionConflictException, WMSException;
+  void pickUp(String itemUuid, BigDecimal qty) throws IllegalArgumentException, WMSException;
 }

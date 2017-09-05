@@ -24,6 +24,8 @@ public interface AcceptanceBillDao {
     AcceptanceBill get(String uuid);
 
     AcceptanceBill getByBillNumber(String billNumber);
+    
+    AcceptanceBill getByItemUuid(String itemUuid);
 
     List<AcceptanceBill> query(PageQueryDefinition definition);
 

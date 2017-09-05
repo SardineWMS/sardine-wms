@@ -11,7 +11,6 @@ package com.hd123.sardine.wms.service.out.acceptance;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -266,7 +265,7 @@ public class AcceptanceBillServiceImpl extends BaseWMSService implements Accepta
 
     if (AcceptanceBillState.Approved.equals(acceptanceBill.getState()))
       acceptanceHandler.rollBackStock(acceptanceBill);
-    
+
     acceptanceBill.setState(AcceptanceBillState.Aborted);
     acceptanceBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     billDao.update(acceptanceBill);
@@ -277,42 +276,30 @@ public class AcceptanceBillServiceImpl extends BaseWMSService implements Accepta
   }
 
   @Override
-  public void pickUp(String uuid, Map<String, BigDecimal> itemPickQty)
-      throws IllegalArgumentException, VersionConflictException, WMSException {
-    Assert.assertArgumentNotNull(uuid, "uuid");
-    Assert.assertArgumentNotNull(itemPickQty, "itemPickQty");
+  public void pickUp(String itemUuid, BigDecimal qty)
+      throws IllegalArgumentException, WMSException {
+    Assert.assertArgumentNotNull(itemUuid, "itemUuid");
+    Assert.assertArgumentNotNull(qty, "qty");
 
-    AcceptanceBill acceptanceBill = get(uuid);
+    AcceptanceBill acceptanceBill = billDao.getByItemUuid(itemUuid);
     if (acceptanceBill == null)
       throw new WMSException("拣货的来源单据不存在！");
-    if (acceptanceBill.getState().equals(AcceptanceBillState.InAlc))
+    if (acceptanceBill.getState().equals(AcceptanceBillState.InAlc) == false)
       throw new WMSException("要货单状态不是待配货，无法拣货！");
 
-    for (String itemUuid : itemPickQty.keySet()) {
-      AcceptanceBillItem pickItem = findAcceptanceItem(acceptanceBill.getItems(), itemUuid);
-      if (pickItem == null)
-        throw new WMSException("拣货的要货单明细不存在！");
-      pickItem.setRealQty(pickItem.getRealQty().add(itemPickQty.get(itemUuid)));
-      pickItem.setRealCaseQtyStr(
-          QpcHelper.qtyToCaseQtyStr(pickItem.getRealQty(), pickItem.getQpcStr()));
-      billDao.updateItem(pickItem);
+    List<AcceptanceBillItem> items = billDao.queryItems(acceptanceBill.getUuid());
+    for (AcceptanceBillItem item : items) {
+      if (item.getUuid().equals(itemUuid) == false)
+        continue;
+      item.setRealQty(item.getRealQty().add(qty));
+      item.setRealCaseQtyStr(QpcHelper.qtyToCaseQtyStr(item.getRealQty(), item.getQpcStr()));
+      billDao.updateItem(item);
     }
     acceptanceBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     billDao.update(acceptanceBill);
-    
-    logger.injectContext(this, uuid, AcceptanceBill.class.getName(),
+
+    logger.injectContext(this, acceptanceBill.getUuid(), AcceptanceBill.class.getName(),
         ApplicationContextUtil.getOperateContext());
-    logger.log("拣货", "拣货明细：" + itemPickQty.toString());
-  }
-
-  private AcceptanceBillItem findAcceptanceItem(List<AcceptanceBillItem> items, String itemUuid) {
-    assert items != null;
-    assert itemUuid != null;
-
-    for (AcceptanceBillItem item : items) {
-      if (item.getUuid().equals(itemUuid))
-        return item;
-    }
-    return null;
+    logger.log("拣货", "明细：" + itemUuid + "，数量：" + qty);
   }
 }
