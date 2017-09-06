@@ -11,7 +11,11 @@ package com.hd123.sardine.wms.web.inner.task;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
 import com.hd123.sardine.wms.api.out.rpl.RplBillService;
 import com.hd123.sardine.wms.api.stock.StockService;
@@ -73,6 +78,7 @@ public class TaskController extends BaseController {
                     defaultValue = "asc") String sortDirection,
             @RequestParam(value = "token", required = true) String token,
             @RequestParam(value = "articleCode", required = false) String articleCode,
+            @RequestParam(value = "taskType", required = false) String taskType,
             @RequestBody List<String> states) {
         RespObject resp = new RespObject();
         try {
@@ -81,10 +87,45 @@ public class TaskController extends BaseController {
             definition.setPageSize(pageSize);
             definition.setSortField(sort);
             definition.setOrderDir(OrderDir.valueOf(sortDirection));
+            if (StringUtil.isNullOrBlank(taskType) == false)
+                definition.put(TaskService.QUERY_FIELD_TASKTYPE, TaskType.valueOf(taskType));
             definition.put(TaskService.QUERY_FIELD_STATES, states);
             definition.put(TaskService.QUERY_FIELD_ARTICLECODE, articleCode);
             definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
             PageQueryResult<TaskView> result = taskService.query(definition);
+
+/*            Map<String, List<TaskView>> map = new HashMap<>();
+            for (TaskView view : result.getRecords()) {
+                String key = view.getOwner() + view.getFromBinCode()
+                        + view.getFromContainerBarcode() + view.getToBinCode()
+                        + view.getToContainerBarcode() + view.getSourceBill().toString();
+                if (map.containsKey(key))
+                    map.get(key).add(view);
+                else
+                    map.put(key, Arrays.asList(view));
+            }
+
+            List<RTask> rTasks = new ArrayList<>();
+            for (String key : map.keySet()) {
+                List<TaskView> taskViews = map.get(key);
+                RTask rtask = new RTask();
+                rtask.setOwner(taskViews.get(0).getOwner());
+                rtask.setFromBinCode(taskViews.get(0).getFromBinCode());
+                rtask.setFromContainerBarcode(taskViews.get(0).getFromContainerBarcode());
+                rtask.setToBinCode(taskViews.get(0).getToBinCode());
+                rtask.setToContainerBarcode(taskViews.get(0).getToContainerBarcode());
+                rtask.setSourceBill(taskViews.get(0).getSourceBill());
+                rtask.setItems(taskViews);
+                rTasks.add(rtask);
+            }
+
+            PageQueryResult<RTask> tasks = new PageQueryResult<>();
+            tasks.setPage(result.getPage());
+            tasks.setPageCount(result.getPageCount());
+            tasks.setPageSize(result.getPageSize());
+            tasks.setRecordCount(result.getRecordCount());
+            tasks.setRecords(rTasks);*/
+
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {

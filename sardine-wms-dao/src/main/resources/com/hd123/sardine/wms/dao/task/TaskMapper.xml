@@ -516,6 +516,9 @@
 		select t.* from
 		db_proxy.sardine_task_view t
 		where 1=1
+		<if test="taskType != null ">
+			and taskType=#{taskType,jdbcType=VARCHAR}
+		</if>
 		<if test="states != null and states.size > 0">
 			and t.state in
 			<foreach collection="states" item="item" index="index" open="("
