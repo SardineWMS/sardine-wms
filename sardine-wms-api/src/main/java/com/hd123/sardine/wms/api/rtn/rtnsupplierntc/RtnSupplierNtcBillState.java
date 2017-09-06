@@ -15,7 +15,7 @@ package com.hd123.sardine.wms.api.rtn.rtnsupplierntc;
  */
 public enum RtnSupplierNtcBillState {
   /** 未审核 */
-  Initial("未审核"),
+  Initial("初始"),
   /** 进行中 */
   InProgress("进行中"),
   /** 已作废 */

@@ -9,6 +9,7 @@
  */
 package com.hd123.sardine.wms.dao.rtn.rtnsupplierntc;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBill;
@@ -26,4 +27,9 @@ public interface RtnSupplierNtcBillDao extends BaseDao<RtnSupplierNtcBill> {
   void removeItmes(String billUuid);
 
   List<RtnSupplierNtcBillItem> queryItems(String uuid);
+
+  RtnSupplierNtcBillItem getItem(String uuid);
+
+  void refreshItemUnshelvedQtyAndCaseQtyStr(String itemUuid, BigDecimal unshelvedQty,
+      String caseQtyStr);
 }

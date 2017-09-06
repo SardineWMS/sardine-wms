@@ -33,6 +33,7 @@ public class StockFilter extends PageQueryDefinition {
   private String operateBillUuid;
   private String stockUuid;
   private String owner;
+  private String wrhUuid;
 
   public String getOwner() {
     return owner;
@@ -168,4 +169,14 @@ public class StockFilter extends PageQueryDefinition {
     this.productionBatch = productionBatch;
     put("productionBatch", productionBatch);
   }
+
+  public String getWrhUuid() {
+    return wrhUuid;
+  }
+
+  public void setWrhUuid(String wrhUuid) {
+    this.wrhUuid = wrhUuid;
+    put("wrhUuid", wrhUuid);
+  }
+
 }

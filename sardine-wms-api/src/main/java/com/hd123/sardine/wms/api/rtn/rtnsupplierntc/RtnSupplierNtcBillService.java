@@ -9,7 +9,8 @@
  */
 package com.hd123.sardine.wms.api.rtn.rtnsupplierntc;
 
-import com.hd123.sardine.wms.api.task.Task;
+import java.math.BigDecimal;
+
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
@@ -112,7 +113,8 @@ public interface RtnSupplierNtcBillService {
    * @throws IllegalArgumentException
    * @throws WMSException
    */
-  void unshelve(UnshelvedInfo unshelvedInfo) throws IllegalArgumentException, WMSException;
+  void unshelve(String itemUuid, BigDecimal unshelvedQty)
+      throws IllegalArgumentException, WMSException;
 
   /**
    * 生成下架指令
@@ -125,5 +127,15 @@ public interface RtnSupplierNtcBillService {
    * @throws IllegalArgumentException
    * @throws WMSException
    */
-  Task genUnshelveTask(String uuid, long version) throws IllegalArgumentException, WMSException;
+  void genUnshelveTask(String uuid, long version) throws IllegalArgumentException, WMSException;
+
+  /**
+   * 根据UUID获取明细
+   * 
+   * @param uuid
+   *          UUID， 为空则返回空
+   * @return 供应商退货通知单明细
+   * @throws WMSException
+   */
+  RtnSupplierNtcBillItem getItem(String uuid) throws WMSException;
 }

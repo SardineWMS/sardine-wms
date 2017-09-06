@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -39,6 +40,7 @@ public class BinDaoImpl extends NameSpaceSupport implements BinDao {
   private static final String CHANGESTATE = "changeState";
   private static final String QUERYBINCODESBYSCOPE = "queryBincodesByScope";
   private static final String QUERYBINCODESBYSCOPEANDSTATES = "queryBinCodesBuScopeAndStates";
+  private static final String QUERYBINBYUSAGEANDSTATE = "queryBinByUsageAndState";
 
   @Override
   public void insert(Bin bin) {
@@ -129,5 +131,20 @@ public class BinDaoImpl extends NameSpaceSupport implements BinDao {
       map.put("binStates", binStates);
     }
     return selectList(QUERYBINCODESBYSCOPEANDSTATES, map);
+  }
+
+  @Override
+  public List<String> queryBinByUsageAndState(BinUsage usage, List<BinState> states) {
+    Map<String, Object> map = ApplicationContextUtil.map();
+    if (Objects.nonNull(usage))
+      map.put("usage", usage.name());
+    if (CollectionUtils.isEmpty(states) == false) {
+      List<String> binStates = new ArrayList<>();
+      for (BinState binState : states) {
+        binStates.add(binState.name());
+      }
+      map.put("binStates", binStates);
+    }
+    return selectList(QUERYBINBYUSAGEANDSTATE, map);
   }
 }

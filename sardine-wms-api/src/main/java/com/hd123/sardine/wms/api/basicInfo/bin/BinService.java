@@ -258,5 +258,17 @@ public interface BinService {
    *          货位状态
    * @return
    */
-  List<String> queryBinByScopeAndUsageAndStates(String binScope, BinUsage usage, List<BinState> states);
+  List<String> queryBinByScopeAndUsageAndStates(String binScope, BinUsage usage,
+      List<BinState> states);
+
+  /**
+   * 根据货位用途和状态查询货位代码
+   * 
+   * @param usage
+   *          货位用途
+   * @param states
+   *          状态
+   * @return
+   */
+  List<String> queryBinByUsageAndState(BinUsage usage, List<BinState> states);
 }

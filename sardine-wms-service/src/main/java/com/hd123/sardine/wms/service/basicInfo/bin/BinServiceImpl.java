@@ -375,4 +375,9 @@ public class BinServiceImpl extends BaseWMSService implements BinService {
     String sql = ScopeUtils.scopeExpToSQLExp("code", binScope);
     return binDao.queryBincodesByScope(sql, usage, states);
   }
+
+  @Override
+  public List<String> queryBinByUsageAndState(BinUsage usage, List<BinState> states) {
+    return binDao.queryBinByUsageAndState(usage, states);
+  }
 }

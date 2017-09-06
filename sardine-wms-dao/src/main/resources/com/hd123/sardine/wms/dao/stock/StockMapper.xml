@@ -438,6 +438,9 @@
 
 	<select id="queryStocks" resultMap="StockMap" parameterType="StockFilter">
 		select t.* from db_proxy.sardine_stock t
+		<if test="wrhUuid != null and wrhUuid != ''">
+			,db_proxy.sardine_wrh w,db_proxy.sardine_bin b
+		</if>
 		where 1=1
 		<if test="owner != null and owner != ''">
 			and t.owner = #{owner}
@@ -480,6 +483,10 @@
 		</if>
 		<if test="operateBillUuid != null">
 			and t.OPERATEBILLUUID = #{operateBillUuid}
+		</if>
+		<if test="wrhUuid != null and wrhUuid != ''">
+			and t.bincode=b.code and b.wrhUuid=w.uuid
+			and w.uuid=#{wrhUuid,jdbcType=VARCHAR}
 		</if>
 		ORDER BY INSTOCKTIME
 	</select>

@@ -33,8 +33,9 @@ public class RtnSupplierNtcBillItem extends Entity {
   private BigDecimal price;
   private String rtnReason;
   private BigDecimal amount;
-  private String unshelvedQtyStr;
-  private BigDecimal unshelvedQty;
+  private String unshelvedCaseQtyStr;
+  private BigDecimal unshelvedQty = BigDecimal.ZERO;
+  private String articleSpec;
   private int line;
 
   public int getLine() {
@@ -126,12 +127,12 @@ public class RtnSupplierNtcBillItem extends Entity {
   }
 
   /** 已下架件数 */
-  public String getUnshelvedQtyStr() {
-    return unshelvedQtyStr;
+  public String getUnshelvedCaseQtyStr() {
+    return unshelvedCaseQtyStr;
   }
 
-  public void setUnshelvedQtyStr(String unshelvedQtyStr) {
-    this.unshelvedQtyStr = unshelvedQtyStr;
+  public void setUnshelvedCaseQtyStr(String unshelvedCaseQtyStr) {
+    this.unshelvedCaseQtyStr = unshelvedCaseQtyStr;
   }
 
   /** 已下架数量 */
@@ -141,6 +142,14 @@ public class RtnSupplierNtcBillItem extends Entity {
 
   public void setUnshelvedQty(BigDecimal unshelvedQty) {
     this.unshelvedQty = unshelvedQty;
+  }
+
+  public String getArticleSpec() {
+    return articleSpec;
+  }
+
+  public void setArticleSpec(String articleSpec) {
+    this.articleSpec = articleSpec;
   }
 
   public void validate() throws WMSException {
@@ -157,6 +166,10 @@ public class RtnSupplierNtcBillItem extends Entity {
       throw new WMSException("单价必须大于零");
     if (Objects.isNull(unshelvedQty) == false && unshelvedQty.compareTo(BigDecimal.ZERO) < 0)
       throw new WMSException("已下架数量不能小于零");
+  }
+
+  public BigDecimal calculateNotUnshelvedQty() {
+    return qty.subtract(unshelvedQty);
   }
 
 }

@@ -24,6 +24,7 @@ import com.hd123.sardine.wms.api.rtn.ntc.ReturnNtcBillState;
 import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBill;
 import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBillService;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
+import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
@@ -184,6 +185,21 @@ public class RtnSupplierNtcBillController {
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
       return new ErrorRespObject("完成供应商退货通知单失败：" + e.getMessage());
+    }
+    return resp;
+
+  }
+
+  @RequestMapping(value = "/gentask", method = RequestMethod.PUT)
+  public @ResponseBody RespObject genTask(
+      @RequestParam(value = "uuid", required = true) String uuid,
+      @RequestParam(value = "version", required = true) long version) {
+    RespObject resp = new RespObject();
+    try {
+      service.genUnshelveTask(uuid, version);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("生成下架指令失败：" + e.getMessage());
     }
     return resp;
 

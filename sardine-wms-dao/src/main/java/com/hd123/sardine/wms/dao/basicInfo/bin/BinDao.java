@@ -41,4 +41,6 @@ public interface BinDao {
   List<String> queryBincodesByScope(String sql, BinUsage binUsage, BinState state);
 
   List<String> queryBincodesByScope(String sql, BinUsage binUsage, List<BinState> states);
+
+  List<String> queryBinByUsageAndState(BinUsage usage, List<BinState> states);
 }

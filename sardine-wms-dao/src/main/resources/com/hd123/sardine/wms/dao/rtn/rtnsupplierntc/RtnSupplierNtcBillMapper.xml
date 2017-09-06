@@ -439,4 +439,16 @@
 		uuid=#{uuid,jdbcType=VARCHAR} and
 		version=#{version,jdbcType=LONGVARCHAR}
 	</delete>
+
+	<select id="get_item" parameterType="java.lang.String"
+		resultMap="BillItemMap">
+		select t.* from db_proxy.sardine_rtnsupplierntcbillitem t
+		where t.uuid=#{uuid,jdbcType=VARCHAR}
+	</select>
+
+	<update id="refreshItemUnshelvedQtyAndCaseQtyStr" parameterType="java.util.Map">
+		update db_proxy.sardine_rtnsupplierntcbillitem set
+		UNSHELVEDQTY=#{unshelvedQty,jdbcType=DECIMAL},UNSHELVEDCASEQTYSTR=#{caseQtyStr,jdbcType=VARCHAR}
+		where uuid=#{uuid,jdbcType=VARCHAR}
+	</update>
 </mapper>

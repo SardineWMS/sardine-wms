@@ -181,17 +181,19 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
               container.getState().getCaption()));
           continue;
         }
-        if (item.getReturnType().equals(jItem.getReturnType())
-            && ReturnType.returnToSupplier.equals(item.getReturnType())) {
-          if (item.getSupplier().getUuid().equals(jItem.getSupplier().getUuid()) == false) {
-            errorMsg
-                .append(MessageFormat.format("第{0}行和第{1}行，退货类型为退供应商时，不同供应商的商品不允许混载", i + 1, j + 1));
+        if (Objects.equals(item.getContainerBarcode(), jItem.getContainerBarcode())) {
+          if (item.getReturnType().equals(jItem.getReturnType())
+              && ReturnType.returnToSupplier.equals(item.getReturnType())) {
+            if (item.getSupplier().getUuid().equals(jItem.getSupplier().getUuid()) == false) {
+              errorMsg.append(
+                  MessageFormat.format("第{0}行和第{1}行，退货类型为退供应商时，不同供应商的商品不允许混载", i + 1, j + 1));
+              continue;
+            }
+          }
+          if (item.getReturnType().equals(jItem.getReturnType()) == false) {
+            errorMsg.append(MessageFormat.format("第{0}行和第{1}行，好退和退供应商的商品不允许混载", i + 1, j + 1));
             continue;
           }
-        }
-        if (item.getReturnType().equals(jItem.getReturnType()) == false) {
-          errorMsg.append(MessageFormat.format("第{0}行和第{1}行，好退和退供应商的商品不允许混载", i + 1, j + 1));
-          continue;
         }
       }
     }

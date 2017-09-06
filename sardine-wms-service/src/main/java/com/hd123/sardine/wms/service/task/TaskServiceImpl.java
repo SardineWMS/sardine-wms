@@ -21,6 +21,7 @@ import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
 import com.hd123.sardine.wms.api.out.rpl.RplBill;
 import com.hd123.sardine.wms.api.out.rpl.RplBillService;
+import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBillService;
 import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.task.TaskService;
 import com.hd123.sardine.wms.api.task.TaskState;
@@ -63,6 +64,9 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
 
   @Autowired
   private RplBillService rplBillService;
+
+  @Autowired
+  private RtnSupplierNtcBillService rtnSupplierNtcBillService;
 
   @Override
   public void insert(List<Task> tasks)
@@ -213,12 +217,16 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
       task.setRealQty(qty);
     else
       task.setRealQty(qty);
+    if (qty.compareTo(task.getQty()) > 0)
+      throw new WMSException("下架数量不能大于指令数量");
     task.setRealCaseQtyStr(QpcHelper.qtyToCaseQtyStr(task.getRealQty(), task.getQpcStr()));
     task.setEndOperateTime(new Date());
     taskDao.update(task);
 
     taskHandler.shiftStock(task);
     taskHandler.manageBinAndContainer(task);
+
+    rtnSupplierNtcBillService.unshelve(task.getSourceBillLineUuid(), task.getRealQty());
 
     logger.injectContext(this, uuid, Task.class.getName(),
         ApplicationContextUtil.getOperateContext());

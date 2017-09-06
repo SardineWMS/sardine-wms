@@ -146,6 +146,7 @@ public class TaskVerifier {
           StockFilter sf = new StockFilter();
           sf.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
           sf.setBinCode(toBinCode);
+          sf.setPageSize(0);
           List<Stock> stocks = stockService.query(sf);
           for (Stock stock : stocks) {
             if (stock.getStockComponent().getSupplier().getUuid()
@@ -174,8 +175,8 @@ public class TaskVerifier {
       Container toContainer = containerService.getByBarcode(toContainerBarcode);
       if (toContainer == null)
         throw new WMSException("目标容器" + toContainerBarcode + "不存在！");
-      if (toContainer.getState().equals(ContainerState.STACONTAINERIDLE) == false
-          && toContainer.getState().equals(ContainerState.STACONTAINERUSEING) == false)
+      if ((toContainer.getState().equals(ContainerState.STACONTAINERIDLE)
+          || toContainer.getState().equals(ContainerState.STACONTAINERUSEING)) == false)
         throw new WMSException("目标容器状态不是空闲或者已使用，无法上架！");
       if (toContainer.getState().equals(ContainerState.STACONTAINERUSEING)
           && toContainer.getPosition().equals(task.getToBinCode()) == false)

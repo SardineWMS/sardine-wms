@@ -213,7 +213,7 @@ public class TaskHandler {
     }
 
     Bin toBin = binService.getBinByCode(task.getToBinCode());
-    if (toBin.getState().equals(BinState.free))
+    if (toBin.getState().equals(BinState.free)||toBin.getState().equals(BinState.lock))
       binService.changeState(toBin.getUuid(), toBin.getVersion(), BinState.using);
 
     if (Objects.equals(task.getFromContainerBarcode(), task.getToContainerBarcode()) == false
