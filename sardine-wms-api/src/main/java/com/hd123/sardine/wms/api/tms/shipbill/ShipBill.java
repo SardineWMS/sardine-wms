@@ -25,181 +25,187 @@ import com.hd123.sardine.wms.common.validator.Validator;
  *
  */
 public class ShipBill extends StandardEntity implements Validator {
-    private static final long serialVersionUID = -8012818602330268139L;
-    public static final String CAPTION = "配货通知单";
+  private static final long serialVersionUID = -8012818602330268139L;
+  public static final String CAPTION = "配货通知单";
 
-    private String companyUuid;
-    private String billNumber;
-    private String vehicleNum;
-    private UCN carrier;
-    private UCN driver;
-    private DeliveryType deliveryType = DeliveryType.warehouse;
-    private OperateMethod method = OperateMethod.ManualBill;
-    private ShipBillState state = ShipBillState.Initial;
-    private String totalCaseQty;
-    private BigDecimal totalVolume = BigDecimal.ZERO;
-    private BigDecimal totalWeight = BigDecimal.ZERO;
-    private BigDecimal totalAmount = BigDecimal.ZERO;
-    private List<ShipBillContainerStock> containerStocks = new ArrayList<>();
-    private List<ShipBillCustomerItem> customerItems = new ArrayList<>();
+  private String companyUuid;
+  private String billNumber;
+  private String vehicleNum;
+  private UCN serialArch;
+  private UCN carrier;
+  private UCN driver;
+  private DeliveryType deliveryType = DeliveryType.warehouse;
+  private OperateMethod method = OperateMethod.ManualBill;
+  private ShipBillState state = ShipBillState.Initial;
+  private String totalCaseQty;
+  private BigDecimal totalVolume = BigDecimal.ZERO;
+  private BigDecimal totalWeight = BigDecimal.ZERO;
+  private BigDecimal totalAmount = BigDecimal.ZERO;
+  private List<ShipBillContainerStock> containerStocks = new ArrayList<>();
+  private List<ShipBillCustomerItem> customerItems = new ArrayList<>();
 
-    /** 单号 */
-    public String getBillNumber() {
-        return billNumber;
-    }
+  /** 单号 */
+  public String getBillNumber() {
+    return billNumber;
+  }
 
-    public void setBillNumber(String billNumber) {
-        Assert.assertArgumentNotNull(billNumber, "billNumber");
-        this.billNumber = billNumber;
-    }
+  public void setBillNumber(String billNumber) {
+    Assert.assertArgumentNotNull(billNumber, "billNumber");
+    this.billNumber = billNumber;
+  }
 
-    /** 车牌号 */
-    public String getVehicleNum() {
-        return vehicleNum;
-    }
+  /** 车牌号 */
+  public String getVehicleNum() {
+    return vehicleNum;
+  }
 
-    public void setVehicleNum(String vehicleNum) {
-        Assert.assertArgumentNotNull(vehicleNum, "vehicleNum");
-        this.vehicleNum = vehicleNum;
-    }
+  public void setVehicleNum(String vehicleNum) {
+    Assert.assertArgumentNotNull(vehicleNum, "vehicleNum");
+    this.vehicleNum = vehicleNum;
+  }
 
-    /** 承运商 */
-    public UCN getCarrier() {
-        return carrier;
-    }
+  public UCN getSerialArch() {
+    return serialArch;
+  }
 
-    public void setCarrier(UCN carrier) {
-        // Assert.assertArgumentNotNull(carrier, "carrier");
-        // Assert.assertArgumentNotNull(carrier.getUuid(), "carrier.uuid");
-        // Assert.assertArgumentNotNull(carrier.getCode(), "carrier.code");
-        // Assert.assertArgumentNotNull(carrier.getName(), "carrier.name");
-        this.carrier = carrier;
-    }
+  public void setSerialArch(UCN serialArch) {
+    this.serialArch = serialArch;
+  }
 
-    /** 司机 */
-    public UCN getDriver() {
-        return driver;
-    }
+  /** 承运商 */
+  public UCN getCarrier() {
+    return carrier;
+  }
 
-    public void setDriver(UCN driver) {
-        // Assert.assertArgumentNotNull(driver, "driver");
-        // Assert.assertArgumentNotNull(driver.getUuid(), "driver.uuid");
-        // Assert.assertArgumentNotNull(driver.getCode(), "driver.code");
-        // Assert.assertArgumentNotNull(driver.getName(), "driver.name");
-        this.driver = driver;
-    }
+  public void setCarrier(UCN carrier) {
+    Assert.assertArgumentNotNull(carrier, "carrier");
 
-    /** 配送方式 */
-    public DeliveryType getDeliveryType() {
-        return deliveryType;
-    }
+    this.carrier = carrier;
+  }
 
-    public void setDeliveryType(DeliveryType deliveryType) {
-        this.deliveryType = deliveryType;
-    }
+  /** 司机 */
+  public UCN getDriver() {
+    return driver;
+  }
 
-    /** 操作方式 */
-    public OperateMethod getMethod() {
-        return method;
-    }
+  public void setDriver(UCN driver) {
+    Assert.assertArgumentNotNull(driver, "driver");
 
-    public void setMethod(OperateMethod method) {
-        Assert.assertArgumentNotNull(method, "method");
-        this.method = method;
-    }
+    this.driver = driver;
+  }
 
-    /** 状态 */
-    public ShipBillState getState() {
-        return state;
-    }
+  /** 配送方式 */
+  public DeliveryType getDeliveryType() {
+    return deliveryType;
+  }
 
-    public void setState(ShipBillState state) {
-        Assert.assertArgumentNotNull(state, "state");
-        this.state = state;
-    }
+  public void setDeliveryType(DeliveryType deliveryType) {
+    this.deliveryType = deliveryType;
+  }
 
-    /** 总件数 */
-    public String getTotalCaseQty() {
-        return totalCaseQty;
-    }
+  /** 操作方式 */
+  public OperateMethod getMethod() {
+    return method;
+  }
 
-    public void setTotalCaseQty(String totalCaseQty) {
-        this.totalCaseQty = totalCaseQty;
-    }
+  public void setMethod(OperateMethod method) {
+    Assert.assertArgumentNotNull(method, "method");
+    this.method = method;
+  }
 
-    /** 总体积 */
-    public BigDecimal getTotalVolume() {
-        return totalVolume;
-    }
+  /** 状态 */
+  public ShipBillState getState() {
+    return state;
+  }
 
-    public void setTotalVolume(BigDecimal totalVolume) {
-        Assert.assertArgumentNotNull(totalVolume, "totalVolume");
-        this.totalVolume = totalVolume;
-    }
+  public void setState(ShipBillState state) {
+    Assert.assertArgumentNotNull(state, "state");
+    this.state = state;
+  }
 
-    /** 总重量 */
-    public BigDecimal getTotalWeight() {
-        return totalWeight;
-    }
+  /** 总件数 */
+  public String getTotalCaseQty() {
+    return totalCaseQty;
+  }
 
-    public void setTotalWeight(BigDecimal totalWeight) {
-        Assert.assertArgumentNotNull(totalWeight, "totalWeight");
-        this.totalWeight = totalWeight;
-    }
+  public void setTotalCaseQty(String totalCaseQty) {
+    this.totalCaseQty = totalCaseQty;
+  }
 
-    /** 总金额 */
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
+  /** 总体积 */
+  public BigDecimal getTotalVolume() {
+    return totalVolume;
+  }
 
-    public void setTotalAmount(BigDecimal totalAmount) {
-        Assert.assertArgumentNotNull(totalAmount, "totalAmount");
-        this.totalAmount = totalAmount;
-    }
+  public void setTotalVolume(BigDecimal totalVolume) {
+    Assert.assertArgumentNotNull(totalVolume, "totalVolume");
+    this.totalVolume = totalVolume;
+  }
 
-    /** 公司 */
-    public String getCompanyUuid() {
-        return companyUuid;
-    }
+  /** 总重量 */
+  public BigDecimal getTotalWeight() {
+    return totalWeight;
+  }
 
-    public void setCompanyUuid(String companyUuid) {
-        Assert.assertArgumentNotNull(companyUuid, "companyUuid");
-        this.companyUuid = companyUuid;
-    }
+  public void setTotalWeight(BigDecimal totalWeight) {
+    Assert.assertArgumentNotNull(totalWeight, "totalWeight");
+    this.totalWeight = totalWeight;
+  }
 
-    /** 装车容器库存明细 */
-    public List<ShipBillContainerStock> getContainerStocks() {
-        return containerStocks;
-    }
+  /** 总金额 */
+  public BigDecimal getTotalAmount() {
+    return totalAmount;
+  }
 
-    public void setContainerStocks(List<ShipBillContainerStock> containerStocks) {
-        Assert.assertArgumentNotNull(containerStocks, "containerStocks");
-        this.containerStocks = containerStocks;
-    }
+  public void setTotalAmount(BigDecimal totalAmount) {
+    Assert.assertArgumentNotNull(totalAmount, "totalAmount");
+    this.totalAmount = totalAmount;
+  }
 
-    /** 装车客户明细 */
-    public List<ShipBillCustomerItem> getCustomerItems() {
-        return customerItems;
-    }
+  /** 公司 */
+  public String getCompanyUuid() {
+    return companyUuid;
+  }
 
-    public void setCustomerItems(List<ShipBillCustomerItem> customerItems) {
-        Assert.assertArgumentNotNull(customerItems, "customerItems");
-        this.customerItems = customerItems;
-    }
+  public void setCompanyUuid(String companyUuid) {
+    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+    this.companyUuid = companyUuid;
+  }
 
-    @Override
-    public void validate() {
-        Assert.assertArgumentNotNull(companyUuid, "companyUuid");
-        Assert.assertArgumentNotNull(billNumber, "billNumber");
-        Assert.assertArgumentNotNull(vehicleNum, "vehicleNum");
-        Assert.assertArgumentNotNull(carrier, "carrier");
-        Assert.assertArgumentNotNull(carrier.getUuid(), "carrier.uuid");
-        Assert.assertArgumentNotNull(carrier.getCode(), "carrier.code");
-        Assert.assertArgumentNotNull(carrier.getName(), "carrier.name");
-        Assert.assertArgumentNotNull(driver, "driver");
-        Assert.assertArgumentNotNull(driver.getUuid(), "driver.uuid");
-        Assert.assertArgumentNotNull(driver.getCode(), "driver.code");
-        Assert.assertArgumentNotNull(driver.getName(), "driver.name");
-    }
+  /** 装车容器库存明细 */
+  public List<ShipBillContainerStock> getContainerStocks() {
+    return containerStocks;
+  }
+
+  public void setContainerStocks(List<ShipBillContainerStock> containerStocks) {
+    Assert.assertArgumentNotNull(containerStocks, "containerStocks");
+    this.containerStocks = containerStocks;
+  }
+
+  /** 装车客户明细 */
+  public List<ShipBillCustomerItem> getCustomerItems() {
+    return customerItems;
+  }
+
+  public void setCustomerItems(List<ShipBillCustomerItem> customerItems) {
+    Assert.assertArgumentNotNull(customerItems, "customerItems");
+    this.customerItems = customerItems;
+  }
+
+  @Override
+  public void validate() {
+    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+    Assert.assertArgumentNotNull(billNumber, "billNumber");
+    Assert.assertArgumentNotNull(vehicleNum, "vehicleNum");
+    Assert.assertArgumentNotNull(serialArch, "serialArch");
+    Assert.assertArgumentNotNull(carrier, "carrier");
+    Assert.assertArgumentNotNull(carrier.getUuid(), "carrier.uuid");
+    Assert.assertArgumentNotNull(carrier.getCode(), "carrier.code");
+    Assert.assertArgumentNotNull(carrier.getName(), "carrier.name");
+    Assert.assertArgumentNotNull(driver, "driver");
+    Assert.assertArgumentNotNull(driver.getUuid(), "driver.uuid");
+    Assert.assertArgumentNotNull(driver.getCode(), "driver.code");
+    Assert.assertArgumentNotNull(driver.getName(), "driver.name");
+  }
 
 }

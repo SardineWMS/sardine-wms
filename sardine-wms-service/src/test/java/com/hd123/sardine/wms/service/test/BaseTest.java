@@ -12,7 +12,6 @@ package com.hd123.sardine.wms.service.test;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -32,7 +31,7 @@ import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
     "/applicationContext*.xml" })
-@Commit
+@Rollback
 @Transactional
 public class BaseTest {
 

@@ -76,7 +76,7 @@ public class TaskServiceImpl extends BaseWMSService implements TaskService {
       taskVerifier.verifySourceStock(task);
 
       task.setUuid(UUIDGenerator.genUUID());
-      task.setTaskNo(billNumberGenerator.allocateNextBillNumber(task.getTaskType().name()));
+      task.setTaskNo(billNumberGenerator.allocateNextBillNumber(Task.class.getSimpleName()));
       task.setCreator(ApplicationContextUtil.getLoginUser());
       task.setCreateTime(new Date());
       task.setState(TaskState.Initial);

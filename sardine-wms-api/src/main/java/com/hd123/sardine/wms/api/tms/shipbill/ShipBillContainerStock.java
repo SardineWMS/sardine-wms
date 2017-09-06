@@ -39,9 +39,21 @@ public class ShipBillContainerStock extends Entity implements Validator {
     private String containerBarcode;
     private Date productionDate;
     private Date validDate;
+    private String stockBatch;
     private BigDecimal qty;
     private String caseQtyStr;
     private UCN supplier;
+    private String orderNo;
+    private UCN shiper;
+    
+    /** 装车员 */
+    public UCN getShiper() {
+      return shiper;
+    }
+
+    public void setShiper(UCN shiper) {
+      this.shiper = shiper;
+    }
 
     /** 装车单UUID */
     public String getShipBillUuid() {
@@ -51,6 +63,14 @@ public class ShipBillContainerStock extends Entity implements Validator {
     public void setShipBillUuid(String shipBillUuid) {
         Assert.assertArgumentNotNull(shipBillUuid, "shipBillUuid");
         this.shipBillUuid = shipBillUuid;
+    }
+    
+    public String getStockBatch() {
+      return stockBatch;
+    }
+
+    public void setStockBatch(String stockBatch) {
+      this.stockBatch = stockBatch;
     }
 
     /** 行号 */
@@ -189,6 +209,14 @@ public class ShipBillContainerStock extends Entity implements Validator {
     public void setSupplier(UCN supplier) {
         Assert.assertArgumentNotNull(supplier, "supplier");
         this.supplier = supplier;
+    }
+    
+    public String getOrderNo() {
+      return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+      this.orderNo = orderNo;
     }
 
     @Override

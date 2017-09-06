@@ -302,6 +302,7 @@ public class PickUpBillHandler {
         StockShiftIn shiftIn = new StockShiftIn();
         shiftIn.setStockComponent(changement.getStockComponent());
         shiftIn.getStockComponent().setBinCode(toBinCode);
+        shiftIn.getStockComponent().setOwner(bill.getCustomer().getUuid());
         shiftIn.getStockComponent().setContainerBarcode(toContainerBarcode);
         shiftIns.add(shiftIn);
       }
