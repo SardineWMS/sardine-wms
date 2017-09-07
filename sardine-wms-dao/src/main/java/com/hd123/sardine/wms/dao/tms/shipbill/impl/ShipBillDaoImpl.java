@@ -19,6 +19,7 @@ import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBill;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBillContainerStock;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBillCustomerItem;
+import com.hd123.sardine.wms.api.tms.shipbill.ShipTaskFilter;
 import com.hd123.sardine.wms.common.dao.NameSpaceSupport;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
@@ -127,8 +128,9 @@ public class ShipBillDaoImpl extends NameSpaceSupport implements ShipBillDao {
   }
 
   @Override
-  public List<ShipBillContainerStock> queryWaitShipStocks() {
-    return selectList(QUERYWAITSHIPSTOCK, ApplicationContextUtil.map());
+  public List<ShipBillContainerStock> queryWaitShipStocks(ShipTaskFilter filter) {
+    Assert.assertArgumentNotNull(filter, "filter");
+    return selectList(QUERYWAITSHIPSTOCK, filter);
   }
 
   @Override

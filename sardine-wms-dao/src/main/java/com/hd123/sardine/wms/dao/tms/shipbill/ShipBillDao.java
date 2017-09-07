@@ -14,6 +14,7 @@ import java.util.List;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBill;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBillContainerStock;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBillCustomerItem;
+import com.hd123.sardine.wms.api.tms.shipbill.ShipTaskFilter;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 
 /**
@@ -45,7 +46,7 @@ public interface ShipBillDao {
 
   void removeContainerStockItems(String shipBillUuid);
 
-  List<ShipBillContainerStock> queryWaitShipStocks();
+  List<ShipBillContainerStock> queryWaitShipStocks(ShipTaskFilter filter);
 
   void updateShipOrder(String shipBillUuid);
 }

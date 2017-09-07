@@ -9,8 +9,6 @@
  */
 package com.hd123.sardine.wms.api.tms.shipbill;
 
-import java.util.List;
-
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -140,5 +138,5 @@ public interface ShipBillService {
    * 
    * @return 带装车信息
    */
-  List<ShipBillContainerStock> queryWaitShipStocks();
+  PageQueryResult<ShipBillContainerStock> queryWaitShipStocks(ShipTaskFilter filter);
 }

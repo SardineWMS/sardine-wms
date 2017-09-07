@@ -685,7 +685,7 @@
         #{shipBillUuid, jdbcType=VARCHAR}
     </delete>
     
-    <select id="queryWaitShipStock" parameterType="java.util.Map" resultMap="ShipBillContainerStockMap">
+    <select id="queryWaitShipStock" parameterType="com.hd123.sardine.wms.api.tms.shipbill.ShipTaskFilter" resultMap="ShipBillContainerStockMap">
       select s.*, c.UUID customeruuid, c.code customercode, c.name customername, 
       s.billuuid sourcebilluuid, s.billtype sourcebilltype, s.billnumber sourcebillnumber from 
         db_proxy.sardine_stock s, db_proxy.sardine_customer c, db_proxy.sardine_bin b where 
@@ -693,6 +693,21 @@
         s.companyuuid = b.companyuuid and b.binusage = 'CollectBin'
         and s.STATE = 'normal'
         and s.companyuuid = #{companyUuid, jdbcType=VARCHAR}
+        <if test="articleCodeLike != null and articleCodeLike != ''">
+          and s.articleCode like CONCAT('%',#{articleCodeLike},'%')  
+        </if>
+        <if test="binCodeLike != null and binCodeLike != ''">
+          and s.bincode like CONCAT('%',#{binCodeLike},'%')  
+        </if>
+        <if test="containerBarcodeLike != null and containerBarcodeLike != ''">
+          and s.containerbarcode like CONCAT('%',#{containerBarcodeLike},'%')  
+        </if>
+        <if test="customerCodeLike != null and customerCodeLike != ''">
+          and c.code like CONCAT('%',#{customerCodeLike},'%')  
+        </if>
+        <if test="supplierCodeLike != null and supplierCodeLike != ''">
+          and s.suppliercode like CONCAT('%',#{supplierCodeLike},'%')  
+        </if>
     </select>
     
     <update id="updateShipOrder" parameterType="java.util.Map">

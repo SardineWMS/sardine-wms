@@ -164,7 +164,7 @@ public class ShipBill extends StandardEntity implements Validator {
     Assert.assertArgumentNotNull(companyUuid, "companyUuid");
     this.companyUuid = companyUuid;
   }
-  
+
   public int getContainerCount() {
     return containerCount;
   }
@@ -200,7 +200,7 @@ public class ShipBill extends StandardEntity implements Validator {
     Assert.assertArgumentNotNull(customerItems, "customerItems");
     this.customerItems = customerItems;
   }
-  
+
   public void clearTotalInfo() {
     setTotalAmount(BigDecimal.ZERO);
     setTotalCaseQty("0");
@@ -222,6 +222,9 @@ public class ShipBill extends StandardEntity implements Validator {
     Assert.assertArgumentNotNull(driver.getUuid(), "driver.uuid");
     Assert.assertArgumentNotNull(driver.getCode(), "driver.code");
     Assert.assertArgumentNotNull(driver.getName(), "driver.name");
+    Assert.assertArgumentNotNull(containerStocks, "containerStocks");
+    if (containerStocks.isEmpty())
+      throw new IllegalArgumentException("装车库存明细不能为空！");
   }
 
 }

@@ -23,6 +23,7 @@ import com.hd123.sardine.wms.api.tms.shipbill.ShipBillContainerStock;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBillCustomerItem;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBillService;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBillState;
+import com.hd123.sardine.wms.api.tms.shipbill.ShipTaskFilter;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -248,7 +249,14 @@ public class ShipBillServiceImpl extends BaseWMSService implements ShipBillServi
   }
 
   @Override
-  public List<ShipBillContainerStock> queryWaitShipStocks() {
-    return dao.queryWaitShipStocks();
+  public PageQueryResult<ShipBillContainerStock> queryWaitShipStocks(ShipTaskFilter filter) {
+    Assert.assertArgumentNotNull(filter, "filter");
+
+    filter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    List<ShipBillContainerStock> list = dao.queryWaitShipStocks(filter);
+    PageQueryResult<ShipBillContainerStock> pqr = new PageQueryResult<ShipBillContainerStock>();
+    PageQueryUtil.assignPageInfo(pqr, filter);
+    pqr.setRecords(list);
+    return pqr;
   }
 }
