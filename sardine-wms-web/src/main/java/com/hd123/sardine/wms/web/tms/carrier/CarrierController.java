@@ -27,6 +27,7 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
@@ -45,6 +46,7 @@ public class CarrierController extends BaseController {
       @RequestParam(value = "token", required = true) String token, @RequestBody Carrier carrier) {
     RespObject resp = new RespObject();
     try {
+      carrier.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       String uuid = service.saveNew(carrier);
       resp.setObj(uuid);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -152,7 +154,7 @@ public class CarrierController extends BaseController {
       definition.setOrderDir(OrderDir.valueOf(sortDirection));
       definition.put(CarrierService.QUERY_CODE_LIKE, code);
       definition.put(CarrierService.QUERY_NAME_EQUALS, name);
-
+      definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<Carrier> result = service.query(definition);
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

@@ -27,6 +27,7 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
@@ -58,7 +59,7 @@ public class VehicleTypeController extends BaseController {
       definition.setPageSize(pageSize);
       definition.setSortField(sort);
       definition.setOrderDir(OrderDir.valueOf(sortDirection));
-
+      definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<VehicleType> result = service.query(definition);
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -75,6 +76,7 @@ public class VehicleTypeController extends BaseController {
       @RequestParam(value = "token", required = true) String token, @RequestBody VehicleType type) {
     RespObject resp = new RespObject();
     try {
+      type.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       String uuid = service.saveNew(type);
       resp.setObj(uuid);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

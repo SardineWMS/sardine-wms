@@ -29,6 +29,7 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
@@ -65,6 +66,7 @@ public class VehicleController extends BaseController {
           StringUtil.isNullOrBlank(state) ? null : VehicleState.valueOf(state));
       definition.put(VehicleService.QUERY_VEHICLENO_LIKE, vehicleNo);
       definition.put(VehicleService.QUERY_VEHICLETYPECODE, vehicleType);
+      definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<Vehicle> result = service.query(definition);
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -82,6 +84,7 @@ public class VehicleController extends BaseController {
     RespObject resp = new RespObject();
     try {
       vehicle.setState(VehicleState.free);
+      vehicle.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       String uuid = service.saveNew(vehicle);
       resp.setObj(uuid);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
