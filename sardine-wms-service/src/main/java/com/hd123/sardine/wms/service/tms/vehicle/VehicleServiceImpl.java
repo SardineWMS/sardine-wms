@@ -43,171 +43,171 @@ import com.hd123.sardine.wms.service.log.EntityLogger;
  */
 public class VehicleServiceImpl extends BaseWMSService implements VehicleService {
 
-    @Autowired
-    private VehicleDao dao;
-    @Autowired
-    private EntityLogger logger;
-    @Autowired
-    private CarrierService carrierService;
-    @Autowired
-    private VehicleTypeService vehicleTypeService;
+  @Autowired
+  private VehicleDao dao;
+  @Autowired
+  private EntityLogger logger;
+  @Autowired
+  private CarrierService carrierService;
+  @Autowired
+  private VehicleTypeService vehicleTypeService;
 
-    @Override
-    public String saveNew(Vehicle vehicle) throws IllegalArgumentException, WMSException {
-        Assert.assertArgumentNotNull(vehicle, "vehicle");
+  @Override
+  public String saveNew(Vehicle vehicle) throws IllegalArgumentException, WMSException {
+    Assert.assertArgumentNotNull(vehicle, "vehicle");
 
-        vehicle.validate();
-        Carrier carrier = carrierService.get(vehicle.getCarrier().getUuid());
-        vehicle.setCarrier(new UCN(carrier.getUuid(), carrier.getCode(), carrier.getName()));
-        VehicleType vehicleType = vehicleTypeService.get(vehicle.getVehicleType().getUuid());
-        vehicle.setVehicleType(
-                new UCN(vehicleType.getUuid(), vehicleType.getCode(), vehicleType.getName()));
-        Vehicle v = getByCode(vehicle.getCode());
-        if (v != null)
-            throw new WMSException("已存在代码为" + vehicle.getCode() + "的车辆");
-        v = getByVehicleNo(vehicle.getVehicleNo());
-        if (v != null)
-            throw new WMSException("已存在车牌号为" + vehicle.getVehicleNo() + "的车辆");
+    vehicle.validate();
+    Carrier carrier = carrierService.get(vehicle.getCarrier().getUuid());
+    vehicle.setCarrier(new UCN(carrier.getUuid(), carrier.getCode(), carrier.getName()));
+    VehicleType vehicleType = vehicleTypeService.get(vehicle.getVehicleType().getUuid());
+    vehicle.setVehicleType(
+        new UCN(vehicleType.getUuid(), vehicleType.getCode(), vehicleType.getName()));
+    Vehicle v = getByCode(vehicle.getCode());
+    if (v != null)
+      throw new WMSException("已存在代码为" + vehicle.getCode() + "的车辆");
+    v = getByVehicleNo(vehicle.getVehicleNo());
+    if (v != null)
+      throw new WMSException("已存在车牌号为" + vehicle.getVehicleNo() + "的车辆");
 
-        vehicle.setUuid(UUIDGenerator.genUUID());
-        vehicle.setState(VehicleState.free);
-        vehicle.setCreateInfo(ApplicationContextUtil.getOperateInfo());
-        vehicle.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
-        dao.insert(vehicle);
+    vehicle.setUuid(UUIDGenerator.genUUID());
+    vehicle.setState(VehicleState.free);
+    vehicle.setCreateInfo(ApplicationContextUtil.getOperateInfo());
+    vehicle.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.insert(vehicle);
 
-        logger.injectContext(this, vehicle.getUuid(), Vehicle.class.getName(),
-                ApplicationContextUtil.getOperateContext());
-        logger.log(EntityLogger.EVENT_ADDNEW, "新增车辆");
-        return vehicle.getUuid();
-    }
+    logger.injectContext(this, vehicle.getUuid(), Vehicle.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_ADDNEW, "新增车辆");
+    return vehicle.getUuid();
+  }
 
-    @Override
-    public void saveModify(Vehicle vehicle) throws IllegalArgumentException, WMSException {
-        Assert.assertArgumentNotNull(vehicle, "vehicle");
+  @Override
+  public void saveModify(Vehicle vehicle) throws IllegalArgumentException, WMSException {
+    Assert.assertArgumentNotNull(vehicle, "vehicle");
 
-        vehicle.validate();
-        Carrier carrier = carrierService.get(vehicle.getCarrier().getUuid());
-        if (carrier == null)
-            throw new WMSException("承运商" + vehicle.getCarrier().getUuid() + "不存在");
-        vehicle.setCarrier(new UCN(carrier.getUuid(), carrier.getCode(), carrier.getName()));
-        VehicleType vehicleType = vehicleTypeService.get(vehicle.getVehicleType().getUuid());
-        if (vehicleType == null)
-            throw new WMSException("车型" + vehicle.getVehicleType().getUuid() + "不存在");
-        vehicle.setVehicleType(
-                new UCN(vehicleType.getUuid(), vehicleType.getCode(), vehicleType.getName()));
-        Vehicle v = dao.get(vehicle.getUuid());
-        if (v == null)
-            throw new WMSException("车辆" + vehicle.getUuid() + "不存在");
-        if (VehicleState.free.equals(v.getState()) == false)
-            throw new WMSException("非空闲车辆，不能修改");
-        Vehicle exsitV = getByCode(vehicle.getCode());
-        if (exsitV != null && v.getUuid().equals(exsitV.getUuid()) == false)
-            throw new WMSException("已存在代码为" + exsitV.getCode() + "的车辆");
-        exsitV = getByVehicleNo(vehicle.getVehicleNo());
-        if (exsitV != null && v.getUuid().equals(exsitV.getUuid()) == false)
-            throw new WMSException("已存在车牌号为" + exsitV.getVehicleNo() + "的车辆");
+    vehicle.validate();
+    Carrier carrier = carrierService.get(vehicle.getCarrier().getUuid());
+    if (carrier == null)
+      throw new WMSException("承运商" + vehicle.getCarrier().getUuid() + "不存在");
+    vehicle.setCarrier(new UCN(carrier.getUuid(), carrier.getCode(), carrier.getName()));
+    VehicleType vehicleType = vehicleTypeService.get(vehicle.getVehicleType().getUuid());
+    if (vehicleType == null)
+      throw new WMSException("车型" + vehicle.getVehicleType().getUuid() + "不存在");
+    vehicle.setVehicleType(
+        new UCN(vehicleType.getUuid(), vehicleType.getCode(), vehicleType.getName()));
+    Vehicle v = dao.get(vehicle.getUuid());
+    if (v == null)
+      throw new WMSException("车辆" + vehicle.getUuid() + "不存在");
+    if (VehicleState.free.equals(v.getState()) == false)
+      throw new WMSException("非空闲车辆，不能修改");
+    Vehicle exsitV = getByCode(vehicle.getCode());
+    if (exsitV != null && v.getUuid().equals(exsitV.getUuid()) == false)
+      throw new WMSException("已存在代码为" + exsitV.getCode() + "的车辆");
+    exsitV = getByVehicleNo(vehicle.getVehicleNo());
+    if (exsitV != null && v.getUuid().equals(exsitV.getUuid()) == false)
+      throw new WMSException("已存在车牌号为" + exsitV.getVehicleNo() + "的车辆");
 
-        PersistenceUtils.checkVersion(vehicle.getVersion(), v, Vehicle.CAPTION, v.getCode());
-        vehicle.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
-        dao.update(vehicle);
+    PersistenceUtils.checkVersion(vehicle.getVersion(), v, Vehicle.CAPTION, v.getCode());
+    vehicle.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(vehicle);
 
-        logger.injectContext(this, vehicle.getUuid(), Vehicle.class.getName(),
-                ApplicationContextUtil.getOperateContext());
-        logger.log(EntityLogger.EVENT_MODIFY, "修改车辆信息");
-    }
+    logger.injectContext(this, vehicle.getUuid(), Vehicle.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_MODIFY, "修改车辆信息");
+  }
 
-    @Override
-    public void online(String uuid, long version)
-            throws IllegalArgumentException, VersionConflictException, WMSException {
-        Assert.assertArgumentNotNull(uuid, "uuid");
-        Assert.assertArgumentNotNull(version, "version");
+  @Override
+  public void online(String uuid, long version)
+      throws IllegalArgumentException, VersionConflictException, WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+    Assert.assertArgumentNotNull(version, "version");
 
-        Vehicle v = dao.get(uuid);
-        if (v == null)
-            throw new WMSException("要启用的车辆" + uuid + "不存在");
-        if (VehicleState.free.equals(v.getState()))
-            return;
-        if (VehicleState.offline.equals(v.getState()) == false)
-            throw new WMSException("车辆当前状态为" + v.getState().getCaption() + "，只有“停用”状态的车辆才能启用");
+    Vehicle v = dao.get(uuid);
+    if (v == null)
+      throw new WMSException("要启用的车辆" + uuid + "不存在");
+    if (VehicleState.free.equals(v.getState()))
+      return;
+    if (VehicleState.offline.equals(v.getState()) == false)
+      throw new WMSException("车辆当前状态为" + v.getState().getCaption() + "，只有“停用”状态的车辆才能启用");
 
-        Carrier carrier = carrierService.get(v.getCarrier().getUuid());
-        if (carrier == null)
-            throw new WMSException("车辆对应的承运商不存在，车辆无法启用");
-        if (CarrierState.offline.equals(carrier.getState()))
-            throw new WMSException("车辆对应的承运商已停用，车辆无法启用");
-        PersistenceUtils.checkVersion(version, v, Vehicle.CAPTION, uuid);
+    Carrier carrier = carrierService.get(v.getCarrier().getUuid());
+    if (carrier == null)
+      throw new WMSException("车辆对应的承运商不存在，车辆无法启用");
+    if (CarrierState.offline.equals(carrier.getState()))
+      throw new WMSException("车辆对应的承运商已停用，车辆无法启用");
+    PersistenceUtils.checkVersion(version, v, Vehicle.CAPTION, uuid);
 
-        v.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
-        v.setState(VehicleState.free);
-        dao.update(v);
-        logger.injectContext(this, uuid, Vehicle.class.getName(),
-                ApplicationContextUtil.getOperateContext());
-        logger.log(EntityLogger.EVENT_MODIFY, "启用车辆");
-    }
+    v.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    v.setState(VehicleState.free);
+    dao.update(v);
+    logger.injectContext(this, uuid, Vehicle.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_MODIFY, "启用车辆");
+  }
 
-    @Override
-    public void offline(String uuid, long version)
-            throws IllegalArgumentException, VersionConflictException, WMSException {
-        Assert.assertArgumentNotNull(uuid, "uuid");
-        Assert.assertArgumentNotNull(version, "version");
+  @Override
+  public void offline(String uuid, long version)
+      throws IllegalArgumentException, VersionConflictException, WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+    Assert.assertArgumentNotNull(version, "version");
 
-        Vehicle v = dao.get(uuid);
-        if (v == null)
-            throw new WMSException("要停用的车辆不存在");
-        if (VehicleState.offline.equals(v.getState()))
-            return;
-        if (VehicleState.free.equals(v.getState()) == false)
-            throw new WMSException("车辆当前状态为" + v.getState().getCaption() + "，只有“空闲”状态的车辆才能被停用");
+    Vehicle v = dao.get(uuid);
+    if (v == null)
+      throw new WMSException("要停用的车辆不存在");
+    if (VehicleState.offline.equals(v.getState()))
+      return;
+    if (VehicleState.free.equals(v.getState()) == false)
+      throw new WMSException("车辆当前状态为" + v.getState().getCaption() + "，只有“空闲”状态的车辆才能被停用");
 
-        PersistenceUtils.checkVersion(version, v, Vehicle.CAPTION, uuid);
-        v.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
-        v.setState(VehicleState.offline);
-        dao.update(v);
-        logger.injectContext(this, uuid, Vehicle.class.getName(),
-                ApplicationContextUtil.getOperateContext());
-        logger.log(EntityLogger.EVENT_MODIFY, "停用车辆");
+    PersistenceUtils.checkVersion(version, v, Vehicle.CAPTION, uuid);
+    v.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    v.setState(VehicleState.offline);
+    dao.update(v);
+    logger.injectContext(this, uuid, Vehicle.class.getName(),
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_MODIFY, "停用车辆");
 
-    }
+  }
 
-    @Override
-    public PageQueryResult<Vehicle> query(PageQueryDefinition definition)
-            throws IllegalArgumentException, WMSException {
-        Assert.assertArgumentNotNull(definition, "definition");
+  @Override
+  public PageQueryResult<Vehicle> query(PageQueryDefinition definition)
+      throws IllegalArgumentException, WMSException {
+    Assert.assertArgumentNotNull(definition, "definition");
 
-        PageQueryResult<Vehicle> qpr = new PageQueryResult<>();
-        List<Vehicle> list = dao.query(definition);
-        PageQueryUtil.assignPageInfo(qpr, definition);
-        qpr.setRecords(list);
-        return qpr;
-    }
+    definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    PageQueryResult<Vehicle> qpr = new PageQueryResult<>();
+    List<Vehicle> list = dao.query(definition);
+    PageQueryUtil.assignPageInfo(qpr, definition);
+    qpr.setRecords(list);
+    return qpr;
+  }
 
-    @Override
-    public Vehicle getByCode(String code) {
-        if (StringUtil.isNullOrBlank(code))
-            return null;
-        return dao.getByCode(code);
-    }
+  @Override
+  public Vehicle getByCode(String code) {
+    if (StringUtil.isNullOrBlank(code))
+      return null;
+    return dao.getByCode(code);
+  }
 
-    @Override
-    public List<Vehicle> queryByType(String typeUuid)
-            throws IllegalArgumentException, WMSException {
-        if (StringUtil.isNullOrBlank(typeUuid))
-            return new ArrayList<Vehicle>();
-        return dao.queryByType(typeUuid);
-    }
+  @Override
+  public List<Vehicle> queryByType(String typeUuid) throws IllegalArgumentException, WMSException {
+    if (StringUtil.isNullOrBlank(typeUuid))
+      return new ArrayList<Vehicle>();
+    return dao.queryByType(typeUuid);
+  }
 
-    @Override
-    public Vehicle getByVehicleNo(String vehicleNo) throws IllegalArgumentException, WMSException {
-        if (StringUtil.isNullOrBlank(vehicleNo))
-            return null;
-        return dao.getByVehicleNo(vehicleNo);
-    }
+  @Override
+  public Vehicle getByVehicleNo(String vehicleNo) throws IllegalArgumentException, WMSException {
+    if (StringUtil.isNullOrBlank(vehicleNo))
+      return null;
+    return dao.getByVehicleNo(vehicleNo);
+  }
 
-    @Override
-    public Vehicle get(String uuid) throws IllegalArgumentException, WMSException {
-        if (StringUtil.isNullOrBlank(uuid))
-            return null;
-        return dao.get(uuid);
-    }
+  @Override
+  public Vehicle get(String uuid) throws IllegalArgumentException, WMSException {
+    if (StringUtil.isNullOrBlank(uuid))
+      return null;
+    return dao.get(uuid);
+  }
 
 }

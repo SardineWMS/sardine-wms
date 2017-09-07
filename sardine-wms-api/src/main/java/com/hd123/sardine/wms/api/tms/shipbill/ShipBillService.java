@@ -9,6 +9,8 @@
  */
 package com.hd123.sardine.wms.api.tms.shipbill;
 
+import java.util.List;
+
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -51,6 +53,17 @@ public interface ShipBillService {
   String saveNew(ShipBill shipBill) throws IllegalArgumentException, WMSException;
 
   /**
+   * 新增并结束装车单
+   * 
+   * @param shipBill
+   *          装车单
+   * @return 装车单号
+   * @throws IllegalArgumentException
+   * @throws WMSException
+   */
+  String saveAndFinish(ShipBill shipBill) throws IllegalArgumentException, WMSException;
+
+  /**
    * 编辑装车单
    * 
    * @param shipBill
@@ -61,6 +74,20 @@ public interface ShipBillService {
    * @throws WMSException
    */
   void saveModify(ShipBill shipBill)
+      throws IllegalArgumentException, VersionConflictException, WMSException;
+
+  /**
+   * 删除装车单
+   * 
+   * @param uuid
+   *          装车单UUID
+   * @param version
+   *          版本号
+   * @throws IllegalArgumentException
+   * @throws VersionConflictException
+   * @throws WMSException
+   */
+  void remove(String uuid, long version)
       throws IllegalArgumentException, VersionConflictException, WMSException;
 
   /**
@@ -107,4 +134,11 @@ public interface ShipBillService {
    */
   void finish(String uuid, long version)
       throws IllegalArgumentException, VersionConflictException, WMSException;
+
+  /**
+   * 查询待装车库存信息
+   * 
+   * @return 带装车信息
+   */
+  List<ShipBillContainerStock> queryWaitShipStocks();
 }

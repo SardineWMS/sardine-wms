@@ -21,6 +21,10 @@
 		<result column="totalVolume" property="totalVolume" jdbcType="DECIMAL" />
 		<result column="totalWeight" property="totalWeight" jdbcType="DECIMAL" />
 		<result column="totalAmount" property="totalAmount" jdbcType="DECIMAL" />
+		<result column="containerCount" property="containerCount"
+			jdbcType="INTEGER" />
+		<result column="customerCount" property="customerCount"
+			jdbcType="INTEGER" />
 		<result column="createdtime " property="createInfo.time"
 			jdbcType="TIMESTAMP" />
 		<result column="createdID" property="createInfo.operator.id"
@@ -53,11 +57,10 @@
 		<result column="orderNo" property="orderNo" jdbcType="INTEGER" />
 		<result column="totalCaseQty" property="totalCaseQty" jdbcType="VARCHAR" />
 		<result column="totalVolume" property="totalVolume" jdbcType="DECIMAL" />
+		<result column="totalAmount" property="totalAmount" jdbcType="DECIMAL" />
+		<result column="totalWeight" property="totalWeight" jdbcType="DECIMAL" />
 		<result column="containerCount" property="containerCount"
 			jdbcType="INTEGER" />
-		<result column="shiperUuid" property="shiper.uuid" jdbcType="VARCHAR" />
-		<result column="shiperCode" property="shiper.code" jdbcType="VARCHAR" />
-		<result column="shiperName" property="shiper.name" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<resultMap
@@ -91,6 +94,7 @@
 			jdbcType="TIMESTAMP" />
 		<result column="validDate" property="validDate" jdbcType="VARCHAR" />
 		<result column="qty" property="qty" jdbcType="DECIMAL" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
 		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
 		<result column="supplierUuid" property="supplier.uuid"
 			jdbcType="VARCHAR" />
@@ -98,6 +102,9 @@
 			jdbcType="VARCHAR" />
 		<result column="supplierName" property="supplier.name"
 			jdbcType="VARCHAR" />
+		<result column="shiperUuid" property="shiper.uuid" jdbcType="VARCHAR" />
+		<result column="shiperCode" property="shiper.code" jdbcType="VARCHAR" />
+		<result column="shiperName" property="shiper.name" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<insert id="insert" parameterType="com.hd123.sardine.wms.api.tms.shipbill.ShipBill">
@@ -133,8 +140,8 @@
 			<if test="driver != null and driver.name != null">
 				driverName,
 			</if>
-			<if test="type != null">
-				type,
+			<if test="deliveryType != null">
+				deliveryType,
 			</if>
 			<if test="method != null">
 				method,
@@ -153,6 +160,12 @@
 			</if>
 			<if test="totalAmount != null">
 				totalAmount,
+			</if>
+			<if test="containerCount != null">
+				containerCount,
+			</if>
+			<if test="customerCount != null">
+				customerCount,
 			</if>
 			version,
 			CREATEDTIME,
@@ -195,6 +208,33 @@
 			<if test="driver != null and driver.name != null">
 				#{driver.name,jdbcType=VARCHAR},
 			</if>
+			<if test="deliveryType != null">
+				#{deliveryType,jdbcType=VARCHAR},
+			</if>
+			<if test="method != null">
+				#{method,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=VARCHAR},
+			</if>
+			<if test="totalCaseQty != null">
+				#{totalCaseQty,jdbcType=VARCHAR},
+			</if>
+			<if test="totalVolume != null">
+				#{totalVolume,jdbcType=DECIMAL},
+			</if>
+			<if test="totalWeight != null">
+				#{totalWeight,jdbcType=DECIMAL},
+			</if>
+			<if test="totalAmount != null">
+				#{totalAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="containerCount != null">
+				#{containerCount,jdbcType=INTEGER},
+			</if>
+			<if test="customerCount != null">
+				#{customerCount,jdbcType=INTEGER},
+			</if>
 			#{version,jdbcType=LONGVARCHAR},
 			#{createInfo.time,jdbcType=TIMESTAMP},
 			#{createInfo.operator.id,jdbcType=VARCHAR},
@@ -212,6 +252,24 @@
 		<set>
 			<if test="state != null">
 				state = #{state,jdbcType=VARCHAR},
+			</if>
+			<if test="totalCaseQty != null">
+				totalCaseQty = #{totalCaseQty,jdbcType=VARCHAR},
+			</if>
+			<if test="totalVolume != null">
+				totalVolume = #{totalVolume,jdbcType=DECIMAL},
+			</if>
+			<if test="totalWeight != null">
+				totalWeight = #{totalWeight,jdbcType=DECIMAL},
+			</if>
+			<if test="totalAmount != null">
+				totalAmount = #{totalAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="containerCount != null">
+				containerCount = #{containerCount,jdbcType=INTEGER},
+			</if>
+			<if test="customerCount != null">
+				customerCount = #{customerCount,jdbcType=INTEGER},
 			</if>
 			LASTMODIFYTIME =
 			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
@@ -238,9 +296,8 @@
 
 	<select id="getByBillNumber" parameterType="java.util.Map"
 		resultMap="ShipBillMap">
-		select t.*,c.code carrierCode,c.name carrierName from
-		db_proxy.sardine_shipbill t,db_proxy.sardine_carrier c where
-		t.carrierUuid=c.uuid and
+		select t.* from
+		db_proxy.sardine_shipbill t where
 		t.billNumber=#{billNumber,jdbcType=VARCHAR}
 		and
 		t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
@@ -373,23 +430,20 @@
 			<if test="orderNo != null">
 				orderNo,
 			</if>
-			<if test="totalCaseQty != null and totalCaseQty != ''">
+			<if test="totalCaseQty != null">
 				totalCaseQty,
 			</if>
-			<if test="totalVolume != null and totalVolume != ''">
+			<if test="totalVolume != null">
 				totalVolume,
 			</if>
-			<if test="containerCount != null and containerCount != ''">
+			<if test="totalWeight != null">
+				totalWeight,
+			</if>
+			<if test="totalAmount != null">
+				totalAmount,
+			</if>
+			<if test="containerCount != null">
 				containerCount,
-			</if>
-			<if test="shiper != null and shiper.uuid != ''">
-				shiperUuid,
-			</if>
-			<if test="shiper != null and shiper.code != ''">
-				shiperCode,
-			</if>
-			<if test="shiper != null and shiper.name != ''">
-				shiperName,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -412,7 +466,7 @@
 				#{customer.name,jdbcType=VARCHAR},
 			</if>
 			<if test="orderNo != null">
-				#{orderNo,jdbcType=INTEGER},
+				#{orderNo,jdbcType=VARCHAR},
 			</if>
 			<if test="totalCaseQty != null and totalCaseQty != ''">
 				#{totalCaseQty,jdbcType=VARCHAR},
@@ -420,17 +474,14 @@
 			<if test="totalVolume != null">
 				#{totalVolume,jdbcType=DECIMAL},
 			</if>
+			<if test="totalWeight != null">
+				#{totalWeight,jdbcType=DECIMAL},
+			</if>
+			<if test="totalAmount != null">
+				#{totalAmount,jdbcType=DECIMAL},
+			</if>
 			<if test="containerCount != null">
 				#{containerCount,jdbcType=INTEGER},
-			</if>
-			<if test="shiper != null and shiper.uuid != ''">
-				#{shiper.uuid,jdbcType=VARCHAR},
-			</if>
-			<if test="shiper != null and shiper.code != ''">
-				#{shiper.code,jdbcType=VARCHAR},
-			</if>
-			<if test="shiper != null and shiper.name != ''">
-				#{shiper.name,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -518,6 +569,15 @@
 			<if test="supplier != null and supplier.name != null">
 				supplierName,
 			</if>
+			<if test="shiper != null and shiper.uuid != ''">
+				shiperUuid,
+			</if>
+			<if test="shiper != null and shiper.code != ''">
+				shiperCode,
+			</if>
+			<if test="shiper != null and shiper.name != ''">
+				shiperName,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uuid != null and uuid != ''">
@@ -592,6 +652,15 @@
 			<if test="supplier != null and supplier.name != null">
 				#{supplier.name,jdbcType=VARCHAR},
 			</if>
+			<if test="shiper != null and shiper.uuid != ''">
+				#{shiper.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="shiper != null and shiper.code != ''">
+				#{shiper.code,jdbcType=VARCHAR},
+			</if>
+			<if test="shiper != null and shiper.name != ''">
+				#{shiper.name,jdbcType=VARCHAR},
+			</if>
 		</trim>
 	</insert>
 
@@ -602,4 +671,34 @@
 		t.shipBillUuid=#{uuid,jdbcType=VARCHAR}
 	</select>
 
+    <delete id="remove" parameterType="java.util.Map">
+        delete from db_proxy.sardine_shipbill where uuid = #{uuid, jdbcType=VARCHAR}
+        and version = #{version, jdbcType=LONGVARCHAR}
+    </delete>
+    
+    <delete id="removeCustomerItems" parameterType="java.util.Map">
+        delete from db_proxy.sardine_shipbillcustomeritem where shipbilluuid = #{shipBillUuid, jdbcType=VARCHAR}
+    </delete>
+    
+    <delete id="removeContainerStockItems" parameterType="java.util.Map">
+        delete from db_proxy.sardine_shipbillcontainerstock where shipbilluuid = 
+        #{shipBillUuid, jdbcType=VARCHAR}
+    </delete>
+    
+    <select id="queryWaitShipStock" parameterType="java.util.Map" resultMap="ShipBillContainerStockMap">
+      select s.*, c.UUID customeruuid, c.code customercode, c.name customername, 
+      s.billuuid sourcebilluuid, s.billtype sourcebilltype, s.billnumber sourcebillnumber from 
+        db_proxy.sardine_stock s, db_proxy.sardine_customer c, db_proxy.sardine_bin b where 
+        s.OWNER = c.uuid and s.BINCODE = b.code and 
+        s.companyuuid = b.companyuuid and b.binusage = 'CollectBin'
+        and s.STATE = 'normal'
+        and s.companyuuid = #{companyUuid, jdbcType=VARCHAR}
+    </select>
+    
+    <update id="updateShipOrder" parameterType="java.util.Map">
+      update db_proxy.sardine_shipbillcustomeritem set ORDERNO = (
+       select max(concat_ws('-',l.CODE,lc.LINEORDER)) from db_proxy.sardine_serialarchline l, db_proxy.sardine_serialarchlinecustomer lc where l.UUID = lc.SERIALARCHLINEUUID 
+       and l.COMPANYUUID = #{companyUuid, jdbcType=VARCHAR} and lc.CUSTOMERUUID = CUSTOMERUUID)
+      where SHIPBILLUUID = #{shipBillUuid, jdbcType=VARCHAR}
+    </update>
 </mapper>

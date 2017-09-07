@@ -31,6 +31,8 @@ public class ShipBillCustomerItem extends Entity implements Validator {
   private String orderNo;
   private String totalCaseQty;
   private BigDecimal totalVolume = BigDecimal.ZERO;
+  private BigDecimal totalWeight = BigDecimal.ZERO;
+  private BigDecimal totalAmount = BigDecimal.ZERO;
   private int containerCount = 0;
 
   /** 装车单UUID */
@@ -76,6 +78,22 @@ public class ShipBillCustomerItem extends Entity implements Validator {
 
   public void setTotalCaseQty(String totalCaseQty) {
     this.totalCaseQty = totalCaseQty;
+  }
+  
+  public BigDecimal getTotalWeight() {
+    return totalWeight;
+  }
+
+  public void setTotalWeight(BigDecimal totalWeight) {
+    this.totalWeight = totalWeight;
+  }
+  
+  public BigDecimal getTotalAmount() {
+    return totalAmount;
+  }
+
+  public void setTotalAmount(BigDecimal totalAmount) {
+    this.totalAmount = totalAmount;
   }
 
   /** 总体积 */

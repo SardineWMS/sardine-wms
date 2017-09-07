@@ -43,9 +43,17 @@ public class ShipBillContainerStock extends Entity implements Validator {
     private BigDecimal qty;
     private String caseQtyStr;
     private UCN supplier;
-    private String orderNo;
     private UCN shiper;
+    private BigDecimal price;
     
+    public BigDecimal getPrice() {
+      return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+      this.price = price;
+    }
+
     /** 装车员 */
     public UCN getShiper() {
       return shiper;
@@ -211,14 +219,6 @@ public class ShipBillContainerStock extends Entity implements Validator {
         this.supplier = supplier;
     }
     
-    public String getOrderNo() {
-      return orderNo;
-    }
-
-    public void setOrderNo(String orderNo) {
-      this.orderNo = orderNo;
-    }
-
     @Override
     public void validate() {
         Assert.assertArgumentNotNull(article, "article");

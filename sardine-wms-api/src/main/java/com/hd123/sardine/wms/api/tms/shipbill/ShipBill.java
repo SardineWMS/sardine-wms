@@ -31,7 +31,6 @@ public class ShipBill extends StandardEntity implements Validator {
   private String companyUuid;
   private String billNumber;
   private String vehicleNum;
-  private UCN serialArch;
   private UCN carrier;
   private UCN driver;
   private DeliveryType deliveryType = DeliveryType.warehouse;
@@ -41,6 +40,8 @@ public class ShipBill extends StandardEntity implements Validator {
   private BigDecimal totalVolume = BigDecimal.ZERO;
   private BigDecimal totalWeight = BigDecimal.ZERO;
   private BigDecimal totalAmount = BigDecimal.ZERO;
+  private int containerCount;
+  private int customerCount;
   private List<ShipBillContainerStock> containerStocks = new ArrayList<>();
   private List<ShipBillCustomerItem> customerItems = new ArrayList<>();
 
@@ -62,14 +63,6 @@ public class ShipBill extends StandardEntity implements Validator {
   public void setVehicleNum(String vehicleNum) {
     Assert.assertArgumentNotNull(vehicleNum, "vehicleNum");
     this.vehicleNum = vehicleNum;
-  }
-
-  public UCN getSerialArch() {
-    return serialArch;
-  }
-
-  public void setSerialArch(UCN serialArch) {
-    this.serialArch = serialArch;
   }
 
   /** 承运商 */
@@ -171,6 +164,22 @@ public class ShipBill extends StandardEntity implements Validator {
     Assert.assertArgumentNotNull(companyUuid, "companyUuid");
     this.companyUuid = companyUuid;
   }
+  
+  public int getContainerCount() {
+    return containerCount;
+  }
+
+  public void setContainerCount(int containerCount) {
+    this.containerCount = containerCount;
+  }
+
+  public int getCustomerCount() {
+    return customerCount;
+  }
+
+  public void setCustomerCount(int customerCount) {
+    this.customerCount = customerCount;
+  }
 
   /** 装车容器库存明细 */
   public List<ShipBillContainerStock> getContainerStocks() {
@@ -191,13 +200,20 @@ public class ShipBill extends StandardEntity implements Validator {
     Assert.assertArgumentNotNull(customerItems, "customerItems");
     this.customerItems = customerItems;
   }
+  
+  public void clearTotalInfo() {
+    setTotalAmount(BigDecimal.ZERO);
+    setTotalCaseQty("0");
+    setTotalVolume(BigDecimal.ZERO);
+    setTotalWeight(BigDecimal.ZERO);
+    setContainerCount(0);
+    setCustomerCount(0);
+  }
 
   @Override
   public void validate() {
     Assert.assertArgumentNotNull(companyUuid, "companyUuid");
-    Assert.assertArgumentNotNull(billNumber, "billNumber");
     Assert.assertArgumentNotNull(vehicleNum, "vehicleNum");
-    Assert.assertArgumentNotNull(serialArch, "serialArch");
     Assert.assertArgumentNotNull(carrier, "carrier");
     Assert.assertArgumentNotNull(carrier.getUuid(), "carrier.uuid");
     Assert.assertArgumentNotNull(carrier.getCode(), "carrier.code");

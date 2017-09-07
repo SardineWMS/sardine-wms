@@ -20,17 +20,13 @@ import com.hd123.sardine.wms.api.stock.Stock;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.api.stock.StockState;
-import com.hd123.sardine.wms.api.tms.carrier.Carrier;
-import com.hd123.sardine.wms.api.tms.carrier.CarrierService;
-import com.hd123.sardine.wms.api.tms.serialarch.SerialArch;
-import com.hd123.sardine.wms.api.tms.serialarch.SerialArchService;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBill;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBillContainerStock;
 import com.hd123.sardine.wms.api.tms.vehicle.Vehicle;
 import com.hd123.sardine.wms.api.tms.vehicle.VehicleService;
-import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
+import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.service.util.StockBatchUtils;
 
 /**
@@ -40,13 +36,7 @@ import com.hd123.sardine.wms.service.util.StockBatchUtils;
 public class ShipBillVerifier {
 
   @Autowired
-  private CarrierService carrierService;
-
-  @Autowired
   private VehicleService vehicleService;
-
-  @Autowired
-  private SerialArchService serialArchService;
 
   @Autowired
   private StockService stockService;
@@ -67,18 +57,10 @@ public class ShipBillVerifier {
 
     shipBill.validate();
 
-    Carrier carrier = carrierService.get(shipBill.getCarrier().getUuid());
-    if (carrier == null)
-      throw new WMSException("承运商" + shipBill.getCarrier().getCode() + "不存在！");
-    shipBill.setCarrier(new UCN(carrier.getUuid(), carrier.getCode(), carrier.getName()));
     Vehicle vehicle = vehicleService.getByVehicleNo(shipBill.getVehicleNum());
     if (vehicle == null)
       throw new WMSException("车辆" + shipBill.getVehicleNum() + "不存在！");
-    SerialArch serialArch = serialArchService.get(shipBill.getSerialArch().getUuid());
-    if (serialArch == null)
-      throw new WMSException("线路体系" + shipBill.getSerialArch().getCode() + "不存在！");
-    shipBill
-        .setSerialArch(new UCN(serialArch.getUuid(), serialArch.getCode(), serialArch.getName()));
+    shipBill.setCarrier(vehicle.getCarrier());
     StockFilter stockFilter = new StockFilter();
     stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     stockFilter.setPageSize(0);
@@ -98,6 +80,9 @@ public class ShipBillVerifier {
       if (totalQty.compareTo(containerStock.getQty()) < 0)
         throw new WMSException("货位" + containerStock.getBinCode() + "，容器"
             + containerStock.getContainerBarcode() + "库存不足，请重试！");
+      containerStock.setPrice(stocks.get(0).getStockComponent().getPrice());
+      containerStock.setCaseQtyStr(
+          QpcHelper.qtyToCaseQtyStr(containerStock.getQty(), containerStock.getQpcStr()));
     }
   }
 

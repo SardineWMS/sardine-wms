@@ -21,22 +21,31 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
  *
  */
 public interface ShipBillDao {
-    ShipBill get(String uuid);
+  ShipBill get(String uuid);
 
-    ShipBill getByBillNumber(String billNumber);
+  ShipBill getByBillNumber(String billNumber);
 
-    List<ShipBill> query(PageQueryDefinition definition);
+  List<ShipBill> query(PageQueryDefinition definition);
 
-    int insert(ShipBill shipBill);
+  int insert(ShipBill shipBill);
 
-    int update(ShipBill shipBill);
+  int update(ShipBill shipBill);
 
-    List<ShipBillCustomerItem> queryCustomerItems(String uuid);
+  void remove(String uuid, long version);
 
-    void insertCustomerItems(List<ShipBillCustomerItem> items);
+  List<ShipBillCustomerItem> queryCustomerItems(String uuid);
 
-    List<ShipBillContainerStock> queryContainerStockItems(String uuid);
+  void insertCustomerItems(List<ShipBillCustomerItem> items);
 
-    void insertContainerStockItems(List<ShipBillContainerStock> items);
+  void removeCustomerItems(String shipBillUuid);
 
+  List<ShipBillContainerStock> queryContainerStockItems(String uuid);
+
+  void insertContainerStockItems(List<ShipBillContainerStock> items);
+
+  void removeContainerStockItems(String shipBillUuid);
+
+  List<ShipBillContainerStock> queryWaitShipStocks();
+
+  void updateShipOrder(String shipBillUuid);
 }
