@@ -11,11 +11,7 @@ package com.hd123.sardine.wms.web.inner.task;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -36,8 +32,6 @@ import com.hd123.sardine.wms.api.task.ContainerMoveRule;
 import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.task.TaskService;
 import com.hd123.sardine.wms.api.task.TaskType;
-import com.hd123.sardine.wms.api.task.TaskView;
-import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
@@ -78,7 +72,7 @@ public class TaskController extends BaseController {
                     defaultValue = "asc") String sortDirection,
             @RequestParam(value = "token", required = true) String token,
             @RequestParam(value = "articleCode", required = false) String articleCode,
-            @RequestParam(value = "taskType", required = false) String taskType,
+            @RequestParam(value = "taskType", required = true) String taskType,
             @RequestBody List<String> states) {
         RespObject resp = new RespObject();
         try {
@@ -92,40 +86,11 @@ public class TaskController extends BaseController {
             definition.put(TaskService.QUERY_FIELD_STATES, states);
             definition.put(TaskService.QUERY_FIELD_ARTICLECODE, articleCode);
             definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-            PageQueryResult<TaskView> result = taskService.query(definition);
-
-/*            Map<String, List<TaskView>> map = new HashMap<>();
-            for (TaskView view : result.getRecords()) {
-                String key = view.getOwner() + view.getFromBinCode()
-                        + view.getFromContainerBarcode() + view.getToBinCode()
-                        + view.getToContainerBarcode() + view.getSourceBill().toString();
-                if (map.containsKey(key))
-                    map.get(key).add(view);
-                else
-                    map.put(key, Arrays.asList(view));
-            }
-
-            List<RTask> rTasks = new ArrayList<>();
-            for (String key : map.keySet()) {
-                List<TaskView> taskViews = map.get(key);
-                RTask rtask = new RTask();
-                rtask.setOwner(taskViews.get(0).getOwner());
-                rtask.setFromBinCode(taskViews.get(0).getFromBinCode());
-                rtask.setFromContainerBarcode(taskViews.get(0).getFromContainerBarcode());
-                rtask.setToBinCode(taskViews.get(0).getToBinCode());
-                rtask.setToContainerBarcode(taskViews.get(0).getToContainerBarcode());
-                rtask.setSourceBill(taskViews.get(0).getSourceBill());
-                rtask.setItems(taskViews);
-                rTasks.add(rtask);
-            }
-
-            PageQueryResult<RTask> tasks = new PageQueryResult<>();
-            tasks.setPage(result.getPage());
-            tasks.setPageCount(result.getPageCount());
-            tasks.setPageSize(result.getPageSize());
-            tasks.setRecordCount(result.getRecordCount());
-            tasks.setRecords(rTasks);*/
-
+            PageQueryResult<?> result = null;
+          //  if (TaskType.Pick.name().equals(taskType))
+                result = pickUpBillService.query(definition);
+//            else
+//                result = taskService.query(definition);
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
@@ -255,7 +220,7 @@ public class TaskController extends BaseController {
             @RequestParam(value = "version", required = true) long version) {
         RespObject resp = new RespObject();
         try {
-            taskService.abort(uuid, version);
+            // taskService.abort(uuid, version);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
             return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
@@ -274,7 +239,8 @@ public class TaskController extends BaseController {
             @RequestParam(value = "version", required = true) long version) {
         RespObject resp = new RespObject();
         try {
-            taskService.putaway(uuid, version, toBinCode, toContainerBarcode);
+            // taskService.putaway(uuid, versioabn, toBinCode,
+            // toContainerBarcode);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
             return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
@@ -284,21 +250,41 @@ public class TaskController extends BaseController {
         return resp;
     }
 
-    @RequestMapping(value = "/rpl", method = RequestMethod.POST)
+    @RequestMapping(value = "/rpl", method = RequestMethod.PUT)
     public @ResponseBody RespObject rpl(
             @RequestParam(value = "token", required = true) String token,
             @RequestParam(value = "rplBillUuid", required = true) String rplBillUuid,
-            @RequestParam(value = "version", required = true) long version,
-            @RequestBody UCN rpler) {
+            @RequestParam(value = "version", required = true) long version) {
         RespObject resp = new RespObject();
 
         try {
-            rplBillService.rpl(rplBillUuid, version, rpler);
+            // rplBillService.rpl(rplBillUuid, version, rpler);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
             return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
             return new ErrorRespObject("补货失败：" + e.getMessage());
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/rtnshelf", method = RequestMethod.PUT)
+    public @ResponseBody RespObject rtnShelf(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "uuid", required = true) String uuid,
+            @RequestParam(value = "toBinCode", required = true) String toBinCode,
+            @RequestParam(value = "toContainerBarcode", required = false) String toContainerBarcode,
+            @RequestParam(value = "version", required = true) long version,
+            @RequestParam(value = "qty", required = true) BigDecimal qty) {
+        RespObject resp = new RespObject();
+        try {
+            // taskService.rtnShelf(uuid, version, toBinCode,
+            // toContainerBarcode, qty);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("收货上架失败：" + e.getMessage());
         }
         return resp;
     }

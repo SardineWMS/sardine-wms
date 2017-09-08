@@ -290,7 +290,7 @@
 		      companyUuid = #{companyUuid, jdbcType=VARCHAR}
 	</update>
 
-	<select id="query" resultMap="PickUpBillMap"
+	<select id="queryByPage" resultMap="PickUpBillMap"
 		parameterType="com.hd123.sardine.wms.api.out.pickup.PickUpBillFilter">
 		select t.*
 		from db_proxy.sardine_pickupbill t, 

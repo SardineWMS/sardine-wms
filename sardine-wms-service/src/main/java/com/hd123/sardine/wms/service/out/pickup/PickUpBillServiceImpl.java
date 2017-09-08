@@ -28,6 +28,9 @@ import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
 import com.hd123.sardine.wms.api.task.TaskView;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
+import com.hd123.sardine.wms.common.query.PageQueryDefinition;
+import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.query.PageQueryUtil;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.out.pickup.PickUpBillDao;
@@ -197,5 +200,21 @@ public class PickUpBillServiceImpl extends BaseWMSService implements PickUpBillS
                 toContainerBarcode);
         pickUpBillHandler.manageBinAndContainer(pickUpItems, toBinCode,
                 Objects.equals(containerBarcode, toContainerBarcode) ? null : toContainerBarcode);
+    }
+
+    @Override
+    public PageQueryResult<PickUpBill> query(PageQueryDefinition definition) {
+        Assert.assertArgumentNotNull(definition, "definition");
+
+        definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+        PageQueryResult<PickUpBill> pgr = new PageQueryResult<PickUpBill>();
+        List<PickUpBill> list = pickUpBillDao.queryByPage(definition);
+        if (CollectionUtils.isEmpty(list) == false) {
+            for (PickUpBill bill : list)
+                bill.setItems(pickUpBillItemDao.queryByPickUpBill(bill.getUuid()));
+        }
+        PageQueryUtil.assignPageInfo(pgr, definition);
+        pgr.setRecords(list);
+        return pgr;
     }
 }

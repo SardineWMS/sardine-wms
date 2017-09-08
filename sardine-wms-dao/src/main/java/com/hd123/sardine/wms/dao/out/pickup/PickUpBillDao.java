@@ -13,6 +13,7 @@ import java.util.List;
 
 import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
 import com.hd123.sardine.wms.api.task.TaskView;
+import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 
 /**
  * 拣货单DAO：接口
@@ -22,19 +23,21 @@ import com.hd123.sardine.wms.api.task.TaskView;
  */
 public interface PickUpBillDao {
 
-  void saveNew(PickUpBill pickUpBill);
+    void saveNew(PickUpBill pickUpBill);
 
-  void saveModify(PickUpBill pickUpBill);
+    void saveModify(PickUpBill pickUpBill);
 
-  PickUpBill get(String uuid);
+    PickUpBill get(String uuid);
 
-  PickUpBill getByBillNumber(String billNumber);
+    PickUpBill getByBillNumber(String billNumber);
 
-  List<TaskView> queryPickTaskView(String waveBillNumber);
-  
-  List<PickUpBill> queryByWaveUuid(String waveUuid);
-  
-  void remove(String uuid, long version);
-  
-  void approveByWaveBillNumber(String waveBillNumber);
+    List<PickUpBill> queryByPage(PageQueryDefinition definition);
+
+    List<TaskView> queryPickTaskView(String waveBillNumber);
+
+    List<PickUpBill> queryByWaveUuid(String waveUuid);
+
+    void remove(String uuid, long version);
+
+    void approveByWaveBillNumber(String waveBillNumber);
 }
