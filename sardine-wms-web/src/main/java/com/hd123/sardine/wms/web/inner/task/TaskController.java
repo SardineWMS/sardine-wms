@@ -87,10 +87,10 @@ public class TaskController extends BaseController {
             definition.put(TaskService.QUERY_FIELD_ARTICLECODE, articleCode);
             definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
             PageQueryResult<?> result = null;
-          //  if (TaskType.Pick.name().equals(taskType))
+            if (TaskType.Pick.name().equals(taskType))
                 result = pickUpBillService.query(definition);
-//            else
-//                result = taskService.query(definition);
+            else
+                result = taskService.query(definition);
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
