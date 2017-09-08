@@ -15,6 +15,7 @@ import java.util.Map;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
+import com.hd123.sardine.wms.api.rtn.returnsupplier.HandoverTaskFilter;
 import com.hd123.sardine.wms.api.rtn.returnsupplier.ReturnSupplierBill;
 import com.hd123.sardine.wms.api.rtn.returnsupplier.ReturnSupplierBillItem;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
@@ -26,33 +27,39 @@ import com.hd123.sardine.wms.dao.rtn.returnsupplier.SupplierReturnBillDao;
  *
  */
 public class ReturnSupplierBillDaoImpl extends BaseDaoImpl<ReturnSupplierBill>
-        implements SupplierReturnBillDao {
-    public static final String MAPPER_GETBYBILLNUMBER = "getByBillNumber";
-    public static final String MAPPER_QUERYITEMS = "queryItems";
-    public static final String MAPPER_INSERTITEMS = "insertItems";
+    implements SupplierReturnBillDao {
+  private static final String MAPPER_GETBYBILLNUMBER = "getByBillNumber";
+  private static final String MAPPER_QUERYITEMS = "queryItems";
+  private static final String MAPPER_INSERTITEMS = "insertItems";
+  private static final String QUERYWAITHANDOVERITEMS = "queryWaitHandoverItems";
 
-    @Override
-    public ReturnSupplierBill getByBillNumber(String billNumber) {
-        if (StringUtil.isNullOrBlank(billNumber))
-            return null;
-        Map<String, Object> map = ApplicationContextUtil.map();
-        map.put("billNumber", billNumber);
-        return getSqlSession().selectOne(generateStatement(MAPPER_GETBYBILLNUMBER), map);
+  @Override
+  public ReturnSupplierBill getByBillNumber(String billNumber) {
+    if (StringUtil.isNullOrBlank(billNumber))
+      return null;
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("billNumber", billNumber);
+    return getSqlSession().selectOne(generateStatement(MAPPER_GETBYBILLNUMBER), map);
+  }
+
+  @Override
+  public List<ReturnSupplierBillItem> queryItems(String uuid) {
+    if (StringUtil.isNullOrBlank(uuid))
+      return new ArrayList<ReturnSupplierBillItem>();
+    return getSqlSession().selectList(generateStatement(MAPPER_QUERYITEMS), uuid);
+  }
+
+  @Override
+  public void insertItems(List<ReturnSupplierBillItem> items) {
+    Assert.assertArgumentNotNull(items, "items");
+    for (ReturnSupplierBillItem item : items) {
+      getSqlSession().insert(generateStatement(MAPPER_INSERTITEMS), item);
     }
+  }
 
-    @Override
-    public List<ReturnSupplierBillItem> queryItems(String uuid) {
-        if (StringUtil.isNullOrBlank(uuid))
-            return new ArrayList<>();
-        return getSqlSession().selectList(generateStatement(MAPPER_QUERYITEMS), uuid);
-    }
-
-    @Override
-    public void insertItems(List<ReturnSupplierBillItem> items) {
-        Assert.assertArgumentNotNull(items, "items");
-        for (ReturnSupplierBillItem item : items) {
-            getSqlSession().insert(generateStatement(MAPPER_INSERTITEMS), item);
-        }
-    }
-
+  @Override
+  public List<ReturnSupplierBillItem> queryWaitHandoverItems(HandoverTaskFilter filter) {
+    Assert.assertArgumentNotNull(filter, "filter");
+    return selectList(QUERYWAITHANDOVERITEMS, filter);
+  }
 }

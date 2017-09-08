@@ -9,11 +9,11 @@
  */
 package com.hd123.sardine.wms.dao.rtn.rtnsupplierntc;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBill;
 import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBillItem;
+import com.hd123.sardine.wms.api.stock.Stock;
 import com.hd123.sardine.wms.common.dao.BaseDao;
 
 /**
@@ -21,6 +21,8 @@ import com.hd123.sardine.wms.common.dao.BaseDao;
  *
  */
 public interface RtnSupplierNtcBillDao extends BaseDao<RtnSupplierNtcBill> {
+
+  RtnSupplierNtcBill getByBillNumber(String billNumber);
 
   void insertItems(List<RtnSupplierNtcBillItem> items);
 
@@ -30,6 +32,18 @@ public interface RtnSupplierNtcBillDao extends BaseDao<RtnSupplierNtcBill> {
 
   RtnSupplierNtcBillItem getItem(String uuid);
 
-  void refreshItemUnshelvedQtyAndCaseQtyStr(String itemUuid, BigDecimal unshelvedQty,
-      String caseQtyStr);
+  void updateItem(RtnSupplierNtcBillItem item);
+
+  /**
+   * 查询待下架的库存
+   * 
+   * @param wrhUuid
+   *          仓库UUID
+   * @param articleUuid
+   *          商品UUID
+   * @param supplierUuid
+   *          供应商UUID
+   * @return 库存集合
+   */
+  List<Stock> queryWaitUnShelveStocks(String wrhUuid, String articleUuid, String supplierUuid);
 }

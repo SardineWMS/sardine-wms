@@ -41,9 +41,27 @@ public class RtnSupplierNtcBill extends StandardEntity {
   private BigDecimal totalAmount;
   private String unshelvedCaseQtyStr;
   private BigDecimal unshelvedAmount;
+  private String realCaseQtyStr;
+  private BigDecimal realAmount;
   private String remark;
   private String companyUuid;
   private List<RtnSupplierNtcBillItem> items = new ArrayList<>();
+
+  public String getRealCaseQtyStr() {
+    return realCaseQtyStr;
+  }
+
+  public void setRealCaseQtyStr(String realCaseQtyStr) {
+    this.realCaseQtyStr = realCaseQtyStr;
+  }
+
+  public BigDecimal getRealAmount() {
+    return realAmount;
+  }
+
+  public void setRealAmount(BigDecimal realAmount) {
+    this.realAmount = realAmount;
+  }
 
   /** 单号 */
   public String getBillNumber() {

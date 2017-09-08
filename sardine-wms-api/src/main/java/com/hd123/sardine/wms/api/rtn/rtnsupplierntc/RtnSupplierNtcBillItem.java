@@ -35,8 +35,26 @@ public class RtnSupplierNtcBillItem extends Entity {
   private BigDecimal amount;
   private String unshelvedCaseQtyStr;
   private BigDecimal unshelvedQty = BigDecimal.ZERO;
+  private BigDecimal realQty = BigDecimal.ZERO;
+  private String realCaseQtyStr;
   private String articleSpec;
   private int line;
+
+  public BigDecimal getRealQty() {
+    return realQty;
+  }
+
+  public void setRealQty(BigDecimal realQty) {
+    this.realQty = realQty;
+  }
+
+  public String getRealCaseQtyStr() {
+    return realCaseQtyStr;
+  }
+
+  public void setRealCaseQtyStr(String realCaseQtyStr) {
+    this.realCaseQtyStr = realCaseQtyStr;
+  }
 
   public int getLine() {
     return line;

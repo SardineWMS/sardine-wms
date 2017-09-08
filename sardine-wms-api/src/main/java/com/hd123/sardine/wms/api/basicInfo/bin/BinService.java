@@ -11,6 +11,7 @@ package com.hd123.sardine.wms.api.basicInfo.bin;
 
 import java.util.List;
 
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;

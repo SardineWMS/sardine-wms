@@ -117,6 +117,20 @@ public interface RtnSupplierNtcBillService {
       throws IllegalArgumentException, WMSException;
 
   /**
+   * 退货交接回写实际退货数量
+   * 
+   * @param billNumber
+   *          退货通知单单号， not null
+   * @param articleUuid
+   *          商品ID， not null
+   * @param qty
+   *          数量， not null
+   * @throws WMSException
+   *           实退数量大于下架数量
+   */
+  void handover(String billNumber, String articleUuid, BigDecimal qty) throws WMSException;
+
+  /**
    * 生成下架指令
    * 
    * @param uuid

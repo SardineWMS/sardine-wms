@@ -24,8 +24,6 @@ import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.article.Article;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleService;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
-import com.hd123.sardine.wms.api.basicInfo.bin.BinState;
-import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.api.basicInfo.bin.Wrh;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
@@ -37,9 +35,6 @@ import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBillItem;
 import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBillService;
 import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBillState;
 import com.hd123.sardine.wms.api.stock.Stock;
-import com.hd123.sardine.wms.api.stock.StockFilter;
-import com.hd123.sardine.wms.api.stock.StockService;
-import com.hd123.sardine.wms.api.stock.StockState;
 import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.task.TaskService;
 import com.hd123.sardine.wms.api.task.TaskType;
@@ -75,9 +70,6 @@ public class RtnSupplierNtcBillServiceImpl extends BaseWMSService
 
   @Autowired
   private SupplierService supplierService;
-
-  @Autowired
-  private StockService stockService;
 
   @Autowired
   private TaskService taskService;
@@ -281,22 +273,37 @@ public class RtnSupplierNtcBillServiceImpl extends BaseWMSService
     RtnSupplierNtcBill bill = get(item.getRtnSupplierNtcBillUuid());
     if (Objects.isNull(bill))
       throw new WMSException("该下架指令对应的供应商退货通知单不存在");
-    bill.setUnshelvedAmount(bill.getUnshelvedAmount().add(item.getPrice().multiply(unshelvedQty)));
-    bill.setUnshelvedCaseQtyStr(QpcHelper.caseQtyStrAdd(bill.getUnshelvedCaseQtyStr(),
-        QpcHelper.qtyToCaseQtyStr(unshelvedQty, item.getQpcStr())));
-    bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
-    if (QpcHelper.compareTo(bill.getTotalCaseQtyStr(), bill.getUnshelvedCaseQtyStr()) == 1)
-      bill.setState(RtnSupplierNtcBillState.InProgress);
-    else
-      bill.setState(RtnSupplierNtcBillState.Finished);
 
-    dao.refreshItemUnshelvedQtyAndCaseQtyStr(itemUuid, unshelvedQty,
-        QpcHelper.qtyToCaseQtyStr(unshelvedQty, item.getQpcStr()));
+    if (bill.getState().equals(RtnSupplierNtcBillState.Finished))
+      throw new WMSException("对应的退货通知单已结束，请作废指令！");
+
+    if (bill.getUnshelvedAmount() == null)
+      bill.setUnshelvedAmount(item.getPrice().multiply(unshelvedQty));
+    else
+      bill.setUnshelvedAmount(
+          bill.getUnshelvedAmount().add(item.getPrice().multiply(unshelvedQty)));
+    if (StringUtil.isNullOrBlank(bill.getUnshelvedCaseQtyStr()))
+      bill.setUnshelvedCaseQtyStr(QpcHelper.qtyToCaseQtyStr(unshelvedQty, item.getQpcStr()));
+    else
+      bill.setUnshelvedCaseQtyStr(QpcHelper.caseQtyStrAdd(bill.getUnshelvedCaseQtyStr(),
+          QpcHelper.qtyToCaseQtyStr(unshelvedQty, item.getQpcStr())));
+    bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     dao.update(bill);
+
+    if (item.getUnshelvedQty() == null)
+      item.setUnshelvedQty(unshelvedQty);
+    else
+      item.setUnshelvedQty(item.getUnshelvedQty().add(unshelvedQty));
+    if (StringUtil.isNullOrBlank(item.getUnshelvedCaseQtyStr()))
+      item.setUnshelvedCaseQtyStr(QpcHelper.qtyToCaseQtyStr(unshelvedQty, item.getQpcStr()));
+    else
+      item.setUnshelvedCaseQtyStr(QpcHelper.caseQtyStrAdd(item.getUnshelvedCaseQtyStr(),
+          QpcHelper.qtyToCaseQtyStr(unshelvedQty, item.getQpcStr())));
+    dao.updateItem(item);
 
     logger.injectContext(this, bill.getBillNumber(), RtnSupplierNtcBill.CAPTION,
         ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_MODIFY, "退货下架");
+    logger.log("下架", "商品" + item.getArticle().getCode() + "下架数量" + unshelvedQty);
   }
 
   @Override
@@ -326,36 +333,15 @@ public class RtnSupplierNtcBillServiceImpl extends BaseWMSService
   private void buildUnshelveTask(RtnSupplierNtcBill bill)
       throws VersionConflictException, IllegalArgumentException, WMSException {
     assert bill != null;
-    assert bill.getItems() != null;
 
-    List<Task> tasks = new ArrayList<>();
-    List<RtnSupplierNtcBillItem> items = bill.getItems();
-    List<BinState> binStates = new ArrayList<>();
-    binStates.add(BinState.free);
-    binStates.add(BinState.using);
-    List<String> list = binService.queryBinByUsageAndState(BinUsage.SupplierCollectBin, binStates);
-    if (CollectionUtils.isEmpty(list))
-      throw new WMSException("当前组织不存在空闲或者已使用的供应商集货位，无法生成下架指令");
-    String toBin = list.get(0);
-    StockFilter filter = new StockFilter();
-    filter.setCompanyUuid(bill.getCompanyUuid());
-    filter.setPageSize(0);
-    filter.setSupplierUuid(bill.getSupplier().getUuid());
-    filter.setState(StockState.normal);
-    String wrhUuid = bill.getWrh().getUuid();
-    filter.setWrhUuid(wrhUuid);
-    for (RtnSupplierNtcBillItem item : items) {
-      filter.setArticleCode(item.getArticle().getCode());
-      filter.setArticleUuid(item.getArticle().getUuid());
-      filter.setQpcStr(item.getQpcStr());
-      List<Stock> stocks = stockService.query(filter);
-      BigDecimal forAllocateQty = item.calculateNotUnshelvedQty();
-      if (BigDecimal.ZERO.compareTo(forAllocateQty) >= 0)
-        continue;
+    List<Task> tasks = new ArrayList<Task>();
+    for (RtnSupplierNtcBillItem item : bill.getItems()) {
+      List<Stock> stocks = dao.queryWaitUnShelveStocks(bill.getWrh().getUuid(),
+          item.getArticle().getUuid(), bill.getSupplier().getUuid());
+      BigDecimal waitUnShelveQty = item.getQty();
       for (Stock stock : stocks) {
-        forAllocateQty = forAllocateQty.subtract(stock.getStockComponent().getQty())
-            .compareTo(BigDecimal.ZERO) >= 0
-                ? forAllocateQty.subtract(stock.getStockComponent().getQty()) : BigDecimal.ZERO;
+        if (waitUnShelveQty.compareTo(BigDecimal.ZERO) <= 0)
+          break;
         Task task = new Task();
         task.setArticle(item.getArticle());
         task.setArticleSpec(stock.getStockComponent().getArticleSpec());
@@ -365,12 +351,14 @@ public class RtnSupplierNtcBillServiceImpl extends BaseWMSService
         task.setFromContainerBarcode(stock.getStockComponent().getContainerBarcode());
         task.setMunit(item.getMunit());
         task.setOperator(ApplicationContextUtil.getLoginUser());
-        task.setOwner("");
+        task.setOwner(bill.getSupplier().getUuid());
         task.setProductionDate(stock.getStockComponent().getProductionDate());
         task.setProductionBatch(stock.getStockComponent().getProductionBatch());
         task.setQpcStr(item.getQpcStr());
-        task.setQty(BigDecimal.ZERO.compareTo(forAllocateQty) <= 0
-            ? stock.getStockComponent().getQty() : item.calculateNotUnshelvedQty());
+        if (waitUnShelveQty.compareTo(stock.getStockComponent().getQty()) <= 0)
+          task.setQty(waitUnShelveQty);
+        else
+          task.setQty(stock.getStockComponent().getQty());
         task.setCaseQtyStr(QpcHelper.qtyToCaseQtyStr(task.getQty(), task.getQpcStr()));
         task.setSourceBillLineUuid(item.getUuid());
         task.setSourceBillNumber(bill.getBillNumber());
@@ -380,12 +368,11 @@ public class RtnSupplierNtcBillServiceImpl extends BaseWMSService
         task.setSupplier(bill.getSupplier());
         task.setTaskGroupNumber(stock.getStockComponent().getContainerBarcode());
         task.setTaskType(TaskType.RtnShelf);
-        task.setToBinCode(toBin);
         task.setToContainerBarcode(Container.VIRTUALITY_CONTAINER);
         task.setValidDate(stock.getStockComponent().getValidDate());
         tasks.add(task);
-        if (BigDecimal.ZERO.compareTo(forAllocateQty) >= 0)
-          break;
+
+        waitUnShelveQty = waitUnShelveQty.subtract(task.getQty());
       }
     }
     taskService.insert(tasks);
@@ -398,4 +385,50 @@ public class RtnSupplierNtcBillServiceImpl extends BaseWMSService
     return dao.getItem(uuid);
   }
 
+  @Override
+  public void handover(String billNumber, String articleUuid, BigDecimal qty) throws WMSException {
+    RtnSupplierNtcBill ntcBill = dao.getByBillNumber(billNumber);
+    if (ntcBill == null)
+      throw new WMSException("退货通知单" + billNumber + "不存在！");
+    List<RtnSupplierNtcBillItem> items = dao.queryItems(ntcBill.getUuid());
+    boolean finish = true;
+    String articleCode = null;
+    for (RtnSupplierNtcBillItem item : items) {
+      if (item.getArticle().getUuid().equals(articleUuid)) {
+        articleCode = item.getArticle().getCode();
+        item.setRealQty(item.getRealQty().add(qty));
+        item.setRealCaseQtyStr(QpcHelper.qtyToCaseQtyStr(item.getRealQty(), item.getQpcStr()));
+
+        if (item.getUnshelvedQty().compareTo(item.getRealQty()) < 0)
+          throw new WMSException("商品" + item.getArticle().getCode() + "退货数量大于下架数量！");
+
+        dao.updateItem(item);
+
+        if (StringUtil.isNullOrBlank(ntcBill.getRealCaseQtyStr()))
+          ntcBill.setRealCaseQtyStr(item.getRealCaseQtyStr());
+        else
+          ntcBill.setRealCaseQtyStr(QpcHelper.caseQtyStrAdd(ntcBill.getRealCaseQtyStr(),
+              QpcHelper.qtyToCaseQtyStr(qty, item.getQpcStr())));
+        if (ntcBill.getRealAmount() == null)
+          ntcBill.setRealAmount(item.getRealQty().multiply(item.getPrice()));
+        else
+          ntcBill.setRealAmount(
+              ntcBill.getRealAmount().add(item.getRealQty().multiply(item.getPrice())));
+      }
+      if (item.getUnshelvedQty().compareTo(item.getRealQty()) > 0
+          || item.getQty().compareTo(item.getUnshelvedQty()) > 0)
+        finish = false;
+    }
+
+    if (finish)
+      ntcBill.setState(RtnSupplierNtcBillState.Finished);
+    else
+      ntcBill.setState(RtnSupplierNtcBillState.InProgress);
+    ntcBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(ntcBill);
+
+    logger.injectContext(this, ntcBill.getUuid(), RtnSupplierNtcBill.CAPTION,
+        ApplicationContextUtil.getOperateContext());
+    logger.log("退货交接", "商品" + articleCode + "交接数量" + qty);
+  }
 }

@@ -28,7 +28,6 @@ import com.hd123.sardine.wms.api.stock.StockChangement;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.api.stock.StockShiftIn;
 import com.hd123.sardine.wms.api.stock.StockShiftRule;
-import com.hd123.sardine.wms.api.stock.StockShiftTarget;
 import com.hd123.sardine.wms.api.stock.StockState;
 import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.task.TaskType;
@@ -142,7 +141,7 @@ public class TaskHandler {
       shiftRule.setSupplierUuid(task.getSupplier().getUuid());
       shiftRule.setQty(task.getQty());
       shiftRule.setState(StockState.locked);
-    //  shiftRule.setOperateBillUuid(task.getUuid());
+      shiftRule.setOperateBillUuid(task.getUuid());
       stockService.changeState(sourceBill, Arrays.asList(shiftRule), StockState.locked,
           StockState.normal);
     } else {
@@ -184,18 +183,25 @@ public class TaskHandler {
     shiftRule.setBinCode(task.getFromBinCode());
     shiftRule.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     shiftRule.setContainerBarcode(task.getFromContainerBarcode());
-  //  shiftRule.setOperateBillUuid(task.getUuid());
-    shiftRule.setOwner(task.getOwner());
+    // shiftRule.setOperateBillUuid(task.getUuid());
+    shiftRule.setOwner(ApplicationContextUtil.getCompanyUuid());
     shiftRule.setProductionBatch(stockBatchUtils.genProductionBatch(task.getProductionDate()));
     shiftRule.setQpcStr(task.getQpcStr());
     shiftRule.setQty(task.getRealQty());
     shiftRule.setStockBatch(task.getStockBatch());
     shiftRule.setSupplierUuid(task.getSupplier().getUuid());
-    StockShiftTarget shiftTarget = new StockShiftTarget();
-    shiftTarget.setBinCode(task.getToBinCode());
-    shiftTarget.setContainerBarCode(task.getToContainerBarcode());
-    shiftTarget.setState(StockState.normal);
-    stockService.shift(sourceBill, Arrays.asList(shiftRule), shiftTarget);
+    List<StockChangement> changements = stockService.shiftOut(sourceBill, Arrays.asList(shiftRule));
+    List<StockShiftIn> shiftIns = new ArrayList<StockShiftIn>();
+    for (StockChangement changement : changements) {
+      StockShiftIn shiftIn = new StockShiftIn();
+      shiftIn.setStockComponent(changement.getStockComponent());
+      shiftIn.getStockComponent().setBinCode(task.getToBinCode());
+      shiftIn.getStockComponent().setContainerBarcode(task.getToContainerBarcode());
+      if (task.getTaskType().equals(TaskType.RtnShelf))
+        shiftIn.getStockComponent().setOwner(task.getSourceBillNumber());
+      shiftIns.add(shiftIn);
+    }
+    stockService.shiftIn(sourceBill, shiftIns);
   }
 
   public void manageBinAndContainer(Task task) throws WMSException {
@@ -213,7 +219,7 @@ public class TaskHandler {
     }
 
     Bin toBin = binService.getBinByCode(task.getToBinCode());
-    if (toBin.getState().equals(BinState.free)||toBin.getState().equals(BinState.lock))
+    if (toBin.getState().equals(BinState.free) || toBin.getState().equals(BinState.lock))
       binService.changeState(toBin.getUuid(), toBin.getVersion(), BinState.using);
 
     if (Objects.equals(task.getFromContainerBarcode(), task.getToContainerBarcode()) == false

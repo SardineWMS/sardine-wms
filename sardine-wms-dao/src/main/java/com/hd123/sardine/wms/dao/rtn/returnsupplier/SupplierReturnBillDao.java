@@ -11,6 +11,7 @@ package com.hd123.sardine.wms.dao.rtn.returnsupplier;
 
 import java.util.List;
 
+import com.hd123.sardine.wms.api.rtn.returnsupplier.HandoverTaskFilter;
 import com.hd123.sardine.wms.api.rtn.returnsupplier.ReturnSupplierBill;
 import com.hd123.sardine.wms.api.rtn.returnsupplier.ReturnSupplierBillItem;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -20,18 +21,19 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
  *
  */
 public interface SupplierReturnBillDao {
-    ReturnSupplierBill get(String uuid);
+  ReturnSupplierBill get(String uuid);
 
-    ReturnSupplierBill getByBillNumber(String billNumber);
+  ReturnSupplierBill getByBillNumber(String billNumber);
 
-    List<ReturnSupplierBill> query(PageQueryDefinition definition);
+  List<ReturnSupplierBill> query(PageQueryDefinition definition);
 
-    int insert(ReturnSupplierBill shipBill);
+  int insert(ReturnSupplierBill shipBill);
 
-    int update(ReturnSupplierBill shipBill);
+  int update(ReturnSupplierBill shipBill);
 
-    List<ReturnSupplierBillItem> queryItems(String uuid);
+  List<ReturnSupplierBillItem> queryItems(String uuid);
 
-    void insertItems(List<ReturnSupplierBillItem> items);
+  void insertItems(List<ReturnSupplierBillItem> items);
 
+  List<ReturnSupplierBillItem> queryWaitHandoverItems(HandoverTaskFilter filter);
 }

@@ -9,9 +9,7 @@
  */
 package com.hd123.sardine.wms.dao.rtn.rtnsupplierntc.impl;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +17,9 @@ import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBill;
 import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBillItem;
+import com.hd123.sardine.wms.api.stock.Stock;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.dao.rtn.rtnsupplierntc.RtnSupplierNtcBillDao;
 
 /**
@@ -29,11 +29,13 @@ import com.hd123.sardine.wms.dao.rtn.rtnsupplierntc.RtnSupplierNtcBillDao;
 public class RtnSupplierNtcBillDaoImpl extends BaseDaoImpl<RtnSupplierNtcBill>
     implements RtnSupplierNtcBillDao {
 
-  public static final String MAPPER_INSERT_ITEMS = "insert_items";
-  public static final String MAPPER_REMOVE_ITEMS = "remove_items";
-  public static final String MAPPER_QUERY_ITEMS = "query_items";
-  public static final String MAPPER_GET_ITEM = "get_item";
-  public static final String MAPPER_REFRESH_ITEM_UNSHELVED_QTY_AND_CASEQTYSTR = "refreshItemUnshelvedQtyAndCaseQtyStr";
+  private static final String MAPPER_INSERT_ITEMS = "insert_items";
+  private static final String MAPPER_REMOVE_ITEMS = "remove_items";
+  private static final String MAPPER_QUERY_ITEMS = "query_items";
+  private static final String MAPPER_GET_ITEM = "get_item";
+  private static final String UPDATEITEM = "updateItem";
+  private static final String GETBYBILLNUMBER = "getByBillNumber";
+  private static final String QUERYWAITUNSHELVESTOCKS = "queryWaitUnShelveStocks";
 
   @Override
   public void insertItems(List<RtnSupplierNtcBillItem> items) {
@@ -64,19 +66,33 @@ public class RtnSupplierNtcBillDaoImpl extends BaseDaoImpl<RtnSupplierNtcBill>
   }
 
   @Override
-  public void refreshItemUnshelvedQtyAndCaseQtyStr(String itemUuid, BigDecimal unshelvedQty,
-      String caseQtyStr) {
-    Assert.assertArgumentNotNull(itemUuid, "itemUuid");
-    Assert.assertArgumentNotNull(unshelvedQty, "unshelvedQty");
-    Assert.assertArgumentNotNull(caseQtyStr, "caseQtyStr");
-    Map<String, Object> map = new HashMap<>();
-    map.put("uuid", itemUuid);
-    map.put("unshelvedQty", unshelvedQty);
-    map.put("caseQtyStr", caseQtyStr);
+  public RtnSupplierNtcBill getByBillNumber(String billNumber) {
+    if (StringUtil.isNullOrBlank(billNumber))
+      return null;
 
-    getSqlSession().update(generateStatement(MAPPER_REFRESH_ITEM_UNSHELVED_QTY_AND_CASEQTYSTR),
-        map);
-
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("billNumber", billNumber);
+    return selectOne(GETBYBILLNUMBER, map);
   }
 
+  @Override
+  public void updateItem(RtnSupplierNtcBillItem item) {
+    Assert.assertArgumentNotNull(item, "item");
+
+    update(UPDATEITEM, item);
+  }
+
+  @Override
+  public List<Stock> queryWaitUnShelveStocks(String wrhUuid, String articleUuid,
+      String supplierUuid) {
+    if (StringUtil.isNullOrBlank(supplierUuid) || StringUtil.isNullOrBlank(articleUuid)
+        || StringUtil.isNullOrBlank(wrhUuid))
+      return new ArrayList<Stock>();
+
+    Map<String, Object> map = ApplicationContextUtil.map();
+    map.put("wrhUuid", wrhUuid);
+    map.put("articleUuid", articleUuid);
+    map.put("supplierUuid", supplierUuid);
+    return selectList(QUERYWAITUNSHELVESTOCKS, map);
+  }
 }

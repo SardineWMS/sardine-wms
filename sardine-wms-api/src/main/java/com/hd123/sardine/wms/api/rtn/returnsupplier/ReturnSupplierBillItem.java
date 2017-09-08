@@ -14,6 +14,7 @@ import java.util.Date;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.common.entity.Entity;
+import com.hd123.sardine.wms.common.entity.SourceBill;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.validator.Validator;
 
@@ -24,164 +25,209 @@ import com.hd123.sardine.wms.common.validator.Validator;
  *
  */
 public class ReturnSupplierBillItem extends Entity implements Validator {
-    private static final long serialVersionUID = -6696446554302802779L;
+  private static final long serialVersionUID = -6696446554302802779L;
 
-    private String returnSupplierBillUuid;
-    private int line;
-    private UCN article;
-    private String spec = "-";
-    private String qpcStr;
-    private String munit = "-";
-    private String binCode;
-    private String containerBarcode;
-    private BigDecimal qty;
-    private String caseQtyStr;
-    private Date productionDate;
-    private Date validDate;
-    private Date returnSupplierDate;
-    private BigDecimal amount = BigDecimal.ZERO;
+  private String returnSupplierBillUuid;
+  private int line;
+  private UCN article;
+  private String spec = "-";
+  private String qpcStr;
+  private String munit = "-";
+  private String binCode;
+  private String containerBarcode;
+  private BigDecimal qty;
+  private String caseQtyStr;
+  private Date productionDate;
+  private Date validDate;
+  private Date returnSupplierDate;
+  private String stockBatch;
+  private BigDecimal amount = BigDecimal.ZERO;
+  private SourceBill sourceBill;
+  private UCN supplier;
+  private String owner;
+  private BigDecimal price = BigDecimal.ZERO;
 
-    /** 供应商退货单UUID */
-    public String getReturnSupplierBillUuid() {
-        return returnSupplierBillUuid;
-    }
+  public String getOwner() {
+    return owner;
+  }
 
-    public void setReturnSupplierBillUuid(String returnSupplierBillUuid) {
-        this.returnSupplierBillUuid = returnSupplierBillUuid;
-    }
+  public void setOwner(String owner) {
+    this.owner = owner;
+  }
+  
+  public SourceBill getSourceBill() {
+    return sourceBill;
+  }
 
-    /** 行号 */
-    public int getLine() {
-        return line;
-    }
+  public void setSourceBill(SourceBill sourceBill) {
+    this.sourceBill = sourceBill;
+  }
 
-    public void setLine(int line) {
-        this.line = line;
-    }
+  /** 供应商退货单UUID */
+  public String getReturnSupplierBillUuid() {
+    return returnSupplierBillUuid;
+  }
 
-    /** 商品 */
-    public UCN getArticle() {
-        return article;
-    }
+  public void setReturnSupplierBillUuid(String returnSupplierBillUuid) {
+    this.returnSupplierBillUuid = returnSupplierBillUuid;
+  }
 
-    public void setArticle(UCN article) {
-        this.article = article;
-    }
+  /** 行号 */
+  public int getLine() {
+    return line;
+  }
 
-    /** 商品规格 */
-    public String getSpec() {
-        return spec;
-    }
+  public void setLine(int line) {
+    this.line = line;
+  }
 
-    public void setSpec(String spec) {
-        this.spec = spec;
-    }
+  /** 商品 */
+  public UCN getArticle() {
+    return article;
+  }
 
-    /** 包装规格 */
-    public String getQpcStr() {
-        return qpcStr;
-    }
+  public void setArticle(UCN article) {
+    this.article = article;
+  }
 
-    public void setQpcStr(String qpcStr) {
-        this.qpcStr = qpcStr;
-    }
+  /** 商品规格 */
+  public String getSpec() {
+    return spec;
+  }
 
-    /** 单位 */
-    public String getMunit() {
-        return munit;
-    }
+  public void setSpec(String spec) {
+    this.spec = spec;
+  }
 
-    public void setMunit(String munit) {
-        this.munit = munit;
-    }
+  /** 包装规格 */
+  public String getQpcStr() {
+    return qpcStr;
+  }
 
-    /** 货位 */
-    public String getBinCode() {
-        return binCode;
-    }
+  public void setQpcStr(String qpcStr) {
+    this.qpcStr = qpcStr;
+  }
 
-    public void setBinCode(String binCode) {
-        this.binCode = binCode;
-    }
+  /** 单位 */
+  public String getMunit() {
+    return munit;
+  }
 
-    /** 容器 */
-    public String getContainerBarcode() {
-        return containerBarcode;
-    }
+  public void setMunit(String munit) {
+    this.munit = munit;
+  }
 
-    public void setContainerBarcode(String containerBarcode) {
-        this.containerBarcode = containerBarcode;
-    }
+  /** 货位 */
+  public String getBinCode() {
+    return binCode;
+  }
 
-    /** 数量 */
-    public BigDecimal getQty() {
-        return qty;
-    }
+  public void setBinCode(String binCode) {
+    this.binCode = binCode;
+  }
 
-    public void setQty(BigDecimal qty) {
-        this.qty = qty;
-    }
+  /** 容器 */
+  public String getContainerBarcode() {
+    return containerBarcode;
+  }
 
-    /** 件数 */
-    public String getCaseQtyStr() {
-        return caseQtyStr;
-    }
+  public void setContainerBarcode(String containerBarcode) {
+    this.containerBarcode = containerBarcode;
+  }
 
-    public void setCaseQtyStr(String caseQtyStr) {
-        this.caseQtyStr = caseQtyStr;
-    }
+  /** 数量 */
+  public BigDecimal getQty() {
+    return qty;
+  }
 
-    /** 生产日期 */
-    public Date getProductionDate() {
-        return productionDate;
-    }
+  public void setQty(BigDecimal qty) {
+    this.qty = qty;
+  }
 
-    public void setProductionDate(Date productionDate) {
-        this.productionDate = productionDate;
-    }
+  /** 件数 */
+  public String getCaseQtyStr() {
+    return caseQtyStr;
+  }
 
-    /** 到效日期 */
-    public Date getValidDate() {
-        return validDate;
-    }
+  public void setCaseQtyStr(String caseQtyStr) {
+    this.caseQtyStr = caseQtyStr;
+  }
 
-    public void setValidDate(Date validDate) {
-        this.validDate = validDate;
-    }
+  /** 生产日期 */
+  public Date getProductionDate() {
+    return productionDate;
+  }
 
-    /** 退货日期 */
-    public Date getReturnSupplierDate() {
-        return returnSupplierDate;
-    }
+  public void setProductionDate(Date productionDate) {
+    this.productionDate = productionDate;
+  }
 
-    public void setReturnSupplierDate(Date returnSupplierDate) {
-        this.returnSupplierDate = returnSupplierDate;
-    }
+  /** 到效日期 */
+  public Date getValidDate() {
+    return validDate;
+  }
 
-    /** 单价 */
-    public BigDecimal getAmount() {
-        return amount;
-    }
+  public void setValidDate(Date validDate) {
+    this.validDate = validDate;
+  }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
+  public String getStockBatch() {
+    return stockBatch;
+  }
 
-    @Override
-    public void validate() {
-        Assert.assertArgumentNotNull(article, "article");
-        Assert.assertArgumentNotNull(article.getUuid(), "article.uuid");
-        Assert.assertArgumentNotNull(article.getCode(), "article.code");
-        Assert.assertArgumentNotNull(article.getName(), "article.name");
-        Assert.assertArgumentNotNull(qpcStr, "qpcStr");
-        Assert.assertArgumentNotNull(binCode, "binCode");
-        Assert.assertArgumentNotNull(containerBarcode, "containerBarcode");
-        Assert.assertArgumentNotNull(productionDate, "productionDate");
-        Assert.assertArgumentNotNull(validDate, "validDate");
-        Assert.assertArgumentNotNull(returnSupplierDate, "returnSupplierDate");
-        Assert.assertArgumentNotNull(amount, "amount");
-        Assert.assertArgumentNotNull(qty, "qty");
-        Assert.assertArgumentNotNull(caseQtyStr, "caseQtyStr");
-    }
+  public void setStockBatch(String stockBatch) {
+    this.stockBatch = stockBatch;
+  }
 
+  /** 退货日期 */
+  public Date getReturnSupplierDate() {
+    return returnSupplierDate;
+  }
+
+  public void setReturnSupplierDate(Date returnSupplierDate) {
+    this.returnSupplierDate = returnSupplierDate;
+  }
+
+  /** 单价 */
+  public BigDecimal getAmount() {
+    return amount;
+  }
+
+  public void setAmount(BigDecimal amount) {
+    this.amount = amount;
+  }
+
+  public UCN getSupplier() {
+    return supplier;
+  }
+
+  public void setSupplier(UCN supplier) {
+    this.supplier = supplier;
+  }
+
+  public BigDecimal getPrice() {
+    return price;
+  }
+
+  public void setPrice(BigDecimal price) {
+    this.price = price;
+  }
+
+  @Override
+  public void validate() {
+    Assert.assertArgumentNotNull(article, "article");
+    Assert.assertArgumentNotNull(article.getUuid(), "article.uuid");
+    Assert.assertArgumentNotNull(article.getCode(), "article.code");
+    Assert.assertArgumentNotNull(article.getName(), "article.name");
+    Assert.assertArgumentNotNull(qpcStr, "qpcStr");
+    Assert.assertArgumentNotNull(binCode, "binCode");
+    Assert.assertArgumentNotNull(containerBarcode, "containerBarcode");
+    Assert.assertArgumentNotNull(productionDate, "productionDate");
+    Assert.assertArgumentNotNull(validDate, "validDate");
+    Assert.assertArgumentNotNull(qty, "qty");
+    Assert.assertArgumentNotNull(caseQtyStr, "caseQtyStr");
+    Assert.assertArgumentNotNull(sourceBill, "sourceBill");
+    Assert.assertArgumentNotNull(stockBatch, "stockBatch");
+    Assert.assertArgumentNotNull(price, "price");
+  }
 }
