@@ -121,7 +121,7 @@ public class AlcNtcBillController extends BaseController {
       definition.put(AlcNtcBillService.QUEYR_SOURCEBILLNUMBER_LIKE, sourceBillNumber);
       definition.put(AlcNtcBillService.QUERY_WRH_EQUALS, wrh);
       definition.put(AlcNtcBillService.QUERY_DELIVERYMODE, deliveryMode);
-
+      definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<AlcNtcBill> result = service.query(definition);
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

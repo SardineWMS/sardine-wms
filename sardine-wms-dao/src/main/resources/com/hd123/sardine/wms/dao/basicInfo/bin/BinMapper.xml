@@ -187,11 +187,13 @@
 
 	<select id="getBinByWrhAndUsage" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
-		select t.* from db_proxy.sardine_bin t where
-		t.wrhUuid =
-		#{wrhUuid, jdbcType=VARCHAR}
-		and t.binusage = #{usage,
-		jdbcType=VARCHAR}
+		select t.* from db_proxy.sardine_bin t where 1=1
+		<if test="wrhUuid != null and wrhUuid != ''">
+			and t.wrhUuid=#{wrhUuid,jdbcType=VARCHAR}
+		</if>
+		<if test="usage != null">
+			and t.binusage=#{usage,jdbcType=VARCHAR}
+		</if>
 	</select>
 
 	<update id="changeState" parameterType="java.util.Map">

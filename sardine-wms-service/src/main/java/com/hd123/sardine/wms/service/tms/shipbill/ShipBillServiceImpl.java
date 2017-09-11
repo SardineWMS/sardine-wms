@@ -141,7 +141,10 @@ public class ShipBillServiceImpl extends BaseWMSService implements ShipBillServi
     shipBill.setState(ShipBillState.Initial);
     shipBill.setCustomerCount(customerItems.size());
 
+    int i = 1;
     for (ShipBillCustomerItem ci : customerItems) {
+      ci.setLine(i);
+      i++;
       ci.setUuid(UUIDGenerator.genUUID());
       ci.setShipBillUuid(shipBill.getUuid());
       shipBill.setTotalAmount(shipBill.getTotalAmount().add(ci.getTotalAmount()));
@@ -154,7 +157,10 @@ public class ShipBillServiceImpl extends BaseWMSService implements ShipBillServi
 
     dao.insertCustomerItems(customerItems);
 
+    int j = 1;
     for (ShipBillContainerStock cs : shipBill.getContainerStocks()) {
+      cs.setLine(j);
+      j++;
       cs.setUuid(UUIDGenerator.genUUID());
       cs.setShipBillUuid(shipBill.getUuid());
       cs.setShiper(ApplicationContextUtil.getLoginUser());
@@ -190,7 +196,10 @@ public class ShipBillServiceImpl extends BaseWMSService implements ShipBillServi
     shipBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     shipBill.setState(ShipBillState.Initial);
 
+    int i = 1;
     for (ShipBillCustomerItem ci : customerItems) {
+      ci.setLine(i);
+      i++;
       ci.setUuid(UUIDGenerator.genUUID());
       ci.setShipBillUuid(shipBill.getUuid());
       shipBill.setTotalAmount(shipBill.getTotalAmount().add(ci.getTotalAmount()));

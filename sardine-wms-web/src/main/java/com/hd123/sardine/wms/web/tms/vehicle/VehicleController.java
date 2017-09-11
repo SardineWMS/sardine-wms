@@ -52,7 +52,8 @@ public class VehicleController extends BaseController {
       @RequestParam(value = "code", required = false) String code,
       @RequestParam(value = "state", required = false) String state,
       @RequestParam(value = "vehicleNo", required = false) String vehicleNo,
-      @RequestParam(value = "vehicleType", required = false) String vehicleType) {
+      @RequestParam(value = "vehicleType", required = false) String vehicleType,
+      @RequestParam(value = "carrierCode", required = false) String carrierCode) {
     RespObject resp = new RespObject();
     try {
       PageQueryDefinition definition = new PageQueryDefinition();
@@ -66,6 +67,7 @@ public class VehicleController extends BaseController {
           StringUtil.isNullOrBlank(state) ? null : VehicleState.valueOf(state));
       definition.put(VehicleService.QUERY_VEHICLENO_LIKE, vehicleNo);
       definition.put(VehicleService.QUERY_VEHICLETYPECODE, vehicleType);
+      definition.put(VehicleService.QUERY_CARRIER_CODE, carrierCode);
       definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<Vehicle> result = service.query(definition);
       resp.setObj(result);

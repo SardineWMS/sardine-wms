@@ -204,10 +204,13 @@
 			and t.vehicleNo=#{vehicleNo,jdbcType=VARCHAR}
 		</if>
 		<if test="vehicleTypeCode != null">
-	and t.vehicleTypeCode=#{vehicleTypeCode,jdbcType=VARCHAR}
+			and t.vehicleTypeCode=#{vehicleTypeCode,jdbcType=VARCHAR}
 		</if>
 		<if test="companyUuid != null">
 			and t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
+		</if>
+		<if test="carrierCode != null and carrierCode != ''">
+			and t.carrierCode=#{carrierCode,jdbcType=VARCHAR}
 		</if>
 		<if test="sortField != null and sortField == 'code'">
 			order by t.code ${orderDir}

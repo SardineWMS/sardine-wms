@@ -275,7 +275,7 @@ public class BinController extends BaseController {
 
   @RequestMapping(value = "/getbinbywrhandusage", method = RequestMethod.GET)
   public @ResponseBody RespObject getBinByWrhAndUsage(
-      @RequestParam(value = "wrhUuid", required = true) String wrhUuid,
+      @RequestParam(value = "wrhUuid", required = false) String wrhUuid,
       @RequestParam(value = "binUsage", required = true) String binUsage) {
     RespObject resp = new RespObject();
     try {

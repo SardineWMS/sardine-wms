@@ -69,7 +69,7 @@ public class ShipBillContainerStock extends Entity implements Validator {
     }
 
     public void setShipBillUuid(String shipBillUuid) {
-        Assert.assertArgumentNotNull(shipBillUuid, "shipBillUuid");
+//        Assert.assertArgumentNotNull(shipBillUuid, "shipBillUuid");
         this.shipBillUuid = shipBillUuid;
     }
     
