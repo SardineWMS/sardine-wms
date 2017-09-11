@@ -26,7 +26,7 @@ import com.hd123.sardine.wms.common.entity.UCN;
  */
 public class AcceptanceBill extends StandardEntity {
   private static final long serialVersionUID = -3175414367770777955L;
-  
+
   public static final String CAPTION = "要货单";
 
   private String billNumber;
@@ -40,8 +40,9 @@ public class AcceptanceBill extends StandardEntity {
   private DeliverySystem deliverySystem;
   private String deliveryType;
   private String totalCaseQtyStr = "0";
-  private String alcTotalCaseQtyStr = "0";
+  private String totalAlcCaseQtyStr = "0";
   private BigDecimal totalAmount = BigDecimal.ZERO;
+  private BigDecimal totalAlcAmount = BigDecimal.ZERO;
   private String remark;
   private List<AcceptanceBillItem> items = new ArrayList<>();
 
@@ -125,12 +126,12 @@ public class AcceptanceBill extends StandardEntity {
     this.totalCaseQtyStr = totalCaseQtyStr;
   }
 
-  public String getAlcTotalCaseQtyStr() {
-    return alcTotalCaseQtyStr;
+  public String getTotalAlcCaseQtyStr() {
+    return totalAlcCaseQtyStr;
   }
 
-  public void setAlcTotalCaseQtyStr(String alcTotalCaseQtyStr) {
-    this.alcTotalCaseQtyStr = alcTotalCaseQtyStr;
+  public void setTotalAlcCaseQtyStr(String totalAlcCaseQtyStr) {
+    this.totalAlcCaseQtyStr = totalAlcCaseQtyStr;
   }
 
   public BigDecimal getTotalAmount() {
@@ -163,6 +164,14 @@ public class AcceptanceBill extends StandardEntity {
 
   public void setItems(List<AcceptanceBillItem> items) {
     this.items = items;
+  }
+
+  public BigDecimal getTotalAlcAmount() {
+    return totalAlcAmount;
+  }
+
+  public void setTotalAlcAmount(BigDecimal totalAlcAmount) {
+    this.totalAlcAmount = totalAlcAmount;
   }
 
   public void validate() {
