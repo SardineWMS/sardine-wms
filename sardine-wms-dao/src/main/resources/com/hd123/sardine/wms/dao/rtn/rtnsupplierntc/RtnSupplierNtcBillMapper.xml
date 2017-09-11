@@ -70,7 +70,7 @@
 		<result column="unshelvedCaseQtyStr" property="unshelvedCaseQtyStr"
 			jdbcType="VARCHAR" />
 	</resultMap>
-	
+
 	<resultMap id="StockMap" type="Stock">
 		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
 		<result column="version" property="version" jdbcType="LONGVARCHAR" />
@@ -115,7 +115,8 @@
 		<result column="operatebillType" property="stockComponent.operateBill.billType"
 			jdbcType="VARCHAR" />
 		<result column="qty" property="stockComponent.qty" jdbcType="DECIMAL" />
-		<result column="price" property="stockComponent.price" jdbcType="DECIMAL" />
+		<result column="price" property="stockComponent.price"
+			jdbcType="DECIMAL" />
 		<result column="qpcStr" property="stockComponent.qpcStr"
 			jdbcType="VARCHAR" />
 		<result column="munit" property="stockComponent.munit"
@@ -131,13 +132,10 @@
 
 	<select id="queryByPage" parameterType="PageQueryDefinition"
 		resultMap="BillMap">
-		select t.*, w.code wrhCode, w.name wrhName
+		select t.*
 		from
-		db_proxy.SARDINE_RTNSUPPLIERNTCBILL t,
-		db_proxy.sardine_wrh w
-		where
-		t.wrhuuid
-		=w.uuid
+		db_proxy.SARDINE_RTNSUPPLIERNTCBILL t
+		where 1=1
 		<if test="billNumberLike != null and billNumberLike != ''">
 			and t.billNumber like CONCAT(CONCAT('%',
 			#{billNumberLike,jdbcType=VARCHAR}),
@@ -151,13 +149,13 @@
 			#{supplierCodeLike,jdbcType=VARCHAR}),
 			'%')
 		</if>
-		<if test="supplierNameLike">
+		<if test="supplierNameLike != null">
 			and t.supplierName like CONCAT(CONCAT('%',
 			#{supplierNameLike,jdbcType=VARCHAR}),
 			'%')
 		</if>
-		<if test="sourceBillNumberLike != null ">
-			and t.sourcebillNumber like CONCAT(CONCAT('%',
+		<if test="sourceBillNumberLike != null and sourceBillNumberLike != ''">
+			and t.sourceBillNumber like CONCAT(CONCAT('%',
 			#{sourceBillNumberLike,jdbcType=VARCHAR}),
 			'%')
 		</if>
@@ -456,12 +454,14 @@
 		db_proxy.sardine_rtnsupplierntcbill t where
 		t.uuid=#{uuid,jdbcType=VARCHAR}
 	</select>
-	
-	<select id="getByBillNumber" parameterType="java.util.Map" resultMap="BillMap">
+
+	<select id="getByBillNumber" parameterType="java.util.Map"
+		resultMap="BillMap">
 		select t.* from
 		db_proxy.sardine_rtnsupplierntcbill t where
 		t.billnumber=#{billNumber,jdbcType=VARCHAR}
-	 and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}	
+		and t.companyUuid =
+		#{companyUuid, jdbcType=VARCHAR}
 	</select>
 
 	<update id="update"
@@ -550,31 +550,40 @@
 		where t.uuid=#{uuid,jdbcType=VARCHAR}
 	</select>
 
-	<update id="updateItem" parameterType="com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBillItem">
-		update db_proxy.sardine_rtnsupplierntcbillitem 
+	<update id="updateItem"
+		parameterType="com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBillItem">
+		update db_proxy.sardine_rtnsupplierntcbillitem
 		<set>
-		  <if test="unshelvedQty != null">
-		    UNSHELVEDQTY = #{unshelvedQty,jdbcType=DECIMAL},
-		  </if>
-		  <if test="realQty != null">
-		    realQty = #{realQty,jdbcType=DECIMAL},
-		  </if>
-		  <if test="realCaseQtyStr != null">
-		    realCaseQtyStr = #{realCaseQtyStr,jdbcType=VARCHAR},
-		  </if>
-		  <if test="unshelvedCaseQtyStr != null">
-		    unshelvedCaseQtyStr = #{unshelvedCaseQtyStr,jdbcType=VARCHAR},
-		  </if>
+			<if test="unshelvedQty != null">
+				UNSHELVEDQTY = #{unshelvedQty,jdbcType=DECIMAL},
+			</if>
+			<if test="realQty != null">
+				realQty = #{realQty,jdbcType=DECIMAL},
+			</if>
+			<if test="realCaseQtyStr != null">
+				realCaseQtyStr = #{realCaseQtyStr,jdbcType=VARCHAR},
+			</if>
+			<if test="unshelvedCaseQtyStr != null">
+				unshelvedCaseQtyStr =
+				#{unshelvedCaseQtyStr,jdbcType=VARCHAR},
+			</if>
 		</set>
 		<where>
-		   uuid = #{uuid, jdbcType=VARCHAR}
+			uuid = #{uuid, jdbcType=VARCHAR}
 		</where>
 	</update>
-	
-	<select id="queryWaitUnShelveStocks" parameterType="java.util.Map" resultMap="StockMap">
-		select s.* from db_proxy.sardine_stock s,db_proxy.sardine_bin b where s.bincode = b.code 
-and s.companyuuid = b.companyuuid and b.binusage = 'SupplierStorageBin'
-and s.state = 'normal' and b.wrhuuid = #{wrhUuid, jdbcType=VARCHAR}
-and s.ARTICLEUUID = #{articleUuid, jdbcType=VARCHAR} and s.SUPPLIERUUID = #{supplierUuid, jdbcType=VARCHAR}
-	 </select>
+
+	<select id="queryWaitUnShelveStocks" parameterType="java.util.Map"
+		resultMap="StockMap">
+		select s.* from db_proxy.sardine_stock
+		s,db_proxy.sardine_bin b where s.bincode = b.code
+		and s.companyuuid =
+		b.companyuuid and b.binusage = 'SupplierStorageBin'
+		and s.state =
+		'normal' and b.wrhuuid = #{wrhUuid, jdbcType=VARCHAR}
+		and s.ARTICLEUUID
+		= #{articleUuid, jdbcType=VARCHAR} and
+		s.SUPPLIERUUID = #{supplierUuid,
+		jdbcType=VARCHAR}
+	</select>
 </mapper>

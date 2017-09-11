@@ -24,7 +24,6 @@ import com.hd123.sardine.wms.api.rtn.ntc.ReturnNtcBillState;
 import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBill;
 import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBillService;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
-import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
