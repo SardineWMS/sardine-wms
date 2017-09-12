@@ -35,6 +35,9 @@ import com.hd123.sardine.wms.api.task.ContainerMoveRule;
 import com.hd123.sardine.wms.api.task.Task;
 import com.hd123.sardine.wms.api.task.TaskService;
 import com.hd123.sardine.wms.api.task.TaskType;
+import com.hd123.sardine.wms.api.tms.shipbill.ShipBillContainerStock;
+import com.hd123.sardine.wms.api.tms.shipbill.ShipBillService;
+import com.hd123.sardine.wms.api.tms.shipbill.ShipTaskFilter;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
@@ -66,6 +69,9 @@ public class TaskController extends BaseController {
 
     @Autowired
     private ReturnSupplierBillService returnSupplierBillService;
+
+    @Autowired
+    private ShipBillService shipBillService;
 
     @Autowired
     private StockService stockService;
@@ -118,8 +124,7 @@ public class TaskController extends BaseController {
             @RequestParam(value = "binCodeLike", required = false) String binCodeLike,
             @RequestParam(value = "containerBarcodeLike",
                     required = false) String containerBarcodeLike,
-            @RequestParam(value = "articleCodeLike", required = false) String articleCodeLike,
-            @RequestParam(value = "taskType", required = true) String taskType) {
+            @RequestParam(value = "articleCodeLike", required = false) String articleCodeLike) {
         RespObject resp = new RespObject();
         try {
             HandoverTaskFilter filter = new HandoverTaskFilter();
@@ -136,6 +141,46 @@ public class TaskController extends BaseController {
             PageQueryResult<ReturnSupplierBillItem> tasks = returnSupplierBillService
                     .queryWaitHandoverItems(filter);
             for (ReturnSupplierBillItem item : tasks.getRecords())
+                item.setCaseQtyStr(QpcHelper.qtyToCaseQtyStr(item.getQty(), item.getQpcStr()));
+            resp.setObj(tasks);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (Exception e) {
+            return new ErrorRespObject("分页查询失败：" + e.getMessage());
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/queryshiptasks", method = RequestMethod.GET)
+    public @ResponseBody RespObject queryShipTasks(
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
+            @RequestParam(value = "sort", required = false) String sort,
+            @RequestParam(value = "order", required = false,
+                    defaultValue = "asc") String sortDirection,
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "supplierCodeLike", required = false) String supplierCodeLike,
+            @RequestParam(value = "binCodeLike", required = false) String binCodeLike,
+            @RequestParam(value = "containerBarcodeLike",
+                    required = false) String containerBarcodeLike,
+            @RequestParam(value = "articleCodeLike", required = false) String articleCodeLike,
+            @RequestParam(value = "customerCodeLike", required = false) String customerCodeLike) {
+        RespObject resp = new RespObject();
+        try {
+            ShipTaskFilter filter = new ShipTaskFilter();
+            filter.setArticleCodeLike(articleCodeLike);
+            filter.setSupplierCodeLike(supplierCodeLike);
+            filter.setBinCodeLike(binCodeLike);
+            filter.setContainerBarcodeLike(containerBarcodeLike);
+            filter.setCustomerCodeLike(customerCodeLike);
+            filter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+            filter.setPage(page);
+            filter.setPageSize(pageSize);
+            filter.setSortField(sort);
+            filter.setOrderDir(OrderDir.valueOf(sortDirection));
+
+            PageQueryResult<ShipBillContainerStock> tasks = shipBillService
+                    .queryWaitShipStocks(filter);
+            for (ShipBillContainerStock item : tasks.getRecords())
                 item.setCaseQtyStr(QpcHelper.qtyToCaseQtyStr(item.getQty(), item.getQpcStr()));
             resp.setObj(tasks);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -382,7 +427,7 @@ public class TaskController extends BaseController {
             @RequestBody List<ReturnSupplierBillItem> returnHandoverItems) {
         RespObject resp = new RespObject();
         try {
-         //   returnSupplierBillService.generateReturnSupplierBill(returnHandoverItems);
+            // returnSupplierBillService.generateReturnSupplierBill(returnHandoverItems);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {
             return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());

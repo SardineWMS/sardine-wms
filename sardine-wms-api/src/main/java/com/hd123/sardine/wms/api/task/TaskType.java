@@ -35,7 +35,7 @@ public enum TaskType {
     /** 退货下架指令 */
     RtnShelf("退货下架指令"),
 
-    /** 装车指令 */
+    /** 移库指令 */
     Move("移库指令");
 
     private String caption;
