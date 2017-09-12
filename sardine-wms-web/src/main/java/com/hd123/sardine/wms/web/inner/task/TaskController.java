@@ -26,6 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
 import com.hd123.sardine.wms.api.out.rpl.RplBillService;
+import com.hd123.sardine.wms.api.rtn.returnsupplier.HandoverTaskFilter;
+import com.hd123.sardine.wms.api.rtn.returnsupplier.ReturnSupplierBillItem;
+import com.hd123.sardine.wms.api.rtn.returnsupplier.ReturnSupplierBillService;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.api.task.ArticleMoveRule;
 import com.hd123.sardine.wms.api.task.ContainerMoveRule;
@@ -41,6 +44,7 @@ import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
+import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
@@ -59,6 +63,9 @@ public class TaskController extends BaseController {
 
     @Autowired
     private PickUpBillService pickUpBillService;
+
+    @Autowired
+    private ReturnSupplierBillService returnSupplierBillService;
 
     @Autowired
     private StockService stockService;
@@ -92,6 +99,45 @@ public class TaskController extends BaseController {
             else
                 result = taskService.query(definition);
             resp.setObj(result);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (Exception e) {
+            return new ErrorRespObject("分页查询失败：" + e.getMessage());
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/queryhandovertasks", method = RequestMethod.GET)
+    public @ResponseBody RespObject queryHandoverTasks(
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
+            @RequestParam(value = "sort", required = false) String sort,
+            @RequestParam(value = "order", required = false,
+                    defaultValue = "asc") String sortDirection,
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "supplierCodeLike", required = false) String supplierCodeLike,
+            @RequestParam(value = "binCodeLike", required = false) String binCodeLike,
+            @RequestParam(value = "containerBarcodeLike",
+                    required = false) String containerBarcodeLike,
+            @RequestParam(value = "articleCodeLike", required = false) String articleCodeLike,
+            @RequestParam(value = "taskType", required = true) String taskType) {
+        RespObject resp = new RespObject();
+        try {
+            HandoverTaskFilter filter = new HandoverTaskFilter();
+            filter.setArticleCodeLike(articleCodeLike);
+            filter.setSupplierCodeLike(supplierCodeLike);
+            filter.setBinCodeLike(binCodeLike);
+            filter.setContainerBarcodeLike(containerBarcodeLike);
+            filter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+            filter.setPage(page);
+            filter.setPageSize(pageSize);
+            filter.setSortField(sort);
+            filter.setOrderDir(OrderDir.valueOf(sortDirection));
+
+            PageQueryResult<ReturnSupplierBillItem> tasks = returnSupplierBillService
+                    .queryWaitHandoverItems(filter);
+            for (ReturnSupplierBillItem item : tasks.getRecords())
+                item.setCaseQtyStr(QpcHelper.qtyToCaseQtyStr(item.getQty(), item.getQpcStr()));
+            resp.setObj(tasks);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (Exception e) {
             return new ErrorRespObject("分页查询失败：" + e.getMessage());
@@ -326,6 +372,22 @@ public class TaskController extends BaseController {
             return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
         } catch (Exception e) {
             return new ErrorRespObject("拣货失败：" + e.getMessage());
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/handover", method = RequestMethod.POST)
+    public @ResponseBody RespObject handover(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestBody List<ReturnSupplierBillItem> returnHandoverItems) {
+        RespObject resp = new RespObject();
+        try {
+         //   returnSupplierBillService.generateReturnSupplierBill(returnHandoverItems);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("交接失败：" + e.getMessage());
         }
         return resp;
     }
