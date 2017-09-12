@@ -459,4 +459,11 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
   public List<Article> queryArticles(List<String> aticleUuids) {
     return articleDao.queryArticles(aticleUuids);
   }
+
+  @Override
+  public ArticleQpc getArticleQpcByArticleUuidAndQpcStr(String articleUuid, String qpcStr) {
+    if (StringUtil.isNullOrBlank(articleUuid))
+      return null;
+    return articleQpcDao.getByQpcStr(articleUuid, qpcStr);
+  }
 }

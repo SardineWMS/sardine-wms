@@ -415,6 +415,9 @@
 		where
 		t.wrhuuid
 		=w.uuid
+		<if test="companyUuid != null">
+			and t.companyuuid=#{companyUuid,jdbcType=VARCHAR}
+		</if>
 		<if test="billNumberLike != null and billNumberLike != ''">
 			and t.billNumber like CONCAT(CONCAT('%',
 			#{billNumberLike,jdbcType=VARCHAR}),
@@ -440,7 +443,8 @@
 		</if>
 		<if test="wrhEquals != null">
 			and t.wrhUuid=(select a.uuid from db_proxy.sardine_wrh a
-			where a.code=#{wrhEquals,jdbcType=VARCHAR})
+			where a.code=#{wrhEquals,jdbcType=VARCHAR} and
+			a.companyuuid=#{companyUuid,jdbcType=VARCHAR})
 		</if>
 		<if test="returnorCodeLike != null">
 			and t.returnorCode like CONCAT(CONCAT('%',
@@ -479,9 +483,6 @@
 			where s.uuid=i.supplieruuid and
 			s.code=
 			#{supplierCodeContains,jdbcType=VARCHAR})
-		</if>
-		<if test="companyUuid != null">
-			and t.companyuuid=#{companyUuid,jdbcType=VARCHAR}
 		</if>
 		<if test="sortField != null and sortField == 'billNumber'">
 			order by t.billNumber ${orderDir}

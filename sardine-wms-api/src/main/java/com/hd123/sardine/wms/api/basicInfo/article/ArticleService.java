@@ -42,233 +42,243 @@ import com.hd123.sardine.wms.common.query.PageQueryResult;
  */
 public interface ArticleService {
 
-    /** 查询条件 */
-    public static final String QUERY_CODE_FIELD = "code";
-    public static final String QUERY_NAME_FIELD = "name";
-    public static final String QUERY_STATE_FIELD = "state";
+  /** 查询条件 */
+  public static final String QUERY_CODE_FIELD = "code";
+  public static final String QUERY_NAME_FIELD = "name";
+  public static final String QUERY_STATE_FIELD = "state";
 
-    /** 排序字段 */
-    public static final String ORDER_CODE_FIELD = "code";
-    public static final String ORDER_NAME_FIELD = "name";
+  /** 排序字段 */
+  public static final String ORDER_CODE_FIELD = "code";
+  public static final String ORDER_NAME_FIELD = "name";
 
-    /**
-     * 新增商品
-     * <p>
-     * 商品代码不允许重复
-     * 
-     * @param article
-     *            商品，not null
-     * @return 商品UUID
-     * @throws IllegalArgumentException
-     *             参数为空或者不合法
-     * @throws WMSException
-     *             代码重复
-     */
-    String insert(Article article) throws IllegalArgumentException, WMSException;
+  /**
+   * 新增商品
+   * <p>
+   * 商品代码不允许重复
+   * 
+   * @param article
+   *          商品，not null
+   * @return 商品UUID
+   * @throws IllegalArgumentException
+   *           参数为空或者不合法
+   * @throws WMSException
+   *           代码重复
+   */
+  String insert(Article article) throws IllegalArgumentException, WMSException;
 
-    /**
-     * 编辑商品
-     * <p>
-     * 商品代码不允许重复
-     * 
-     * @param article
-     *            商品，not null
-     * @return 商品UUID
-     * @throws IllegalArgumentException
-     *             参数为空或者不合法
-     * @throws WMSException
-     *             代码重复
-     */
-    void update(Article article) throws IllegalArgumentException, WMSException;
+  /**
+   * 编辑商品
+   * <p>
+   * 商品代码不允许重复
+   * 
+   * @param article
+   *          商品，not null
+   * @return 商品UUID
+   * @throws IllegalArgumentException
+   *           参数为空或者不合法
+   * @throws WMSException
+   *           代码重复
+   */
+  void update(Article article) throws IllegalArgumentException, WMSException;
 
-    /**
-     * 根据uuid查询商品
-     * 
-     * @param uuid
-     *            uuid
-     * @return 商品，不存在则返回null
-     */
-    Article get(String uuid);
+  /**
+   * 根据uuid查询商品
+   * 
+   * @param uuid
+   *          uuid
+   * @return 商品，不存在则返回null
+   */
+  Article get(String uuid);
 
-    /**
-     * 根据code查询商品
-     * 
-     * @param code
-     *            代码
-     * @param companyUuid
-     *            组织id
-     * @return 商品，不存在则返回null
-     */
-    Article getByCode(String code);
+  /**
+   * 根据code查询商品
+   * 
+   * @param code
+   *          代码
+   * @param companyUuid
+   *          组织id
+   * @return 商品，不存在则返回null
+   */
+  Article getByCode(String code);
 
-    /**
-     * 根据barcode查询商品
-     * 
-     * @param barcode
-     *            条码
-     * @param companyUuid
-     *            组织id
-     * @return 商品，不存在则返回null
-     */
-    Article getByBarcode(String barcode);
+  /**
+   * 根据barcode查询商品
+   * 
+   * @param barcode
+   *          条码
+   * @param companyUuid
+   *          组织id
+   * @return 商品，不存在则返回null
+   */
+  Article getByBarcode(String barcode);
 
-    /**
-     * 分页查询商品
-     * 
-     * @param definition
-     *            查询条件，not null
-     * @return 分页结果集
-     * @throws IllegalArgumentException
-     */
-    PageQueryResult<Article> query(PageQueryDefinition definition) throws IllegalArgumentException;
+  /**
+   * 分页查询商品
+   * 
+   * @param definition
+   *          查询条件，not null
+   * @return 分页结果集
+   * @throws IllegalArgumentException
+   */
+  PageQueryResult<Article> query(PageQueryDefinition definition) throws IllegalArgumentException;
 
-    /**
-     * 新增商品规格
-     * <p>
-     * 如果{@link ArticleQpc#getQpcStr()}对应的商品已存在，则抛出{@link WMSException}<br>
-     * 如果{@link ArticleQpc#getUuid()}对应的商品已存在，则先删除原规格，再插入新规格<br>
-     * 新增规格都是非默认规格
-     * 
-     * @param qpc
-     *            规格，not null
-     * @throws IllegalArgumentException
-     * @throws WMSException
-     */
-    void insertArticleQpc(ArticleQpc qpc) throws IllegalArgumentException, WMSException;
+  /**
+   * 新增商品规格
+   * <p>
+   * 如果{@link ArticleQpc#getQpcStr()}对应的商品已存在，则抛出{@link WMSException}<br>
+   * 如果{@link ArticleQpc#getUuid()}对应的商品已存在，则先删除原规格，再插入新规格<br>
+   * 新增规格都是非默认规格
+   * 
+   * @param qpc
+   *          规格，not null
+   * @throws IllegalArgumentException
+   * @throws WMSException
+   */
+  void insertArticleQpc(ArticleQpc qpc) throws IllegalArgumentException, WMSException;
 
-    /**
-     * 新增商品条码
-     * <p>
-     * 如果{@link ArticleBarcode#getBarcode()}对应的商品已存在，则抛出{@link WMSException}<br>
-     * 如果{@link ArticleBarcode#getUuid()}对应的商品已存在，则先删除原条码，再插入新条码<br>
-     * 
-     * @param barcode
-     *            条码，not null
-     * @throws IllegalArgumentException
-     * @throws WMSException
-     */
-    void insertArticleBarcode(ArticleBarcode barcode) throws IllegalArgumentException, WMSException;
+  /**
+   * 新增商品条码
+   * <p>
+   * 如果{@link ArticleBarcode#getBarcode()}对应的商品已存在，则抛出{@link WMSException}<br>
+   * 如果{@link ArticleBarcode#getUuid()}对应的商品已存在，则先删除原条码，再插入新条码<br>
+   * 
+   * @param barcode
+   *          条码，not null
+   * @throws IllegalArgumentException
+   * @throws WMSException
+   */
+  void insertArticleBarcode(ArticleBarcode barcode) throws IllegalArgumentException, WMSException;
 
-    /**
-     * 新增商品规格
-     * <p>
-     * 如果{@link ArticleSupplier#getSupplierUuid()}对应的商品已存在，则抛出
-     * {@link WMSException} <br>
-     * 如果{@link ArticleSupplier#getUuid()}对应的商品已存在，则先删除原供应商，再插入新供应商<br>
-     * 
-     * @param supplier
-     *            商品供应商，not null
-     * @throws IllegalArgumentException
-     * @throws WMSException
-     */
-    void insertArticleSupplier(ArticleSupplier supplier)
-            throws IllegalArgumentException, WMSException;
+  /**
+   * 新增商品规格
+   * <p>
+   * 如果{@link ArticleSupplier#getSupplierUuid()}对应的商品已存在，则抛出
+   * {@link WMSException} <br>
+   * 如果{@link ArticleSupplier#getUuid()}对应的商品已存在，则先删除原供应商，再插入新供应商<br>
+   * 
+   * @param supplier
+   *          商品供应商，not null
+   * @throws IllegalArgumentException
+   * @throws WMSException
+   */
+  void insertArticleSupplier(ArticleSupplier supplier)
+      throws IllegalArgumentException, WMSException;
 
-    /**
-     * 删除指定uuid的商品规格，不存在时直接返回
-     * 
-     * @param articleUuid
-     *            商品uuid，not null
-     * @param qpcUuid
-     *            规格uuid，not null
-     * @throws IllegalArgumentException
-     * @throws WMSException
-     */
-    void deleteArticleQpc(String articleUuid, String qpcUuid)
-            throws IllegalArgumentException, WMSException;
+  /**
+   * 删除指定uuid的商品规格，不存在时直接返回
+   * 
+   * @param articleUuid
+   *          商品uuid，not null
+   * @param qpcUuid
+   *          规格uuid，not null
+   * @throws IllegalArgumentException
+   * @throws WMSException
+   */
+  void deleteArticleQpc(String articleUuid, String qpcUuid)
+      throws IllegalArgumentException, WMSException;
 
-    /**
-     * 删除指定uuid的商品条码，不存在时直接返回
-     * 
-     * @param articleUuid
-     *            商品uuid，not null
-     * @param barcodeUuid
-     *            条码uuid，not null
-     * @throws IllegalArgumentException
-     * @throws WMSException
-     */
-    void deleteArticleBarcode(String articleUuid, String barcodeUuid)
-            throws IllegalArgumentException, WMSException;
+  /**
+   * 删除指定uuid的商品条码，不存在时直接返回
+   * 
+   * @param articleUuid
+   *          商品uuid，not null
+   * @param barcodeUuid
+   *          条码uuid，not null
+   * @throws IllegalArgumentException
+   * @throws WMSException
+   */
+  void deleteArticleBarcode(String articleUuid, String barcodeUuid)
+      throws IllegalArgumentException, WMSException;
 
-    /**
-     * 删除指定uuid的商品供应商，不存在时直接返回
-     * 
-     * @param articleUuid
-     *            商品uuid，not null
-     * @param articleSupplierUuid
-     *            商品供应商uuid，not null
-     * @throws IllegalArgumentException
-     * @throws WMSException
-     */
-    void deleteArticleSupplier(String articleUuid, String articleSupplierUuid)
-            throws IllegalArgumentException, WMSException;
+  /**
+   * 删除指定uuid的商品供应商，不存在时直接返回
+   * 
+   * @param articleUuid
+   *          商品uuid，not null
+   * @param articleSupplierUuid
+   *          商品供应商uuid，not null
+   * @throws IllegalArgumentException
+   * @throws WMSException
+   */
+  void deleteArticleSupplier(String articleUuid, String articleSupplierUuid)
+      throws IllegalArgumentException, WMSException;
 
-    /**
-     * 将指定uuid的商品供应商设置为商品的默认供应商
-     * <p>
-     * 一个商品只有一个默认供应商
-     * 
-     * @param articleUuid
-     *            商品uuid，not null
-     * @param articleSupplierUuid
-     *            供应商uuid，not null
-     * @throws IllegalArgumentException
-     * @throws WMSException
-     *             指定的供应商不存在
-     */
-    void setDefaultArticleSupplier(String articleUuid, String articleSupplierUuid)
-            throws IllegalArgumentException, WMSException;
+  /**
+   * 将指定uuid的商品供应商设置为商品的默认供应商
+   * <p>
+   * 一个商品只有一个默认供应商
+   * 
+   * @param articleUuid
+   *          商品uuid，not null
+   * @param articleSupplierUuid
+   *          供应商uuid，not null
+   * @throws IllegalArgumentException
+   * @throws WMSException
+   *           指定的供应商不存在
+   */
+  void setDefaultArticleSupplier(String articleUuid, String articleSupplierUuid)
+      throws IllegalArgumentException, WMSException;
 
-    /**
-     * 将指定uuid的商品规格设置为商品的默认规格
-     * <p>
-     * 一个商品只有一个默认规格
-     * 
-     * @param articleUuid
-     *            商品uuid，not null
-     * @param qpcUuid
-     *            规格uuid，not null
-     * @throws IllegalArgumentException
-     * @throws WMSException
-     *             指定的规格不存在
-     */
-    void setDefaultArticleQpc(String articleUuid, String qpcUuid)
-            throws IllegalArgumentException, WMSException;
+  /**
+   * 将指定uuid的商品规格设置为商品的默认规格
+   * <p>
+   * 一个商品只有一个默认规格
+   * 
+   * @param articleUuid
+   *          商品uuid，not null
+   * @param qpcUuid
+   *          规格uuid，not null
+   * @throws IllegalArgumentException
+   * @throws WMSException
+   *           指定的规格不存在
+   */
+  void setDefaultArticleQpc(String articleUuid, String qpcUuid)
+      throws IllegalArgumentException, WMSException;
 
-    /**
-     * 分页查询库存中的商品
-     * 
-     * @param definition
-     *            查询条件
-     * @return 分页结果集
-     * @throws IllegalArgumentException
-     *             查询条件为空时抛出
-     */
-    PageQueryResult<UCN> queryInStocks(PageQueryDefinition definition)
-            throws IllegalArgumentException;
+  /**
+   * 分页查询库存中的商品
+   * 
+   * @param definition
+   *          查询条件
+   * @return 分页结果集
+   * @throws IllegalArgumentException
+   *           查询条件为空时抛出
+   */
+  PageQueryResult<UCN> queryInStocks(PageQueryDefinition definition)
+      throws IllegalArgumentException;
 
-    /**
-     * 设置商品固定拣货位
-     * 
-     * @param articleUuid
-     *            商品uuid，not null。
-     * @param fixedPickBin
-     *            拣货位或拣货存储位，not null。
-     * @throws IllegalArgumentException
-     * @throws WMSException
-     */
-    void updateArticleFixedPickBin(String articleUuid, String fixedPickBin)
-            throws IllegalArgumentException, WMSException;
+  /**
+   * 设置商品固定拣货位
+   * 
+   * @param articleUuid
+   *          商品uuid，not null。
+   * @param fixedPickBin
+   *          拣货位或拣货存储位，not null。
+   * @throws IllegalArgumentException
+   * @throws WMSException
+   */
+  void updateArticleFixedPickBin(String articleUuid, String fixedPickBin)
+      throws IllegalArgumentException, WMSException;
 
-    /**
-     * 查询商品规格
-     * 
-     * @param articleUuid
-     *            商品uuid
-     * @return 商品规格集合
-     * @throws IllegalArgumentException
-     */
-    List<ArticleQpc> queryArticleQpcs(String articleUuid) throws IllegalArgumentException;
-    
-    List<Article> queryArticles(List<String> aticleUuids);
+  /**
+   * 查询商品规格
+   * 
+   * @param articleUuid
+   *          商品uuid
+   * @return 商品规格集合
+   * @throws IllegalArgumentException
+   */
+  List<ArticleQpc> queryArticleQpcs(String articleUuid) throws IllegalArgumentException;
+
+  List<Article> queryArticles(List<String> aticleUuids);
+
+  /**
+   * 根据商品UUID和qpcStr获取ArticleQpc
+   * 
+   * @param articleUuid
+   *          if null return null
+   * @param qpcStr
+   * @return
+   */
+  ArticleQpc getArticleQpcByArticleUuidAndQpcStr(String articleUuid, String qpcStr);
 }

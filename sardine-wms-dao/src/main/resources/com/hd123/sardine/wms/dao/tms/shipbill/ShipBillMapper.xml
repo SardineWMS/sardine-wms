@@ -687,7 +687,7 @@
     
     <select id="queryWaitShipStock" parameterType="com.hd123.sardine.wms.api.tms.shipbill.ShipTaskFilter" resultMap="ShipBillContainerStockMap">
       select s.*, c.UUID customeruuid, c.code customercode, c.name customername, 
-      s.billuuid sourcebilluuid, s.billtype sourcebilltype, s.billnumber sourcebillnumber from 
+      s.billuuid sourceBillUuid, s.billtype sourceBillType, s.billnumber sourceBillNumber from 
         db_proxy.sardine_stock s, db_proxy.sardine_customer c, db_proxy.sardine_bin b where 
         s.OWNER = c.uuid and s.BINCODE = b.code and 
         s.companyuuid = b.companyuuid and b.binusage = 'CollectBin'

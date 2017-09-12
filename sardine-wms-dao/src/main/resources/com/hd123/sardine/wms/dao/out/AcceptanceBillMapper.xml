@@ -26,6 +26,7 @@
 		<result column="deliveryType" property="deliveryType" jdbcType="VARCHAR" />
 		<result column="totalCaseQtyStr" property="totalCaseQtyStr" jdbcType="VARCHAR" />
 		<result column="alcTotalCaseQtyStr" property="alcTotalCaseQtyStr" jdbcType="VARCHAR" />
+		<result column="totalAlcAmount" property="totalAlcAmount" jdbcType="DECIMAL" />
 		<result column="totalAmount" property="totalAmount" jdbcType="DECIMAL" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
 		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
@@ -76,6 +77,7 @@
 		<result column="realCaseQtyStr" property="realCaseQtyStr"
 			jdbcType="VARCHAR" />
 		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="articleSpec" property="articleSpec" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<insert id="insert" parameterType="AcceptanceBill">
@@ -111,7 +113,7 @@
 			<if test="totalCaseQtyStr != null">
 				totalCaseQtyStr,
 			</if>
-			<if test="totalAlcCaseQtyStr != null">
+			<if test="alcTotalCaseQtyStr != null">
 				totalAlcCaseQtyStr,
 			</if>
 			<if test="totalAmount != null">
@@ -170,8 +172,8 @@
 			<if test="totalCaseQtyStr != null">
 				#{totalCaseQtyStr,jdbcType=VARCHAR},
 			</if>
-			<if test="totalAlcCaseQtyStr != null">
-				#{totalAlcCaseQtyStr,jdbcType=VARCHAR},
+			<if test="alcTotalCaseQtyStr != null">
+				#{alcTotalCaseQtyStr,jdbcType=VARCHAR},
 			</if>
 			<if test="totalAmount != null">
 				#{totalAmount,jdbcType=DECIMAL},
@@ -278,7 +280,8 @@
 		planCaseQtyStr,
 		realQty,
 		realCaseQtyStr,
-		price
+		price,
+		amount
 		)
 		values(
 		#{uuid, jdbcType=VARCHAR},
@@ -298,7 +301,8 @@
 		#{planCaseQtyStr, jdbcType=VARCHAR},
 		#{realQty, jdbcType=DECIMAL},
 		#{realCaseQtyStr, jdbcType=VARCHAR},
-		#{price, jdbcType=DECIMAL}
+		#{price, jdbcType=DECIMAL},
+		#{amount,jdbcType=DECIMAL}
 		)
 	</insert>
 
@@ -328,7 +332,7 @@
 	</select>
 
 	<select id="queryItems" parameterType="java.lang.String" resultMap="AcceptanceBillItemMap">
-		select t.*, a.code articlecode, a.name articlename,s.code suppliercode,s.name suppliername
+		select t.*, a.code articlecode, a.name articlename,s.code suppliercode,s.name suppliername,a.spec articleSpec
 		from
 		db_proxy.sardine_acceptanceBillItem t,
 		db_proxy.sardine_article a,

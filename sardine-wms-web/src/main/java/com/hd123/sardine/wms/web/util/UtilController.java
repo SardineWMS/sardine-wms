@@ -25,12 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.stock.Stock;
+import com.hd123.sardine.wms.api.stock.StockComponent;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
 import com.hd123.sardine.wms.common.http.RespStatus;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.web.base.BaseController;
 
@@ -144,7 +146,8 @@ public class UtilController extends BaseController {
       @RequestParam(value = "binCode", required = false) String binCode,
       @RequestParam(value = "containerBarcode", required = false) String containerBarcode,
       @RequestParam(value = "articleUuid", required = false) String articleUuid,
-      @RequestParam(value = "qpcStr", required = false) String qpcStr) {
+      @RequestParam(value = "qpcStr", required = false) String qpcStr,
+      @RequestParam(value = "articleCode", required = false) String articleCode) {
     RespObject resp = new RespObject();
     try {
       StockFilter filter = new StockFilter();
@@ -153,9 +156,14 @@ public class UtilController extends BaseController {
       filter.setContainerBarcode(containerBarcode);
       filter.setQpcStr(qpcStr);
       filter.setPageSize(0);
+      filter.setArticleCode(articleCode);
+      filter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       List<Stock> stocks = stockService.query(filter);
-
-      resp.setObj(stocks);
+      List<StockComponent> components = new ArrayList<>();
+      for (Stock stock : stocks) {
+        components.add(stock.getStockComponent());
+      }
+      resp.setObj(components);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (NotLoginInfoException e) {
       return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());

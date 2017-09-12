@@ -31,6 +31,7 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.base.BaseController;
 
 /**
@@ -63,7 +64,7 @@ public class UserController extends BaseController {
 
   @RequestMapping(value = "/getbycode", method = RequestMethod.GET)
   public @ResponseBody RespObject getByCode(@RequestParam(value = "userCode") String userCode,
-          @RequestParam(value = "token") String token) {
+      @RequestParam(value = "token") String token) {
     RespObject resp = new RespObject();
     try {
       User user = userService.getByCode(userCode);
@@ -86,7 +87,8 @@ public class UserController extends BaseController {
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "phone", required = false) String phone,
       @RequestParam(value = "userState", required = false) String userState,
-      @RequestParam(value = "roleUuid", required = false) String roleUuid) {
+      @RequestParam(value = "roleUuid", required = false) String roleUuid,
+      @RequestParam(value = "roleName", required = true) String roleName) {
     RespObject resp = new RespObject();
     try {
       PageQueryDefinition definition = new PageQueryDefinition();
@@ -100,6 +102,8 @@ public class UserController extends BaseController {
       definition.put(UserService.QUERY_USERSTATE_FIELD,
           StringUtil.isNullOrBlank(userState) ? null : UserState.valueOf(userState));
       definition.put(UserService.QUERY_ROLE_FIELD, roleUuid);
+      definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+      definition.put(UserService.QUERY_ROLE_NAME_FIELD, roleName);
       PageQueryResult<User> result = userService.query(definition);
 
       resp.setObj(result);

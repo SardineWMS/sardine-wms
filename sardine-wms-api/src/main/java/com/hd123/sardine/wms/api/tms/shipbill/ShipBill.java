@@ -51,7 +51,7 @@ public class ShipBill extends StandardEntity implements Validator {
   }
 
   public void setBillNumber(String billNumber) {
-    Assert.assertArgumentNotNull(billNumber, "billNumber");
+//    Assert.assertArgumentNotNull(billNumber, "billNumber");
     this.billNumber = billNumber;
   }
 
@@ -112,7 +112,7 @@ public class ShipBill extends StandardEntity implements Validator {
   }
 
   public void setState(ShipBillState state) {
-    Assert.assertArgumentNotNull(state, "state");
+//    Assert.assertArgumentNotNull(state, "state");
     this.state = state;
   }
 
@@ -161,7 +161,7 @@ public class ShipBill extends StandardEntity implements Validator {
   }
 
   public void setCompanyUuid(String companyUuid) {
-    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+//    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
     this.companyUuid = companyUuid;
   }
 
@@ -197,7 +197,7 @@ public class ShipBill extends StandardEntity implements Validator {
   }
 
   public void setCustomerItems(List<ShipBillCustomerItem> customerItems) {
-    Assert.assertArgumentNotNull(customerItems, "customerItems");
+//    Assert.assertArgumentNotNull(customerItems, "customerItems");
     this.customerItems = customerItems;
   }
 

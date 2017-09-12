@@ -188,6 +188,9 @@
 		<if test="roleUuid != null and roleUuid != ''">
 			,db_proxy.sardine_role_user ur
 		</if>
+		<if test="roleName != null and roleName != ''">
+			,db_proxy.sardine_role_user ur,db_proxy.sardine_role r
+		</if>
 		where 1=1
 		<if test="code != null">
 			and u.code like CONCAT(CONCAT('%', #{code}),
@@ -213,6 +216,10 @@
 		<if test="roleUuid != null and roleUuid != ''">
 			and u.uuid=ur.useruuid and
 			ur.roleuuid=#{roleUuid,jdbcType=VARCHAR}
+		</if>
+		<if test="roleName != null and roleName != ''">
+			and u.uuid=ur.useruuid and ur.roleuuid=r.uuid and
+			r.name=#{roleName,jdbcType=VARCHAR}
 		</if>
 		<if test="sortField != null and sortField == 'code'">
 			order by t.code ${orderDir}

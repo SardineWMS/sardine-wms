@@ -132,20 +132,20 @@ public class ShipBillHandler {
         customerItem.setLine(customerItems.size() + 1);
         customerItem.setTotalCaseQty(cs.getCaseQtyStr());
         customerItem
-            .setTotalVolume(caculateVolume(cs.getArticle().getUuid(), cs.getQpcStr(), cs.getQty()));
+            .setTotalVolume(calculateVolume(cs.getArticle().getUuid(), cs.getQpcStr(), cs.getQty()));
         customerItem.setContainerCount(
             caculateContainerCount(shipBill.getContainerStocks(), cs.getCustomer().getUuid()));
         customerItem
-            .setTotalWeight(caculateWeight(cs.getArticle().getUuid(), cs.getQpcStr(), cs.getQty()));
+            .setTotalWeight(calculateWeight(cs.getArticle().getUuid(), cs.getQpcStr(), cs.getQty()));
         customerItem.setTotalAmount(cs.getPrice().multiply(cs.getQty()));
         customerItems.add(customerItem);
       } else {
         customerItem.setTotalCaseQty(
             QpcHelper.caseQtyStrAdd(customerItem.getTotalCaseQty(), cs.getCaseQtyStr()));
         customerItem.setTotalVolume(customerItem.getTotalVolume()
-            .add(caculateVolume(cs.getArticle().getUuid(), cs.getQpcStr(), cs.getQty())));
+            .add(calculateVolume(cs.getArticle().getUuid(), cs.getQpcStr(), cs.getQty())));
         customerItem.setTotalWeight(customerItem.getTotalWeight()
-            .add(caculateWeight(cs.getArticle().getUuid(), cs.getQpcStr(), cs.getQty())));
+            .add(calculateWeight(cs.getArticle().getUuid(), cs.getQpcStr(), cs.getQty())));
         customerItem
             .setTotalAmount(customerItem.getTotalAmount().add(cs.getPrice().multiply(cs.getQty())));
       }
@@ -166,7 +166,7 @@ public class ShipBillHandler {
     return containerSet.size();
   }
 
-  private BigDecimal caculateVolume(String articleUuid, String qpcStr, BigDecimal qty) {
+  public BigDecimal calculateVolume(String articleUuid, String qpcStr, BigDecimal qty) {
     assert articleUuid != null;
     assert qpcStr != null;
     assert qty != null;
@@ -186,7 +186,7 @@ public class ShipBillHandler {
     return BigDecimal.ZERO;
   }
 
-  private BigDecimal caculateWeight(String articleUuid, String qpcStr, BigDecimal qty) {
+  public BigDecimal calculateWeight(String articleUuid, String qpcStr, BigDecimal qty) {
     assert articleUuid != null;
     assert qpcStr != null;
     assert qty != null;
