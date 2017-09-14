@@ -88,7 +88,7 @@ public class UserController extends BaseController {
       @RequestParam(value = "phone", required = false) String phone,
       @RequestParam(value = "userState", required = false) String userState,
       @RequestParam(value = "roleUuid", required = false) String roleUuid,
-      @RequestParam(value = "roleName", required = true) String roleName) {
+      @RequestParam(value = "roleName", required = false) String roleName) {
     RespObject resp = new RespObject();
     try {
       PageQueryDefinition definition = new PageQueryDefinition();
