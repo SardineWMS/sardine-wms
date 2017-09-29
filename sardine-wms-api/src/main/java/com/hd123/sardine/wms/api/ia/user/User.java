@@ -23,117 +23,145 @@ import com.hd123.sardine.wms.common.entity.StandardEntity;
  *
  */
 public class User extends StandardEntity {
-    public static final String DEFAULT_PASSWD = "888888";
-    public static final String DEFAULT_ADMIN_PASSWD = "admin8888";
-    public static final String COMPANYUUID_FLOWTYPE = "companyid";
-    public static final String COMPANYCODE_PREFIX = "8";
+  public static final String DEFAULT_PASSWD = "888888";
+  public static final String DEFAULT_ADMIN_PASSWD = "admin8888";
+  public static final String COMPANYUUID_FLOWTYPE = "companyid";
+  public static final String COMPANYCODE_PREFIX = "8";
 
-    private static final long serialVersionUID = -691450513005794988L;
+  private static final long serialVersionUID = -691450513005794988L;
 
-    private String code;
-    private String name;
-    private String phone;
-    private String passwd;
-    private boolean administrator;
+  private String code;
+  private String name;
+  private String phone;
+  private String passwd;
+  private boolean administrator;
 
-    private String companyUuid;
-    private String companyCode;
-    private String companyName;
-    
-    private UserState userState = UserState.online;
+  private String companyUuid;
+  private String companyCode;
+  private String companyName;
 
-    public UserState getUserState() {
-        return userState;
-    }
+  private String id;
+  private String email;
+  private String remark;
 
-    public void setUserState(UserState userState) {
-        this.userState = userState;
-    }
+  private UserState userState = UserState.online;
 
-    /** 指示当前用户是否是管理员用户，新注册的用户默认为管理员用户，管理员在新建时可指定新建用户是否是管理员 */
-    public boolean isAdministrator() {
-        return administrator;
-    }
+  public UserState getUserState() {
+    return userState;
+  }
 
-    public void setAdministrator(boolean administrator) {
-        this.administrator = administrator;
-    }
+  public void setUserState(UserState userState) {
+    this.userState = userState;
+  }
 
-    /** 用户代码，由用户注册或者新增时指定，全局唯一，由字母和数字组成，长度不超过30位 */
-    public String getCode() {
-        return code;
-    }
+  /** 指示当前用户是否是管理员用户，新注册的用户默认为管理员用户，管理员在新建时可指定新建用户是否是管理员 */
+  public boolean isAdministrator() {
+    return administrator;
+  }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+  public void setAdministrator(boolean administrator) {
+    this.administrator = administrator;
+  }
 
-    /** 用户名称，长度不超过100 */
-    public String getName() {
-        return name;
-    }
+  /** 用户代码，由用户注册或者新增时指定，全局唯一，由字母和数字组成，长度不超过30位 */
+  public String getCode() {
+    return code;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setCode(String code) {
+    this.code = code;
+  }
 
-    /** 用户电话 */
-    public String getPhone() {
-        return phone;
-    }
+  /** 用户名称，长度不超过100 */
+  public String getName() {
+    return name;
+  }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    /** 用户密码，新增用户初始密码为888888，注册用户可指定自己的密码 */
-    public String getPasswd() {
-        return passwd;
-    }
+  /** 用户电话 */
+  public String getPhone() {
+    return phone;
+  }
 
-    public void setPasswd(String passwd) {
-        this.passwd = passwd;
-    }
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
 
-    /** 用户所属公司id，注册用户由系统生成，新增用户则根据当前管理员所属公司进行填充 */
-    public String getCompanyUuid() {
-        return companyUuid;
-    }
+  /** 用户密码，新增用户初始密码为888888，注册用户可指定自己的密码 */
+  public String getPasswd() {
+    return passwd;
+  }
 
-    public void setCompanyUuid(String companyUuid) {
-        this.companyUuid = companyUuid;
-    }
+  public void setPasswd(String passwd) {
+    this.passwd = passwd;
+  }
 
-    /** 用户所属公司代码，注册用户由系统生成，新增用户则根据当前管理员所属公司进行填充 */
-    public String getCompanyCode() {
-        return companyCode;
-    }
+  /** 用户所属公司id，注册用户由系统生成，新增用户则根据当前管理员所属公司进行填充 */
+  public String getCompanyUuid() {
+    return companyUuid;
+  }
 
-    public void setCompanyCode(String companyCode) {
-        this.companyCode = companyCode;
-    }
+  public void setCompanyUuid(String companyUuid) {
+    this.companyUuid = companyUuid;
+  }
 
-    /** 用户所属公司id，注册用户由用户指定，新增用户则根据当前管理员所属公司进行填充 */
-    public String getCompanyName() {
-        return companyName;
-    }
+  /** 用户所属公司代码，注册用户由系统生成，新增用户则根据当前管理员所属公司进行填充 */
+  public String getCompanyCode() {
+    return companyCode;
+  }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
+  public String getId() {
+    return id;
+  }
 
-    /**
-     * 获取用户登录信息
-     */
-    public UserInfo fetchUserInfo() {
-        UserInfo info = new UserInfo();
-        info.setCode(code);
-        info.setName(name);
-        info.setUuid(getUuid());
-        info.setCompanyCode(companyCode);
-        info.setCompanyUuid(companyUuid);
-        info.setCompanyName(companyName);
-        info.setAdministrator(administrator);
-        return info;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public String getRemark() {
+    return remark;
+  }
+
+  public void setRemark(String remark) {
+    this.remark = remark;
+  }
+
+  public void setCompanyCode(String companyCode) {
+    this.companyCode = companyCode;
+  }
+
+  /** 用户所属公司id，注册用户由用户指定，新增用户则根据当前管理员所属公司进行填充 */
+  public String getCompanyName() {
+    return companyName;
+  }
+
+  public void setCompanyName(String companyName) {
+    this.companyName = companyName;
+  }
+
+  /**
+   * 获取用户登录信息
+   */
+  public UserInfo fetchUserInfo() {
+    UserInfo info = new UserInfo();
+    info.setCode(code);
+    info.setName(name);
+    info.setUuid(getUuid());
+    info.setCompanyCode(companyCode);
+    info.setCompanyUuid(companyUuid);
+    info.setCompanyName(companyName);
+    info.setAdministrator(administrator);
+    return info;
+  }
 }

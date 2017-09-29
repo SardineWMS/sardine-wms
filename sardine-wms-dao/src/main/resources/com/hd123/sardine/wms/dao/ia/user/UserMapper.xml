@@ -85,7 +85,10 @@
 		companyUuid,
 		companyCode,
 		companyName,
-		userState
+		userState,
+		id,
+		email,
+		remark
 		)
 		values (
 		#{uuid,jdbcType=VARCHAR},
@@ -106,7 +109,10 @@
 		#{companyUuid,jdbcType=VARCHAR},
 		#{companyCode,jdbcType=VARCHAR},
 		#{companyName,jdbcType=VARCHAR},
-		#{userState,jdbcType=VARCHAR}
+		#{userState,jdbcType=VARCHAR},
+		#{id,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR}
 		)
 	</insert>
 
@@ -123,6 +129,9 @@
 			#{administrator,jdbcType=CHAR},
 			userState =
 			#{userState,jdbcType=CHAR},
+			id=#{id,jdbcType=VARCHAR},
+			email=#{email,jdbcType=VARCHAR},
+			remark=#{remark,jdbcType=VARCHAR},
 			version =
 			#{version,jdbcType=LONGVARCHAR} +
 			1,

@@ -20,116 +20,144 @@ import java.io.Serializable;
  *
  */
 public class RegisterUser implements Serializable {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private String uuid;
-    private String code;
-    private String name;
-    private String phone;
-    private String passwd;
+  private String uuid;
+  private String code;
+  private String name;
+  private String phone;
+  private String passwd;
 
-    private String companyUuid;
-    private String companyCode;
-    private String companyName;
-    private String address;
-    private String homePage;
-    private String companyType;
-    private UserState userState = UserState.online;
+  private String companyUuid;
+  private String companyCode;
+  private String companyName;
+  private String address;
+  private String homePage;
+  private String companyType;
+  private UserState userState = UserState.online;
 
-    public String getUuid() {
-        return uuid;
-    }
+  private String id;
+  private String email;
+  private String remark;
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
+  public String getUuid() {
+    return uuid;
+  }
 
-    public String getCode() {
-        return code;
-    }
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+  public String getCode() {
+    return code;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public void setCode(String code) {
+    this.code = code;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getPhone() {
-        return phone;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+  public String getPhone() {
+    return phone;
+  }
 
-    public String getPasswd() {
-        return passwd;
-    }
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
 
-    public void setPasswd(String passwd) {
-        this.passwd = passwd;
-    }
+  public String getPasswd() {
+    return passwd;
+  }
 
-    public UserState getUserState() {
-        return userState;
-    }
+  public void setPasswd(String passwd) {
+    this.passwd = passwd;
+  }
 
-    public void setUserState(UserState userState) {
-        this.userState = userState;
-    }
+  public UserState getUserState() {
+    return userState;
+  }
 
-    public String getCompanyUuid() {
-        return companyUuid;
-    }
+  public void setUserState(UserState userState) {
+    this.userState = userState;
+  }
 
-    public void setCompanyUuid(String companyUuid) {
-        this.companyUuid = companyUuid;
-    }
+  public String getCompanyUuid() {
+    return companyUuid;
+  }
 
-    public String getCompanyCode() {
-        return companyCode;
-    }
+  public void setCompanyUuid(String companyUuid) {
+    this.companyUuid = companyUuid;
+  }
 
-    public void setCompanyCode(String companyCode) {
-        this.companyCode = companyCode;
-    }
+  public String getCompanyCode() {
+    return companyCode;
+  }
 
-    public String getCompanyName() {
-        return companyName;
-    }
+  public void setCompanyCode(String companyCode) {
+    this.companyCode = companyCode;
+  }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
+  public String getCompanyName() {
+    return companyName;
+  }
 
-    public String getAddress() {
-        return address;
-    }
+  public void setCompanyName(String companyName) {
+    this.companyName = companyName;
+  }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+  public String getAddress() {
+    return address;
+  }
 
-    public String getHomePage() {
-        return homePage;
-    }
+  public void setAddress(String address) {
+    this.address = address;
+  }
 
-    public void setHomePage(String homePage) {
-        this.homePage = homePage;
-    }
+  public String getHomePage() {
+    return homePage;
+  }
 
-    public String getCompanyType() {
-        return companyType;
-    }
+  public void setHomePage(String homePage) {
+    this.homePage = homePage;
+  }
 
-    public void setCompanyType(String companyType) {
-        this.companyType = companyType;
-    }
+  public String getCompanyType() {
+    return companyType;
+  }
+
+  public void setCompanyType(String companyType) {
+    this.companyType = companyType;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  public String getRemark() {
+    return remark;
+  }
+
+  public void setRemark(String remark) {
+    this.remark = remark;
+  }
 
 }

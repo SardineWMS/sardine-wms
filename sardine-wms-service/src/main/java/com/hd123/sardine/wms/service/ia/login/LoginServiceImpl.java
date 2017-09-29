@@ -108,6 +108,9 @@ public class LoginServiceImpl extends BaseWMSService implements LoginService {
     user.setPasswd(registerUser.getPasswd());
     user.setCode(registerUser.getCode());
     user.setPhone(registerUser.getPhone());
+    user.setId(registerUser.getId());
+    user.setEmail(registerUser.getEmail());
+    user.setRemark(registerUser.getRemark());
     user.setUuid(UUIDGenerator.genUUID());
     user.setCreateInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
     user.setLastModifyInfo(new OperateInfo(new Operator("sardine", "sardine", "注册用户")));
