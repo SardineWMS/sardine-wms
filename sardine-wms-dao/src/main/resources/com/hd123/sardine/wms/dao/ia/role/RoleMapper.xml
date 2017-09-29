@@ -84,7 +84,8 @@
 		LASTMODIFYCODE,
 		LASTMODIFYNAME,
 		state,
-		companyUuid
+		companyUuid,
+		remark
 		)
 		values (
 		#{uuid,jdbcType=VARCHAR},
@@ -100,7 +101,8 @@
 		#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
 		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
 		#{state,jdbcType=VARCHAR},
-		#{companyUuid,jdbcType=VARCHAR}
+		#{companyUuid,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR}
 		)
 	</insert>
 
@@ -112,7 +114,8 @@
 			name =
 			#{name,jdbcType=VARCHAR},
 			state =
-			#{state,jdbcType=CHAR},
+			#{state,jdbcType=VARCHAR},
+			remark=#{remark,jdbcType=VARCHAR},
 			version =
 			#{version,jdbcType=LONGVARCHAR} +
 			1,
