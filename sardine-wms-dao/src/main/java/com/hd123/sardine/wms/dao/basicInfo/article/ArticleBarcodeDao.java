@@ -21,6 +21,8 @@ import com.hd123.sardine.wms.common.dao.BaseDao;
 public interface ArticleBarcodeDao extends BaseDao<ArticleBarcode> {
 
   List<ArticleBarcode> queryByList(String articleUuid);
-  
+
   void remove(String uuid);
+
+  ArticleBarcode getByArticleAndQpc(String articleUuid, String qpcStr);
 }

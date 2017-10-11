@@ -281,4 +281,22 @@ public interface ArticleService {
    * @return
    */
   ArticleQpc getArticleQpcByArticleUuidAndQpcStr(String articleUuid, String qpcStr);
+
+  /**
+   * 启用
+   * 
+   * @param uuid
+   * @param version
+   * @throws WMSException
+   */
+  void online(String uuid, long version) throws WMSException;
+
+  /**
+   * 停用
+   * 
+   * @param uuid
+   * @param version
+   * @throws WMSException 
+   */
+  void offline(String uuid, long version) throws WMSException;
 }

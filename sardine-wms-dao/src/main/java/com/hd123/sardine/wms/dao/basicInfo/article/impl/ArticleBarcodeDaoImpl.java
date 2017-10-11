@@ -10,7 +10,9 @@
 package com.hd123.sardine.wms.dao.basicInfo.article.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleBarcode;
@@ -23,10 +25,10 @@ import com.hd123.sardine.wms.dao.basicInfo.article.ArticleBarcodeDao;
  */
 public class ArticleBarcodeDaoImpl extends BaseDaoImpl<ArticleBarcode>
     implements ArticleBarcodeDao {
-  
+
   public static final String MAPPER_QUERYBYLIST = "queryByList";
-  
   public static final String MAPPER_REMOVEONE = "removeone";
+  public static final String MAPPER_GET_BY_ARTICLE_AND_QPC = "getByArticleAndQpc";
 
   @Override
   public List<ArticleBarcode> queryByList(String articleUuid) {
@@ -40,7 +42,17 @@ public class ArticleBarcodeDaoImpl extends BaseDaoImpl<ArticleBarcode>
   public void remove(String uuid) {
     if (StringUtil.isNullOrBlank(uuid))
       return;
-    
+
     getSqlSession().delete(generateStatement(MAPPER_REMOVEONE), uuid);
+  }
+
+  @Override
+  public ArticleBarcode getByArticleAndQpc(String articleUuid, String qpcStr) {
+    if (StringUtil.isNullOrBlank(articleUuid) || StringUtil.isNullOrBlank(qpcStr))
+      return null;
+    Map<String, String> map = new HashMap<>();
+    map.put("articleUuid", articleUuid);
+    map.put("qpcStr", qpcStr);
+    return getSqlSession().selectOne(generateStatement(MAPPER_GET_BY_ARTICLE_AND_QPC), map);
   }
 }

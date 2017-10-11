@@ -40,4 +40,9 @@
 	<delete id="removeone" parameterType="String">
 	    delete from db_proxy.sardine_article_barcode where uuid = #{uuid,jdbcType=VARCHAR}
 	</delete>
+	
+	<select id="getByArticleAndQpc" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select t.* from db_proxy.sardine_article_barcode t where t.articleUuid=#{articleUuid,jdbcType=VARCHAR}
+		and t.qpcStr=#{qpcStr,jdbcType=VARCHAR}
+	</select>
 </mapper>

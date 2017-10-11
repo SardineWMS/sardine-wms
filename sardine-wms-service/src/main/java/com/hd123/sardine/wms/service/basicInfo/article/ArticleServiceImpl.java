@@ -9,8 +9,10 @@
  */
 package com.hd123.sardine.wms.service.basicInfo.article;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,6 +22,7 @@ import com.hd123.sardine.wms.api.basicInfo.article.Article;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleBarcode;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleQpc;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleService;
+import com.hd123.sardine.wms.api.basicInfo.article.ArticleState;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleSupplier;
 import com.hd123.sardine.wms.api.basicInfo.bin.Bin;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
@@ -36,6 +39,8 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
+import com.hd123.sardine.wms.common.utils.PersistenceUtils;
+import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.common.validator.ValidateHandler;
 import com.hd123.sardine.wms.common.validator.ValidateResult;
 import com.hd123.sardine.wms.dao.basicInfo.article.ArticleBarcodeDao;
@@ -117,10 +122,29 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
     articleConfig.setPutawayBin(article.getPutawayBin());
     articleConfigService.saveArticleConfig(articleConfig);
 
+    saveArticleQpcAndBarcode(article);// 新增商品时默认添加商品条码=商品代码，规格为1*1*1
+
     logger.injectContext(this, article.getUuid(), Article.class.getName(),
         ApplicationContextUtil.getOperateContext());
     logger.log(EntityLogger.EVENT_ADDNEW, "新增商品");
     return article.getUuid();
+  }
+
+  private void saveArticleQpcAndBarcode(Article article) {
+    assert article != null;
+    ArticleQpc qpc = new ArticleQpc();
+    qpc.setArticleUuid(article.getUuid());
+    qpc.setDefault_(true);
+    qpc.setQpcStr(ArticleQpc.DEFAULT_QPCSTR);
+    qpc.setUuid(UUIDGenerator.genUUID());
+
+    ArticleBarcode barcode = new ArticleBarcode();
+    barcode.setArticleUuid(article.getUuid());
+    barcode.setBarcode(article.getCode());
+    barcode.setQpcStr(ArticleQpc.DEFAULT_QPCSTR);
+    barcode.setUuid(UUIDGenerator.genUUID());
+    articleQpcDao.insert(qpc);
+    articleBarcodeDao.insert(barcode);
   }
 
   @Override
@@ -336,6 +360,16 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
     Article article = articleDao.get(articleUuid);
     if (article == null)
       throw new WMSException("商品" + articleUuid + "不存在。");
+    ArticleQpc articleQpc = articleQpcDao.get(qpcUuid);
+    if (Objects.isNull(articleQpc))
+      throw new WMSException("商品规格不存在");
+    if (articleQpc.isDefault_())
+      throw new WMSException("默认规格不允许删除");
+    ArticleBarcode barcode = articleBarcodeDao.getByArticleAndQpc(articleUuid,
+        articleQpc.getQpcStr());
+    if (Objects.nonNull(barcode))
+      throw new WMSException(MessageFormat.format("存在条码{0}与规格{1}对应，请先删除条码{2}", barcode,
+          articleQpc.getQpcStr(), barcode));
     articleQpcDao.remove(qpcUuid);
 
     logger.injectContext(this, qpcUuid, ArticleQpc.class.getName(),
@@ -352,6 +386,9 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
     Article article = articleDao.get(articleUuid);
     if (article == null)
       throw new WMSException("商品" + articleUuid + "不存在。");
+    ArticleBarcode barcode = articleBarcodeDao.get(barcodeUuid);
+    if (Objects.isNull(barcode))
+      throw new WMSException("要删除的商品条码不存在");
     articleBarcodeDao.remove(barcodeUuid);
 
     logger.injectContext(this, barcodeUuid, ArticleBarcode.class.getName(),
@@ -465,5 +502,41 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
     if (StringUtil.isNullOrBlank(articleUuid))
       return null;
     return articleQpcDao.getByQpcStr(articleUuid, qpcStr);
+  }
+
+  @Override
+  public void online(String uuid, long version) throws WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+    Assert.assertArgumentNotNull(version, "version");
+
+    Article article = articleDao.get(uuid);
+    if (Objects.isNull(article))
+      throw new WMSException("要启用的商品不存在");
+    PersistenceUtils.checkVersion(version, article, "商品", uuid);
+    if (ArticleState.online.equals(article.getState()))
+      return;
+
+    article.setState(ArticleState.online);
+    article.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+
+    articleDao.update(article);
+  }
+
+  @Override
+  public void offline(String uuid, long version) throws WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+    Assert.assertArgumentNotNull(version, "version");
+
+    Article article = articleDao.get(uuid);
+    if (Objects.isNull(article))
+      throw new WMSException("要停用的商品不存在");
+    PersistenceUtils.checkVersion(version, article, "商品", uuid);
+    if (ArticleState.offline.equals(article.getState()))
+      return;
+
+    article.setState(ArticleState.offline);
+    article.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+
+    articleDao.update(article);
   }
 }

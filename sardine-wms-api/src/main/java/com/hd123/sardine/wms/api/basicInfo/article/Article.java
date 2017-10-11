@@ -9,6 +9,7 @@
  */
 package com.hd123.sardine.wms.api.basicInfo.article;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +33,7 @@ import com.hd123.sardine.wms.common.utils.StockConstants;
  */
 public class Article extends StandardEntity {
   private static final long serialVersionUID = 4329860271781901045L;
-  
+
   private String companyUuid;
   private String code;
   private String name;
@@ -48,6 +49,13 @@ public class Article extends StandardEntity {
   private ArticlePutawayBin putawayBin;
   private String storageArea;
   private String remark;
+
+  private String simpleName;
+  private String secondCode;
+  private BigDecimal sellPrice;
+  private BigDecimal purchasePrice;
+  private String habitat;
+  private String size;
 
   private List<ArticleSupplier> articleSuppliers = new ArrayList<ArticleSupplier>();
   private List<ArticleBarcode> barcodes = new ArrayList<ArticleBarcode>();
@@ -212,6 +220,60 @@ public class Article extends StandardEntity {
     this.fixedPickBin = fixedPickBin;
   }
 
+  /** 简称 */
+  public String getSimpleName() {
+    return simpleName;
+  }
+
+  public void setSimpleName(String simpleName) {
+    this.simpleName = simpleName;
+  }
+
+  /** 第二代码 */
+  public String getSecondCode() {
+    return secondCode;
+  }
+
+  public void setSecondCode(String secondCode) {
+    this.secondCode = secondCode;
+  }
+
+  /** 售价 */
+  public BigDecimal getSellPrice() {
+    return sellPrice;
+  }
+
+  public void setSellPrice(BigDecimal sellPrice) {
+    this.sellPrice = sellPrice;
+  }
+
+  /** 进价 */
+  public BigDecimal getPurchasePrice() {
+    return purchasePrice;
+  }
+
+  public void setPurchasePrice(BigDecimal purchasePrice) {
+    this.purchasePrice = purchasePrice;
+  }
+
+  /** 产地 */
+  public String getHabitat() {
+    return habitat;
+  }
+
+  public void setHabitat(String habitat) {
+    this.habitat = habitat;
+  }
+
+  /** 尺寸 */
+  public String getSize() {
+    return size;
+  }
+
+  public void setSize(String size) {
+    this.size = size;
+  }
+
   public Date calValidDate(Date produtionDate, Date validate) throws ParseException {
     Assert.assertArgumentNotNull(produtionDate, "productionDate");
 
@@ -243,9 +305,11 @@ public class Article extends StandardEntity {
     if (expflag.equals(DateCheckStandard.none))
       return;
 
-    if (new Date().after(productDate) == false)
+    if (DateHelper.isSameDay(new Date(), productDate) == false
+        && new Date().after(productDate) == false)
       throw new WMSException("商品生产日期不能晚于当前日期！！");
-    if (new Date().before(validDate) == false)
+    if (DateHelper.isSameDay(new Date(), validDate) == false
+        && new Date().before(validDate) == false)
       throw new WMSException("商品有效期不能早于当前日期！");
   }
 

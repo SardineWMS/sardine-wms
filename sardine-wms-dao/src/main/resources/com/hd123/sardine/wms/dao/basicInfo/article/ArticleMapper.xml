@@ -13,8 +13,7 @@
 			jdbcType="VARCHAR" />
 		<result column="categoryname" property="category.name"
 			jdbcType="VARCHAR" />
-		<result column="expflag" property="expflag"
-			jdbcType="VARCHAR" />
+		<result column="expflag" property="expflag" jdbcType="VARCHAR" />
 		<result column="state" property="state" jdbcType="VARCHAR" />
 		<result column="expDays" property="expDays" jdbcType="INTEGER" />
 		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
@@ -42,15 +41,15 @@
 		from db_proxy.sardine_article u
 		where u.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
-	
+
 	<select id="queryArticles" parameterType="map" resultMap="BaseResultMap">
 		select u.*
 		from db_proxy.sardine_article u
-		where u.uuid in 
-		<foreach collection="articleUuids" item="item" index="index" open="("
-				separator="," close=")">
-				#{item}
-	    </foreach>
+		where u.uuid in
+		<foreach collection="articleUuids" item="item" index="index"
+			open="(" separator="," close=")">
+			#{item}
+		</foreach>
 	</select>
 
 	<select id="getByCode" parameterType="map" resultMap="BaseResultMap">
@@ -96,7 +95,13 @@
 		LASTMODIFYID,
 		LASTMODIFYCODE,
 		LASTMODIFYNAME,
-		companyUuid
+		companyUuid,
+		secondcode,
+		simplename,
+		sellprice,
+		purchaseprice,
+		habitat,
+		size
 		)
 		values (
 		#{uuid,jdbcType=VARCHAR},
@@ -119,7 +124,13 @@
 		#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
 		#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
 		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
-		#{companyUuid,jdbcType=VARCHAR}
+		#{companyUuid,jdbcType=VARCHAR},
+		#{secondCode,jdbcType=VARCHAR},
+		#{simpleName,jdbcType=VARCHAR},
+		#{sellPrice,jdbcType=DECIMAL},
+		#{purchasePrice,jdbcType=DECIMAL},
+		#{habitat,jdbcType=VARCHAR},
+		#{size,jdbcType=VARCHAR}
 		)
 	</insert>
 
@@ -148,6 +159,24 @@
 			1,
 			remark =
 			#{remark,jdbcType=VARCHAR},
+			<if test="secondCode != null and secondCode != ''">
+				secondCode=#{secondCode,jdbcType=VARCHAR},
+			</if>
+			<if test="simpleName != null and simpleName != ''">
+				simpleName=#{simpleName,jdbcType=VARCHAR},
+			</if>
+			<if test="sellPrice != null">
+				sellPrice=#{sellPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="purchasePrice != null">
+				purchasePrice=#{purchasePrice,jdbcType=DECIMAL},
+			</if>
+			<if test="habitat != null and habitat != ''">
+				habitat=#{habitat,jdbcType=VARCHAR},
+			</if>
+			<if test="size != null and size != ''">
+				size=#{size,jdbcType=VARCHAR},
+			</if>
 			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
 				LASTMODIFYTIME =
 				#{lastModifyInfo.time,jdbcType=TIMESTAMP},
