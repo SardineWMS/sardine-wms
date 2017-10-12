@@ -105,7 +105,8 @@ public class AlcNtcBillController extends BaseController {
       @RequestParam(value = "taskBillNumber", required = false) String taskBillNumber,
       @RequestParam(value = "sourceBillNumber", required = false) String sourceBillNumber,
       @RequestParam(value = "wrh", required = false) String wrh,
-      @RequestParam(value = "deliverMode", required = false) String deliveryMode) {
+      @RequestParam(value = "deliverMode", required = false) String deliveryMode,
+      @RequestParam(value = "articleCode", required = false) String articleCode) {
     RespObject resp = new RespObject();
     try {
       PageQueryDefinition definition = new PageQueryDefinition();
@@ -121,6 +122,7 @@ public class AlcNtcBillController extends BaseController {
       definition.put(AlcNtcBillService.QUEYR_SOURCEBILLNUMBER_LIKE, sourceBillNumber);
       definition.put(AlcNtcBillService.QUERY_WRH_EQUALS, wrh);
       definition.put(AlcNtcBillService.QUERY_DELIVERYMODE, deliveryMode);
+      definition.put(AlcNtcBillService.QUERY_ARTICLECODE_CONTAINS, articleCode);
       definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<AlcNtcBill> result = service.query(definition);
       resp.setObj(result);

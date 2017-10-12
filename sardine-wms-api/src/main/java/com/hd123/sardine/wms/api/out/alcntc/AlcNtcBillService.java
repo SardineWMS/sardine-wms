@@ -31,6 +31,7 @@ public interface AlcNtcBillService {
   public static final String QUEYR_SOURCEBILLNUMBER_LIKE = "sourceBillNumber";
   public static final String QUERY_WRH_EQUALS = "wrh";
   public static final String QUERY_DELIVERYMODE = "deliveryMode";
+  public static final String QUERY_ARTICLECODE_CONTAINS = "articleCode";
 
   /**
    * 新增配送通知单

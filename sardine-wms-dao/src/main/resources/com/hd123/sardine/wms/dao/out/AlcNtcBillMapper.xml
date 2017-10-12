@@ -570,6 +570,12 @@
 		<if test="deliveryMode != null">
 			and t.deliveryMode=#{deliveryMode}
 		</if>
+		<if test="articleCode != null and articleCode != ''">
+			and exists (select 1 from db_proxy.sardine_alcntcbillitem
+			ai where
+			ai.articleCode = #{articleCode, jdbcType=VARCHAR} and t.uuid =
+			ai.ALCNTCBILLUUID)
+		</if>
 	</select>
 
 	<delete id="remove" parameterType="java.util.Map">
