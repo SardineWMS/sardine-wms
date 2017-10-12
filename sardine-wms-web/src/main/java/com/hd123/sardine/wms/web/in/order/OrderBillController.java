@@ -68,7 +68,9 @@ public class OrderBillController extends BaseController {
       @RequestParam(value = "billNumber", required = false) String billNumber,
       @RequestParam(value = "supplierCode", required = false) String supplierCode,
       @RequestParam(value = "whrCode", required = false) String whrCode,
-      @RequestParam(value = "state", required = false) String state) {
+      @RequestParam(value = "state", required = false) String state,
+      @RequestParam(value = "articleCode", required = false) String articleCode,
+      @RequestParam(value = "sourceBillNumber", required = false) String sourceBill) {
     RespObject resp = new RespObject();
     try {
       PageQueryDefinition definition = new PageQueryDefinition();
@@ -79,6 +81,8 @@ public class OrderBillController extends BaseController {
       definition.put(OrderBillService.QUERY_BILLNUMBER_LIKE, billNumber);
       definition.put(OrderBillService.QUERY_SUPPLIERCODE_EQUALS, supplierCode);
       definition.put(OrderBillService.QUERY_WRHCODE_EQUALS, whrCode);
+      definition.put(OrderBillService.QUERY_ARTICLE_CONTAINS, articleCode);
+      definition.put(OrderBillService.QUERY_SOURCEBILL_LIKE, sourceBill);
       if (StringUtil.isNullOrBlank(state) == false && "all".equals(state) == false)
         definition.put(OrderBillService.QUERY_STATE_EQUALS, OrderBillState.valueOf(state));
       PageQueryResult<OrderBill> result = orderBillService.query(definition);

@@ -29,6 +29,8 @@ public interface OrderBillService {
   public static final String QUERY_WRHCODE_EQUALS = "wrhCode";
   public static final String QUERY_STATE_EQUALS = "state";
   public static final String QUERY_SUPPLIERCODE_EQUALS = "supplierCode";
+  public static final String QUERY_ARTICLE_CONTAINS = "articleCode";
+  public static final String QUERY_SOURCEBILL_LIKE = "sourceBillNumber";
 
   /** 排序字段 */
   public static final String ORDER_CODE_BILLNUMBER = "billNumber";

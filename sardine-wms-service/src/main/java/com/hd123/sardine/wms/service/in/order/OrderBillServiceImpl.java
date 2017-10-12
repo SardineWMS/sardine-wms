@@ -224,6 +224,7 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
     orderVerifier.verifyOrderBill(oldOrderBill);
     oldOrderBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     oldOrderBill.setState(OrderBillState.PreChecked);
+    oldOrderBill.setPreCheckDate(new Date());
     orderBillDao.update(oldOrderBill);
 
     logger.injectContext(this, uuid, OrderBill.class.getName(),

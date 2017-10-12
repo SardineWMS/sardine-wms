@@ -66,6 +66,7 @@ public class ReceiveBillController extends BaseController {
       definition.put(ReceiveBillService.QUERY_WRH_FIELD, wrh);
       definition.put(ReceiveBillService.QUERY_STATE_FIELD,
           StringUtil.isNullOrBlank(state) ? null : ReceiveBillState.valueOf(state));
+      definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<ReceiveBill> result = service.query(definition);
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

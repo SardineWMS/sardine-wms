@@ -43,6 +43,8 @@ public class OrderBill extends StandardEntity {
   private BigDecimal totalReceiveAmount;
   private String note;
 
+  private Date preCheckDate;
+
   private List<OrderBillItem> items = new ArrayList<OrderBillItem>();
 
   /** 单号 */
@@ -168,6 +170,15 @@ public class OrderBill extends StandardEntity {
 
   public void setNote(String note) {
     this.note = note;
+  }
+
+  /** 预检时间 */
+  public Date getPreCheckDate() {
+    return preCheckDate;
+  }
+
+  public void setPreCheckDate(Date preCheckDate) {
+    this.preCheckDate = preCheckDate;
   }
 
   /** 明细 */

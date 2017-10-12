@@ -16,16 +16,20 @@ package com.hd123.sardine.wms.api.basicInfo.article;
  *
  */
 public enum ArticleState {
-    /** 正常 */
-    normal("正常");
+  /** 启用 */
+  online("启用"),
+  /** 停用 */
+  offline("停用"),
+  /** 正常 */
+  normal("正常");
 
-    private String caption;
+  private String caption;
 
-    private ArticleState(String caption) {
-        this.caption = caption;
-    }
+  private ArticleState(String caption) {
+    this.caption = caption;
+  }
 
-    public String getCaption() {
-        return caption;
-    }
+  public String getCaption() {
+    return caption;
+  }
 }
