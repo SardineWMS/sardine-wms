@@ -68,7 +68,7 @@ public class ReturnNtcBillController extends BaseController {
       @RequestParam(value = "page", required = false, defaultValue = "1") int page,
       @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
       @RequestParam(value = "sort", required = false) String sort,
-      @RequestParam(value = "order", required = false, defaultValue = "asc") String sortDirection,
+      @RequestParam(value = "order", required = false, defaultValue = "desc") String sortDirection,
       @RequestParam(value = "token", required = false) String token,
       @RequestParam(value = "billNumber", required = false) String billNumber,
       @RequestParam(value = "customerCode", required = false) String customerCode,
