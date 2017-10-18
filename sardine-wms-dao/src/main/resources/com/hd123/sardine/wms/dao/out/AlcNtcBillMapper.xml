@@ -52,6 +52,7 @@
 			jdbcType="VARCHAR" />
 		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
 			jdbcType="VARCHAR" />
+		<result column="alcDate" property="alcDate" jdbcType="TIMESTAMP" />
 	</resultMap>
 
 	<resultMap type="com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillItem"
@@ -214,7 +215,7 @@
 	<update id="updateItem" parameterType="com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillItem">
 		update db_proxy.sardine_alcntcbillitem
 		<set>
-		    <if test="planQty != null">
+			<if test="planQty != null">
 				planQty=#{planQty,jdbcType=DECIMAL},
 			</if>
 			<if test="planCaseQtyStr != null">
@@ -341,6 +342,9 @@
 				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
 				LASTMODIFYName,
 			</if>
+			<if test="alcDate != null">
+				alcDate,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uuid != null">
@@ -442,6 +446,9 @@
 				test="lastModifyInfo != null and lastModifyInfo.operator != null and lastModifyInfo.operator.fullName != null">
 				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
 			</if>
+			<if test="alcDate != null">
+				#{alcDate,jdbcType=TIMESTAMP}
+			</if>
 		</trim>
 	</insert>
 
@@ -528,6 +535,10 @@
 				LASTMODIFYNAME =
 				#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
 			</if>
+			<if test="alcDate != null">
+				alcDate =
+				#{alcDate,jdbcType=TIMESTAMP},
+			</if>
 		</set>
 		<where>
 			uuid=#{uuid,jdbcType=VARCHAR}
@@ -573,7 +584,8 @@
 		<if test="articleCode != null and articleCode != ''">
 			and exists (select 1 from db_proxy.sardine_alcntcbillitem
 			ai where
-			ai.articleCode = #{articleCode, jdbcType=VARCHAR} and t.uuid =
+			ai.articleCode = #{articleCode, jdbcType=VARCHAR} and t.uuid
+			=
 			ai.ALCNTCBILLUUID)
 		</if>
 	</select>
@@ -595,9 +607,10 @@
 		resultMap="AlcNtcBillMap">
 		select t.* from db_proxy.sardine_alcntcbill t where
 		t.wavebillnumber=#{waveBillNumber,jdbcType=VARCHAR}
-		and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+		and t.companyUuid =
+		#{companyUuid, jdbcType=VARCHAR}
 	</select>
-	
+
 	<update id="refreshAlcNtcBillItemPlanQty" parameterType="java.util.Map">
 		UPDATE
 		db_proxy.sardine_alcntcbillitem a SET PLANQTY =
@@ -605,8 +618,10 @@
 		db_proxy.sardine_pickupbillitem t where t.ALCNTCBILLITEMUUID =
 		a.uuid)
 		where
-		a.ALCNTCBILLUUID in (SELECT n.uuid from db_proxy.sardine_alcntcbill n WHERE
-		n.WAVEBILLNUMBER=#{waveBillNumber,jdbcType=VARCHAR} AND n.companyuuid = #{companyUuid, jdbcType=VARCHAR})
+		a.ALCNTCBILLUUID in (SELECT n.uuid from
+		db_proxy.sardine_alcntcbill n WHERE
+		n.WAVEBILLNUMBER=#{waveBillNumber,jdbcType=VARCHAR} AND n.companyuuid
+		= #{companyUuid, jdbcType=VARCHAR})
 	</update>
 
 	<update id="refreshAlcNtcBillItemPlanCaseQtyStr" parameterType="java.lang.String">
@@ -615,11 +630,16 @@
 		(a.PLANQTY,a.QPCSTR))
 		where a.ALCNTCBILLUUID
 		in (SELECT n.uuid from db_proxy.sardine_alcntcbill n WHERE
-		n.WAVEBILLNUMBER= #{waveBillNumber, jdbcType=VARCHAR} and n.companyuuid = #{companyUuid, jdbcType=VARCHAR}) 
+		n.WAVEBILLNUMBER= #{waveBillNumber, jdbcType=VARCHAR} and
+		n.companyuuid = #{companyUuid, jdbcType=VARCHAR})
 	</update>
-	
+
 	<update id="inAlc" parameterType="java.util.Map">
-	    update db_proxy.sardine_alcntcbill set state = 'inAlc' where 
-	    WAVEBILLNUMBER = #{waveBillNumber, jdbcType=VARCHAR} and companyuuid = #{companyUuid, jdbcType=VARCHAR}
+		update
+		db_proxy.sardine_alcntcbill set state = 'inAlc' where
+		WAVEBILLNUMBER =
+		#{waveBillNumber, jdbcType=VARCHAR} and companyuuid =
+		#{companyUuid,
+		jdbcType=VARCHAR}
 	</update>
 </mapper>

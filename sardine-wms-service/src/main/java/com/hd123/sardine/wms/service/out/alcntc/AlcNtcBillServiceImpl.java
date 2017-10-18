@@ -10,7 +10,9 @@
 package com.hd123.sardine.wms.service.out.alcntc;
 
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,11 +23,14 @@ import com.hd123.sardine.wms.api.basicInfo.article.ArticleQpc;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleService;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
 import com.hd123.sardine.wms.api.basicInfo.bin.Wrh;
+import com.hd123.sardine.wms.api.basicInfo.customer.Customer;
+import com.hd123.sardine.wms.api.basicInfo.customer.CustomerService;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBill;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillItem;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillService;
 import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBillState;
 import com.hd123.sardine.wms.api.out.alcntc.DeliverySystem;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -56,6 +61,8 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
   private ArticleService articleService;
   @Autowired
   private BinService binService;
+  @Autowired
+  private CustomerService customerService;
 
   @Override
   public String insert(AlcNtcBill alcNtcBill) throws IllegalArgumentException, WMSException {
@@ -66,6 +73,7 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
     if (dao.getByBillNumber(alcNtcBill.getBillNumber()) != null)
       return null;
     verifyArticleAndWrh(alcNtcBill);
+    verifyCustomer(alcNtcBill);
     refreshInVaildQpcStr(alcNtcBill);
 
     alcNtcBill.setUuid(UUIDGenerator.genUUID());
@@ -98,6 +106,7 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
     Wrh wrh = binService.getWrh(alcNtcBill.getWrh().getUuid());
     if (wrh == null)
       throw new WMSException("仓位" + alcNtcBill.getWrh().getUuid() + "不存在");
+    alcNtcBill.setWrh(new UCN(wrh.getUuid(), wrh.getCode(), wrh.getName()));
 
     for (AlcNtcBillItem item : alcNtcBill.getItems()) {
       Article article = articleService.get(item.getArticle().getUuid());
@@ -105,6 +114,17 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
         throw new WMSException("商品" + item.getArticle().getUuid() + "不存在");
     }
 
+  }
+
+  private void verifyCustomer(AlcNtcBill alcNtcBill) throws WMSException {
+    assert alcNtcBill != null;
+    assert alcNtcBill.getItems() != null && alcNtcBill.getItems().isEmpty();
+
+    Customer customer = customerService.getByCode(alcNtcBill.getCustomer().getCode());
+    if (Objects.isNull(customer))
+      throw new WMSException(
+          MessageFormat.format("不存在代码是{0}的客户！", alcNtcBill.getCustomer().getCode()));
+    alcNtcBill.setCustomer(new UCN(customer.getUuid(), customer.getCode(), customer.getName()));
   }
 
   private void refreshInVaildQpcStr(AlcNtcBill alcNtcBill) {

@@ -12,6 +12,7 @@ package com.hd123.sardine.wms.api.out.alcntc;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -30,6 +31,9 @@ import com.hd123.sardine.wms.common.utils.QpcHelper;
 public class AlcNtcBill extends StandardEntity {
   private static final long serialVersionUID = 8831468624891551855L;
   public static final String CAPTION = "配货通知单";
+  private static int LENGTH_BILLNUMBER = 30;
+  private static int LENGTH_REASON = 100;
+  private static int LENGTH_REMARK = 255;
 
   private String billNumber;
   private AlcNtcBillState state = AlcNtcBillState.initial;
@@ -46,8 +50,9 @@ public class AlcNtcBill extends StandardEntity {
   private String totalCaseQtyStr;
   private String planTotalCaseQtyStr;
   private String realTotalCaseQtyStr;
-  private BigDecimal totalAmount;
-  private BigDecimal realAmount;
+  private BigDecimal totalAmount = BigDecimal.ZERO;
+  private BigDecimal realAmount = BigDecimal.ZERO;
+  private Date alcDate = new Date();
 
   private List<AlcNtcBillItem> items = new ArrayList<AlcNtcBillItem>();
 
@@ -66,6 +71,7 @@ public class AlcNtcBill extends StandardEntity {
   }
 
   public void setState(AlcNtcBillState state) {
+    Assert.assertArgumentNotNull(state, "state");
     this.state = state;
   }
 
@@ -75,6 +81,8 @@ public class AlcNtcBill extends StandardEntity {
   }
 
   public void setDeliveryReason(String deliveryReason) {
+    Assert.assertArgumentNotNull(deliveryReason, "deliveryReason");
+    Assert.assertStringNotTooLong(deliveryReason, LENGTH_REASON, "deliveryReason");
     this.deliveryReason = deliveryReason;
   }
 
@@ -93,6 +101,8 @@ public class AlcNtcBill extends StandardEntity {
   }
 
   public void setDeliveryMode(String deliveryMode) {
+    Assert.assertArgumentNotNull(deliveryMode, "deliveryMode");
+    Assert.assertStringNotTooLong(deliveryMode, LENGTH_REASON, "deliveryMode");
     this.deliveryMode = deliveryMode;
   }
 
@@ -102,6 +112,7 @@ public class AlcNtcBill extends StandardEntity {
   }
 
   public void setSourceBillNumber(String sourceBillNumber) {
+    Assert.assertStringNotTooLong(sourceBillNumber, LENGTH_BILLNUMBER, "sourceBillNumber");
     this.sourceBillNumber = sourceBillNumber;
   }
 
@@ -111,6 +122,7 @@ public class AlcNtcBill extends StandardEntity {
   }
 
   public void setSourceBillType(String sourceBillType) {
+    Assert.assertStringNotTooLong(sourceBillType, LENGTH_REASON, "sourceBillType");
     this.sourceBillType = sourceBillType;
   }
 
@@ -120,6 +132,7 @@ public class AlcNtcBill extends StandardEntity {
   }
 
   public void setWrh(UCN wrh) {
+    Assert.assertArgumentNotNull(wrh, "wrh");
     this.wrh = wrh;
   }
 
@@ -137,6 +150,7 @@ public class AlcNtcBill extends StandardEntity {
   }
 
   public void setRealAmount(BigDecimal realAmount) {
+    Assert.assertArgumentNotNull(realAmount, "realAmount");
     this.realAmount = realAmount;
   }
 
@@ -146,6 +160,7 @@ public class AlcNtcBill extends StandardEntity {
   }
 
   public void setRemark(String remark) {
+    Assert.assertStringNotTooLong(remark, LENGTH_REMARK, "remark");
     this.remark = remark;
   }
 
@@ -155,6 +170,7 @@ public class AlcNtcBill extends StandardEntity {
   }
 
   public void setCustomer(UCN customer) {
+    Assert.assertArgumentNotNull(customer, "customer");
     this.customer = customer;
   }
 
@@ -181,6 +197,7 @@ public class AlcNtcBill extends StandardEntity {
   }
 
   public void setTotalCaseQtyStr(String totalCaseQtyStr) {
+    Assert.assertArgumentNotNull(totalCaseQtyStr, "totalCaseQtyStr");
     this.totalCaseQtyStr = totalCaseQtyStr;
   }
 
@@ -189,6 +206,7 @@ public class AlcNtcBill extends StandardEntity {
   }
 
   public void setTotalAmount(BigDecimal totalAmount) {
+    Assert.assertArgumentNotNull(totalAmount, "totalAmount");
     this.totalAmount = totalAmount;
   }
 
@@ -208,6 +226,15 @@ public class AlcNtcBill extends StandardEntity {
     this.realTotalCaseQtyStr = realTotalCaseQtyStr;
   }
 
+  /** 配货时间 */
+  public Date getAlcDate() {
+    return alcDate;
+  }
+
+  public void setAlcDate(Date alcDate) {
+    this.alcDate = alcDate;
+  }
+
   public void refreshTotalInfo() {
     totalCaseQtyStr = "0";
     totalAmount = BigDecimal.ZERO;
@@ -222,9 +249,12 @@ public class AlcNtcBill extends StandardEntity {
   }
 
   public void validate() {
+    Assert.assertArgumentNotNull(state, "state");
     Assert.assertArgumentNotNull(wrh, "wrh");
     Assert.assertArgumentNotNull(customer, "customer");
-
+    Assert.assertArgumentNotNull(deliveryReason, "deliveryReason");
+    Assert.assertArgumentNotNull(deliveryMode, "deliveryMode");
+    Assert.assertArgumentNotNull(realAmount, "realAmount");
     if (CollectionUtils.isEmpty(items))
       throw new IllegalArgumentException("明细行不能为空");
 
