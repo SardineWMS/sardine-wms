@@ -169,6 +169,9 @@
 		<if test="name != null">
 			and t.name=#{name,jdbcType=VARCHAR}
 		</if>
+		<if test="state != null and state != null">
+			and t.state =#{state,jdbcType = VARCHAR}
+		</if>
 		<if test="companyUuid != null">
 			and t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
 		</if>

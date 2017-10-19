@@ -144,7 +144,8 @@ public class CarrierController extends BaseController {
       @RequestParam(value = "sort", required = false) String sort,
       @RequestParam(value = "order", required = false, defaultValue = "asc") String sortDirection,
       @RequestParam(value = "code", required = false) String code,
-      @RequestParam(value = "name", required = false) String name) {
+      @RequestParam(value = "name", required = false) String name,
+      @RequestParam(value = "state", required = false) String state) {
     RespObject resp = new RespObject();
     try {
       PageQueryDefinition definition = new PageQueryDefinition();
@@ -154,6 +155,7 @@ public class CarrierController extends BaseController {
       definition.setOrderDir(OrderDir.valueOf(sortDirection));
       definition.put(CarrierService.QUERY_CODE_LIKE, code);
       definition.put(CarrierService.QUERY_NAME_EQUALS, name);
+      definition.put(CarrierService.QUERY_STATE_EQUALS, state);
       definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<Carrier> result = service.query(definition);
       resp.setObj(result);

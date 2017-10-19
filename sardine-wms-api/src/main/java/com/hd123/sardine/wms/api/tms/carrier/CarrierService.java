@@ -24,6 +24,7 @@ public interface CarrierService {
     /** 查询条件 */
     public static final String QUERY_CODE_LIKE = "code";
     public static final String QUERY_NAME_EQUALS = "name";
+    public static final String QUERY_STATE_EQUALS = "state";
     /** 排序字段 */
     public static final String FIELD_ORDER_CODE = "code";
 
