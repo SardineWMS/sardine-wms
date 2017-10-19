@@ -56,7 +56,7 @@ public interface CustomerService {
      *             参数异常时抛出
      * @throws WMSException
      */
-    void removeState(String uuid, long version) throws IllegalArgumentException, WMSException;
+    void offline(String uuid, long version) throws IllegalArgumentException, WMSException;
 
     /**
      * 编辑客户
@@ -98,7 +98,7 @@ public interface CustomerService {
      * @throws IllegalArgumentException
      * @throws WMSException
      */
-    void recover(String uuid, long version) throws IllegalArgumentException, WMSException;
+    void online(String uuid, long version) throws IllegalArgumentException, WMSException;
 
     /**
      * 查询当前组织所有客户，UCN

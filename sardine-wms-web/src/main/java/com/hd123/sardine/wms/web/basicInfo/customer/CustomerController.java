@@ -133,35 +133,35 @@ public class CustomerController extends BaseController {
     return resp;
   }
 
-  @RequestMapping(value = "/remove", method = RequestMethod.PUT)
-  public @ResponseBody RespObject remove(@RequestParam(value = "uuid", required = true) String uuid,
+  @RequestMapping(value = "/offline", method = RequestMethod.PUT)
+  public @ResponseBody RespObject offline(@RequestParam(value = "uuid", required = true) String uuid,
       @RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "version", required = true) long version) {
     RespObject resp = new RespObject();
     try {
-      customerService.removeState(uuid, version);
+      customerService.offline(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (IllegalArgumentException e) {
       return new ErrorRespObject("参数异常：" + e.getMessage());
     } catch (Exception e) {
-      return new ErrorRespObject("删除客户失败：" + e.getMessage());
+      return new ErrorRespObject("禁用客户失败：" + e.getMessage());
     }
     return resp;
   }
 
-  @RequestMapping(value = "/recover", method = RequestMethod.PUT)
-  public @ResponseBody RespObject recover(
+  @RequestMapping(value = "/online", method = RequestMethod.PUT)
+  public @ResponseBody RespObject online(
       @RequestParam(value = "uuid", required = true) String uuid,
       @RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "version", required = true) long version) {
     RespObject resp = new RespObject();
     try {
-      customerService.recover(uuid, version);
+      customerService.online(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (IllegalArgumentException e) {
       return new ErrorRespObject("参数异常：" + e.getMessage());
     } catch (Exception e) {
-      return new ErrorRespObject("恢复客户失败：" + e.getMessage());
+      return new ErrorRespObject("启用客户失败：" + e.getMessage());
     }
     return resp;
   }

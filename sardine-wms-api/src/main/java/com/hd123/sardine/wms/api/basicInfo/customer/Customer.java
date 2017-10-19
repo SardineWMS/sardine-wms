@@ -28,8 +28,26 @@ public class Customer extends StandardEntity {
     private CustomerState state;
     private String companyUuid;
     private String remark;
+    private String simpleName;
+    private String contacter;
 
-    /** 说明 */
+    public String getSimpleName() {
+		return simpleName;
+	}
+
+	public void setSimpleName(String simpleName) {
+		this.simpleName = simpleName;
+	}
+
+	public String getContacter() {
+		return contacter;
+	}
+
+	public void setContacter(String contacter) {
+		this.contacter = contacter;
+	}
+
+	/** 说明 */
     public String getRemark() {
         return remark;
     }

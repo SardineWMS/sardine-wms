@@ -78,7 +78,7 @@ public class CustomerServiceImpl extends BaseWMSService implements CustomerServi
     }
 
     @Override
-    public void removeState(String uuid, long version)
+    public void offline(String uuid, long version)
             throws IllegalArgumentException, WMSException {
         Customer dbCustomer = customerDao.get(uuid);
         ValidateResult updateResult = customerRemoveAndRecoverValidateHandler
@@ -93,7 +93,7 @@ public class CustomerServiceImpl extends BaseWMSService implements CustomerServi
 
         logger.injectContext(this, uuid, Customer.class.getName(),
                 ApplicationContextUtil.getOperateContext());
-        logger.log(EntityLogger.EVENT_DELETE, "删除客户（标记）");
+        logger.log(EntityLogger.EVENT_DELETE, "禁用客户");
     }
 
     @Override
@@ -131,7 +131,7 @@ public class CustomerServiceImpl extends BaseWMSService implements CustomerServi
     }
 
     @Override
-    public void recover(String uuid, long version) throws IllegalArgumentException, WMSException {
+    public void online(String uuid, long version) throws IllegalArgumentException, WMSException {
         Customer dbCustomer = customerDao.get(uuid);
         ValidateResult updateResult = customerRemoveAndRecoverValidateHandler
                 .putAttribute(CustomerRemoveAndRecoverValidateHandler.KEY_OPERATOR_CUSTOMER,
@@ -145,7 +145,7 @@ public class CustomerServiceImpl extends BaseWMSService implements CustomerServi
 
         logger.injectContext(this, uuid, Customer.class.getName(),
                 ApplicationContextUtil.getOperateContext());
-        logger.log(EntityLogger.EVENT_MODIFY, "恢复客户");
+        logger.log(EntityLogger.EVENT_MODIFY, "启用客户");
     }
 
     @Override
