@@ -83,7 +83,7 @@ public interface SupplierService {
   void saveModify(Supplier supplier) throws IllegalArgumentException, WMSException;
 
   /**
-   * 删除供应商，只标记状态未“已删除”
+   * 禁用供应商
    * 
    * @param uuid
    *          供应商uuid，not null。
@@ -93,10 +93,10 @@ public interface SupplierService {
    *           参数为空
    * @throws WMSException
    */
-  void remove(String uuid, long version) throws IllegalArgumentException, WMSException;
+  void offline(String uuid, long version) throws IllegalArgumentException, WMSException;
 
   /**
-   * 恢复供应商状态未“正常”
+   * 启用供应商状态未“正常”
    * 
    * @param uuid
    *          供应商uuid，not null。
@@ -106,6 +106,6 @@ public interface SupplierService {
    *           参数为空。
    * @throws WMSException
    */
-  void recover(String uuid, long version) throws IllegalArgumentException, WMSException;
+  void online(String uuid, long version) throws IllegalArgumentException, WMSException;
 
 }

@@ -138,7 +138,7 @@ public class SupplierController extends BaseController {
       @RequestParam(value = "version", required = false) long version) {
     RespObject resp = new RespObject();
     try {
-      supplierService.remove(uuid, version);
+      supplierService.offline(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
       return new ErrorRespObject("删除供应商失败：" + e.getMessage());
@@ -153,7 +153,7 @@ public class SupplierController extends BaseController {
       @RequestParam(value = "version", required = true) long version) {
     RespObject resp = new RespObject();
     try {
-      supplierService.recover(uuid, version);
+      supplierService.online(uuid, version);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
       return new ErrorRespObject("启用供应商失败：" + e.getMessage());

@@ -16,78 +16,123 @@ import com.hd123.sardine.wms.common.entity.StandardEntity;
  *
  */
 public class Supplier extends StandardEntity {
-  private static final long serialVersionUID = -760323364874715726L;
+	private static final long serialVersionUID = -760323364874715726L;
 
-  private String code;
-  private String name;
-  private SupplierState state = SupplierState.online;
-  private String address;
-  private String phone;
-  private String remark;
-  private String companyUuid;
-  private String storageArea;
+	private String code;
+	private String name;
+	private SupplierState state = SupplierState.online;
+	private String address;
+	private String phone;
+	private String remark;
+	private String companyUuid;
+	private String storageArea;
+	private String simpleName;
+	private String contacter;
+	private String zCode;
+	private String eMail;
+	private String fax;
 
-  public String getCode() {
-    return code;
-  }
+	public String getSimpleName() {
+		return simpleName;
+	}
 
-  public void setCode(String code) {
-    this.code = code;
-  }
+	public void setSimpleName(String simpleName) {
+		this.simpleName = simpleName;
+	}
 
-  public String getName() {
-    return name;
-  }
+	public String getContacter() {
+		return contacter;
+	}
 
-  public void setName(String name) {
-    this.name = name;
-  }
+	public void setContacter(String contacter) {
+		this.contacter = contacter;
+	}
 
-  public SupplierState getState() {
-    return state;
-  }
+	public String getzCode() {
+		return zCode;
+	}
 
-  public void setState(SupplierState state) {
-    this.state = state;
-  }
+	public void setzCode(String zCode) {
+		this.zCode = zCode;
+	}
 
-  public String getAddress() {
-    return address;
-  }
+	public String geteMail() {
+		return eMail;
+	}
 
-  public void setAddress(String address) {
-    this.address = address;
-  }
+	public void seteMail(String eMail) {
+		this.eMail = eMail;
+	}
 
-  public String getPhone() {
-    return phone;
-  }
+	public String getFax() {
+		return fax;
+	}
 
-  public void setPhone(String phone) {
-    this.phone = phone;
-  }
+	public void setFax(String fax) {
+		this.fax = fax;
+	}
 
-  public String getRemark() {
-    return remark;
-  }
+	public String getCode() {
+		return code;
+	}
 
-  public void setRemark(String remark) {
-    this.remark = remark;
-  }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-  public String getCompanyUuid() {
-    return companyUuid;
-  }
+	public String getName() {
+		return name;
+	}
 
-  public void setCompanyUuid(String companyUuid) {
-    this.companyUuid = companyUuid;
-  }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-  public String getStorageArea() {
-    return storageArea;
-  }
+	public SupplierState getState() {
+		return state;
+	}
 
-  public void setStorageArea(String storageArea) {
-    this.storageArea = storageArea;
-  }
+	public void setState(SupplierState state) {
+		this.state = state;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getCompanyUuid() {
+		return companyUuid;
+	}
+
+	public void setCompanyUuid(String companyUuid) {
+		this.companyUuid = companyUuid;
+	}
+
+	public String getStorageArea() {
+		return storageArea;
+	}
+
+	public void setStorageArea(String storageArea) {
+		this.storageArea = storageArea;
+	}
 }

@@ -70,7 +70,7 @@ public class SupplierServiceTest extends BaseServiceTest {
         .withVersion(VERSION).build();
     when(dao.get(UUID)).thenReturn(supplier);
 
-    service.remove(UUID, VERSION);
+    service.offline(UUID, VERSION);
 
     verify(dao).update(supplier);
     Assertions.assertThat(SupplierState.offline).isEqualTo(supplier.getState());
@@ -84,7 +84,7 @@ public class SupplierServiceTest extends BaseServiceTest {
         .withVersion(VERSION).build();
     when(dao.get(UUID)).thenReturn(supplier);
 
-    service.recover(UUID, VERSION);
+    service.online(UUID, VERSION);
 
     verify(dao).update(supplier);
     Assertions.assertThat(SupplierState.online).isEqualTo(supplier.getState());

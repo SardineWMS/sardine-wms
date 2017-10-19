@@ -126,7 +126,7 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
   }
 
   @Override
-  public void remove(String uuid, long version) throws IllegalArgumentException, WMSException {
+  public void offline(String uuid, long version) throws IllegalArgumentException, WMSException {
     Assert.assertArgumentNotNull(uuid, "uuid");
     Assert.assertArgumentNotNull(version, "version");
 
@@ -141,11 +141,11 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
 
     logger.injectContext(this, supplier.getUuid(), Supplier.class.getName(),
         ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_REMOVE, "删除供应商");
+    logger.log(EntityLogger.EVENT_REMOVE, "停用供应商");
   }
 
   @Override
-  public void recover(String uuid, long version) throws IllegalArgumentException, WMSException {
+  public void online(String uuid, long version) throws IllegalArgumentException, WMSException {
     Assert.assertArgumentNotNull(uuid, "uuid");
     Assert.assertArgumentNotNull(version, "version");
 
@@ -160,7 +160,7 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
 
     logger.injectContext(this, supplier.getUuid(), Supplier.class.getName(),
         ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_MODIFY, "恢复供应商");
+    logger.log(EntityLogger.EVENT_MODIFY, "启用供应商");
   }
 
 }
