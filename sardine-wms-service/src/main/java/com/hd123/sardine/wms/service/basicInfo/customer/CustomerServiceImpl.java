@@ -68,7 +68,7 @@ public class CustomerServiceImpl extends BaseWMSService implements CustomerServi
         customer.setCompanyUuid(ApplicationContextUtil.getParentCompanyUuid());
         customer.setCreateInfo(ApplicationContextUtil.getOperateInfo());
         customer.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
-        customer.setState(CustomerState.normal);
+        customer.setState(CustomerState.online);
         customerDao.insert(customer);
 
         logger.injectContext(this, customer.getUuid(), Customer.class.getName(),
@@ -87,7 +87,7 @@ public class CustomerServiceImpl extends BaseWMSService implements CustomerServi
                 .validate(dbCustomer);
         checkValidateResult(updateResult);
         PersistenceUtils.checkVersion(version, dbCustomer, "客户", uuid);
-        dbCustomer.setState(CustomerState.deleted);
+        dbCustomer.setState(CustomerState.offline);
         dbCustomer.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
         customerDao.update(dbCustomer);
 
@@ -139,7 +139,7 @@ public class CustomerServiceImpl extends BaseWMSService implements CustomerServi
                 .validate(dbCustomer);
         checkValidateResult(updateResult);
         PersistenceUtils.checkVersion(version, dbCustomer, "客户", uuid);
-        dbCustomer.setState(CustomerState.normal);
+        dbCustomer.setState(CustomerState.online);
         dbCustomer.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
         customerDao.update(dbCustomer);
 

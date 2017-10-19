@@ -17,9 +17,9 @@ package com.hd123.sardine.wms.api.basicInfo.customer;
  */
 public enum CustomerState {
     /** 正常 */
-    normal("正常"),
+    online("正常"),
     /** 已删除 */
-    deleted("已删除");
+    offline("已删除");
 
     private String caption;
 
