@@ -513,26 +513,31 @@
 
 	<select id="queryByList" parameterType="PageQueryDefinition"
 		resultMap="TaskViewMap">
-		select t.* from
-		db_proxy.sardine_task_view t
+		select DISTINCT v.* from
+		db_proxy.sardine_task_view v,db_proxy.sardine_task t,
+		db_proxy.sardine_rplbill r
 		where 1=1
-		<if test="taskType != null ">
-			and taskType=#{taskType,jdbcType=VARCHAR}
+		<if test="taskType != null  and taskType.name !='Rpl' ">
+			and v.uuid=t.uuid
+			and t.taskType=#{taskType,jdbcType=VARCHAR}
+		</if>
+		<if test="taskType != null  and taskType.name =='Rpl' ">
+			and v.uuid=r.uuid
 		</if>
 		<if test="states != null and states.size > 0">
-			and t.state in
+			and v.state in
 			<foreach collection="states" item="item" index="index" open="("
 				separator="," close=")">
 				#{item}
 			</foreach>
 		</if>
 		<if test="articleCode != null and articleCode != ''">
-			and t.articleCode like CONCAT(CONCAT('%',
+			and v.articleCode like CONCAT(CONCAT('%',
 			#{articleCode,jdbcType=VARCHAR}),
 			'%')
 		</if>
 		<if test="companyUuid != null and companyUuid != ''">
-			and companyUuid=#{companyUuid,jdbcType=VARCHAR}
+			and v.companyUuid=#{companyUuid,jdbcType=VARCHAR}
 		</if>
 	</select>
 </mapper>
