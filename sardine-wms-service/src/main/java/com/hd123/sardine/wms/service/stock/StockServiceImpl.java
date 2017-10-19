@@ -196,7 +196,7 @@ public class StockServiceImpl implements StockService {
         }
         stockDao.insertStockLog(log);
       }
-      if (shiftOutQty.compareTo(BigDecimal.ZERO) > 0)
+      if (shiftOutQty.compareTo(BigDecimal.ZERO) < 0)
         throw new WMSException("商品" + shiftRule.getArticleUuid() + "库存不足，缺少" + shiftOutQty + "个！");
     }
 
