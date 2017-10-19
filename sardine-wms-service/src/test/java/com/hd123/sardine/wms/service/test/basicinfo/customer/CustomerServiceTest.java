@@ -45,7 +45,7 @@ public class CustomerServiceTest extends BaseServiceTest {
 
   @Test
   public void insert() throws Exception {
-    Customer customer = CustomerBuilder.customer().withState(CustomerState.normal).build();
+    Customer customer = CustomerBuilder.customer().withState(CustomerState.online).build();
     when(dao.getByCode(anyString())).thenReturn(null);
     service.insert(customer);
     verify(dao).insert(customerCaptor.capture());
@@ -54,21 +54,21 @@ public class CustomerServiceTest extends BaseServiceTest {
 
   @Test
   public void deleteState() throws Exception {
-    Customer customer = CustomerBuilder.customer().withState(CustomerState.normal).withVersion(0)
+    Customer customer = CustomerBuilder.customer().withState(CustomerState.online).withVersion(0)
         .withUuid(UUID).build();
     when(dao.get(anyString())).thenReturn(customer);
-    service.removeState(UUID, 0);
+    service.offline(UUID, 0);
     verify(dao).update(customerCaptor.capture());
-    Assertions.assertThat(customerCaptor.getValue().getState()).isEqualTo(CustomerState.deleted);
+    Assertions.assertThat(customerCaptor.getValue().getState()).isEqualTo(CustomerState.offline);
   }
 
   @Test
   public void recover() throws Exception {
-    Customer customer = CustomerBuilder.customer().withState(CustomerState.deleted).withVersion(0)
+    Customer customer = CustomerBuilder.customer().withState(CustomerState.offline).withVersion(0)
         .withUuid(UUID).build();
     when(dao.get(anyString())).thenReturn(customer);
-    service.recover(UUID, 0);
+    service.online(UUID, 0);
     verify(dao).update(customerCaptor.capture());
-    Assertions.assertThat(customerCaptor.getValue().getState()).isEqualTo(CustomerState.normal);
+    Assertions.assertThat(customerCaptor.getValue().getState()).isEqualTo(CustomerState.online);
   }
 }

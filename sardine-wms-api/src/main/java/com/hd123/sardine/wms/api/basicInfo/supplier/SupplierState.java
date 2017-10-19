@@ -17,9 +17,9 @@ package com.hd123.sardine.wms.api.basicInfo.supplier;
  */
 public enum SupplierState {
     /** 正常 */
-    normal("正常"),
-    /** 已删除 */
-    deleted("已删除");
+    online("正常"),
+    /** 禁用 */
+    offline("禁用");
 
     private String caption;
 

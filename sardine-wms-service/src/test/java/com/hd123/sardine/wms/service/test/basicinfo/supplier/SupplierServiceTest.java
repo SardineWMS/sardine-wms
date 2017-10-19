@@ -66,28 +66,28 @@ public class SupplierServiceTest extends BaseServiceTest {
 
   @Test
   public void remove() throws Exception {
-    Supplier supplier = SupplierBuilder.supplier().withUuid(UUID).withState(SupplierState.normal)
+    Supplier supplier = SupplierBuilder.supplier().withUuid(UUID).withState(SupplierState.online)
         .withVersion(VERSION).build();
     when(dao.get(UUID)).thenReturn(supplier);
 
     service.remove(UUID, VERSION);
 
     verify(dao).update(supplier);
-    Assertions.assertThat(SupplierState.deleted).isEqualTo(supplier.getState());
+    Assertions.assertThat(SupplierState.offline).isEqualTo(supplier.getState());
     Assertions.assertThat(supplier.getLastModifyInfo().getOperator())
         .isEqualTo(defaultOperCtx().getOperator());
   }
 
   @Test
   public void recover() throws Exception {
-    Supplier supplier = SupplierBuilder.supplier().withUuid(UUID).withState(SupplierState.deleted)
+    Supplier supplier = SupplierBuilder.supplier().withUuid(UUID).withState(SupplierState.offline)
         .withVersion(VERSION).build();
     when(dao.get(UUID)).thenReturn(supplier);
 
     service.recover(UUID, VERSION);
 
     verify(dao).update(supplier);
-    Assertions.assertThat(SupplierState.normal).isEqualTo(supplier.getState());
+    Assertions.assertThat(SupplierState.online).isEqualTo(supplier.getState());
     Assertions.assertThat(supplier.getLastModifyInfo().getOperator())
         .isEqualTo(defaultOperCtx().getOperator());
   }

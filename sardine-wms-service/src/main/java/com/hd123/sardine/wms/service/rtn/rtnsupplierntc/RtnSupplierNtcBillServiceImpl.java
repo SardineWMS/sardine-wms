@@ -135,7 +135,7 @@ public class RtnSupplierNtcBillServiceImpl extends BaseWMSService
     Supplier supplier = supplierService.get(uuid);
     if (Objects.isNull(supplier))
       throw new WMSException(MessageFormat.format("供应商{0}不存在", uuid));
-    if (SupplierState.deleted.equals(supplier.getState()))
+    if (SupplierState.offline.equals(supplier.getState()))
       throw new WMSException(MessageFormat.format("当前供应商的状态是{0}，不是正常状态，不能新建供应商退货通知单",
           supplier.getState().getCaption()));
   }

@@ -135,7 +135,7 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
       throw EntityNotFoundException.create(Supplier.class.getName(), "uuid", uuid);
     PersistenceUtils.checkVersion(version, supplier, "供应商", uuid);
 
-    supplier.setState(SupplierState.deleted);
+    supplier.setState(SupplierState.offline);
     supplier.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     dao.update(supplier);
 
@@ -154,7 +154,7 @@ public class SupplierServiceImpl extends BaseWMSService implements SupplierServi
       throw EntityNotFoundException.create(Supplier.class.getName(), "uuid", uuid);
     PersistenceUtils.checkVersion(version, supplier, "供应商", uuid);
 
-    supplier.setState(SupplierState.normal);
+    supplier.setState(SupplierState.online);
     supplier.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     dao.update(supplier);
 

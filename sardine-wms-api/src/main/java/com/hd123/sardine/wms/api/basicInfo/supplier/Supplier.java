@@ -20,7 +20,7 @@ public class Supplier extends StandardEntity {
 
   private String code;
   private String name;
-  private SupplierState state = SupplierState.normal;
+  private SupplierState state = SupplierState.online;
   private String address;
   private String phone;
   private String remark;
