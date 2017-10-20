@@ -29,6 +29,8 @@
 			jdbcType="VARCHAR" />
 		<result column="version" property="version" jdbcType="LONGVARCHAR" />
 		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="simpleName" property="simpleName" jdbcType="VARCHAR"/>
+		<result column="contacter" property="contacter" jdbcType="VARCHAR"/>
 	</resultMap>
 
 	<insert id="insert" parameterType="Customer">
@@ -51,7 +53,9 @@
 		lastModifyCode,
 		lastModifyName,
 		version,
-		address
+		address,
+		simpleName,
+		contacter
 		) values(
 		#{uuid,jdbcType=VARCHAR},
 		#{code,jdbcType=VARCHAR},
@@ -70,7 +74,9 @@
 		#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
 		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
 		#{version,jdbcType=LONGVARCHAR},
-		#{address,jdbcType=VARCHAR}
+		#{address,jdbcType=VARCHAR},
+		#{simpleName,jdbcType=VARCHAR},
+		#{contacter,jdbcType=VARCHAR},
 		)
 	</insert>
 
@@ -169,6 +175,10 @@
 			1,
 			state=
 			#{state,jdbcType=VARCHAR},
+			simpleName=
+			#{simpleName,jdbcType=VARCHAR},
+			contacter=
+			#{contacter,jdbcType=VARCHAR},
 			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
 				LASTMODIFYTIME =
 				#{lastModifyInfo.time,jdbcType=TIMESTAMP},

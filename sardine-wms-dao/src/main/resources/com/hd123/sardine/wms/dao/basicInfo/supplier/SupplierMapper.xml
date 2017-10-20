@@ -29,6 +29,11 @@
 			jdbcType="VARCHAR" />
 		<result column="version" property="version" jdbcType="LONGVARCHAR" />
 		<result column="storageArea" property="storageArea" jdbcType="VARCHAR" />
+		<result column="simpleName" property="simpleName" jdbcType="VARCHAR"/>
+		<result column="contacter" property="contacter" jdbcType="VARCHAR"/>
+		<result column="zCode" property="zCode" jdbcType="VARCHAR"/>
+		<result column="eMail" property="eMail" jdbcType="VARCHAR"/>
+		<result column="fax" property="fax" jdbcType="VARCHAR"/>
 	</resultMap>
 
 	<select id="get" parameterType="String" resultMap="BaseResultMap">
@@ -72,7 +77,12 @@
 		LASTMODIFYNAME,
 		state,
 		companyUuid,
-		remark
+		remark,
+		simpleName,
+		contacter,
+		zCode,
+		Email,
+		fax
 		)
 		values (
 		#{uuid,jdbcType=VARCHAR},
@@ -91,7 +101,12 @@
 		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
 		#{state,jdbcType=VARCHAR},
 		#{companyUuid,jdbcType=VARCHAR},
-		#{remark,jdbcType=VARCHAR}
+		#{remark,jdbcType=VARCHAR},
+		#{simpleName,jdbcType=VARCHAR},
+		#{contacter,jdbcType=VARCHAR},
+		#{zCode,jdbcType=VARCHAR},
+		#{eMail,jdbcType=VARCHAR},
+		#{fax,jdbcType=VARCHAR}
 		)
 	</insert>
 
@@ -108,6 +123,16 @@
 			#{address,jdbcType=CHAR},
 			state =
 			#{state,jdbcType=CHAR},
+			simpleName =
+			#{simpleName,jdbcType=VARCHAR},
+			contacter =
+			#{contacter,jdbcType=VARCHAR},
+			zCode =
+			#{zCode,jdbcType=VARCHAR},
+			eMail =
+			#{eMail,jdbcType=VARCHAR},
+			fax =
+			#{fax,jdbcType=VARCHAR},
 			version =
 			#{version,jdbcType=LONGVARCHAR} +
 			1,
