@@ -572,8 +572,8 @@
 			and t.sourceBillNumber like
 			CONCAT(CONCAT('%',#{sourceBillNumber}),'%')
 		</if>
-		<if test="wrhUuid != null">
-			and t.wrhUuid = #{wrhUuid}
+		<if test="wrh != null and wrh != ''">
+			and t.wrhCode = #{wrh}
 		</if>
 		<if test="deliverySystem != null">
 			and t.deliverySystem=#{deliverySystem}
@@ -587,6 +587,14 @@
 			ai.articleCode = #{articleCode, jdbcType=VARCHAR} and t.uuid
 			=
 			ai.ALCNTCBILLUUID)
+		</if>
+		<if test="alcDateLessThan != null">
+			and t.alcDate <![CDATA[<]]>
+			#{alcDateLessThan,jdbcType=TIMESTAMP}
+		</if>
+		<if test="alcDateMoreThan != null">
+			and t.alcDate >=
+			#{alcDateMoreThan,jdbcType=TIMESTAMP}
 		</if>
 	</select>
 

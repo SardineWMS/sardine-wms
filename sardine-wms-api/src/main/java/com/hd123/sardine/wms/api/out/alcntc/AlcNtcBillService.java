@@ -32,6 +32,8 @@ public interface AlcNtcBillService {
   public static final String QUERY_WRH_EQUALS = "wrh";
   public static final String QUERY_DELIVERYMODE = "deliveryMode";
   public static final String QUERY_ARTICLECODE_CONTAINS = "articleCode";
+  public static final String QUERY_ALCDATEMORETHAN = "alcDateMoreThan";
+  public static final String QUERY_ALCDATELESSTHAN = "alcDateLessThan";
 
   /**
    * 新增配送通知单
