@@ -105,8 +105,10 @@ public class AlcNtcBillController extends BaseController {
       @RequestParam(value = "taskBillNumber", required = false) String taskBillNumber,
       @RequestParam(value = "sourceBillNumber", required = false) String sourceBillNumber,
       @RequestParam(value = "wrh", required = false) String wrh,
-      @RequestParam(value = "deliverMode", required = false) String deliveryMode,
-      @RequestParam(value = "articleCode", required = false) String articleCode) {
+      @RequestParam(value = "deliveryMode", required = false) String deliveryMode,
+      @RequestParam(value = "articleCode", required = false) String articleCode,
+      @RequestParam(value = "alcDateLessThan", required = false) String alcDateLessThan,
+      @RequestParam(value = "alcDateMoreThan", required = false) String alcDateMoreThan) {
     RespObject resp = new RespObject();
     try {
       PageQueryDefinition definition = new PageQueryDefinition();
@@ -125,6 +127,12 @@ public class AlcNtcBillController extends BaseController {
       definition.put(AlcNtcBillService.QUERY_ARTICLECODE_CONTAINS, articleCode);
       definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<AlcNtcBill> result = service.query(definition);
+      definition.put(AlcNtcBillService.QUERY_ALCDATELESSTHAN,
+          StringUtil.isNullOrBlank(alcDateLessThan) ? null
+              : StringUtil.toDate(alcDateLessThan, "yyyy-MM-dd"));
+      definition.put(AlcNtcBillService.QUERY_ALCDATEMORETHAN,
+          StringUtil.isNullOrBlank(alcDateMoreThan) ? null
+              : StringUtil.toDate(alcDateMoreThan, "yyyy-MM-dd"));
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
