@@ -9,6 +9,8 @@
  */
 package com.hd123.sardine.wms.web.out.wave;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,105 +42,164 @@ import com.hd123.sardine.wms.web.base.BaseController;
 @RequestMapping("/out/wave")
 public class WaveBillController extends BaseController {
 
-  @Autowired
-  private WaveBillService service;
+    @Autowired
+    private WaveBillService service;
 
-  @RequestMapping(value = "/insert", method = RequestMethod.POST)
-  public @ResponseBody RespObject insert(
-      @RequestParam(value = "token", required = true) String token, @RequestBody WaveBill bill) {
-    RespObject resp = new RespObject();
-    try {
-      bill.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-      String uuid = service.saveNew(bill);
-      resp.setObj(uuid);
-      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-    } catch (NotLoginInfoException e) {
-      return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
-    } catch (Exception e) {
-      return new ErrorRespObject("新建波次单失败》：" + e.getMessage());
+    @RequestMapping(value = "/insert", method = RequestMethod.POST)
+    public @ResponseBody RespObject insert(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestBody WaveBill bill) {
+        RespObject resp = new RespObject();
+        try {
+            bill.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+            String uuid = service.saveNew(bill);
+            resp.setObj(uuid);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("新建波次单失败》：" + e.getMessage());
+        }
+        return resp;
     }
-    return resp;
-  }
 
-  @RequestMapping(value = "/update", method = RequestMethod.PUT)
-  public @ResponseBody RespObject update(
-      @RequestParam(value = "token", required = true) String token, @RequestBody WaveBill bill) {
-    RespObject resp = new RespObject();
-    try {
-      service.saveModify(bill);
-      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-    } catch (NotLoginInfoException e) {
-      return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
-    } catch (Exception e) {
-      return new ErrorRespObject("修改波次单失败：" + e.getMessage());
+    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    public @ResponseBody RespObject update(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestBody WaveBill bill) {
+        RespObject resp = new RespObject();
+        try {
+            service.saveModify(bill);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("修改波次单失败：" + e.getMessage());
+        }
+        return resp;
     }
-    return resp;
-  }
 
-  @RequestMapping(value = "/remove", method = RequestMethod.DELETE)
-  public @ResponseBody RespObject remove(
-      @RequestParam(value = "token", required = true) String token,
-      @RequestParam(value = "uuid", required = true) String uuid,
-      @RequestParam(value = "version", required = true) long version) {
-    RespObject resp = new RespObject();
-    try {
-      service.remove(uuid, version);
-      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-    } catch (NotLoginInfoException e) {
-      return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
-    } catch (Exception e) {
-      return new ErrorRespObject("删除波次单失败：" + e.getMessage());
+    @RequestMapping(value = "/remove", method = RequestMethod.DELETE)
+    public @ResponseBody RespObject remove(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "uuid", required = true) String uuid,
+            @RequestParam(value = "version", required = true) long version) {
+        RespObject resp = new RespObject();
+        try {
+            service.remove(uuid, version);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("删除波次单失败：" + e.getMessage());
+        }
+        return resp;
     }
-    return resp;
-  }
 
-  @RequestMapping(value = "/query", method = RequestMethod.GET)
-  public @ResponseBody RespObject query(
-      @RequestParam(value = "token", required = true) String token,
-      @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-      @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
-      @RequestParam(value = "sort", required = false) String sort,
-      @RequestParam(value = "order", required = false, defaultValue = "asc") String sortDirection,
-      @RequestParam(value = "type", required = false) String type,
-      @RequestParam(value = "billNumber", required = false) String billNumber,
-      @RequestParam(value = "state", required = false) String state,
-      @RequestParam(value = "waveType", required = false) String waveType) {
-    RespObject resp = new RespObject();
-    try {
-      PageQueryDefinition definition = new PageQueryDefinition();
-      definition.setPage(page);
-      definition.setPageSize(pageSize);
-      definition.setSortField(sort);
-      definition.setOrderDir(OrderDir.valueOf(sortDirection));
-      definition.put(WaveBillService.QUERY_BILLNUMBER_LIKE, billNumber);
-      definition.put(WaveBillService.QUERY_STATE_EQUALS,
-          StringUtil.isNullOrBlank(state) ? null : WaveBillState.valueOf(state));
-      definition.put(WaveBillService.QUERY_WAVETYPE_EQUALS,
-          StringUtil.isNullOrBlank(waveType) ? null : WaveType.valueOf(waveType));
-
-      PageQueryResult<WaveBill> result = service.query(definition);
-      resp.setObj(result);
-      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-    } catch (Exception e) {
-      return new ErrorRespObject("分页查询波次单失败：" + e.getMessage());
+    @RequestMapping(value = "/start", method = RequestMethod.PUT)
+    public @ResponseBody RespObject start(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "uuid", required = true) String uuid,
+            @RequestParam(value = "version", required = true) long version) {
+        RespObject resp = new RespObject();
+        try {
+            WaveBill bill = service.get(uuid);
+            List<String> articleUuids = service.start(bill.getUuid(), bill.getVersion());
+            service.executeArticle(bill.getUuid(), bill.getBillNumber(), articleUuids);
+            service.generatePickUpBill(bill.getUuid(), bill.getBillNumber());
+            service.startComplete(bill.getBillNumber());
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("启动波次单失败：" + e.getMessage());
+        }
+        return resp;
     }
-    return resp;
-  }
 
-  @RequestMapping(value = "/get", method = RequestMethod.GET)
-  public @ResponseBody RespObject get(@RequestParam(value = "token", required = true) String token,
-      @RequestParam(value = "uuid", required = true) String uuid) {
-    RespObject resp = new RespObject();
-    try {
-      WaveBill bill = service.get(uuid);
-      resp.setObj(bill);
-      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
-    } catch (NotLoginInfoException e) {
-      return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
-    } catch (Exception e) {
-      return new ErrorRespObject("获取波次单失败：" + e.getMessage());
+    @RequestMapping(value = "/confirm", method = RequestMethod.PUT)
+    public @ResponseBody RespObject confirm(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "uuid", required = true) String uuid,
+            @RequestParam(value = "version", required = true) long version) {
+        RespObject resp = new RespObject();
+        try {
+            service.confirm(uuid, version);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("启动波次单失败：" + e.getMessage());
+        }
+        return resp;
     }
-    return resp;
 
-  }
+    @RequestMapping(value = "/rollBack", method = RequestMethod.PUT)
+    public @ResponseBody RespObject rollBack(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "uuid", required = true) String uuid,
+            @RequestParam(value = "version", required = true) long version) {
+        RespObject resp = new RespObject();
+        try {
+            service.rollBack(uuid, version);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("启动波次单失败：" + e.getMessage());
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/query", method = RequestMethod.GET)
+    public @ResponseBody RespObject query(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
+            @RequestParam(value = "sort", required = false) String sort,
+            @RequestParam(value = "order", required = false,
+                    defaultValue = "asc") String sortDirection,
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "billNumber", required = false) String billNumber,
+            @RequestParam(value = "state", required = false) String state,
+            @RequestParam(value = "waveType", required = false) String waveType) {
+        RespObject resp = new RespObject();
+        try {
+            PageQueryDefinition definition = new PageQueryDefinition();
+            definition.setPage(page);
+            definition.setPageSize(pageSize);
+            definition.setSortField(sort);
+            definition.setOrderDir(OrderDir.valueOf(sortDirection));
+            definition.put(WaveBillService.QUERY_BILLNUMBER_LIKE, billNumber);
+            definition.put(WaveBillService.QUERY_STATE_EQUALS,
+                    StringUtil.isNullOrBlank(state) ? null : WaveBillState.valueOf(state));
+            definition.put(WaveBillService.QUERY_WAVETYPE_EQUALS,
+                    StringUtil.isNullOrBlank(waveType) ? null : WaveType.valueOf(waveType));
+
+            PageQueryResult<WaveBill> result = service.query(definition);
+            resp.setObj(result);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (Exception e) {
+            return new ErrorRespObject("分页查询波次单失败：" + e.getMessage());
+        }
+        return resp;
+    }
+
+    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    public @ResponseBody RespObject get(
+            @RequestParam(value = "token", required = true) String token,
+            @RequestParam(value = "uuid", required = true) String uuid) {
+        RespObject resp = new RespObject();
+        try {
+            WaveBill bill = service.get(uuid);
+            resp.setObj(bill);
+            resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+        } catch (NotLoginInfoException e) {
+            return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
+        } catch (Exception e) {
+            return new ErrorRespObject("获取波次单失败：" + e.getMessage());
+        }
+        return resp;
+
+    }
 }
