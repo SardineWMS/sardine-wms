@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
@@ -27,11 +28,11 @@ import com.hd123.sardine.wms.api.tms.serialarch.SerialArchLineCustomer;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArchService;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
-import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
+import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.tms.serialarch.SerialArchDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
@@ -90,10 +91,11 @@ public class SerialArchServiceImpl extends BaseWMSService implements SerialArchS
 
     line.validate();
 
-    SerialArch arch = dao.get(line.getSerialArch().getUuid());
-    if (Objects.isNull(arch))
-      throw new WMSException(
-          MessageFormat.format("运输线路对应的线路体系{0}不存在", line.getSerialArch().getCode()));
+    //// SerialArch arch = dao.get(line.getSerialArch().getUuid());
+    // if (Objects.isNull(arch))
+    // throw new WMSException(
+    // MessageFormat.format("运输线路对应的线路体系{0}不存在",
+    //// line.getSerialArch().getCode()));
     SerialArchLine l = dao.getLineByCode(line.getCode());
     if (Objects.nonNull(l))
       throw new WMSException(MessageFormat.format("已存在代码为{0}的运输线路，不能重复使用", line.getCode()));
@@ -102,6 +104,7 @@ public class SerialArchServiceImpl extends BaseWMSService implements SerialArchS
     line.setUuid(UUIDGenerator.genUUID());
     line.setCreateInfo(ApplicationContextUtil.getOperateInfo());
     line.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    line.setSerialArch(new UCN(SerialArch.DEFAULT_UUID, "", ""));
 
     for (SerialArchLineCustomer c : line.getCustomers()) {
       if (StringUtil.isNullOrBlank(c.getCustomer().getUuid()))
@@ -130,9 +133,11 @@ public class SerialArchServiceImpl extends BaseWMSService implements SerialArchS
       for (SerialArchLine l : lineList) {
         if (l != null && l.getUuid().equals(line.getUuid()) == false
             && l.getSerialArch().getUuid().equals(line.getSerialArch().getUuid()))
-          errorMsg.append("客户" + customer.getName() + "已经存在于当前体系的其他路线上");
-        if (l.getSerialArch().getUuid().equals(line.getSerialArch().getUuid()) == false)
-          errorMsg.append("客户" + customer.getName() + "不能同时存在多个线路体系中");
+          errorMsg.append("客户" + customer.getName() + "已经存在于其他路线上");
+        // if
+        // (l.getSerialArch().getUuid().equals(line.getSerialArch().getUuid())
+        // == false)
+        // errorMsg.append("客户" + customer.getName() + "不能同时存在多个线路体系中");
       }
 
       for (int j = i + 1; j < line.getCustomers().size(); j++) {
@@ -155,30 +160,28 @@ public class SerialArchServiceImpl extends BaseWMSService implements SerialArchS
 
   @Override
   public List<SerialArchInfo> queryTreeData() {
-    String companyUuid = ApplicationContextUtil.getCompanyUuid();
-    PageQueryDefinition definition = new PageQueryDefinition();
-    definition.setCompanyUuid(companyUuid);
-    definition.setPageSize(0);
-    definition.setSortField("code");
-    definition.setOrderDir(OrderDir.asc);
-    List<SerialArch> list = dao.query(definition);// 线路体系
+    // String companyUuid = ApplicationContextUtil.getCompanyUuid();
+    // PageQueryDefinition definition = new PageQueryDefinition();
+    // definition.setCompanyUuid(companyUuid);
+    // definition.setPageSize(0);
+    // definition.setSortField("code");
+    // definition.setOrderDir(OrderDir.asc);
+    // List<SerialArch> list = dao.query(definition);// 线路体系
     List<SerialArchInfo> tree = new ArrayList<>();
-    for (SerialArch serialArch : list) {
-      SerialArchInfo info = new SerialArchInfo();
-      info.setKey(serialArch.toFriendString());
-      info.setTitle(serialArch.getUuid());
-      List<SerialArchLine> lines = dao.getLineByArchUuid(serialArch.getUuid());// 运输线路
-      List<SerialArchInfo> children = new ArrayList<>();
-      for (SerialArchLine l : lines) {
-        SerialArchInfo i = new SerialArchInfo();
-        i.setKey(l.toFriendString());
-        i.setTitle(l.getUuid());
-        i.setChildren(null);
-        children.add(i);
-      }
-      info.setChildren(children);
-      tree.add(info);
+    // SerialArchInfo info = new SerialArchInfo();
+    // info.setKey(serialArch.toFriendString());
+    // info.setTitle(serialArch.getUuid());
+    List<SerialArchLine> lines = dao.getLineByCompanyUuid();// 运输线路
+    List<SerialArchInfo> children = new ArrayList<>();
+    for (SerialArchLine l : lines) {
+      SerialArchInfo i = new SerialArchInfo();
+      i.setKey(l.toFriendString());
+      i.setTitle(l.getUuid());
+      i.setChildren(null);
+      children.add(i);
+      tree.add(i);
     }
+    // info.setChildren(children);
     return tree;
   }
 
@@ -432,6 +435,23 @@ public class SerialArchServiceImpl extends BaseWMSService implements SerialArchS
     if (StringUtil.isNullOrBlank(uuid))
       return null;
     return dao.get(uuid);
+  }
+
+  @Override
+  public void removeLine(String uuid, long version) throws WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+    Assert.assertArgumentNotNull(version, "version");
+
+    SerialArchLine line = dao.getLine(uuid);
+    if (Objects.isNull(line))
+      throw new WMSException(MessageFormat.format("要删除的线路{0}不存在", uuid));
+    List<SerialArchLineCustomer> lineCustomers = dao.getCustomerByLine(uuid);
+    if (CollectionUtils.isEmpty(lineCustomers) == false)
+      throw new WMSException("线路下包含有门店，不能删除");
+    PersistenceUtils.checkVersion(version, line, SerialArchLine.CAPTION, uuid);
+
+    dao.removeLine(uuid, version);
+
   }
 
 }

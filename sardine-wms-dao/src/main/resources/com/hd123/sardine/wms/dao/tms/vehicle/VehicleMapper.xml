@@ -16,6 +16,9 @@
 		<result column="carrierUuid" property="carrier.uuid" jdbcType="VARCHAR" />
 		<result column="carrierCode" property="carrier.code" jdbcType="VARCHAR" />
 		<result column="carrierName" property="carrier.name" jdbcType="VARCHAR" />
+		<result column="driverUuid" property="driver.uuid" jdbcType="VARCHAR" />
+		<result column="driverCode" property="driver.code" jdbcType="VARCHAR" />
+		<result column="driverName" property="driver.name" jdbcType="VARCHAR" />
 		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
 		<result column="createdtime " property="createInfo.time"
 			jdbcType="TIMESTAMP" />
@@ -76,6 +79,15 @@
 			<if test="remark != null">
 				remark,
 			</if>
+			<if test="driver != null and driver.uuid != null and driver.uuid != ''">
+				driverUuid,
+			</if>
+			<if test="driver != null and driver.code != null and driver.code != ''">
+				driverCode,
+			</if>
+			<if test="driver != null and driver.name != null and driver.name != ''">
+				driverName,
+			</if>
 			version,
 			CREATEDTIME,
 			CREATEDID,
@@ -122,6 +134,15 @@
 			</if>
 			<if test="remark != null">
 				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="driver != null and driver.uuid != null and driver.uuid != ''">
+				#{driver.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="driver != null and driver.code != null and driver.code != ''">
+				#{driver.code,jdbcType=VARCHAR},
+			</if>
+			<if test="driver != null and driver.name != null and driver.name != ''">
+				#{driver.name,jdbcType=VARCHAR},
 			</if>
 			#{version,jdbcType=LONGVARCHAR},
 			#{createInfo.time,jdbcType=TIMESTAMP},
@@ -172,6 +193,15 @@
 			</if>
 			<if test="remark != null">
 				remark=#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="driver != null and driver.uuid != null and driver.uuid !=''">
+				driverUuid=#{driver.uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="driver != null and driver.code != null and driver.code !=''">
+				driverCode=#{driver.code,jdbcType=VARCHAR},
+			</if>
+			<if test="driver != null and driver.name != null and driver.name != ''">
+				driverName=#{driver.name,jdbcType=VARCHAR},
 			</if>
 			LASTMODIFYTIME =
 			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
