@@ -9,13 +9,17 @@
  */
 package com.hd123.sardine.wms.service.tms.vehicle;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
+import com.hd123.sardine.wms.api.ia.user.User;
+import com.hd123.sardine.wms.api.ia.user.UserService;
 import com.hd123.sardine.wms.api.tms.carrier.Carrier;
 import com.hd123.sardine.wms.api.tms.carrier.CarrierService;
 import com.hd123.sardine.wms.api.tms.carrier.CarrierState;
@@ -51,6 +55,8 @@ public class VehicleServiceImpl extends BaseWMSService implements VehicleService
   private CarrierService carrierService;
   @Autowired
   private VehicleTypeService vehicleTypeService;
+  @Autowired
+  private UserService userService;
 
   @Override
   public String saveNew(Vehicle vehicle) throws IllegalArgumentException, WMSException {
@@ -59,6 +65,10 @@ public class VehicleServiceImpl extends BaseWMSService implements VehicleService
     vehicle.validate();
     Carrier carrier = carrierService.get(vehicle.getCarrier().getUuid());
     vehicle.setCarrier(new UCN(carrier.getUuid(), carrier.getCode(), carrier.getName()));
+    User user = userService.getByCode(vehicle.getDriver().getCode());
+    if (Objects.isNull(user))
+      throw new WMSException(MessageFormat.format("不存在代码为{0}的司机", vehicle.getDriver().getCode()));
+    vehicle.setDriver(new UCN(user.getUuid(), user.getCode(), user.getName()));
     VehicleType vehicleType = vehicleTypeService.get(vehicle.getVehicleType().getUuid());
     vehicle.setVehicleType(
         new UCN(vehicleType.getUuid(), vehicleType.getCode(), vehicleType.getName()));
