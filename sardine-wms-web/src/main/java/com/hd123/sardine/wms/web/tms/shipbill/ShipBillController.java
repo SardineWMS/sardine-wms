@@ -1,5 +1,5 @@
 /**
- * 版权所有(C)，上海海鼎信息工程股份有限公司，2017，所有权利保留。
+\ * 版权所有(C)，上海海鼎信息工程股份有限公司，2017，所有权利保留。
  * 
  * 项目名：	sardine-wms-web
  * 文件名：	ShipBillController.java
@@ -26,7 +26,6 @@ import com.hd123.sardine.wms.api.tms.shipbill.DeliveryType;
 import com.hd123.sardine.wms.api.tms.shipbill.OperateMethod;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBill;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBillContainerStock;
-import com.hd123.sardine.wms.api.tms.shipbill.ShipBillCustomerItem;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBillService;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBillState;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipTaskFilter;
@@ -291,6 +290,20 @@ public class ShipBillController extends BaseController {
       return new ErrorRespObject("计算商品重量失败：" + e.getMessage());
     }
 
+    return resp;
+
+  }
+
+  @RequestMapping(value = "/abort", method = RequestMethod.PUT)
+  public RespObject abort(@RequestParam(value = "uuid", required = true) String uuid,
+      @RequestParam(value = "version", required = true) long version) {
+    RespObject resp = new RespObject();
+    try {
+      service.abort(uuid, version);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("作废装车单失败：", e.getMessage());
+    }
     return resp;
 
   }
