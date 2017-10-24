@@ -102,9 +102,9 @@
 			jdbcType="VARCHAR" />
 		<result column="supplierName" property="supplier.name"
 			jdbcType="VARCHAR" />
-		<result column="shiperUuid" property="shiper.uuid" jdbcType="VARCHAR" />
-		<result column="shiperCode" property="shiper.code" jdbcType="VARCHAR" />
-		<result column="shiperName" property="shiper.name" jdbcType="VARCHAR" />
+		<result column="shipperUuid" property="shipper.uuid" jdbcType="VARCHAR" />
+		<result column="shipperCode" property="shipper.code" jdbcType="VARCHAR" />
+		<result column="shipperName" property="shipper.name" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<insert id="insert" parameterType="com.hd123.sardine.wms.api.tms.shipbill.ShipBill">
@@ -364,24 +364,26 @@
 			and i.articleCode like
 			CONCAT(CONCAT('%',
 			#{customerName,jdbcType=VARCHAR}),
-			'%')
+			'%') and
+			i.SHIPBILLUUID=t.uuid
 			)
 		</if>
-		<if test="shiperCode != null and shiperCode != ''">
+		<if test="shipperCode != null and shipperCode != ''">
 			and EXISTS (select 1 from
-			db_proxy.sardine_shipbillcustomeritem i
-			and i.shiperCode like
+			db_proxy.sardine_shipbillcontainerstock i
+			where i.shipperCode like
 			CONCAT(CONCAT('%',
-			#{shiperCode,jdbcType=VARCHAR}),
-			'%')
+			#{shipperCode,jdbcType=VARCHAR}),
+			'%') and
+			i.SHIPBILLUUID=t.uuid
 			)
 		</if>
-		<if test="shiperName != null and shiperName != ''">
+		<if test="shipperName != null and shipperName != ''">
 			and EXISTS (select 1 from
-			db_proxy.sardine_shipbillcustomeritem i
-			and i.shiperName like
+			db_proxy.sardine_shipbillcontainerstock i
+			where i.shipperName like
 			CONCAT(CONCAT('%',
-			#{shiperName,jdbcType=VARCHAR}),
+			#{shipperName,jdbcType=VARCHAR}),
 			'%')
 			)
 		</if>
@@ -569,14 +571,14 @@
 			<if test="supplier != null and supplier.name != null">
 				supplierName,
 			</if>
-			<if test="shiper != null and shiper.uuid != ''">
-				shiperUuid,
+			<if test="shipper != null and shipper.uuid != ''">
+				shipperUuid,
 			</if>
-			<if test="shiper != null and shiper.code != ''">
-				shiperCode,
+			<if test="shipper != null and shipper.code != ''">
+				shipperCode,
 			</if>
-			<if test="shiper != null and shiper.name != ''">
-				shiperName,
+			<if test="shipper != null and shipper.name != ''">
+				shipperName,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -652,14 +654,14 @@
 			<if test="supplier != null and supplier.name != null">
 				#{supplier.name,jdbcType=VARCHAR},
 			</if>
-			<if test="shiper != null and shiper.uuid != ''">
-				#{shiper.uuid,jdbcType=VARCHAR},
+			<if test="shipper != null and shipper.uuid != ''">
+				#{shipper.uuid,jdbcType=VARCHAR},
 			</if>
-			<if test="shiper != null and shiper.code != ''">
-				#{shiper.code,jdbcType=VARCHAR},
+			<if test="shipper != null and shipper.code != ''">
+				#{shipper.code,jdbcType=VARCHAR},
 			</if>
-			<if test="shiper != null and shiper.name != ''">
-				#{shiper.name,jdbcType=VARCHAR},
+			<if test="shipper != null and shipper.name != ''">
+				#{shipper.name,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -671,49 +673,73 @@
 		t.shipBillUuid=#{uuid,jdbcType=VARCHAR}
 	</select>
 
-    <delete id="remove" parameterType="java.util.Map">
-        delete from db_proxy.sardine_shipbill where uuid = #{uuid, jdbcType=VARCHAR}
-        and version = #{version, jdbcType=LONGVARCHAR}
-    </delete>
-    
-    <delete id="removeCustomerItems" parameterType="java.util.Map">
-        delete from db_proxy.sardine_shipbillcustomeritem where shipbilluuid = #{shipBillUuid, jdbcType=VARCHAR}
-    </delete>
-    
-    <delete id="removeContainerStockItems" parameterType="java.util.Map">
-        delete from db_proxy.sardine_shipbillcontainerstock where shipbilluuid = 
-        #{shipBillUuid, jdbcType=VARCHAR}
-    </delete>
-    
-    <select id="queryWaitShipStock" parameterType="com.hd123.sardine.wms.api.tms.shipbill.ShipTaskFilter" resultMap="ShipBillContainerStockMap">
-      select s.*, c.UUID customeruuid, c.code customercode, c.name customername, 
-      s.billuuid sourceBillUuid, s.billtype sourceBillType, s.billnumber sourceBillNumber from 
-        db_proxy.sardine_stock s, db_proxy.sardine_customer c, db_proxy.sardine_bin b where 
-        s.OWNER = c.uuid and s.BINCODE = b.code and 
-        s.companyuuid = b.companyuuid and b.binusage = 'CollectBin'
-        and s.STATE = 'normal'
-        and s.companyuuid = #{companyUuid, jdbcType=VARCHAR}
-        <if test="articleCodeLike != null and articleCodeLike != ''">
-          and s.articleCode like CONCAT('%',#{articleCodeLike},'%')  
-        </if>
-        <if test="binCodeLike != null and binCodeLike != ''">
-          and s.bincode like CONCAT('%',#{binCodeLike},'%')  
-        </if>
-        <if test="containerBarcodeLike != null and containerBarcodeLike != ''">
-          and s.containerbarcode like CONCAT('%',#{containerBarcodeLike},'%')  
-        </if>
-        <if test="customerCodeLike != null and customerCodeLike != ''">
-          and c.code like CONCAT('%',#{customerCodeLike},'%')  
-        </if>
-        <if test="supplierCodeLike != null and supplierCodeLike != ''">
-          and s.suppliercode like CONCAT('%',#{supplierCodeLike},'%')  
-        </if>
-    </select>
-    
-    <update id="updateShipOrder" parameterType="java.util.Map">
-      update db_proxy.sardine_shipbillcustomeritem set ORDERNO = (
-       select max(concat_ws('-',l.CODE,lc.LINEORDER)) from db_proxy.sardine_serialarchline l, db_proxy.sardine_serialarchlinecustomer lc where l.UUID = lc.SERIALARCHLINEUUID 
-       and l.COMPANYUUID = #{companyUuid, jdbcType=VARCHAR} and lc.CUSTOMERUUID = CUSTOMERUUID)
-      where SHIPBILLUUID = #{shipBillUuid, jdbcType=VARCHAR}
-    </update>
+	<delete id="remove" parameterType="java.util.Map">
+		delete from
+		db_proxy.sardine_shipbill where uuid = #{uuid, jdbcType=VARCHAR}
+		and
+		version = #{version, jdbcType=LONGVARCHAR}
+	</delete>
+
+	<delete id="removeCustomerItems" parameterType="java.util.Map">
+		delete from
+		db_proxy.sardine_shipbillcustomeritem where shipbilluuid =
+		#{shipBillUuid, jdbcType=VARCHAR}
+	</delete>
+
+	<delete id="removeContainerStockItems" parameterType="java.util.Map">
+		delete from
+		db_proxy.sardine_shipbillcontainerstock where shipbilluuid =
+		#{shipBillUuid, jdbcType=VARCHAR}
+	</delete>
+
+	<select id="queryWaitShipStock"
+		parameterType="com.hd123.sardine.wms.api.tms.shipbill.ShipTaskFilter"
+		resultMap="ShipBillContainerStockMap">
+		select s.*, c.UUID customeruuid, c.code customercode, c.name
+		customername,
+		s.billuuid sourceBillUuid, s.billtype sourceBillType,
+		s.billnumber
+		sourceBillNumber from
+		db_proxy.sardine_stock s,
+		db_proxy.sardine_customer c, db_proxy.sardine_bin b where
+		s.OWNER =
+		c.uuid and s.BINCODE = b.code and
+		s.companyuuid = b.companyuuid and
+		b.binusage = 'CollectBin'
+		and s.STATE = 'normal'
+		and s.companyuuid =
+		#{companyUuid, jdbcType=VARCHAR}
+		<if test="articleCodeLike != null and articleCodeLike != ''">
+			and s.articleCode like CONCAT('%',#{articleCodeLike},'%')
+		</if>
+		<if test="binCodeLike != null and binCodeLike != ''">
+			and s.bincode like CONCAT('%',#{binCodeLike},'%')
+		</if>
+		<if test="containerBarcodeLike != null and containerBarcodeLike != ''">
+			and s.containerbarcode like
+			CONCAT('%',#{containerBarcodeLike},'%')
+		</if>
+		<if test="customerCodeLike != null and customerCodeLike != ''">
+			and c.code like CONCAT('%',#{customerCodeLike},'%')
+		</if>
+		<if test="supplierCodeLike != null and supplierCodeLike != ''">
+			and s.suppliercode like
+			CONCAT('%',#{supplierCodeLike},'%')
+		</if>
+	</select>
+
+	<update id="updateShipOrder" parameterType="java.util.Map">
+		update
+		db_proxy.sardine_shipbillcustomeritem set ORDERNO = (
+		select
+		max(concat_ws('-',l.CODE,lc.LINEORDER)) from
+		db_proxy.sardine_serialarchline l,
+		db_proxy.sardine_serialarchlinecustomer lc where l.UUID =
+		lc.SERIALARCHLINEUUID
+		and l.COMPANYUUID = #{companyUuid,
+		jdbcType=VARCHAR} and lc.CUSTOMERUUID
+		= CUSTOMERUUID)
+		where SHIPBILLUUID
+		= #{shipBillUuid, jdbcType=VARCHAR}
+	</update>
 </mapper>

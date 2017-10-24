@@ -9,12 +9,16 @@
  */
 package com.hd123.sardine.wms.service.tms.shipbill;
 
+import java.text.MessageFormat;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
+import com.hd123.sardine.wms.api.ia.user.User;
+import com.hd123.sardine.wms.api.ia.user.UserService;
 import com.hd123.sardine.wms.api.out.acceptance.AcceptanceBill;
 import com.hd123.sardine.wms.api.tms.shipbill.DeliveryType;
 import com.hd123.sardine.wms.api.tms.shipbill.OperateMethod;
@@ -24,6 +28,7 @@ import com.hd123.sardine.wms.api.tms.shipbill.ShipBillCustomerItem;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBillService;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipBillState;
 import com.hd123.sardine.wms.api.tms.shipbill.ShipTaskFilter;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -53,6 +58,9 @@ public class ShipBillServiceImpl extends BaseWMSService implements ShipBillServi
 
   @Autowired
   private ShipBillHandler shipBillHandler;
+
+  @Autowired
+  private UserService userService;
 
   @Override
   public ShipBill getByUuid(String uuid) {
@@ -163,7 +171,10 @@ public class ShipBillServiceImpl extends BaseWMSService implements ShipBillServi
       j++;
       cs.setUuid(UUIDGenerator.genUUID());
       cs.setShipBillUuid(shipBill.getUuid());
-      cs.setShiper(ApplicationContextUtil.getLoginUser());
+      User user = userService.getByCode(cs.getShipper().getCode());
+      if (Objects.isNull(user))
+        throw new WMSException("代码为" + cs.getShipper().getCode() + "的用户不存在");
+      cs.setShipper(new UCN(user.getUuid(), user.getCode(), user.getName()));
     }
 
     dao.insertContainerStockItems(shipBill.getContainerStocks());
@@ -215,7 +226,7 @@ public class ShipBillServiceImpl extends BaseWMSService implements ShipBillServi
     for (ShipBillContainerStock cs : shipBill.getContainerStocks()) {
       cs.setUuid(UUIDGenerator.genUUID());
       cs.setShipBillUuid(shipBill.getUuid());
-      cs.setShiper(ApplicationContextUtil.getLoginUser());
+      cs.setShipper(ApplicationContextUtil.getLoginUser());
     }
 
     dao.removeContainerStockItems(shipBill.getUuid());
@@ -267,5 +278,27 @@ public class ShipBillServiceImpl extends BaseWMSService implements ShipBillServi
     PageQueryUtil.assignPageInfo(pqr, filter);
     pqr.setRecords(list);
     return pqr;
+  }
+
+  @Override
+  public void abort(String uuid, long version) throws WMSException {
+    Assert.assertArgumentNotNull(uuid, "uuid");
+    Assert.assertArgumentNotNull(version, "version");
+
+    ShipBill shipBill = dao.get(uuid);
+    if (Objects.isNull(shipBill))
+      throw new WMSException("要作废的装车单不存在");
+    if (ShipBillState.Abort.equals(shipBill.getState()))
+      return;
+    if (ShipBillState.Initial.equals(shipBill.getState()) == false)
+      throw new WMSException(
+          MessageFormat.format("装车单当前的状态是{0}，不是初始状态，不能作废", shipBill.getState().getCaption()));
+    PersistenceUtils.checkVersion(version, shipBill, ShipBill.CAPTION, uuid);
+
+    shipBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    shipBill.setState(ShipBillState.Abort);
+
+    dao.update(shipBill);
+
   }
 }

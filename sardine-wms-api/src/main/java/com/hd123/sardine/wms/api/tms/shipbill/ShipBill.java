@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.sardine.wms.api.out.alcntc.DeliverySystem;
 import com.hd123.sardine.wms.common.entity.StandardEntity;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.validator.Validator;
@@ -42,6 +43,7 @@ public class ShipBill extends StandardEntity implements Validator {
   private BigDecimal totalAmount = BigDecimal.ZERO;
   private int containerCount;
   private int customerCount;
+  private DeliverySystem deliverySystem = DeliverySystem.tradition;
   private List<ShipBillContainerStock> containerStocks = new ArrayList<>();
   private List<ShipBillCustomerItem> customerItems = new ArrayList<>();
 
@@ -51,7 +53,7 @@ public class ShipBill extends StandardEntity implements Validator {
   }
 
   public void setBillNumber(String billNumber) {
-//    Assert.assertArgumentNotNull(billNumber, "billNumber");
+    // Assert.assertArgumentNotNull(billNumber, "billNumber");
     this.billNumber = billNumber;
   }
 
@@ -112,7 +114,7 @@ public class ShipBill extends StandardEntity implements Validator {
   }
 
   public void setState(ShipBillState state) {
-//    Assert.assertArgumentNotNull(state, "state");
+    // Assert.assertArgumentNotNull(state, "state");
     this.state = state;
   }
 
@@ -161,7 +163,7 @@ public class ShipBill extends StandardEntity implements Validator {
   }
 
   public void setCompanyUuid(String companyUuid) {
-//    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+    // Assert.assertArgumentNotNull(companyUuid, "companyUuid");
     this.companyUuid = companyUuid;
   }
 
@@ -197,8 +199,18 @@ public class ShipBill extends StandardEntity implements Validator {
   }
 
   public void setCustomerItems(List<ShipBillCustomerItem> customerItems) {
-//    Assert.assertArgumentNotNull(customerItems, "customerItems");
+    // Assert.assertArgumentNotNull(customerItems, "customerItems");
     this.customerItems = customerItems;
+  }
+
+  /** 配送体系 */
+  public DeliverySystem getDeliverySystem() {
+    return deliverySystem;
+  }
+
+  public void setDeliverySystem(DeliverySystem deliverySystem) {
+    Assert.assertArgumentNotNull(deliverySystem, "deliverySystem");
+    this.deliverySystem = deliverySystem;
   }
 
   public void clearTotalInfo() {
@@ -223,6 +235,7 @@ public class ShipBill extends StandardEntity implements Validator {
     Assert.assertArgumentNotNull(driver.getCode(), "driver.code");
     Assert.assertArgumentNotNull(driver.getName(), "driver.name");
     Assert.assertArgumentNotNull(containerStocks, "containerStocks");
+    Assert.assertArgumentNotNull(deliverySystem, "deliverySystem");
     if (containerStocks.isEmpty())
       throw new IllegalArgumentException("装车库存明细不能为空！");
   }

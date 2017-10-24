@@ -146,11 +146,11 @@ public class ShipBillController extends BaseController {
     target.setVehicleNum(source.getVehicleNum());
     target.setVersion(source.getVersion());
     target.setTotalCaseQty(source.getTotalCaseQty());
-    target.setCustomerCount(source.getCustomerItems().size());
-    int containerCount = 0;
-    for (ShipBillCustomerItem item : source.getCustomerItems())
-      containerCount += item.getContainerCount();
-    target.setContainerCount(containerCount);
+    target.setCustomerCount(source.getCustomerCount());
+    // int containerCount = 0;
+    // for (ShipBillCustomerItem item : source.getCustomerItems())
+    // containerCount += item.getContainerCount();
+    target.setContainerCount(source.getContainerCount());
     return target;
   }
 

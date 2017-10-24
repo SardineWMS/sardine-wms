@@ -14,22 +14,25 @@ package com.hd123.sardine.wms.api.tms.shipbill;
  *
  */
 public enum ShipBillState {
-    /** 初始 */
-    Initial("初始"),
+  /** 初始 */
+  Initial("初始"),
 
-    /** 装车中 */
-    InProgress("装车中"),
+  /** 装车中 */
+  InProgress("装车中"),
 
-    /** 已完成 */
-    Finished("已完成");
+  /** 已作废 */
+  Abort("已作废"),
 
-    private ShipBillState(String caption) {
-      this.caption = caption;
-    }
+  /** 已完成 */
+  Finished("已完成");
 
-    private String caption;
+  private ShipBillState(String caption) {
+    this.caption = caption;
+  }
 
-    public String getCaption() {
-      return caption;
-    }
+  private String caption;
+
+  public String getCaption() {
+    return caption;
+  }
 }
