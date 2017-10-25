@@ -55,6 +55,7 @@
 		select u.*
 		from db_proxy.sardine_article_supplier u
 		where u.articleUuid = #{articleUuid,jdbcType=VARCHAR}
+		order by u.default_ DESC
 	</select>
 	
 	<delete id="removeone" parameterType="String">

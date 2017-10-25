@@ -197,28 +197,6 @@ public class RtnSupplierNtcBillServiceImpl extends BaseWMSService
   }
 
   @Override
-  public void remove(String uuid, long version) throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(uuid, "uuid");
-    Assert.assertArgumentNotNull(version, "version");
-
-    RtnSupplierNtcBill bill = get(uuid);
-    if (Objects.isNull(bill))
-      throw new WMSException(MessageFormat.format("要删除的供应商退货通知单{0}不存在", bill.getUuid()));
-    PersistenceUtils.checkVersion(version, bill, RtnSupplierNtcBill.CAPTION, uuid);
-    if ((RtnSupplierNtcBillState.Initial.equals(bill.getState())
-        || RtnSupplierNtcBillState.Aborted.equals(bill.getState())) == false)
-      throw new WMSException(
-          MessageFormat.format("当前供应商退货通知单的状态是{0}，不是初始或已作废状态，不能删除", bill.getState().getCaption()));
-
-    dao.remove(uuid, version);
-    dao.removeItmes(uuid);
-
-    logger.injectContext(this, uuid, RtnSupplierNtcBill.CAPTION,
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_REMOVE, "删除供应商退货通知单");
-  }
-
-  @Override
   public void abort(String uuid, long version) throws IllegalArgumentException, WMSException {
     Assert.assertArgumentNotNull(uuid, "uuid");
     Assert.assertArgumentNotNull(version, "version");

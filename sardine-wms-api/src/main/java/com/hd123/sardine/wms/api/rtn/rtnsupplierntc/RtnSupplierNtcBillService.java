@@ -70,18 +70,6 @@ public interface RtnSupplierNtcBillService {
   void saveModify(RtnSupplierNtcBill bill) throws WMSException;
 
   /**
-   * 删除供应商退货通知单
-   * 
-   * @param uuid
-   *          要删除退货通知单的UUID，not null
-   * @param version
-   *          版本号，not null
-   * @throws IllegalArgumentException
-   * @throws WMSException
-   */
-  void remove(String uuid, long version) throws IllegalArgumentException, WMSException;
-
-  /**
    * 作废供应商退货通知单
    * 
    * @param uuid

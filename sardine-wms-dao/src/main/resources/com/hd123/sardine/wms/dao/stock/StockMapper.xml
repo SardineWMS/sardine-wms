@@ -488,6 +488,13 @@
 			and t.bincode=b.code and b.wrhUuid=w.uuid
 			and w.uuid=#{wrhUuid,jdbcType=VARCHAR}
 		</if>
+		<if test="binCodes != null and binCodes.size > 0">
+			and t.binCode in
+			<foreach collection="binCodes" item="item" index="index" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
 		ORDER BY INSTOCKTIME
 	</select>
 
