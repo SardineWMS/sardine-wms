@@ -19,59 +19,60 @@ import com.hd123.sardine.wms.common.entity.StandardEntity;
  *
  */
 public class SerialArch extends StandardEntity {
-    private static final long serialVersionUID = 856820675468969516L;
-    public static final String CAPTION = "线路体系";
-    private static final int LENGTH_CODE = 30;
-    private static final int LENGTH_NAME = 100;
+  private static final long serialVersionUID = 856820675468969516L;
+  public static final String DEFAULT_UUID = "-";
+  public static final String CAPTION = "线路体系";
+  private static final int LENGTH_CODE = 30;
+  private static final int LENGTH_NAME = 100;
 
-    private String code;
-    private String name;
-    private String companyUuid;
+  private String code;
+  private String name;
+  private String companyUuid;
 
-    public String getCode() {
-        return code;
-    }
+  public String getCode() {
+    return code;
+  }
 
-    /** 代码 */
-    public void setCode(String code) {
-        Assert.assertArgumentNotNull(code, "code");
-        Assert.assertStringNotTooLong(code, LENGTH_CODE, "code");
-        this.code = code;
-    }
+  /** 代码 */
+  public void setCode(String code) {
+    Assert.assertArgumentNotNull(code, "code");
+    Assert.assertStringNotTooLong(code, LENGTH_CODE, "code");
+    this.code = code;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    /** 名称 */
-    public void setName(String name) {
-        Assert.assertArgumentNotNull(name, "name");
-        Assert.assertStringNotTooLong(name, LENGTH_NAME, "name");
-        this.name = name;
-    }
+  /** 名称 */
+  public void setName(String name) {
+    Assert.assertArgumentNotNull(name, "name");
+    Assert.assertStringNotTooLong(name, LENGTH_NAME, "name");
+    this.name = name;
+  }
 
-    public String getCompanyUuid() {
-        return companyUuid;
-    }
+  public String getCompanyUuid() {
+    return companyUuid;
+  }
 
-    public void setCompanyUuid(String companyUuid) {
-        Assert.assertArgumentNotNull(companyUuid, "companyUuid");
-        this.companyUuid = companyUuid;
-    }
+  public void setCompanyUuid(String companyUuid) {
+    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+    this.companyUuid = companyUuid;
+  }
 
-    public void validate() {
-        Assert.assertArgumentNotNull(code, "code");
-        Assert.assertArgumentNotNull(name, "name");
-        Assert.assertArgumentNotNull(companyUuid, "companyUuid");
-    }
+  public void validate() {
+    Assert.assertArgumentNotNull(code, "code");
+    Assert.assertArgumentNotNull(name, "name");
+    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+  }
 
-    public String toFriendString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("[");
-        sb.append(code);
-        sb.append("]");
-        sb.append(name);
-        return sb.toString();
-    }
+  public String toFriendString() {
+    StringBuffer sb = new StringBuffer();
+    sb.append("[");
+    sb.append(code);
+    sb.append("]");
+    sb.append(name);
+    return sb.toString();
+  }
 
 }

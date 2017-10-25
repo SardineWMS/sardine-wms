@@ -22,34 +22,37 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
  *
  */
 public interface SerialArchDao extends BaseDao<SerialArch> {
-    SerialArch getByCode(String code);
+  SerialArch getByCode(String code);
 
-    int insertSerialArchLine(SerialArchLine line);
+  int insertSerialArchLine(SerialArchLine line);
 
-    SerialArchLine getLineByCode(String lineCode);
+  SerialArchLine getLineByCode(String lineCode);
 
-    SerialArchLine getLine(String uuid);
+  SerialArchLine getLine(String uuid);
 
-    List<SerialArchLine> getLineByCustomerUuid(String customerUuid);
+  List<SerialArchLine> getLineByCustomerUuid(String customerUuid);
 
-    int insertLineCustomer(SerialArchLineCustomer c);
+  int insertLineCustomer(SerialArchLineCustomer c);
 
-    List<SerialArchLine> getLineByArchUuid(String archUuid);
+  List<SerialArchLine> getLineByArchUuid(String archUuid);
 
-    List<SerialArchLineCustomer> getCustomerByLine(String lineUuid);
+  List<SerialArchLineCustomer> getCustomerByLine(String lineUuid);
 
-    SerialArchLineCustomer getCustomer(String lineUuid, String customerUuid);
+  SerialArchLineCustomer getCustomer(String lineUuid, String customerUuid);
 
-    int removeCustomer(String lineUuid, String customerUuid);
+  int removeCustomer(String lineUuid, String customerUuid);
 
-    void updateLineCustomer(SerialArchLineCustomer lineCustomer);
+  void updateLineCustomer(SerialArchLineCustomer lineCustomer);
 
-    SerialArchLineCustomer getCustomerByLineAndOrder(String lineUuid, int order);
+  SerialArchLineCustomer getCustomerByLineAndOrder(String lineUuid, int order);
 
-    List<SerialArchLineCustomer> queryCustomerOrderLess(String lineUuid, int order);
+  List<SerialArchLineCustomer> queryCustomerOrderLess(String lineUuid, int order);
 
-    List<SerialArchLineCustomer> queryCustomerOrderMore(String lineUuid, int order);
+  List<SerialArchLineCustomer> queryCustomerOrderMore(String lineUuid, int order);
 
-    List<SerialArchLineCustomer> queryCustomerByLine(PageQueryDefinition definition);
+  List<SerialArchLineCustomer> queryCustomerByLine(PageQueryDefinition definition);
 
+  List<SerialArchLine> getLineByCompanyUuid();
+
+  int removeLine(String uuid, long version);
 }

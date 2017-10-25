@@ -30,8 +30,8 @@ public interface ShipBillService {
   public static final String QUERY_DRIVERCODE_LIKE = "driverCode";
   public static final String QUERY_DRIVERNAME_LIKE = "driverName";
   public static final String QUERY_ARTICLECODE_CONTAINS = "articleCode";
-  public static final String QUERY_SHIPERCODE_LIKE = "shiperCode";
-  public static final String QUERY_SHIPERNAME_LIKE = "shiperName";
+  public static final String QUERY_SHIPERCODE_LIKE = "shipperCode";
+  public static final String QUERY_SHIPERNAME_LIKE = "shipperName";
   public static final String QUERY_CONTAINERBARCODE_CONTAINS = "containerBarcode";
 
   /** 排序字段 */
@@ -139,4 +139,13 @@ public interface ShipBillService {
    * @return 带装车信息
    */
   PageQueryResult<ShipBillContainerStock> queryWaitShipStocks(ShipTaskFilter filter);
+
+  /**
+   * 作废装车单
+   * 
+   * @param uuid
+   * @param version
+   * @throws WMSException
+   */
+  void abort(String uuid, long version) throws WMSException;
 }

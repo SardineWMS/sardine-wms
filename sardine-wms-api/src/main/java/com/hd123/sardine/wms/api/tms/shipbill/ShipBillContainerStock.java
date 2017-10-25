@@ -25,223 +25,223 @@ import com.hd123.sardine.wms.common.validator.Validator;
  *
  */
 public class ShipBillContainerStock extends Entity implements Validator {
-    private static final long serialVersionUID = -1589580927820368381L;
+  private static final long serialVersionUID = -1589580927820368381L;
 
-    private String shipBillUuid;
-    private int line;
-    private UCN article;
-    private UCN customer;
-    private String qpcStr;
-    private String spec = "-";
-    private String munit = "-";
-    private SourceBill sourceBill;
-    private String binCode;
-    private String containerBarcode;
-    private Date productionDate;
-    private Date validDate;
-    private String stockBatch;
-    private BigDecimal qty;
-    private String caseQtyStr;
-    private UCN supplier;
-    private UCN shiper;
-    private BigDecimal price;
-    
-    public BigDecimal getPrice() {
-      return price;
-    }
+  private String shipBillUuid;
+  private int line;
+  private UCN article;
+  private UCN customer;
+  private String qpcStr;
+  private String spec = "-";
+  private String munit = "-";
+  private SourceBill sourceBill;
+  private String binCode;
+  private String containerBarcode;
+  private Date productionDate;
+  private Date validDate;
+  private String stockBatch;
+  private BigDecimal qty;
+  private String caseQtyStr;
+  private UCN supplier;
+  private UCN shipper = new UCN();
+  private BigDecimal price;
 
-    public void setPrice(BigDecimal price) {
-      this.price = price;
-    }
+  public BigDecimal getPrice() {
+    return price;
+  }
 
-    /** 装车员 */
-    public UCN getShiper() {
-      return shiper;
-    }
+  public void setPrice(BigDecimal price) {
+    this.price = price;
+  }
 
-    public void setShiper(UCN shiper) {
-      this.shiper = shiper;
-    }
+  /** 装车员 */
+  public UCN getShipper() {
+    return shipper;
+  }
 
-    /** 装车单UUID */
-    public String getShipBillUuid() {
-        return shipBillUuid;
-    }
+  public void setShipper(UCN shipper) {
+    this.shipper = shipper;
+  }
 
-    public void setShipBillUuid(String shipBillUuid) {
-//        Assert.assertArgumentNotNull(shipBillUuid, "shipBillUuid");
-        this.shipBillUuid = shipBillUuid;
-    }
-    
-    public String getStockBatch() {
-      return stockBatch;
-    }
+  /** 装车单UUID */
+  public String getShipBillUuid() {
+    return shipBillUuid;
+  }
 
-    public void setStockBatch(String stockBatch) {
-      this.stockBatch = stockBatch;
-    }
+  public void setShipBillUuid(String shipBillUuid) {
+    // Assert.assertArgumentNotNull(shipBillUuid, "shipBillUuid");
+    this.shipBillUuid = shipBillUuid;
+  }
 
-    /** 行号 */
-    public int getLine() {
-        return line;
-    }
+  public String getStockBatch() {
+    return stockBatch;
+  }
 
-    public void setLine(int line) {
-        this.line = line;
-    }
+  public void setStockBatch(String stockBatch) {
+    this.stockBatch = stockBatch;
+  }
 
-    /** 商品 */
-    public UCN getArticle() {
-        return article;
-    }
+  /** 行号 */
+  public int getLine() {
+    return line;
+  }
 
-    public void setArticle(UCN article) {
-        Assert.assertArgumentNotNull(article, "article");
-        this.article = article;
-    }
+  public void setLine(int line) {
+    this.line = line;
+  }
 
-    /** 客户 */
-    public UCN getCustomer() {
-        return customer;
-    }
+  /** 商品 */
+  public UCN getArticle() {
+    return article;
+  }
 
-    public void setCustomer(UCN customer) {
-        Assert.assertArgumentNotNull(customer, "customer");
-        this.customer = customer;
-    }
+  public void setArticle(UCN article) {
+    Assert.assertArgumentNotNull(article, "article");
+    this.article = article;
+  }
 
-    /** 包装规格 */
-    public String getQpcStr() {
-        return qpcStr;
-    }
+  /** 客户 */
+  public UCN getCustomer() {
+    return customer;
+  }
 
-    public void setQpcStr(String qpcStr) {
-        Assert.assertArgumentNotNull(qpcStr, "qpcStr");
-        this.qpcStr = qpcStr;
-    }
+  public void setCustomer(UCN customer) {
+    Assert.assertArgumentNotNull(customer, "customer");
+    this.customer = customer;
+  }
 
-    /** 商品规格 */
-    public String getSpec() {
-        return spec;
-    }
+  /** 包装规格 */
+  public String getQpcStr() {
+    return qpcStr;
+  }
 
-    public void setSpec(String spec) {
-        Assert.assertArgumentNotNull(spec, "spec");
-        this.spec = spec;
-    }
+  public void setQpcStr(String qpcStr) {
+    Assert.assertArgumentNotNull(qpcStr, "qpcStr");
+    this.qpcStr = qpcStr;
+  }
 
-    /** 计量单位 */
-    public String getMunit() {
-        return munit;
-    }
+  /** 商品规格 */
+  public String getSpec() {
+    return spec;
+  }
 
-    public void setMunit(String munit) {
-        Assert.assertArgumentNotNull(munit, "munit");
-        this.munit = munit;
-    }
+  public void setSpec(String spec) {
+    Assert.assertArgumentNotNull(spec, "spec");
+    this.spec = spec;
+  }
 
-    /** 来源单号 */
-    public SourceBill getSourceBill() {
-        return sourceBill;
-    }
+  /** 计量单位 */
+  public String getMunit() {
+    return munit;
+  }
 
-    public void setSourceBill(SourceBill sourceBill) {
-        Assert.assertArgumentNotNull(sourceBill, "sourceBill");
-        this.sourceBill = sourceBill;
-    }
+  public void setMunit(String munit) {
+    Assert.assertArgumentNotNull(munit, "munit");
+    this.munit = munit;
+  }
 
-    /** 货位 */
-    public String getBinCode() {
-        return binCode;
-    }
+  /** 来源单号 */
+  public SourceBill getSourceBill() {
+    return sourceBill;
+  }
 
-    public void setBinCode(String binCode) {
-        Assert.assertArgumentNotNull(binCode, "binCode");
-        this.binCode = binCode;
-    }
+  public void setSourceBill(SourceBill sourceBill) {
+    Assert.assertArgumentNotNull(sourceBill, "sourceBill");
+    this.sourceBill = sourceBill;
+  }
 
-    /** 容器 */
-    public String getContainerBarcode() {
-        return containerBarcode;
-    }
+  /** 货位 */
+  public String getBinCode() {
+    return binCode;
+  }
 
-    public void setContainerBarcode(String containerBarcode) {
-        Assert.assertArgumentNotNull(containerBarcode, "containerBarcode");
-        this.containerBarcode = containerBarcode;
-    }
+  public void setBinCode(String binCode) {
+    Assert.assertArgumentNotNull(binCode, "binCode");
+    this.binCode = binCode;
+  }
 
-    /** 生产日期 */
-    public Date getProductionDate() {
-        return productionDate;
-    }
+  /** 容器 */
+  public String getContainerBarcode() {
+    return containerBarcode;
+  }
 
-    public void setProductionDate(Date productionDate) {
-        Assert.assertArgumentNotNull(productionDate, "productionDate");
-        this.productionDate = productionDate;
-    }
+  public void setContainerBarcode(String containerBarcode) {
+    Assert.assertArgumentNotNull(containerBarcode, "containerBarcode");
+    this.containerBarcode = containerBarcode;
+  }
 
-    /** 到校日期 */
-    public Date getValidDate() {
-        return validDate;
-    }
+  /** 生产日期 */
+  public Date getProductionDate() {
+    return productionDate;
+  }
 
-    public void setValidDate(Date validDate) {
-        Assert.assertArgumentNotNull(validDate, "validDate");
-        this.validDate = validDate;
-    }
+  public void setProductionDate(Date productionDate) {
+    Assert.assertArgumentNotNull(productionDate, "productionDate");
+    this.productionDate = productionDate;
+  }
 
-    /** 数量 */
-    public BigDecimal getQty() {
-        return qty;
-    }
+  /** 到校日期 */
+  public Date getValidDate() {
+    return validDate;
+  }
 
-    public void setQty(BigDecimal qty) {
-        Assert.assertArgumentNotNull(qty, "qty");
-        this.qty = qty;
-    }
+  public void setValidDate(Date validDate) {
+    Assert.assertArgumentNotNull(validDate, "validDate");
+    this.validDate = validDate;
+  }
 
-    /** 件数 */
-    public String getCaseQtyStr() {
-        return caseQtyStr;
-    }
+  /** 数量 */
+  public BigDecimal getQty() {
+    return qty;
+  }
 
-    public void setCaseQtyStr(String caseQtyStr) {
-        this.caseQtyStr = caseQtyStr;
-    }
+  public void setQty(BigDecimal qty) {
+    Assert.assertArgumentNotNull(qty, "qty");
+    this.qty = qty;
+  }
 
-    /** 供应商 */
-    public UCN getSupplier() {
-        return supplier;
-    }
+  /** 件数 */
+  public String getCaseQtyStr() {
+    return caseQtyStr;
+  }
 
-    public void setSupplier(UCN supplier) {
-        Assert.assertArgumentNotNull(supplier, "supplier");
-        this.supplier = supplier;
-    }
-    
-    @Override
-    public void validate() {
-        Assert.assertArgumentNotNull(article, "article");
-        Assert.assertArgumentNotNull(article.getUuid(), "article.uuid");
-        Assert.assertArgumentNotNull(article.getCode(), "article.code");
-        Assert.assertArgumentNotNull(article.getName(), "article.name");
-        Assert.assertArgumentNotNull(customer, "customer");
-        Assert.assertArgumentNotNull(customer.getUuid(), "customer.uuid");
-        Assert.assertArgumentNotNull(customer.getCode(), "customer.code");
-        Assert.assertArgumentNotNull(customer.getName(), "customer.name");
-        Assert.assertArgumentNotNull(qpcStr, "qpcStr");
-        Assert.assertArgumentNotNull(sourceBill, "sourceBill");
-        Assert.assertArgumentNotNull(sourceBill.getBillUuid(), "sourceBill.billUuid");
-        Assert.assertArgumentNotNull(sourceBill.getBillNumber(), "sourceBill.billNumber");
-        Assert.assertArgumentNotNull(sourceBill.getBillType(), "sourceBill.billType");
-        Assert.assertArgumentNotNull(binCode, "binCode");
-        Assert.assertArgumentNotNull(containerBarcode, "containerBarcode");
-        Assert.assertArgumentNotNull(productionDate, "productionDate");
-        Assert.assertArgumentNotNull(validDate, "validDate");
-        Assert.assertArgumentNotNull(qty, "qty");
-        Assert.assertArgumentNotNull(supplier, "supplier");
-        Assert.assertArgumentNotNull(supplier.getUuid(), "supplier.uuid");
-        Assert.assertArgumentNotNull(supplier.getCode(), "supplier.code");
-        Assert.assertArgumentNotNull(supplier.getName(), "supplier.name");
-    }
+  public void setCaseQtyStr(String caseQtyStr) {
+    this.caseQtyStr = caseQtyStr;
+  }
+
+  /** 供应商 */
+  public UCN getSupplier() {
+    return supplier;
+  }
+
+  public void setSupplier(UCN supplier) {
+    Assert.assertArgumentNotNull(supplier, "supplier");
+    this.supplier = supplier;
+  }
+
+  @Override
+  public void validate() {
+    Assert.assertArgumentNotNull(article, "article");
+    Assert.assertArgumentNotNull(article.getUuid(), "article.uuid");
+    Assert.assertArgumentNotNull(article.getCode(), "article.code");
+    Assert.assertArgumentNotNull(article.getName(), "article.name");
+    Assert.assertArgumentNotNull(customer, "customer");
+    Assert.assertArgumentNotNull(customer.getUuid(), "customer.uuid");
+    Assert.assertArgumentNotNull(customer.getCode(), "customer.code");
+    Assert.assertArgumentNotNull(customer.getName(), "customer.name");
+    Assert.assertArgumentNotNull(qpcStr, "qpcStr");
+    Assert.assertArgumentNotNull(sourceBill, "sourceBill");
+    Assert.assertArgumentNotNull(sourceBill.getBillUuid(), "sourceBill.billUuid");
+    Assert.assertArgumentNotNull(sourceBill.getBillNumber(), "sourceBill.billNumber");
+    Assert.assertArgumentNotNull(sourceBill.getBillType(), "sourceBill.billType");
+    Assert.assertArgumentNotNull(binCode, "binCode");
+    Assert.assertArgumentNotNull(containerBarcode, "containerBarcode");
+    Assert.assertArgumentNotNull(productionDate, "productionDate");
+    Assert.assertArgumentNotNull(validDate, "validDate");
+    Assert.assertArgumentNotNull(qty, "qty");
+    Assert.assertArgumentNotNull(supplier, "supplier");
+    Assert.assertArgumentNotNull(supplier.getUuid(), "supplier.uuid");
+    Assert.assertArgumentNotNull(supplier.getCode(), "supplier.code");
+    Assert.assertArgumentNotNull(supplier.getName(), "supplier.name");
+  }
 }

@@ -20,95 +20,107 @@ import com.hd123.sardine.wms.common.entity.UCN;
  *
  */
 public class Vehicle extends StandardEntity {
-    private static final long serialVersionUID = 8000399501692816578L;
-    public static final String CAPTION = "车辆";
+  private static final long serialVersionUID = 8000399501692816578L;
+  public static final String CAPTION = "车辆";
 
-    private static final int LENGTH_CODE = 30;
+  private static final int LENGTH_CODE = 30;
 
-    private String code;
-    private String vehicleNo;
-    private VehicleState state;
-    private UCN vehicleType;
-    private UCN carrier;
-    private String remark;
-    private String companyUuid;
+  private String code;
+  private String vehicleNo;
+  private VehicleState state;
+  private UCN vehicleType;
+  private UCN carrier;
+  private String remark;
+  private String companyUuid;
+  private UCN driver;
 
-    /** 代码 */
-    public String getCode() {
-        return code;
-    }
+  /** 代码 */
+  public String getCode() {
+    return code;
+  }
 
-    public void setCode(String code) {
-        Assert.assertArgumentNotNull(code, "code");
-        Assert.assertStringNotTooLong(code, LENGTH_CODE, "code");
-        this.code = code;
-    }
+  public void setCode(String code) {
+    Assert.assertArgumentNotNull(code, "code");
+    Assert.assertStringNotTooLong(code, LENGTH_CODE, "code");
+    this.code = code;
+  }
 
-    /** 车牌号 */
-    public String getVehicleNo() {
-        return vehicleNo;
-    }
+  /** 车牌号 */
+  public String getVehicleNo() {
+    return vehicleNo;
+  }
 
-    public void setVehicleNo(String vehicleNo) {
-        Assert.assertArgumentNotNull(vehicleNo, "vehicleNo");
-        Assert.assertStringNotTooLong(vehicleNo, LENGTH_CODE, "vehicleNo");
-        this.vehicleNo = vehicleNo;
-    }
+  public void setVehicleNo(String vehicleNo) {
+    Assert.assertArgumentNotNull(vehicleNo, "vehicleNo");
+    Assert.assertStringNotTooLong(vehicleNo, LENGTH_CODE, "vehicleNo");
+    this.vehicleNo = vehicleNo;
+  }
 
-    /** 状态 */
-    public VehicleState getState() {
-        return state;
-    }
+  /** 状态 */
+  public VehicleState getState() {
+    return state;
+  }
 
-    public void setState(VehicleState state) {
-        Assert.assertArgumentNotNull(state, "state");
-        this.state = state;
-    }
+  public void setState(VehicleState state) {
+    Assert.assertArgumentNotNull(state, "state");
+    this.state = state;
+  }
 
-    /** 车型 */
-    public UCN getVehicleType() {
-        return vehicleType;
-    }
+  /** 车型 */
+  public UCN getVehicleType() {
+    return vehicleType;
+  }
 
-    public void setVehicleType(UCN vehicleType) {
-        Assert.assertArgumentNotNull(vehicleType, "vehicleType");
-        this.vehicleType = vehicleType;
-    }
+  public void setVehicleType(UCN vehicleType) {
+    Assert.assertArgumentNotNull(vehicleType, "vehicleType");
+    this.vehicleType = vehicleType;
+  }
 
-    /** 承运商 */
-    public UCN getCarrier() {
-        return carrier;
-    }
+  /** 承运商 */
+  public UCN getCarrier() {
+    return carrier;
+  }
 
-    public void setCarrier(UCN carrier) {
-        Assert.assertArgumentNotNull(carrier, "carrier");
-        this.carrier = carrier;
-    }
+  public void setCarrier(UCN carrier) {
+    Assert.assertArgumentNotNull(carrier, "carrier");
+    this.carrier = carrier;
+  }
 
-    public String getRemark() {
-        return remark;
-    }
+  public String getRemark() {
+    return remark;
+  }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
+  public void setRemark(String remark) {
+    this.remark = remark;
+  }
 
-    public String getCompanyUuid() {
-        return companyUuid;
-    }
+  public String getCompanyUuid() {
+    return companyUuid;
+  }
 
-    public void setCompanyUuid(String companyUuid) {
-        Assert.assertArgumentNotNull(companyUuid, "companyUuid");
-        this.companyUuid = companyUuid;
-    }
+  public void setCompanyUuid(String companyUuid) {
+    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+    this.companyUuid = companyUuid;
+  }
 
-    public void validate() {
-        Assert.assertArgumentNotNull(carrier, "carrier");
-        Assert.assertArgumentNotNull(state, "state");
-        Assert.assertArgumentNotNull(vehicleNo, "vehicleNo");
-        Assert.assertArgumentNotNull(vehicleType, "vehicleType");
-        Assert.assertArgumentNotNull(code, "code");
-        Assert.assertArgumentNotNull(companyUuid, "companyUuid");
-    }
+  /** 司机 */
+  public UCN getDriver() {
+    return driver;
+  }
+
+  public void setDriver(UCN driver) {
+    Assert.assertArgumentNotNull(driver, "driver");
+    this.driver = driver;
+  }
+
+  public void validate() {
+    Assert.assertArgumentNotNull(carrier, "carrier");
+    Assert.assertArgumentNotNull(state, "state");
+    Assert.assertArgumentNotNull(vehicleNo, "vehicleNo");
+    Assert.assertArgumentNotNull(vehicleType, "vehicleType");
+    Assert.assertArgumentNotNull(code, "code");
+    Assert.assertArgumentNotNull(companyUuid, "companyUuid");
+    Assert.assertArgumentNotNull(driver, "driver");
+  }
 
 }

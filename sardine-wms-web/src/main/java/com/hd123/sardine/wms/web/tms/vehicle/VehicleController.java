@@ -81,8 +81,8 @@ public class VehicleController extends BaseController {
   }
 
   @RequestMapping(value = "/insert", method = RequestMethod.POST)
-  public @ResponseBody RespObject insert(
-      @RequestParam(value = "token", required = true) String token, @RequestBody Vehicle vehicle) {
+  public RespObject insert(@RequestParam(value = "token", required = true) String token,
+      @RequestBody Vehicle vehicle) {
     RespObject resp = new RespObject();
     try {
       vehicle.setState(VehicleState.free);

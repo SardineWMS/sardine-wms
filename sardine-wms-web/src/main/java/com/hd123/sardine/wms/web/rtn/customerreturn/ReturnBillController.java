@@ -60,7 +60,8 @@ public class ReturnBillController extends BaseController {
       @RequestParam(value = "articleName", required = false) String articleName,
       @RequestParam(value = "articleCode", required = false) String articleCode,
       @RequestParam(value = "supplierName", required = false) String supplierName,
-      @RequestParam(value = "supplierCode", required = false) String supplierCode) {
+      @RequestParam(value = "supplierCode", required = false) String supplierCode,
+      @RequestParam(value = "containerBarcode", required = false) String containerBarcode) {
     RespObject resp = new RespObject();
     try {
       PageQueryDefinition definition = new PageQueryDefinition();
@@ -82,6 +83,7 @@ public class ReturnBillController extends BaseController {
       definition.put(ReturnBillService.QUERY_ARTICLE_NAME_CONTAINS, articleName);
       definition.put(ReturnBillService.QUERY_SUPPLIER_CODE_CONTAINS, supplierCode);
       definition.put(ReturnBillService.QUERY_SUPPLIER_NAMW_CONTAINS, supplierName);
+      definition.put(ReturnBillService.QUERY_CONTAINERBARCODE_CONTAINS, containerBarcode);
       PageQueryResult<ReturnBill> result = service.query(definition);
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

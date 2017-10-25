@@ -84,7 +84,7 @@ public class SerialArchLine extends StandardEntity {
     public void validate() {
         Assert.assertArgumentNotNull(code, "code");
         Assert.assertArgumentNotNull(name, "name");
-        Assert.assertArgumentNotNull(serialArch, "serialArch");
+//        Assert.assertArgumentNotNull(serialArch, "serialArch");
         Assert.assertArgumentNotNull(companyUuid, "companyUuid");
     }
 

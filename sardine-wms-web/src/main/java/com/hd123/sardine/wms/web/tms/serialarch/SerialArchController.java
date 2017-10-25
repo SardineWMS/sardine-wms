@@ -56,8 +56,8 @@ public class SerialArchController extends BaseController {
   private CustomerService customerService;
 
   @RequestMapping(value = "/createSerialArch", method = RequestMethod.POST)
-  public @ResponseBody RespObject createSerialArch(
-      @RequestParam(value = "token", required = true) String token, @RequestBody SerialArch arch) {
+  public RespObject createSerialArch(@RequestParam(value = "token", required = true) String token,
+      @RequestBody SerialArch arch) {
     RespObject resp = new RespObject();
     try {
       arch.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
@@ -73,8 +73,7 @@ public class SerialArchController extends BaseController {
   }
 
   @RequestMapping(value = "/queryTreeData", method = RequestMethod.GET)
-  public @ResponseBody RespObject queryTreeData(
-      @RequestParam(value = "token", required = true) String token) {
+  public RespObject queryTreeData(@RequestParam(value = "token", required = true) String token) {
     RespObject resp = new RespObject();
     try {
       List<SerialArchInfo> data = service.queryTreeData();
@@ -89,8 +88,7 @@ public class SerialArchController extends BaseController {
   }
 
   @RequestMapping(value = "/createLine", method = RequestMethod.POST)
-  public @ResponseBody RespObject createLine(
-      @RequestParam(value = "token", required = true) String token,
+  public RespObject createLine(@RequestParam(value = "token", required = true) String token,
       @RequestBody SerialArchLine line) {
     RespObject resp = new RespObject();
     try {
@@ -107,8 +105,7 @@ public class SerialArchController extends BaseController {
   }
 
   @RequestMapping(value = "/getLineByCode", method = RequestMethod.GET)
-  public @ResponseBody RespObject getLineByCode(
-      @RequestParam(value = "token", required = true) String token,
+  public RespObject getLineByCode(@RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "code", required = true) String code) {
     RespObject resp = new RespObject();
     try {
@@ -125,8 +122,7 @@ public class SerialArchController extends BaseController {
   }
 
   @RequestMapping(value = "/addCustomer", method = RequestMethod.POST)
-  public @ResponseBody RespObject addCustomer(
-      @RequestParam(value = "token", required = true) String token,
+  public RespObject addCustomer(@RequestParam(value = "token", required = true) String token,
       @RequestBody LineCustomer lineCustomer) {
     RespObject resp = new RespObject();
     try {
@@ -143,7 +139,7 @@ public class SerialArchController extends BaseController {
   }
 
   @RequestMapping(value = "/queryCustomerWithoutLine", method = RequestMethod.GET)
-  public @ResponseBody RespObject queryCustomerWithoutLine(
+  public RespObject queryCustomerWithoutLine(
       @RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "page", required = false, defaultValue = "1") int page,
       @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
@@ -184,8 +180,7 @@ public class SerialArchController extends BaseController {
   }
 
   @RequestMapping(value = "/getLine", method = RequestMethod.GET)
-  public @ResponseBody RespObject getLine(
-      @RequestParam(value = "token", required = true) String token,
+  public RespObject getLine(@RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "uuid", required = true) String uuid) {
     RespObject resp = new RespObject();
     try {
@@ -202,8 +197,7 @@ public class SerialArchController extends BaseController {
   }
 
   @RequestMapping(value = "/removeCustomer", method = RequestMethod.DELETE)
-  public @ResponseBody RespObject removeCustomer(
-      @RequestParam(value = "token", required = true) String token,
+  public RespObject removeCustomer(@RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "customerUuid", required = true) String customerUuid,
       @RequestParam(value = "lineUuid", required = true) String lineUuid) {
     RespObject resp = new RespObject();
@@ -219,8 +213,7 @@ public class SerialArchController extends BaseController {
   }
 
   @RequestMapping(value = "/upOrder", method = RequestMethod.PUT)
-  public @ResponseBody RespObject upOrder(
-      @RequestParam(value = "token", required = true) String token,
+  public RespObject upOrder(@RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "customerUuid", required = true) String customerUuid,
       @RequestParam(value = "lineUuid", required = true) String lineUuid,
       @RequestParam(value = "order", required = true) int order) {
@@ -237,8 +230,7 @@ public class SerialArchController extends BaseController {
   }
 
   @RequestMapping(value = "/downOrder", method = RequestMethod.PUT)
-  public @ResponseBody RespObject downOrder(
-      @RequestParam(value = "token", required = true) String token,
+  public RespObject downOrder(@RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "customerUuid", required = true) String customerUuid,
       @RequestParam(value = "lineUuid", required = true) String lineUuid,
       @RequestParam(value = "order", required = true) int order) {
@@ -255,8 +247,7 @@ public class SerialArchController extends BaseController {
   }
 
   @RequestMapping(value = "/postponeCustomer", method = RequestMethod.PUT)
-  public @ResponseBody RespObject postponeCustomer(
-      @RequestParam(value = "token", required = true) String token,
+  public RespObject postponeCustomer(@RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "customerUuid", required = true) String customerUuid,
       @RequestParam(value = "lineUuid", required = true) String lineUuid,
       @RequestParam(value = "order", required = true) int order) {
@@ -273,8 +264,7 @@ public class SerialArchController extends BaseController {
   }
 
   @RequestMapping(value = "/stickCustomer", method = RequestMethod.PUT)
-  public @ResponseBody RespObject stickCustomer(
-      @RequestParam(value = "token", required = true) String token,
+  public RespObject stickCustomer(@RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "customerUuid", required = true) String customerUuid,
       @RequestParam(value = "lineUuid", required = true) String lineUuid,
       @RequestParam(value = "order", required = true) int order) {
@@ -291,7 +281,7 @@ public class SerialArchController extends BaseController {
   }
 
   @RequestMapping(value = "/queryCustomerByLine", method = RequestMethod.GET)
-  public @ResponseBody RespObject queryCustomerByLine(
+  public RespObject queryCustomerByLine(
       @RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "page", required = false, defaultValue = "1") int page,
       @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
@@ -324,8 +314,7 @@ public class SerialArchController extends BaseController {
   }
 
   @RequestMapping(value = "/querySerialArch", method = RequestMethod.GET)
-  public @ResponseBody RespObject querySerialArch(
-      @RequestParam(value = "token", required = true) String token) {
+  public RespObject querySerialArch(@RequestParam(value = "token", required = true) String token) {
     RespObject resp = new RespObject();
     try {
       PageQueryDefinition definition = new PageQueryDefinition();
@@ -338,6 +327,19 @@ public class SerialArchController extends BaseController {
       return new ErrorRespObject("登录信息为空，请重新登录：" + e.getMessage());
     } catch (Exception e) {
       return new ErrorRespObject("查询线路体系失败：" + e.getMessage());
+    }
+    return resp;
+  }
+
+  @RequestMapping(value = "/removeline", method = RequestMethod.DELETE)
+  public RespObject removeLine(@RequestParam(value = "uuid", required = true) String uuid,
+      @RequestParam(value = "version", required = true) long version) {
+    RespObject resp = new RespObject();
+    try {
+      service.removeLine(uuid, version);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("删除线路失败：", e.getMessage());
     }
     return resp;
   }

@@ -316,4 +316,16 @@
 		select t.* from db_proxy.sardine_serialarch t where
 		t.uuid=#{uuid,jdbcType=VARCHAR}
 	</select>
+
+	<select id="getLineByCompanyUuid" parameterType="java.lang.String"
+		resultMap="SerialArchLineMap">
+		select t.* from db_proxy.sardine_serialarchline t where
+		t.companyuuid=#{companyUuid,jdbcType=VARCHAR} order by code
+	</select>
+
+	<delete id="removeLine" parameterType="java.util.Map">
+		delete from
+		db_proxy.sardine.serialarchline where uuid=#{uuid,jdbcType=VARCHAR}
+		and version=#{version,jdbcType=LONGVARCHAR}
+	</delete>
 </mapper>

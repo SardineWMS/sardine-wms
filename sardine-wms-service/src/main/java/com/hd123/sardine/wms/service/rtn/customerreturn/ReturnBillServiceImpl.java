@@ -30,6 +30,8 @@ import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerState;
+import com.hd123.sardine.wms.api.ia.user.User;
+import com.hd123.sardine.wms.api.ia.user.UserService;
 import com.hd123.sardine.wms.api.in.putaway.PutawayService;
 import com.hd123.sardine.wms.api.rtn.customerreturn.ReturnBill;
 import com.hd123.sardine.wms.api.rtn.customerreturn.ReturnBillItem;
@@ -49,6 +51,7 @@ import com.hd123.sardine.wms.api.task.TaskService;
 import com.hd123.sardine.wms.api.task.TaskType;
 import com.hd123.sardine.wms.common.entity.OperateMode;
 import com.hd123.sardine.wms.common.entity.SourceBill;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
@@ -83,6 +86,8 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
   @Autowired
   private PutawayService putawayService;
   @Autowired
+  private UserService userService;
+  @Autowired
   private EntityLogger logger;
 
   @Override
@@ -97,6 +102,7 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     bill.setState(ReturnBillState.initial);
     bill.setUuid(UUIDGenerator.genUUID());
+    bill.setType(bill.getType() == null ? bill.getType() : OperateMode.ManualBill);
     dao.insert(bill);
 
     for (ReturnBillItem item : bill.getItems()) {
@@ -120,6 +126,10 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
         || ReturnNtcBillState.inProgress.equals(returnNtcBill.getState())) == false)
       throw new WMSException(MessageFormat.format("退仓通知单状态是{0}，不是初始或进行中的，不能操作",
           returnNtcBill.getState().getCaption()));
+    User user = userService.getByCode(bill.getReturnor().getCode());
+    if (Objects.isNull(user))
+      throw new WMSException("代码为" + bill.getReturnor().getCode() + "的用户不存在");
+    bill.setReturnor(new UCN(user.getUuid(), user.getCode(), user.getName()));
 
     assert returnNtcBill.getItems() != null;
     assert bill.getItems() != null;

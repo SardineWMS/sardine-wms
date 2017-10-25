@@ -417,4 +417,30 @@ public class ArticleController extends BaseController {
     return resp;
 
   }
+
+  @RequestMapping(value = "/online", method = RequestMethod.PUT)
+  public RespObject online(@RequestParam(value = "uuid", required = true) String uuid,
+      @RequestParam(value = "version", required = true) long version) {
+    RespObject resp = new RespObject();
+    try {
+      articleService.online(uuid, version);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("启用商品失败：", e.getMessage());
+    }
+    return resp;
+  }
+
+  @RequestMapping(value = "/offline", method = RequestMethod.PUT)
+  public RespObject offline(@RequestParam(value = "uuid", required = true) String uuid,
+      @RequestParam(value = "version", required = true) long version) {
+    RespObject resp = new RespObject();
+    try {
+      articleService.offline(uuid, version);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("停用商品失败：", e.getMessage());
+    }
+    return resp;
+  }
 }
