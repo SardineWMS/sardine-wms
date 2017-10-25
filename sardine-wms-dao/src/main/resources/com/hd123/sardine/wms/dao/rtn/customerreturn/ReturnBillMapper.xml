@@ -460,6 +460,7 @@
 			and EXISTS (select 1 from db_proxy.sardine_article
 			a,db_proxy.sardine_returnbillitem i
 			where a.uuid=i.articleuuid and
+			i.RETURNBILLUUID=t.uuid and
 			a.code=
 			#{articleCodeContains,jdbcType=VARCHAR})
 		</if>
@@ -467,6 +468,7 @@
 			and EXISTS (select 1 from db_proxy.sardine_article
 			a,db_proxy.sardine_returnbillitem i
 			where a.uuid=i.articleuuid and
+			i.RETURNBILLUUID=t.uuid and
 			a.name=
 			#{articleNameContains,jdbcType=VARCHAR})
 		</if>
@@ -474,6 +476,7 @@
 			and EXISTS (select 1 from db_proxy.sardine_supplier
 			s,db_proxy.sardine_returnbillitem i
 			where s.uuid=i.supplieruuid and
+			i.RETURNBILLUUID=t.uuid and
 			s.name=
 			#{supplierNameContains,jdbcType=VARCHAR})
 		</if>
@@ -481,8 +484,16 @@
 			and EXISTS (select 1 from db_proxy.sardine_supplier
 			s,db_proxy.sardine_returnbillitem i
 			where s.uuid=i.supplieruuid and
+			i.RETURNBILLUUID=t.uuid and
 			s.code=
 			#{supplierCodeContains,jdbcType=VARCHAR})
+		</if>
+		<if test="containerBarcodeContains != null">
+			and EXISTS (select 1 from db_proxy.sardine_returnbillitem
+			i
+			where i.RETURNBILLUUID=t.uuid and
+			i.CONTAINERBARCODE=
+			#{containerBarcodeContains,jdbcType=VARCHAR})
 		</if>
 		<if test="sortField != null and sortField == 'billNumber'">
 			order by t.billNumber ${orderDir}

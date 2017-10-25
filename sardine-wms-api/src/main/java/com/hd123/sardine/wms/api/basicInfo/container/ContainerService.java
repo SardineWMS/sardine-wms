@@ -23,6 +23,7 @@ public interface ContainerService {
   public static final String QUERY_STATE_FIELD = "state";
   public static final String QUERY_POSITION_FIELD = "position";
   public static final String QUERY_TOPOSITION_FIELD = "toPosition";
+  public static final String QUERY_TYPECODE_FIELD = "typeCode";
 
   /***
    * 新增容器

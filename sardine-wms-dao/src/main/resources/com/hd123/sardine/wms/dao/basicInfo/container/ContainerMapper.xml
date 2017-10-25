@@ -56,7 +56,8 @@
 		resultMap="BaseResultMap">
 		select t.*
 		from db_proxy.sardine_container t
-		where companyuuid = #{companyUuid, jdbcType=VARCHAR}
+		where companyuuid =
+		#{companyUuid, jdbcType=VARCHAR}
 		<if test="barcode != null">
 			and t.barcode like CONCAT(CONCAT('%', #{barcode}),
 			'%')
@@ -69,6 +70,9 @@
 		</if>
 		<if test="state != null">
 			and t.state = #{state,jdbcType=VARCHAR}
+		</if>
+		<if test="typeCode != null and typeCode != ''">
+			and t.containerTypeCode = #{typeCode,jdbcType=VARCHAR}
 		</if>
 		<if test="sortField != null and sortField =='barcode'">
 			order by t.barcode ${orderDir}
