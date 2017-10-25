@@ -340,7 +340,7 @@
 			)
 		</if>
 		<if test="returnSupplierDateLessThanOrEqual != null ">
-			and t.returnSupplierDate  <![CDATA[<=]]>
+			and t.returnSupplierDate  <![CDATA[<]]>
 			#{returnSupplierDateLessThanOrEqual,jdbcType=TIMESTAMP}
 		</if>
 		<if test="returnSupplierDateGreaterThanOrEqual != null ">

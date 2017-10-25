@@ -52,9 +52,10 @@ public class ReturnSupplierBillController extends BaseController {
     public @ResponseBody RespObject query(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
-            @RequestParam(value = "sort", required = false) String sort,
+            @RequestParam(value = "sort", required = false,
+                    defaultValue = "billNumber") String sort,
             @RequestParam(value = "order", required = false,
-                    defaultValue = "asc") String sortDirection,
+                    defaultValue = "desc") String sortDirection,
             @RequestParam(value = "token", required = false) String token,
             @RequestParam(value = "billNumber", required = false) String billNumber,
             @RequestParam(value = "state", required = false) String state,
@@ -78,8 +79,7 @@ public class ReturnSupplierBillController extends BaseController {
             PageQueryDefinition definition = new PageQueryDefinition();
             definition.setPage(page);
             definition.setPageSize(pageSize);
-            definition.setSortField(StringUtil.isNullOrBlank(sort)
-                    ? ReturnSupplierBillService.QUERY_BILLNUMBER_LIKE : sort);
+            definition.setSortField(sort);
             definition.setOrderDir(OrderDir.valueOf(sortDirection));
             definition.put(ReturnSupplierBillService.QUERY_BILLNUMBER_LIKE, billNumber);
             definition.put(ReturnSupplierBillService.QUERY_STATE_EQUALS,

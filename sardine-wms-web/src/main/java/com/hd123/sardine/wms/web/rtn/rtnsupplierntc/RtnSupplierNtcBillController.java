@@ -48,7 +48,8 @@ public class RtnSupplierNtcBillController {
     public @ResponseBody RespObject query(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
-            @RequestParam(value = "sort", required = false, defaultValue = "billNumber") String sort,
+            @RequestParam(value = "sort", required = false,
+                    defaultValue = "billNumber") String sort,
             @RequestParam(value = "order", required = false,
                     defaultValue = "desc") String sortDirection,
             @RequestParam(value = "token", required = false) String token,
@@ -68,8 +69,7 @@ public class RtnSupplierNtcBillController {
             PageQueryDefinition definition = new PageQueryDefinition();
             definition.setPage(page);
             definition.setPageSize(pageSize);
-            definition.setSortField(StringUtil.isNullOrBlank(sort)
-                    ? RtnSupplierNtcBillService.QUERY_BILLNUMBER_LIKE : sort);
+            definition.setSortField(sort);
             definition.setOrderDir(OrderDir.valueOf(sortDirection));
             definition.put(RtnSupplierNtcBillService.QUERY_ARTICLECODE_CONTAIN, articleCode);
             definition.put(RtnSupplierNtcBillService.QUERY_ARTICLENAME_CONTAIN, articleName);
