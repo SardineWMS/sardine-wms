@@ -25,7 +25,7 @@
 			jdbcType="VARCHAR" />
 		<result column="deliveryType" property="deliveryType" jdbcType="VARCHAR" />
 		<result column="totalCaseQtyStr" property="totalCaseQtyStr" jdbcType="VARCHAR" />
-		<result column="alcTotalCaseQtyStr" property="alcTotalCaseQtyStr" jdbcType="VARCHAR" />
+		<result column="totalAlcCaseQtyStr" property="totalAlcCaseQtyStr" jdbcType="VARCHAR" />
 		<result column="totalAlcAmount" property="totalAlcAmount" jdbcType="DECIMAL" />
 		<result column="totalAmount" property="totalAmount" jdbcType="DECIMAL" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
@@ -113,7 +113,7 @@
 			<if test="totalCaseQtyStr != null">
 				totalCaseQtyStr,
 			</if>
-			<if test="alcTotalCaseQtyStr != null">
+			<if test="totalAlcCaseQtyStr != null">
 				totalAlcCaseQtyStr,
 			</if>
 			<if test="totalAmount != null">
@@ -172,8 +172,8 @@
 			<if test="totalCaseQtyStr != null">
 				#{totalCaseQtyStr,jdbcType=VARCHAR},
 			</if>
-			<if test="alcTotalCaseQtyStr != null">
-				#{alcTotalCaseQtyStr,jdbcType=VARCHAR},
+			<if test="totalAlcCaseQtyStr != null">
+				#{totalAlcCaseQtyStr,jdbcType=VARCHAR},
 			</if>
 			<if test="totalAmount != null">
 				#{totalAmount,jdbcType=DECIMAL},
@@ -350,7 +350,7 @@
 		from
 		db_proxy.sardine_acceptanceBill t,
 		db_proxy.sardine_wrh w,
-		db_proxy.sardine_wrh c
+		db_proxy.sardine_customer c
 		where t.wrhuuid = w.uuid
 		  and t.customeruuid = c.uuid
 		  and t.companyuuid = #{companyUuid, jdbcType=VARCHAR}

@@ -93,6 +93,7 @@ public class AcceptanceBillServiceImpl extends BaseWMSService implements Accepta
     acceptanceBill.setState(AcceptanceBillState.Initial);
     acceptanceBill.setBillNumber(
         billNumberGenerator.allocateNextBillNumber(AcceptanceBill.class.getSimpleName()));
+    acceptanceBill.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
     acceptanceBill.setCreateInfo(ApplicationContextUtil.getOperateInfo());
     acceptanceBill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
 

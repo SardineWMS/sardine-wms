@@ -463,6 +463,9 @@
 		<if test="articleUuid != null and articleUuid != ''">
 			and t.articleUuid = #{articleUuid}
 		</if>
+		<if test="articleCode != null and articleCode != ''">
+			and t.articleCode = #{articleCode}
+		</if>
 		<if test="stockBatch != null and stockBatch != ''">
 			and t.stockBatch = #{stockBatch}
 		</if>
