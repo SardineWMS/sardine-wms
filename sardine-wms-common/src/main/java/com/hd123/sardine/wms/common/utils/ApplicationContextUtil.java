@@ -162,7 +162,7 @@ public class ApplicationContextUtil {
 
   public static UserType getUserType() {
     String companyUuid = COMPANYUUID_LOCAL.get();
-    if (companyUuid.contains(Constants.DC_PREFIX)) {
+    if (companyUuid.length() > 8) {
       return UserType.dcUser;
     } else if (companyUuid.contains(Constants.SUPP_PREFIX)) {
       return UserType.supplierUser;
