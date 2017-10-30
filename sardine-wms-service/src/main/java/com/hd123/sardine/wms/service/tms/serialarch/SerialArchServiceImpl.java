@@ -32,7 +32,6 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.query.PageQueryUtil;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
-import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.common.utils.UUIDGenerator;
 import com.hd123.sardine.wms.dao.tms.serialarch.SerialArchDao;
 import com.hd123.sardine.wms.service.ia.BaseWMSService;
@@ -438,20 +437,30 @@ public class SerialArchServiceImpl extends BaseWMSService implements SerialArchS
   }
 
   @Override
-  public void removeLine(String uuid, long version) throws WMSException {
-    Assert.assertArgumentNotNull(uuid, "uuid");
-    Assert.assertArgumentNotNull(version, "version");
+  public void removeLine(String code) throws WMSException {
+    Assert.assertArgumentNotNull(code, "code");
 
-    SerialArchLine line = dao.getLine(uuid);
+    SerialArchLine line = dao.getLineByCode(code);
+    ;
     if (Objects.isNull(line))
-      throw new WMSException(MessageFormat.format("要删除的线路{0}不存在", uuid));
-    List<SerialArchLineCustomer> lineCustomers = dao.getCustomerByLine(uuid);
+      throw new WMSException(MessageFormat.format("要删除的线路{0}不存在", code));
+    List<SerialArchLineCustomer> lineCustomers = dao.getCustomerByLine(line.getUuid());
     if (CollectionUtils.isEmpty(lineCustomers) == false)
       throw new WMSException("线路下包含有门店，不能删除");
-    PersistenceUtils.checkVersion(version, line, SerialArchLine.CAPTION, uuid);
 
-    dao.removeLine(uuid, version);
+    dao.removeLine(line.getUuid());
 
+  }
+
+  @Override
+  public PageQueryResult<Customer> queryCustomerWithoutLine(PageQueryDefinition definition) {
+    Assert.assertArgumentNotNull(definition, "definition");
+
+    List<Customer> list = dao.queryCustomerWithoutLine(definition);
+    PageQueryResult<Customer> pqr = new PageQueryResult<>();
+    PageQueryUtil.assignPageInfo(pqr, definition);
+    pqr.setRecords(list);
+    return pqr;
   }
 
 }

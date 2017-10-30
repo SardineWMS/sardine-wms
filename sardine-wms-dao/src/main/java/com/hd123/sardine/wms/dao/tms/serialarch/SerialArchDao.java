@@ -11,6 +11,7 @@ package com.hd123.sardine.wms.dao.tms.serialarch;
 
 import java.util.List;
 
+import com.hd123.sardine.wms.api.basicInfo.customer.Customer;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArch;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArchLine;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArchLineCustomer;
@@ -54,5 +55,7 @@ public interface SerialArchDao extends BaseDao<SerialArch> {
 
   List<SerialArchLine> getLineByCompanyUuid();
 
-  int removeLine(String uuid, long version);
+  int removeLine(String uuid);
+
+  List<Customer> queryCustomerWithoutLine(PageQueryDefinition definition);
 }

@@ -11,6 +11,7 @@ package com.hd123.sardine.wms.api.tms.serialarch;
 
 import java.util.List;
 
+import com.hd123.sardine.wms.api.basicInfo.customer.Customer;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
@@ -204,5 +205,15 @@ public interface SerialArchService {
    * @Exception VersionConflictException
    * @exception WMSException
    */
-  void removeLine(String uuid, long version) throws WMSException;
+  void removeLine(String code) throws WMSException;
+
+  /**
+   * 查询没有加入线路中的客户列表
+   * 
+   * @param definition
+   *          查询条件，not null
+   * @return
+   * @throws IllegalArgumentException
+   */
+  PageQueryResult<Customer> queryCustomerWithoutLine(PageQueryDefinition definition);
 }

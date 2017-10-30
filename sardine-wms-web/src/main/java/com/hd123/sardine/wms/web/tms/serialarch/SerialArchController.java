@@ -10,27 +10,23 @@
 package com.hd123.sardine.wms.web.tms.serialarch;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hd123.sardine.wms.api.basicInfo.customer.CustomerService;
+import com.hd123.sardine.wms.api.basicInfo.customer.Customer;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArch;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArchInfo;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArchLine;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArchLineCustomer;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArchService;
-import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
@@ -39,7 +35,6 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
-import com.hd123.sardine.wms.common.query.PageQueryUtil;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.web.base.BaseController;
 
@@ -52,8 +47,6 @@ import com.hd123.sardine.wms.web.base.BaseController;
 public class SerialArchController extends BaseController {
   @Autowired
   private SerialArchService service;
-  @Autowired
-  private CustomerService customerService;
 
   @RequestMapping(value = "/createSerialArch", method = RequestMethod.POST)
   public RespObject createSerialArch(@RequestParam(value = "token", required = true) String token,
@@ -145,30 +138,21 @@ public class SerialArchController extends BaseController {
       @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
       @RequestParam(value = "sort", required = false) String sort,
       @RequestParam(value = "order", required = false, defaultValue = "asc") String sortDirection,
-      @RequestParam(value = "lineUuid", required = false) String lineUuid) {
+      @RequestParam(value = "code", required = false) String code,
+      @RequestParam(value = "name", required = false) String name,
+      @RequestParam(value = "state", required = false) String state) {
     RespObject resp = new RespObject();
     try {
       PageQueryDefinition definition = new PageQueryDefinition();
       definition.setPage(page);
-      definition.setPageSize(0);
+      definition.setPageSize(pageSize);
       definition.setSortField(sort);
       definition.setOrderDir(OrderDir.valueOf(sortDirection));
-      List<UCN> allCustomer = customerService.queryAllCustomer();// 不分页获取当前登录组织下所有的客户
-      SerialArchLine line = service.getLine(lineUuid);
-      List<SerialArchLine> list = service.getLinesByArchUuid(line.getSerialArch().getUuid());
-      Set<UCN> uuids = new HashSet<>();
-      for (SerialArchLine l : list) {
-        List<SerialArchLineCustomer> allCustomersInArch = service
-            .getCustomersByLineUuid(l.getUuid());
-        for (SerialArchLineCustomer c : allCustomersInArch) {
-          uuids.add(c.getCustomer());// 当前线路体系下的所有客户
-        }
-      }
-      allCustomer.removeAll(uuids);
-      definition.setPageSize(pageSize);
-      PageQueryResult<UCN> pqr = new PageQueryResult<>();
-      PageQueryUtil.assignPageInfo(pqr, definition);
-      pqr.setRecords(allCustomer);
+      definition.put("code", code);
+      definition.put("name", name);
+      definition.put("state", state);
+
+      PageQueryResult<Customer> pqr = service.queryCustomerWithoutLine(definition);
       resp.setObj(pqr);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (NotLoginInfoException e) {
@@ -332,11 +316,12 @@ public class SerialArchController extends BaseController {
   }
 
   @RequestMapping(value = "/removeline", method = RequestMethod.DELETE)
-  public RespObject removeLine(@RequestParam(value = "uuid", required = true) String uuid,
-      @RequestParam(value = "version", required = true) long version) {
+  public RespObject removeLine(@RequestParam(value = "code", required = true) String code) {
     RespObject resp = new RespObject();
     try {
-      service.removeLine(uuid, version);
+      String substring = code.substring(1);
+      String[] split = substring.split("]");
+      service.removeLine(split[0]);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
       return new ErrorRespObject("删除线路失败：", e.getMessage());

@@ -325,7 +325,27 @@
 
 	<delete id="removeLine" parameterType="java.util.Map">
 		delete from
-		db_proxy.sardine.serialarchline where uuid=#{uuid,jdbcType=VARCHAR}
-		and version=#{version,jdbcType=LONGVARCHAR}
+		db_proxy.sardine_serialarchline where uuid=#{uuid,jdbcType=VARCHAR}
 	</delete>
+
+	<select id="queryCustomerWithoutLine" parameterType="PageQueryDefinition"
+		resultType="com.hd123.sardine.wms.api.basicInfo.customer.Customer">
+		select a.* from db_proxy.sardine_customer a where a.uuid not in
+		(SELECT t.UUID
+		from db_proxy.sardine_customer t INNER JOIN
+		db_proxy.sardine_serialarchlinecustomer b ON
+		t.UUID=b.CUSTOMERUUID)
+		<if test="code != null and code != ''">
+			and a.code=#{code,jdbcType=VARCHAR}
+		</if>
+		<if test="name != null and name != ''">
+			and a.name=#{name,jdbcType=VARCHAR}
+		</if>
+		<if test="state != null and state != ''">
+			and a.state=#{state,jdbcType=VARCHAR}
+		</if>
+		<if test="companyUuid != null and companyUuid != ''">
+			and a.companyUuid=#{companyUuid,jdbcType=VARCHAR}
+		</if>
+	</select>
 </mapper>
