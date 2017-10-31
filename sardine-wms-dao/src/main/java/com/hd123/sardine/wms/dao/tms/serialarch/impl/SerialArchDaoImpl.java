@@ -16,6 +16,7 @@ import java.util.Map;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
+import com.hd123.sardine.wms.api.basicInfo.customer.Customer;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArch;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArchLine;
 import com.hd123.sardine.wms.api.tms.serialarch.SerialArchLineCustomer;
@@ -47,6 +48,7 @@ public class SerialArchDaoImpl extends BaseDaoImpl<SerialArch> implements Serial
   public static final String MAPPER_QUERYCUSTOMERBYLINE = "queryCustomerByLine";
   public static final String MAPPER_GETLINEBYCOMPANYUUID = "getLineByCompanyUuid";
   public static final String MAPPER_REMOVELINE = "removeLine";
+  public static final String MAPPER_QUERY_CUSTOMER_WITHOUT_LINE = "queryCustomerWithoutLine";
 
   @Override
   public SerialArch getByCode(String code) {
@@ -180,13 +182,20 @@ public class SerialArchDaoImpl extends BaseDaoImpl<SerialArch> implements Serial
   }
 
   @Override
-  public int removeLine(String uuid, long version) {
+  public int removeLine(String uuid) {
     Map<String, Object> map = ApplicationContextUtil.map();
     map.put("uuid", uuid);
-    map.put("version", version);
     int i = getSqlSession().delete(generateStatement(MAPPER_REMOVELINE), map);
     PersistenceUtils.optimisticVerify(i);
     return i;
+  }
+
+  @Override
+  public List<Customer> queryCustomerWithoutLine(PageQueryDefinition definition) {
+    Assert.assertArgumentNotNull(definition, "definition");
+
+    return getSqlSession().selectList(generateStatement(MAPPER_QUERY_CUSTOMER_WITHOUT_LINE),
+        definition);
   }
 
 }
