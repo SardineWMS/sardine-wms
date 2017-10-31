@@ -117,10 +117,7 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
     article.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     articleDao.insert(article);
 
-    ArticleConfig articleConfig = new ArticleConfig();
-    articleConfig.setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
-    articleConfig.setPutawayBin(article.getPutawayBin());
-    articleConfigService.saveArticleConfig(articleConfig);
+    saveArticleConfig(article);
 
     saveArticleQpcAndBarcode(article);// 新增商品时默认添加商品条码=商品代码，规格为1*1*1
 
@@ -165,14 +162,24 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
     article.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     articleDao.update(article);
 
-    ArticleConfig articleConfig = new ArticleConfig();
-    articleConfig.setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
-    articleConfig.setPutawayBin(article.getPutawayBin());
-    articleConfigService.saveArticleConfig(articleConfig);
+    saveArticleConfig(article);
 
     logger.injectContext(this, article.getUuid(), Article.class.getName(),
         ApplicationContextUtil.getOperateContext());
     logger.log(EntityLogger.EVENT_MODIFY, "修改商品");
+  }
+
+  private void saveArticleConfig(Article article) throws WMSException {
+    ArticleConfig articleConfig = new ArticleConfig();
+    articleConfig.setArticle(new UCN(article.getUuid(), article.getCode(), article.getName()));
+    if (StringUtil.isNullOrBlank(article.getFixedPickBin()) == false) {
+      Bin pickUpBin = binService.getBinByCode(article.getFixedPickBin());
+      if (Objects.isNull(pickUpBin))
+        throw new WMSException("固定拣货位" + article.getFixedPickBin() + "不存在");
+    }
+    articleConfig.setPutawayBin(article.getPutawayBin());
+    articleConfig.setStorageArea(article.getStorageArea());
+    articleConfigService.saveArticleConfig(articleConfig);
   }
 
   @Override

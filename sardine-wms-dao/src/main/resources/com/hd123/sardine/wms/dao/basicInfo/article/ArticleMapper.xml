@@ -74,64 +74,161 @@
 
 	<insert id="insert" parameterType="Article">
 		insert into
-		db_proxy.sardine_article (
-		uuid,
-		code,
-		name,
-		spec,
-		state,
-		expdays,
-		categoryuuid,
-		categorycode,
-		categoryname,
-		expflag,
-		version,
-		remark,
-		CREATEDTIME,
-		CREATEDID,
-		CREATEDCODE,
-		CREATEDNAME,
-		LASTMODIFYTIME,
-		LASTMODIFYID,
-		LASTMODIFYCODE,
-		LASTMODIFYNAME,
-		companyUuid,
-		secondcode,
-		simplename,
-		sellprice,
-		purchaseprice,
-		habitat,
-		size
-		)
-		values (
-		#{uuid,jdbcType=VARCHAR},
-		#{code,jdbcType=VARCHAR},
-		#{name,jdbcType=VARCHAR},
-		#{spec,jdbcType=VARCHAR},
-		#{state,jdbcType=VARCHAR},
-		#{expDays,jdbcType=INTEGER},
-		#{category.uuid,jdbcType=VARCHAR},
-		#{category.code,jdbcType=VARCHAR},
-		#{category.name,jdbcType=VARCHAR},
-		#{expflag,jdbcType=VARCHAR},
-		#{version,jdbcType=LONGVARCHAR},
-		#{remark,jdbcType=VARCHAR},
-		#{createInfo.time,jdbcType=TIMESTAMP},
-		#{createInfo.operator.id,jdbcType=VARCHAR},
-		#{createInfo.operator.code,jdbcType=VARCHAR},
-		#{createInfo.operator.fullName,jdbcType=VARCHAR},
-		#{lastModifyInfo.time,jdbcType=TIMESTAMP},
-		#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
-		#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
-		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
-		#{companyUuid,jdbcType=VARCHAR},
-		#{secondCode,jdbcType=VARCHAR},
-		#{simpleName,jdbcType=VARCHAR},
-		#{sellPrice,jdbcType=DECIMAL},
-		#{purchasePrice,jdbcType=DECIMAL},
-		#{habitat,jdbcType=VARCHAR},
-		#{size,jdbcType=VARCHAR}
-		)
+		db_proxy.sardine_article
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uuid != null and uuid != ''">
+				uuid,
+			</if>
+			<if test="code != null and code != ''">
+				code,
+			</if>
+			<if test="name != null and name != ''">
+				name,
+			</if>
+			<if test="spec != null and spec != ''">
+				spec,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="expDays != null">
+				expdays,
+			</if>
+			<if
+				test="category != null and category.uuid != null and category.uuid !=''">
+				categoryuuid,
+			</if>
+			<if
+				test="category != null and category.code != null and category.code != ''">
+				categorycode,
+			</if>
+			<if
+				test="category != null and category.name != null and category.name != ''">
+				categoryname,
+			</if>
+			<if test="expflag != null">
+				expflag,
+			</if>
+			<if test="remark != null and remark != ''">
+				remark,
+			</if>
+			<if test="secondCode != null and secondCode != ''">
+				secondcode,
+			</if>
+			<if test="simpleName != null and simpleName != ''">
+				simplename,
+			</if>
+			<if test="sellPrice != null">
+				sellprice,
+			</if>
+			<if test="purchasePrice != null">
+				purchaseprice,
+			</if>
+			<if test="habitat != null and habitat != ''">
+				habitat,
+			</if>
+			<if test="size != null and size !=''">
+				size,
+			</if>
+			<if test="companyUuid != null and companyUuid != ''">
+				companyUuid,
+			</if>
+			<if test="stkLmtDays != null">
+				stkLmtDays,
+			</if>
+			<if test="goodsRtnLmtDays != null">
+				goodsRtnLmtDays,
+			</if>
+			<if test="alcLmtDays != null">
+				alcLmtDays,
+			</if>
+			version,
+			CREATEDTIME,
+			CREATEDID,
+			CREATEDCODE,
+			CREATEDNAME,
+			LASTMODIFYTIME,
+			LASTMODIFYID,
+			LASTMODIFYCODE,
+			LASTMODIFYNAME,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uuid != null and uuid != ''">
+				#{uuid,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null and code != ''">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null and name != ''">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="spec != null and spec != ''">
+				#{spec,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=VARCHAR},
+			</if>
+			<if test="expDays != null">
+				#{expDays,jdbcType=INTEGER},
+			</if>
+			<if
+				test="category != null and category.uuid != null and category.uuid !=''">
+				#{category.uuid,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="category != null and category.code != null and category.code != ''">
+				#{category.code,jdbcType=VARCHAR},
+			</if>
+			<if
+				test="category != null and category.name != null and category.name != ''">
+				#{category.name,jdbcType=VARCHAR},
+			</if>
+			<if test="expflag != null">
+				#{expflag,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null and remark != ''">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="secondCode != null and secondCode != ''">
+				#{secondCode,jdbcType=VARCHAR},
+			</if>
+			<if test="simpleName != null and simpleName != ''">
+				#{simpleName,jdbcType=VARCHAR},
+			</if>
+			<if test="sellPrice != null">
+				#{sellPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="purchasePrice != null">
+				#{purchasePrice,jdbcType=DECIMAL},
+			</if>
+			<if test="habitat != null and habitat != ''">
+				#{habitat,jdbcType=VARCHAR},
+			</if>
+			<if test="size != null and size !=''">
+				#{size,jdbcType=VARCHAR}
+			</if>
+			<if test="companyUuid != null and companyUuid != ''">
+				#{companyUuid,jdbcType=VARCHAR},
+			</if>
+			<if test="stkLmtDays != null">
+				#{stkLmtDays,jdbcType=INTEGER},
+			</if>
+			<if test="goodsRtnLmtDays != null">
+				#{goodsRtnLmtDays,jdbcType=INTEGER},
+			</if>
+			<if test="alcLmtDays != null">
+				#{alcLmtDays,jdbcType=INTEGER},
+			</if>
+			#{version,jdbcType=LONGVARCHAR},
+			#{createInfo.time,jdbcType=TIMESTAMP},
+			#{createInfo.operator.id,jdbcType=VARCHAR},
+			#{createInfo.operator.code,jdbcType=VARCHAR},
+			#{createInfo.operator.fullName,jdbcType=VARCHAR},
+			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		</trim>
 	</insert>
 
 	<update id="update" parameterType="Article">
@@ -176,6 +273,15 @@
 			</if>
 			<if test="size != null and size != ''">
 				size=#{size,jdbcType=VARCHAR},
+			</if>
+			<if test="stkLmtDays != null">
+				stkLmtDays=#{stkLmtDays,jdbcType=INTEGER},
+			</if>
+			<if test="goodsRtnLmtDays != null">
+				goodsRtnLmtDays=#{goodsRtnLmtDays,jdbcType=INTEGER},
+			</if>
+			<if test="alcLmtDays != null">
+				alcLmtDays=#{alcLmtDays,jdbcType=INTEGER},
 			</if>
 			<if test="lastModifyInfo != null and lastModifyInfo.time != null">
 				LASTMODIFYTIME =
