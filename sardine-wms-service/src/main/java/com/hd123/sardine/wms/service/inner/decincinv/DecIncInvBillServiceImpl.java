@@ -302,13 +302,14 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
     for (DecIncInvBillItem item : decIncInvBill.getItems()) {
       StockShiftRule rule = new StockShiftRule();
       rule.setBinCode(item.getBinCode());
-      rule.setContainerBarcode(item.getBinCode());
+      rule.setContainerBarcode(item.getContainerBarCode());
       rule.setArticleUuid(item.getArticle().getUuid());
       rule.setSupplierUuid(item.getSupplier().getUuid());
       rule.setQty(item.getQty().abs());
       rule.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       rule.setStockBatch(item.getStockBatch());
       rule.setQpcStr(item.getQpcStr());
+      rule.setOwner(ApplicationContextUtil.getCompanyUuid());
       shiftOutRules.add(rule);
       if (StringUtil.isNullOrBlank(item.getContainerBarCode()) == false
           && Container.VIRTUALITY_CONTAINER.equals(item.getContainerBarCode()) == false)
@@ -334,6 +335,7 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
 
     for (String binCode : binCodes) {
       StockFilter stockFilter = new StockFilter();
+      stockFilter.setPageSize(0);
       stockFilter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       stockFilter.setBinCode(binCode);
       List<Stock> stocks = stockService.query(stockFilter);

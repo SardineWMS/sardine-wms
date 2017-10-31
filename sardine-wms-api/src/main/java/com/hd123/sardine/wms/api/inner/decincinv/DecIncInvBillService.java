@@ -24,7 +24,12 @@ public interface DecIncInvBillService {
     public static final String QUERY_BILLNUMBER_LIKE = "billNumber";
     public static final String QUERY_STATE_EQUALS = "state";
     public static final String QUERY_TYPE_EQUALS = "type";
-    public static final String QUERY_WRHCODE_LIKE = "wrhCode";
+    public static final String QUERY_WRHUUID_EQUALS = "wrhUuid";
+    public static final String QUERY_OPERATORCODE_EQUALS = "operatorCode";
+    public static final String QUERY_BINCODE_LIKE = "binCode";
+    public static final String QUERY_CONTAINERBARCODE_LIKE = "containerBarcode";
+    public static final String QUERY_ARTICLECODE_LIKE = "articleCode";
+
 
     /** 排序字段 */
     public static final String FIELD_ORDER_BILLNO = "billNumber";
