@@ -131,7 +131,7 @@ public class SupplierController extends BaseController {
     return resp;
   }
 
-  @RequestMapping(value = "/remove", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/remove", method = RequestMethod.PUT)
   public @ResponseBody RespObject remove(
       @RequestParam(value = "uuid", required = false) String uuid,
       @RequestParam(value = "token", required = false) String token,
