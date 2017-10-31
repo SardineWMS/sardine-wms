@@ -24,23 +24,27 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
  */
 public interface BinDao {
 
-  void remove(String uuid, long version);
+	void remove(String uuid, long version);
 
-  void insert(Bin bin);
+	void insert(Bin bin);
 
-  List<Bin> query(PageQueryDefinition definition);
+	List<Bin> query(PageQueryDefinition definition);
 
-  Bin getByCode(String companyUuid, String code);
+	Bin getByCode(String companyUuid, String code);
 
-  Bin get(String uuid, String companyUuid);
+	Bin get(String uuid, String companyUuid);
 
-  Bin getBinByWrhAndUsage(String wrhUuid, BinUsage usage);
+	Bin getBinByWrhAndUsage(String wrhUuid, BinUsage usage);
 
-  void changeState(String uuid, long version, BinState state);
+	void changeState(String uuid, long version, BinState state);
 
-  List<String> queryBincodesByScope(String sql, BinUsage binUsage, BinState state);
+	List<String> queryBincodesByScope(String sql, BinUsage binUsage, BinState state);
 
-  List<String> queryBincodesByScope(String sql, BinUsage binUsage, List<BinState> states);
+	List<String> queryBincodesByScope(String sql, BinUsage binUsage, List<BinState> states);
 
-  List<String> queryBinByUsageAndState(BinUsage usage, List<BinState> states);
+	List<String> queryBinByUsageAndState(BinUsage usage, List<BinState> states);
+
+	List<Bin> queryBinByWrhAndState(String wrhUuid, BinState state);
+
+	List<Bin> queryBinByBinScopeAndState(String code, BinState state);
 }

@@ -17,20 +17,21 @@ package com.hd123.sardine.wms.api.basicInfo.bin;
  */
 
 public enum BinState {
-  /** 空闲 */
-  free("空闲"),
-  /** 使用中 */
-  using("使用中"),
-  /** 锁定，临时状态 */
-  lock("锁定");
+	/** 空闲 */
+	free("空闲"),
+	/** 使用中 */
+	using("使用中"),
+	/** 锁定，临时状态 */
+	lock("锁定"),
+	/**封仓锁定*/
+	closeLock("封仓锁定");
+	private String caption;
 
-  private String caption;
+	private BinState(String caption) {
+		this.caption = caption;
+	}
 
-  private BinState(String caption) {
-    this.caption = caption;
-  }
-
-  public String getCaption() {
-    return caption;
-  }
+	public String getCaption() {
+		return caption;
+	}
 }

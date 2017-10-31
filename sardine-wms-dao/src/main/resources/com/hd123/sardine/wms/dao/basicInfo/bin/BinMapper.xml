@@ -205,6 +205,24 @@
 		b.version = #{version, jdbcType=LONGVARCHAR}
 	</update>
 
+	<select id="queryBinByBinScopeAndState" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select t.* from db_proxy.sardine_bin t where
+		t.code like
+		CONCAT(#{code,jdbcType=VARCHAR},'%')
+		and
+		t.state=#{state,jdbcType=VARCHAR}
+	</select>
+
+	<select id="queryBinByWrhAndState" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select * from db_proxy.sardine_bin t where
+		t.wrhuuid =
+		#{wrhUuid,jdbcType = VARCHAR} and
+		t.state = #{state,jdbcType =
+		VARCHAR}
+	</select>
+
 	<select id="queryBinByUsageAndState" parameterType="java.util.Map"
 		resultType="java.lang.String">
 		select b.code from db_proxy.sardine_bin b
@@ -223,4 +241,5 @@
 			</foreach>
 		</if>
 	</select>
+
 </mapper>

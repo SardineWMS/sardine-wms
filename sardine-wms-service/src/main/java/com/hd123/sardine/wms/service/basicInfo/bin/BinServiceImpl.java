@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
@@ -55,329 +56,372 @@ import com.hd123.sardine.wms.service.log.EntityLogger;
  */
 public class BinServiceImpl extends BaseWMSService implements BinService {
 
-  @Autowired
-  private WrhDao wrhDao;
+	@Autowired
+	private WrhDao wrhDao;
 
-  @Autowired
-  private ZoneDao zoneDao;
+	@Autowired
+	private ZoneDao zoneDao;
 
-  @Autowired
-  private PathDao pathDao;
+	@Autowired
+	private PathDao pathDao;
 
-  @Autowired
-  private ShelfDao shelfDao;
+	@Autowired
+	private ShelfDao shelfDao;
 
-  @Autowired
-  private BinDao binDao;
+	@Autowired
+	private BinDao binDao;
 
-  @Autowired
-  private BinTypeService binTypeService;
+	@Autowired
+	private BinTypeService binTypeService;
 
-  @Autowired
-  private EntityLogger logger;
+	@Autowired
+	private EntityLogger logger;
 
-  @Override
-  public void insertWrh(Wrh wrh) throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(wrh, "wrh");
-    Assert.assertArgumentNotNull(wrh.getCode(), "wrh.code");
-    Assert.assertArgumentNotNull(wrh.getName(), "wrh.name");
-    Assert.assertStringNotTooLong(wrh.getCode(), Wrh.LENGTH_CODE, "wrh.code");
-    Assert.assertStringNotTooLong(wrh.getName(), Wrh.LENGTH_NAME, "wrh.name");
-    Assert.assertStringNotTooLong(wrh.getNote(), Wrh.LENGTH_NOTE, "wrh.note");
+	@Override
+	public void insertWrh(Wrh wrh) throws IllegalArgumentException, WMSException {
+		Assert.assertArgumentNotNull(wrh, "wrh");
+		Assert.assertArgumentNotNull(wrh.getCode(), "wrh.code");
+		Assert.assertArgumentNotNull(wrh.getName(), "wrh.name");
+		Assert.assertStringNotTooLong(wrh.getCode(), Wrh.LENGTH_CODE, "wrh.code");
+		Assert.assertStringNotTooLong(wrh.getName(), Wrh.LENGTH_NAME, "wrh.name");
+		Assert.assertStringNotTooLong(wrh.getNote(), Wrh.LENGTH_NOTE, "wrh.note");
 
-    Wrh codeEqualsWrh = wrhDao.getByCode(wrh.getCompanyUuid(), wrh.getCode());
-    if (codeEqualsWrh != null && Objects.equals(codeEqualsWrh.getUuid(), wrh.getUuid()) == false)
-      throw new WMSException("仓位" + wrh.getCode() + "已存在。");
+		Wrh codeEqualsWrh = wrhDao.getByCode(wrh.getCompanyUuid(), wrh.getCode());
+		if (codeEqualsWrh != null && Objects.equals(codeEqualsWrh.getUuid(), wrh.getUuid()) == false)
+			throw new WMSException("仓位" + wrh.getCode() + "已存在。");
 
-    wrh.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-    wrh.setUuid(UUIDGenerator.genUUID());
-    wrhDao.insert(wrh);
+		wrh.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+		wrh.setUuid(UUIDGenerator.genUUID());
+		wrhDao.insert(wrh);
 
-    logger.injectContext(this, wrh.getUuid(), Wrh.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ADDNEW, "新建仓位");
-  }
+		logger.injectContext(this, wrh.getUuid(), Wrh.class.getName(), ApplicationContextUtil.getOperateContext());
+		logger.log(EntityLogger.EVENT_ADDNEW, "新建仓位");
+	}
 
-  @Override
-  public void insertZone(Zone zone) throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(zone, "zone");
-    Assert.assertArgumentNotNull(zone.getCode(), "zone.code");
-    Assert.assertArgumentNotNull(zone.getName(), "zone.name");
-    Assert.assertArgumentNotNull(zone.getWrh(), "zone.wrh");
-    Assert.assertStringNotTooLong(zone.getCode(), Zone.LENGTH_CODE, "zone.code");
-    Assert.assertStringNotTooLong(zone.getName(), Zone.LENGTH_NAME, "zone.name");
-    Assert.assertStringNotTooLong(zone.getNote(), Zone.LENGTH_NOTE, "zone.note");
+	@Override
+	public void insertZone(Zone zone) throws IllegalArgumentException, WMSException {
+		Assert.assertArgumentNotNull(zone, "zone");
+		Assert.assertArgumentNotNull(zone.getCode(), "zone.code");
+		Assert.assertArgumentNotNull(zone.getName(), "zone.name");
+		Assert.assertArgumentNotNull(zone.getWrh(), "zone.wrh");
+		Assert.assertStringNotTooLong(zone.getCode(), Zone.LENGTH_CODE, "zone.code");
+		Assert.assertStringNotTooLong(zone.getName(), Zone.LENGTH_NAME, "zone.name");
+		Assert.assertStringNotTooLong(zone.getNote(), Zone.LENGTH_NOTE, "zone.note");
 
-    Zone codeEqualsZone = zoneDao.getByCode(zone.getCompanyUuid(), zone.getCode());
-    if (codeEqualsZone != null && Objects.equals(codeEqualsZone.getUuid(), zone.getUuid()) == false)
-      throw new WMSException("货区" + zone.getCode() + "已存在。");
+		Zone codeEqualsZone = zoneDao.getByCode(zone.getCompanyUuid(), zone.getCode());
+		if (codeEqualsZone != null && Objects.equals(codeEqualsZone.getUuid(), zone.getUuid()) == false)
+			throw new WMSException("货区" + zone.getCode() + "已存在。");
 
-    Wrh zoneOfWrh = wrhDao.get(zone.getWrh().getUuid(), zone.getCompanyUuid());
-    if (zoneOfWrh == null) {
-      throw new WMSException("货区对应的仓位" + zone.getWrh().getUuid() + "不存在。");
-    }
+		Wrh zoneOfWrh = wrhDao.get(zone.getWrh().getUuid(), zone.getCompanyUuid());
+		if (zoneOfWrh == null) {
+			throw new WMSException("货区对应的仓位" + zone.getWrh().getUuid() + "不存在。");
+		}
 
-    zone.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-    zone.setWrh(new UCN(zoneOfWrh.getUuid(), zoneOfWrh.getCode(), zoneOfWrh.getName()));
-    zone.setUuid(UUIDGenerator.genUUID());
-    zoneDao.insert(zone);
+		zone.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+		zone.setWrh(new UCN(zoneOfWrh.getUuid(), zoneOfWrh.getCode(), zoneOfWrh.getName()));
+		zone.setUuid(UUIDGenerator.genUUID());
+		zoneDao.insert(zone);
 
-    logger.injectContext(this, zone.getUuid(), Zone.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ADDNEW, "新建货区");
-  }
+		logger.injectContext(this, zone.getUuid(), Zone.class.getName(), ApplicationContextUtil.getOperateContext());
+		logger.log(EntityLogger.EVENT_ADDNEW, "新建货区");
+	}
 
-  @Override
-  public void insertPath(Path path) throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(path, "path");
-    Assert.assertArgumentNotNull(path.getZoneUuid(), "path.zone");
-    Assert.assertStringNotTooLong(path.getNote(), Path.LENGTH_NOTE, "path.note");
+	@Override
+	public void insertPath(Path path) throws IllegalArgumentException, WMSException {
+		Assert.assertArgumentNotNull(path, "path");
+		Assert.assertArgumentNotNull(path.getZoneUuid(), "path.zone");
+		Assert.assertStringNotTooLong(path.getNote(), Path.LENGTH_NOTE, "path.note");
 
-    Zone pathOfZone = zoneDao.get(path.getZoneUuid(), path.getCompanyUuid());
-    if (pathOfZone == null) {
-      throw new WMSException("货道对应的货区" + path.getZoneUuid() + "不存在。");
-    }
+		Zone pathOfZone = zoneDao.get(path.getZoneUuid(), path.getCompanyUuid());
+		if (pathOfZone == null) {
+			throw new WMSException("货道对应的货区" + path.getZoneUuid() + "不存在。");
+		}
 
-    String pathCode = billNumberGenerator.allocateNextPathCode(pathOfZone.getCode());
-    path.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-    path.setCode(pathCode);
-    path.setUuid(UUIDGenerator.genUUID());
-    pathDao.insert(path);
+		String pathCode = billNumberGenerator.allocateNextPathCode(pathOfZone.getCode());
+		path.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+		path.setCode(pathCode);
+		path.setUuid(UUIDGenerator.genUUID());
+		pathDao.insert(path);
 
-    logger.injectContext(this, path.getUuid(), Path.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ADDNEW, "新建货道");
-  }
+		logger.injectContext(this, path.getUuid(), Path.class.getName(), ApplicationContextUtil.getOperateContext());
+		logger.log(EntityLogger.EVENT_ADDNEW, "新建货道");
+	}
 
-  @Override
-  public void insertShelf(String pathCode) throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(pathCode, "pathCode");
-    Assert.assertStringNotTooLong(pathCode, Path.LENGTH_CODE, "pathCode");
+	@Override
+	public void insertShelf(String pathCode) throws IllegalArgumentException, WMSException {
+		Assert.assertArgumentNotNull(pathCode, "pathCode");
+		Assert.assertStringNotTooLong(pathCode, Path.LENGTH_CODE, "pathCode");
 
-    Path shelfOfPath = pathDao.getByCode(ApplicationContextUtil.getCompanyUuid(), pathCode);
-    if (shelfOfPath == null) {
-      throw new WMSException("货架对应的货道" + pathCode + "不存在。");
-    }
+		Path shelfOfPath = pathDao.getByCode(ApplicationContextUtil.getCompanyUuid(), pathCode);
+		if (shelfOfPath == null) {
+			throw new WMSException("货架对应的货道" + pathCode + "不存在。");
+		}
 
-    String shelfCode = billNumberGenerator.allocateNextShelfCode(shelfOfPath.getCode());
-    Shelf shelf = new Shelf();
-    shelf.setPathUuid(shelfOfPath.getUuid());
-    shelf.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-    shelf.setCode(shelfCode);
-    shelf.setUuid(UUIDGenerator.genUUID());
-    shelfDao.insert(shelf);
+		String shelfCode = billNumberGenerator.allocateNextShelfCode(shelfOfPath.getCode());
+		Shelf shelf = new Shelf();
+		shelf.setPathUuid(shelfOfPath.getUuid());
+		shelf.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+		shelf.setCode(shelfCode);
+		shelf.setUuid(UUIDGenerator.genUUID());
+		shelfDao.insert(shelf);
 
-    logger.injectContext(this, shelf.getUuid(), Shelf.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ADDNEW, "新建货架");
-  }
+		logger.injectContext(this, shelf.getUuid(), Shelf.class.getName(), ApplicationContextUtil.getOperateContext());
+		logger.log(EntityLogger.EVENT_ADDNEW, "新建货架");
+	}
 
-  @Override
-  public void insertBin(Bin bin) throws IllegalArgumentException, WMSException {
-    Assert.assertArgumentNotNull(bin, "bin");
-    Assert.assertArgumentNotNull(bin.getCode(), "bin.code");
-    Assert.assertArgumentNotNull(bin.getUsage(), "bin.usage");
-    Assert.assertArgumentNotNull(bin.getBinType(), "bin.type");
-    Assert.assertStringNotTooLong(bin.getCode(), Bin.LENGTH_CODE, "bin.code");
+	@Override
+	public void insertBin(Bin bin) throws IllegalArgumentException, WMSException {
+		Assert.assertArgumentNotNull(bin, "bin");
+		Assert.assertArgumentNotNull(bin.getCode(), "bin.code");
+		Assert.assertArgumentNotNull(bin.getUsage(), "bin.usage");
+		Assert.assertArgumentNotNull(bin.getBinType(), "bin.type");
+		Assert.assertStringNotTooLong(bin.getCode(), Bin.LENGTH_CODE, "bin.code");
 
-    BinType binType = binTypeService.get(bin.getBinType().getUuid());
-    if (binType == null) {
-      throw new WMSException("货位对应货位类型" + bin.getBinType().getCode() + "不存在。");
-    }
-    Shelf binOfShelf = shelfDao.getByCode(bin.getCompanyUuid(), bin.getCode().substring(0, 6));
-    if (binOfShelf == null) {
-      throw new WMSException("货位对应货架" + bin.getShelfUuid() + "不存在。");
-    }
-    Path binOfPath = pathDao.get(binOfShelf.getPathUuid(), binOfShelf.getCompanyUuid());
-    if (binOfPath == null) {
-      throw new IllegalArgumentException("货道不存在。");
-    }
-    Zone binOfZone = zoneDao.get(binOfPath.getZoneUuid(), binOfPath.getCompanyUuid());
-    if (binOfZone == null) {
-      throw new IllegalArgumentException("货区不存在。");
-    }
-    Bin codeEqualsBin = binDao.getByCode(bin.getCompanyUuid(), bin.getCode());
-    if (codeEqualsBin != null && Objects.equals(codeEqualsBin.getUuid(), bin.getUuid()) == false)
-      throw new WMSException("货位" + bin.getCode() + "已存在。");
+		BinType binType = binTypeService.get(bin.getBinType().getUuid());
+		if (binType == null) {
+			throw new WMSException("货位对应货位类型" + bin.getBinType().getCode() + "不存在。");
+		}
+		Shelf binOfShelf = shelfDao.getByCode(bin.getCompanyUuid(), bin.getCode().substring(0, 6));
+		if (binOfShelf == null) {
+			throw new WMSException("货位对应货架" + bin.getShelfUuid() + "不存在。");
+		}
+		Path binOfPath = pathDao.get(binOfShelf.getPathUuid(), binOfShelf.getCompanyUuid());
+		if (binOfPath == null) {
+			throw new IllegalArgumentException("货道不存在。");
+		}
+		Zone binOfZone = zoneDao.get(binOfPath.getZoneUuid(), binOfPath.getCompanyUuid());
+		if (binOfZone == null) {
+			throw new IllegalArgumentException("货区不存在。");
+		}
+		Bin codeEqualsBin = binDao.getByCode(bin.getCompanyUuid(), bin.getCode());
+		if (codeEqualsBin != null && Objects.equals(codeEqualsBin.getUuid(), bin.getUuid()) == false)
+			throw new WMSException("货位" + bin.getCode() + "已存在。");
 
-    bin.setShelfUuid(binOfShelf.getUuid());
-    bin.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-    bin.setBinLevel(bin.getCode().substring(7));
-    bin.setBinColumn(bin.getCode().substring(7, 8));
-    bin.setBinType(new UCN(binType.getUuid(), binType.getCode(), binType.getName()));
-    bin.setWrh(binOfZone.getWrh());
-    bin.setState(BinState.free);
-    bin.setUuid(UUIDGenerator.genUUID());
-    binDao.insert(bin);
+		bin.setShelfUuid(binOfShelf.getUuid());
+		bin.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+		bin.setBinLevel(bin.getCode().substring(7));
+		bin.setBinColumn(bin.getCode().substring(7, 8));
+		bin.setBinType(new UCN(binType.getUuid(), binType.getCode(), binType.getName()));
+		bin.setWrh(binOfZone.getWrh());
+		bin.setState(BinState.free);
+		bin.setUuid(UUIDGenerator.genUUID());
+		binDao.insert(bin);
 
-    logger.injectContext(this, bin.getUuid(), Bin.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_ADDNEW, "新建货位");
-  }
+		logger.injectContext(this, bin.getUuid(), Bin.class.getName(), ApplicationContextUtil.getOperateContext());
+		logger.log(EntityLogger.EVENT_ADDNEW, "新建货位");
+	}
 
-  @Override
-  public PageQueryResult<Bin> queryBin(PageQueryDefinition definition)
-      throws IllegalArgumentException {
-    Assert.assertArgumentNotNull(definition, "definition");
+	@Override
+	public PageQueryResult<Bin> queryBin(PageQueryDefinition definition) throws IllegalArgumentException {
+		Assert.assertArgumentNotNull(definition, "definition");
 
-    definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-    PageQueryResult<Bin> pgr = new PageQueryResult<Bin>();
-    List<Bin> list = binDao.query(definition);
-    PageQueryUtil.assignPageInfo(pgr, definition);
-    pgr.setRecords(list);
-    return pgr;
-  }
+		definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+		PageQueryResult<Bin> pgr = new PageQueryResult<Bin>();
+		List<Bin> list = binDao.query(definition);
+		PageQueryUtil.assignPageInfo(pgr, definition);
+		pgr.setRecords(list);
+		return pgr;
+	}
 
-  @Override
-  public List<BinInfo> queryTreeData() {
-    List<BinInfo> result = new ArrayList<BinInfo>();
-    String companyUuid = ApplicationContextUtil.getCompanyUuid();
-    List<Wrh> wrhs = wrhDao.query(companyUuid);
-    for (Wrh wrh : wrhs) {
-      BinInfo wrhInfo = new BinInfo();
-      wrhInfo.setTitle(wrh.getUuid());
-      wrhInfo.setKey(wrh.toFriendString());
-      wrhInfo.setType(WrhType.wrh);
+	@Override
+	public List<BinInfo> queryTreeData() {
+		List<BinInfo> result = new ArrayList<BinInfo>();
+		String companyUuid = ApplicationContextUtil.getCompanyUuid();
+		List<Wrh> wrhs = wrhDao.query(companyUuid);
+		for (Wrh wrh : wrhs) {
+			BinInfo wrhInfo = new BinInfo();
+			wrhInfo.setTitle(wrh.getUuid());
+			wrhInfo.setKey(wrh.toFriendString());
+			wrhInfo.setType(WrhType.wrh);
 
-      List<Zone> wrhOfZones = zoneDao.query(companyUuid, wrh.getUuid());
-      for (Zone zone : wrhOfZones) {
-        BinInfo zoneInfo = new BinInfo();
-        zoneInfo.setTitle(zone.getUuid());
-        zoneInfo.setKey(zone.toFriendString());
-        zoneInfo.setType(WrhType.zone);
+			List<Zone> wrhOfZones = zoneDao.query(companyUuid, wrh.getUuid());
+			for (Zone zone : wrhOfZones) {
+				BinInfo zoneInfo = new BinInfo();
+				zoneInfo.setTitle(zone.getUuid());
+				zoneInfo.setKey(zone.toFriendString());
+				zoneInfo.setType(WrhType.zone);
 
-        List<Path> zoneOfPaths = pathDao.query(companyUuid, zone.getUuid());
-        for (Path path : zoneOfPaths) {
-          BinInfo pathInfo = new BinInfo();
-          pathInfo.setTitle(path.getUuid());
-          pathInfo.setKey(path.getCode());
-          pathInfo.setType(WrhType.path);
+				List<Path> zoneOfPaths = pathDao.query(companyUuid, zone.getUuid());
+				for (Path path : zoneOfPaths) {
+					BinInfo pathInfo = new BinInfo();
+					pathInfo.setTitle(path.getUuid());
+					pathInfo.setKey(path.getCode());
+					pathInfo.setType(WrhType.path);
 
-          List<Shelf> pathOfShelfs = shelfDao.query(companyUuid, path.getUuid());
-          for (Shelf shelf : pathOfShelfs) {
-            BinInfo shelfInfo = new BinInfo();
-            shelfInfo.setTitle(shelf.getUuid());
-            shelfInfo.setKey(shelf.getCode());
-            shelfInfo.setType(WrhType.shelf);
-            pathInfo.getChildren().add(shelfInfo);
-          }
-          zoneInfo.getChildren().add(pathInfo);
-        }
-        wrhInfo.getChildren().add(zoneInfo);
-      }
-      result.add(wrhInfo);
-    }
-    return result;
-  }
+					List<Shelf> pathOfShelfs = shelfDao.query(companyUuid, path.getUuid());
+					for (Shelf shelf : pathOfShelfs) {
+						BinInfo shelfInfo = new BinInfo();
+						shelfInfo.setTitle(shelf.getUuid());
+						shelfInfo.setKey(shelf.getCode());
+						shelfInfo.setType(WrhType.shelf);
+						pathInfo.getChildren().add(shelfInfo);
+					}
+					zoneInfo.getChildren().add(pathInfo);
+				}
+				wrhInfo.getChildren().add(zoneInfo);
+			}
+			result.add(wrhInfo);
+		}
+		return result;
+	}
 
-  @Override
-  public void remove(String uuid, long version)
-      throws IllegalArgumentException, VersionConflictException, WMSException {
-    Assert.assertArgumentNotNull(uuid, "uuid");
+	@Override
+	public void remove(String uuid, long version)
+			throws IllegalArgumentException, VersionConflictException, WMSException {
+		Assert.assertArgumentNotNull(uuid, "uuid");
 
-    String companyUuid = ApplicationContextUtil.getCompanyUuid();
-    Bin bin = binDao.get(uuid, companyUuid);
-    if (bin == null)
-      return;
+		String companyUuid = ApplicationContextUtil.getCompanyUuid();
+		Bin bin = binDao.get(uuid, companyUuid);
+		if (bin == null)
+			return;
 
-    PersistenceUtils.checkVersion(version, bin, "货位", bin.getCode());
-    binDao.remove(uuid, version);
+		PersistenceUtils.checkVersion(version, bin, "货位", bin.getCode());
+		binDao.remove(uuid, version);
 
-    logger.injectContext(this, uuid, Bin.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_REMOVE, "删除货位");
-  }
+		logger.injectContext(this, uuid, Bin.class.getName(), ApplicationContextUtil.getOperateContext());
+		logger.log(EntityLogger.EVENT_REMOVE, "删除货位");
+	}
 
-  @Override
-  public List<Wrh> queryWrhs() {
-    return wrhDao.query(ApplicationContextUtil.getCompanyUuid());
-  }
+	@Override
+	public List<Wrh> queryWrhs() {
+		return wrhDao.query(ApplicationContextUtil.getCompanyUuid());
+	}
 
-  @Override
-  public List<Zone> queryZones() {
-    String companyUuid = ApplicationContextUtil.getCompanyUuid();
-    List<Wrh> wrhs = wrhDao.query(companyUuid);
-    List<Zone> zones = new ArrayList<Zone>();
-    for (Wrh wrh : wrhs) {
-      zones.addAll(zoneDao.query(companyUuid, wrh.getUuid()));
-    }
-    return zones;
-  }
+	@Override
+	public List<Zone> queryZones() {
+		String companyUuid = ApplicationContextUtil.getCompanyUuid();
+		List<Wrh> wrhs = wrhDao.query(companyUuid);
+		List<Zone> zones = new ArrayList<Zone>();
+		for (Wrh wrh : wrhs) {
+			zones.addAll(zoneDao.query(companyUuid, wrh.getUuid()));
+		}
+		return zones;
+	}
 
-  @Override
-  public Wrh getWrh(String wrhUuid) {
-    return wrhDao.get(wrhUuid, ApplicationContextUtil.getCompanyUuid());
-  }
+	@Override
+	public Wrh getWrh(String wrhUuid) {
+		return wrhDao.get(wrhUuid, ApplicationContextUtil.getCompanyUuid());
+	}
 
-  @Override
-  public Bin getBinByCode(String binCode) {
-    if (StringUtil.isNullOrBlank(binCode))
-      return null;
-    return binDao.getByCode(ApplicationContextUtil.getCompanyUuid(), binCode);
-  }
+	@Override
+	public Bin getBinByCode(String binCode) {
+		if (StringUtil.isNullOrBlank(binCode))
+			return null;
+		return binDao.getByCode(ApplicationContextUtil.getCompanyUuid(), binCode);
+	}
 
-  @Override
-  public Bin getBinByWrhAndUsage(String wrhUuid, BinUsage usage) {
-    return binDao.getBinByWrhAndUsage(wrhUuid, usage);
-  }
+	@Override
+	public Bin getBinByWrhAndUsage(String wrhUuid, BinUsage usage) {
+		return binDao.getBinByWrhAndUsage(wrhUuid, usage);
+	}
 
-  @Override
-  public void changeState(String uuid, long version, BinState state)
-      throws IllegalArgumentException, VersionConflictException, WMSException {
-    Assert.assertArgumentNotNull(uuid, "uuid");
-    Assert.assertArgumentNotNull(state, "state");
+	@Override
+	public void changeState(String uuid, long version, BinState state)
+			throws IllegalArgumentException, VersionConflictException, WMSException {
+		Assert.assertArgumentNotNull(uuid, "uuid");
+		Assert.assertArgumentNotNull(state, "state");
 
-    Bin bin = binDao.get(uuid, ApplicationContextUtil.getCompanyUuid());
-    if (bin == null)
-      throw new WMSException("指定货位不存在！");
-    if (bin.getState().equals(state))
-      return;
+		Bin bin = binDao.get(uuid, ApplicationContextUtil.getCompanyUuid());
+		if (bin == null)
+			throw new WMSException("指定货位不存在！");
+		if (bin.getState().equals(state))
+			return;
 
-    PersistenceUtils.checkVersion(version, bin, "货位", bin.getCode());
-    bin.setState(state);
-    binDao.changeState(uuid, version, state);
+		PersistenceUtils.checkVersion(version, bin, "货位", bin.getCode());
+		bin.setState(state);
+		binDao.changeState(uuid, version, state);
 
-    logger.injectContext(this, uuid, Bin.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_MODIFY, "改变货位状态");
-  }
+		logger.injectContext(this, uuid, Bin.class.getName(), ApplicationContextUtil.getOperateContext());
+		logger.log(EntityLogger.EVENT_MODIFY, "改变货位状态");
+	}
 
-  @Override
-  public List<String> queryBinByScopeAndUsage(String binScope, BinUsage usage, BinState state) {
-    if (StringUtil.isNullOrBlank(binScope))
-      return null;
+	@Override
+	public List<String> queryBinByScopeAndUsage(String binScope, BinUsage usage, BinState state) {
+		if (StringUtil.isNullOrBlank(binScope))
+			return null;
 
-    String sql = ScopeUtils.scopeExpToSQLExp("code", binScope);
-    return binDao.queryBincodesByScope(sql, usage, state);
-  }
+		String sql = ScopeUtils.scopeExpToSQLExp("code", binScope);
+		return binDao.queryBincodesByScope(sql, usage, state);
+	}
 
-  @Override
-  public void lock(String uuid, long version) throws WMSException {
-    Assert.assertArgumentNotNull(uuid, "uuid");
+	@Override
+	public void lock(String uuid, long version) throws WMSException {
+		Assert.assertArgumentNotNull(uuid, "uuid");
 
-    Bin bin = binDao.get(uuid, ApplicationContextUtil.getCompanyUuid());
-    if (bin == null)
-      throw new WMSException("货位不存在！");
-    PersistenceUtils.checkVersion(version, bin, "货位", uuid);
-    binDao.changeState(uuid, version, BinState.lock);
+		Bin bin = binDao.get(uuid, ApplicationContextUtil.getCompanyUuid());
+		if (bin == null)
+			throw new WMSException("货位不存在！");
+		PersistenceUtils.checkVersion(version, bin, "货位", uuid);
+		binDao.changeState(uuid, version, BinState.lock);
 
-    logger.injectContext(this, uuid, Bin.class.getName(),
-        ApplicationContextUtil.getOperateContext());
-    logger.log(EntityLogger.EVENT_MODIFY, "锁定货位");
-  }
+		logger.injectContext(this, uuid, Bin.class.getName(), ApplicationContextUtil.getOperateContext());
+		logger.log(EntityLogger.EVENT_MODIFY, "锁定货位");
+	}
 
-  @Override
-  public List<String> queryBinByScopeAndUsageAndStates(String binScope, BinUsage usage,
-      List<BinState> states) {
-    if (StringUtil.isNullOrBlank(binScope))
-      return null;
+	@Override
+	public List<String> queryBinByScopeAndUsageAndStates(String binScope, BinUsage usage, List<BinState> states) {
+		if (StringUtil.isNullOrBlank(binScope))
+			return null;
 
-    String sql = ScopeUtils.scopeExpToSQLExp("code", binScope);
-    return binDao.queryBincodesByScope(sql, usage, states);
-  }
+		String sql = ScopeUtils.scopeExpToSQLExp("code", binScope);
+		return binDao.queryBincodesByScope(sql, usage, states);
+	}
 
-  @Override
-  public List<String> queryBinByUsageAndState(BinUsage usage, List<BinState> states) {
-    return binDao.queryBinByUsageAndState(usage, states);
-  }
+	@Override
+	public List<String> queryBinByUsageAndState(BinUsage usage, List<BinState> states) {
+		return binDao.queryBinByUsageAndState(usage, states);
+	}
+
+	@Override
+	public void closeWrh(String wrhUuid, String binScope) throws WMSException, IllegalArgumentException {
+		List<Bin> bins = new ArrayList<Bin>();
+		if (binScope == null) {
+			if (wrhUuid == null)
+				throw new WMSException("请选择仓位或者货位。");
+			Wrh wrh = wrhDao.get(wrhUuid, ApplicationContextUtil.getCompanyUuid());
+			if (wrh == null)
+				throw new WMSException("该仓位不存在");
+			bins = binDao.queryBinByWrhAndState(wrhUuid, BinState.free);
+		} else {
+			bins = binDao.queryBinByBinScopeAndState(binScope, BinState.free);
+			for(Bin bin : bins){
+				if((wrhUuid != null) && (!wrhUuid.equals(bin.getWrh().getUuid())))
+					throw new WMSException("货位范围不在该仓位下!");
+			}
+		}
+		closeOrReleaseWrh(bins, BinState.closeLock);
+	}
+
+	@Override
+	public void releaseWrh(String wrhUuid, String binScope) throws WMSException, IllegalArgumentException {
+		List<Bin> bins = new ArrayList<Bin>();
+		if(binScope == null){
+			if(wrhUuid == null)
+				throw new WMSException("请输入仓位或者货位范围");
+			Wrh wrh = wrhDao.get(wrhUuid, ApplicationContextUtil.getCompanyUuid());
+			if (wrh == null)
+				throw new WMSException("仓位不存在！");
+			bins = binDao.queryBinByWrhAndState(wrh.getUuid(), BinState.closeLock);
+		}else{			
+			bins = binDao.queryBinByBinScopeAndState(binScope, BinState.closeLock);
+			for(Bin bin : bins){
+				if((wrhUuid != null) && (!wrhUuid.equals(bin.getWrh().getUuid())))
+					throw new WMSException("货位范围不在该仓位下!");
+			}
+		}
+		closeOrReleaseWrh(bins, BinState.free);
+	}
+	
+	private void closeOrReleaseWrh(List<Bin> bins, BinState state) {
+		if (CollectionUtils.isEmpty(bins))
+			return;		
+		for (Bin bin : bins) {			
+				binDao.changeState(bin.getUuid(), bin.getVersion(), state);	
+				logger.injectContext(this, bin.getUuid(), Bin.class.getName(),
+						ApplicationContextUtil.getOperateContext());
+				if(BinState.closeLock.equals(state))
+					logger.log(EntityLogger.EVENT_MODIFY, "封仓锁定货位");
+				logger.log(EntityLogger.EVENT_MODIFY, "解仓释放货位");
+		}
+	}
 }

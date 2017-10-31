@@ -12,6 +12,7 @@ package com.hd123.sardine.wms.dao.basicInfo.bin;
 import java.util.List;
 
 import com.hd123.sardine.wms.api.basicInfo.bin.Wrh;
+import com.hd123.sardine.wms.common.exception.WMSException;
 
 /**
  * 仓位Dao 接口
