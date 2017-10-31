@@ -101,15 +101,15 @@
 			<if test="orderBillNumber != null">
 				orderBillNumber,
 			</if>
-			<if test="wrh != null and wrh.uuid != null"> 
-			    wrhuuid, 
-		    </if>
-		    <if test="wrh != null and wrh.code != null"> 
-			    wrhcode, 
-		    </if>
-		    <if test="wrh != null and wrh.name != null"> 
-			    wrhname, 
-		    </if>
+			<if test="wrh != null and wrh.uuid != null">
+				wrhuuid,
+			</if>
+			<if test="wrh != null and wrh.code != null">
+				wrhcode,
+			</if>
+			<if test="wrh != null and wrh.name != null">
+				wrhname,
+			</if>
 			<if test="method != null">
 				method,
 			</if>
@@ -282,7 +282,7 @@
 	<select id="getByBillNumber" resultMap="ReceiveBillMap"
 		parameterType="java.util.Map">
 		select t.* from db_proxy.sardine_receivebill t
-		where 
+		where
 		t.billNumber =
 		#{billNumber,jdbcType=VARCHAR} and t.companyUuid =
 		#{companyUuid,jdbcType=VARCHAR}
@@ -316,6 +316,20 @@
 			#{orderBill,jdbcType=VARCHAR}),
 			'%')
 		</if>
+		<if test="articleCode != null and articleCode != ''">
+			and EXISTS(
+			select 1 from db_proxy.sardine_receivebillitem
+			i
+			where
+			i.articlecode
+			like
+			CONCAT(CONCAT('%',#{articleCode,jdbcType=VARCHAR}),'%')
+			)
+		</if>
+		<if test="receiverCode != null and receiverCode != ''">
+			and t.receivercode like
+			CONCAT(CONCAT('%',#{receiverCode,jdbcType=VARCHAR},'%'))
+		</if>
 		<if test="sortField != null and sortField == 'billNumber'">
 			order by t.billNumber ${orderDir}
 		</if>
@@ -340,7 +354,8 @@
 		#{version,jdbcType=LONGVARCHAR}
 	</delete>
 
-	<insert id="insertItems" parameterType="com.hd123.sardine.wms.api.in.receive.ReceiveBillItem">
+	<insert id="insertItems"
+		parameterType="com.hd123.sardine.wms.api.in.receive.ReceiveBillItem">
 		insert into db_proxy.sardine_receivebillItem
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="uuid != null">

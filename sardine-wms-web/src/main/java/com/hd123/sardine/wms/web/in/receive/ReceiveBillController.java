@@ -42,23 +42,26 @@ public class ReceiveBillController extends BaseController {
   private ReceiveBillService service;
 
   @RequestMapping(value = "/query", method = RequestMethod.GET)
-  public @ResponseBody RespObject query(
+  public RespObject query(
       @RequestParam(value = "page", required = false, defaultValue = "1") int page,
       @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
       @RequestParam(value = "sort", required = false) String sort,
-      @RequestParam(value = "order", required = false, defaultValue = "asc") String sortDirection,
+      @RequestParam(value = "order", required = false, defaultValue = "desc") String sortDirection,
       @RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "billNumber", required = false) String billNumber,
       @RequestParam(value = "supplier", required = false) String supplier,
       @RequestParam(value = "wrh", required = false) String wrh,
       @RequestParam(value = "orderBill", required = false) String orderBill,
-      @RequestParam(value = "state", required = false) String state) {
+      @RequestParam(value = "state", required = false) String state,
+      @RequestParam(value = "articleCode", required = false) String articleCode,
+      @RequestParam(value = "receiverCode", required = false) String receiverCode) {
     RespObject resp = new RespObject();
     try {
       PageQueryDefinition definition = new PageQueryDefinition();
       definition.setPage(page);
       definition.setPageSize(pageSize);
-      definition.setSortField(sort);
+      definition.setSortField(
+          StringUtil.isNullOrBlank(sort) ? ReceiveBillService.FIELD_ORDER_BILLNO : sort);
       definition.setOrderDir(OrderDir.valueOf(sortDirection));
       definition.put(ReceiveBillService.QUERY_BILLNO_FIELD, billNumber);
       definition.put(ReceiveBillService.QUERY_ORDERBILL_FIELD, orderBill);
@@ -67,6 +70,8 @@ public class ReceiveBillController extends BaseController {
       definition.put(ReceiveBillService.QUERY_STATE_FIELD,
           StringUtil.isNullOrBlank(state) ? null : ReceiveBillState.valueOf(state));
       definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+      definition.put(ReceiveBillService.QUERY_ARTICLE_CODE_FIELD, articleCode);
+      definition.put(ReceiveBillService.QUERY_RECEIVER_CODE_FIELD, receiverCode);
       PageQueryResult<ReceiveBill> result = service.query(definition);
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
@@ -77,8 +82,7 @@ public class ReceiveBillController extends BaseController {
   }
 
   @RequestMapping(value = "/insert", method = RequestMethod.POST)
-  public @ResponseBody RespObject insert(
-      @RequestParam(value = "token", required = true) String token,
+  public RespObject insert(@RequestParam(value = "token", required = true) String token,
       @RequestBody ReceiveBill receiveBill) {
     RespObject resp = new RespObject();
     try {
@@ -94,7 +98,7 @@ public class ReceiveBillController extends BaseController {
   }
 
   @RequestMapping(value = "/getByBillNo", method = RequestMethod.GET)
-  public @ResponseBody RespObject getByBillNo(
+  public RespObject getByBillNo(
       @RequestParam(value = "billNumber", required = true) String billNumber,
       @RequestParam(value = "token", required = true) String token) {
     RespObject resp = new RespObject();
@@ -110,7 +114,7 @@ public class ReceiveBillController extends BaseController {
   }
 
   @RequestMapping(value = "/remove", method = RequestMethod.DELETE)
-  public @ResponseBody RespObject remove(@RequestParam(value = "uuid", required = true) String uuid,
+  public RespObject remove(@RequestParam(value = "uuid", required = true) String uuid,
       @RequestParam(value = "version", required = true) long version,
       @RequestParam(value = "token", required = true) String token) {
     RespObject resp = new RespObject();
@@ -124,7 +128,7 @@ public class ReceiveBillController extends BaseController {
   }
 
   @RequestMapping(value = "/audit", method = RequestMethod.PUT)
-  public @ResponseBody RespObject audit(@RequestParam(value = "uuid", required = true) String uuid,
+  public RespObject audit(@RequestParam(value = "uuid", required = true) String uuid,
       @RequestParam(value = "version", required = true) long version,
       @RequestParam(value = "token", required = true) String token) {
     RespObject resp = new RespObject();
@@ -140,8 +144,7 @@ public class ReceiveBillController extends BaseController {
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
-  public @ResponseBody RespObject update(
-      @RequestParam(value = "token", required = true) String token,
+  public RespObject update(@RequestParam(value = "token", required = true) String token,
       @RequestBody ReceiveBill receiveBill) {
     RespObject resp = new RespObject();
     try {
