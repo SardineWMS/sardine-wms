@@ -76,7 +76,7 @@
 		#{version,jdbcType=LONGVARCHAR},
 		#{address,jdbcType=VARCHAR},
 		#{simpleName,jdbcType=VARCHAR},
-		#{contacter,jdbcType=VARCHAR},
+		#{contacter,jdbcType=VARCHAR}
 		)
 	</insert>
 

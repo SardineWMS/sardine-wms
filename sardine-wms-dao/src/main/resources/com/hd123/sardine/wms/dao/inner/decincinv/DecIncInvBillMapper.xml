@@ -8,6 +8,10 @@
 		<id column="uuid" property="uuid" jdbcType="VARCHAR" />
 		<result column="version" property="version" jdbcType="LONGVARCHAR" />
 		<result column="billNumber" property="billNumber" jdbcType="VARCHAR" />
+		<result column="sourceBillNumber" property="sourceBillNumber"
+			jdbcType="VARCHAR" />
+		<result column="sourceBillType" property="sourceBillType"
+			jdbcType="VARCHAR" />
 		<result column="wrhuuid" property="wrh.uuid" jdbcType="VARCHAR" />
 		<result column="wrhcode" property="wrh.code" jdbcType="VARCHAR" /> 
 		<result column="wrhname" property="wrh.name" jdbcType="VARCHAR" />
@@ -84,6 +88,12 @@
 			<if test="billNumber != null">
 				billNumber,
 			</if>
+			<if test="sourceBillNumber != null">
+				sourceBillNumber,
+			</if>
+			<if test="sourceBillType != null">
+				sourceBillType,
+			</if>
 			<if test="companyUuid != null">
 				companyUuid,
 			</if>
@@ -130,6 +140,12 @@
 			</if>
 			<if test="billNumber != null">
 				#{billNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillNumber != null">
+				#{sourceBillNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillType != null">
+				#{sourceBillType,jdbcType=VARCHAR},
 			</if>
 			<if test="companyUuid != null">
 				#{companyUuid,jdbcType=VARCHAR},
@@ -182,6 +198,12 @@
 			</if>
 			<if test="type != null">
 				type = #{type,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillNumber != null">
+				sourceBillNumber = #{sourceBillNumber, jdbcType=VARCHAR},
+			</if>
+			<if test="sourceBillType != null">
+				sourceBillType = #{sourceBillType, jdbcType=VARCHAR},
 			</if>
 			<if test="wrh != null and wrh.uuid != null">
 				wrhuuid = #{wrh.uuid,jdbcType=VARCHAR},
@@ -250,10 +272,12 @@
 		select t.*, w.code wrhcode, w.name wrhname
 		from
 		db_proxy.sardine_decIncInvBill t,
+		db_proxy.sardine_decIncInvBillitem i,
 		db_proxy.sardine_wrh w
 		where
-		t.wrhuuid
-		=w.uuid
+		t.wrhuuid=w.uuid
+		and 
+		t.uuid=i.billBillUuid
 		<if test="billNumber != null and billNumber != ''">
 			and t.billNumber like CONCAT(CONCAT('%',
 			#{billNumber,jdbcType=VARCHAR}),
@@ -265,10 +289,27 @@
 		<if test="type != null">
 			and t.type = #{type,jdbcType=VARCHAR}
 		</if>
-		<if test="wrhCode != null and wrhCode != ''">
-			and w.code like CONCAT(CONCAT('%',
-			#{wrhCode,jdbcType=VARCHAR}),
+		<if test="wrhUuid != null and wrhUuid != ''">
+			and w.uuid = #{wrhUuid,jdbcType=VARCHAR}
+		</if>
+		<if test="operatorCode != null and operatorCode != ''">
+			and t.operatorCode = #{operatorCode,jdbcType=VARCHAR}
+		</if>
+		<if test="binCode != null and binCode != ''">
+			and i.binCode like CONCAT(CONCAT('%',
+			#{binCode,jdbcType=VARCHAR}),
 			'%')
+		</if>
+		<if test="containerBarcode != null and containerBarcode != ''">
+			and i.containerBarcode like CONCAT(CONCAT('%',
+			#{containerBarcode,jdbcType=VARCHAR}),
+			'%')
+		</if>
+		<if test="articleCode != null and articleCode != ''">
+			and i.articleuuid in (select a.uuid from db_proxy.sardine_article a
+			where a.code like CONCAT(CONCAT('%',
+			#{articleCode,jdbcType=VARCHAR}),
+			'%'))
 		</if>
 		<if test="companyUuid != null">
 			and t.companyuuid=#{companyUuid,jdbcType=VARCHAR}
