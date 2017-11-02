@@ -46,6 +46,7 @@ public interface ArticleService {
   public static final String QUERY_CODE_FIELD = "code";
   public static final String QUERY_NAME_FIELD = "name";
   public static final String QUERY_STATE_FIELD = "state";
+  public static final String QUERY_SECOND_CODE_FIELD = "secondCode";
 
   /** 排序字段 */
   public static final String ORDER_CODE_FIELD = "code";

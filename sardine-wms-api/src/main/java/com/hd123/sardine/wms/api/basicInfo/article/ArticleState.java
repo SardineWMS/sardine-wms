@@ -16,8 +16,6 @@ package com.hd123.sardine.wms.api.basicInfo.article;
  *
  */
 public enum ArticleState {
-  /** 启用 */
-  online("启用"),
   /** 停用 */
   offline("停用"),
   /** 正常 */

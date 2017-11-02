@@ -92,7 +92,8 @@ public class ArticleController extends BaseController {
       @RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "code", required = false) String code,
       @RequestParam(value = "name", required = false) String name,
-      @RequestParam(value = "state", required = false) String state) {
+      @RequestParam(value = "state", required = false) String state,
+      @RequestParam(value = "secondCode", required = false) String secondCode) {
     RespObject resp = new RespObject();
     try {
       PageQueryDefinition definition = new PageQueryDefinition();
@@ -104,7 +105,8 @@ public class ArticleController extends BaseController {
       definition.put(ArticleService.QUERY_NAME_FIELD, name);
       definition.put(ArticleService.QUERY_STATE_FIELD,
           StringUtil.isNullOrBlank(state) ? null : ArticleState.valueOf(state));
-      definition.put("companyUuid", ApplicationContextUtil.getParentCompanyUuid());
+      definition.setCompanyUuid(ApplicationContextUtil.getParentCompanyUuid());
+      definition.put(ArticleService.QUERY_SECOND_CODE_FIELD, secondCode);
       PageQueryResult<Article> result = articleService.query(definition);
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

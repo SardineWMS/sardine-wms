@@ -520,10 +520,10 @@ public class ArticleServiceImpl extends BaseWMSService implements ArticleService
     if (Objects.isNull(article))
       throw new WMSException("要启用的商品不存在");
     PersistenceUtils.checkVersion(version, article, "商品", uuid);
-    if (ArticleState.online.equals(article.getState()))
+    if (ArticleState.normal.equals(article.getState()))
       return;
 
-    article.setState(ArticleState.online);
+    article.setState(ArticleState.normal);
     article.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
 
     articleDao.update(article);

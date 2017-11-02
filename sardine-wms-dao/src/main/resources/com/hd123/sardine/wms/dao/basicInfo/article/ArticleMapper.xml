@@ -313,11 +313,15 @@
 		select u.*
 		from db_proxy.sardine_article u
 		where 1=1
-		<if test="code != null">
+		<if test="code != null and code != ''">
 			and u.code like CONCAT(CONCAT('%', #{code}),
 			'%')
 		</if>
-		<if test="name != null">
+		<if test="secondCode != null and secondCode != ''">
+			and u.secondcode like CONCAT(CONCAT('%', #{secondCode}),
+			'%')
+		</if>
+		<if test="name != null and name != ''">
 			and u.name like CONCAT(CONCAT('%', #{name}),
 			'%')
 		</if>
