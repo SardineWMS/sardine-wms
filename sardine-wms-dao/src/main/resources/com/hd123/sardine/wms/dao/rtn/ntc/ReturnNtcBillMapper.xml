@@ -321,10 +321,11 @@
 			and t.returnDate >=
 			#{returnDateMoreThan,jdbcType=TIMESTAMP}
 		</if>
-		<if test="articleCode != null">
+		<if test="articleCode != null and articleCode != ''">
 			and EXISTS (select 1 from db_proxy.sardine_article
 			a,db_proxy.sardine_returnntcbillitem i
-			where a.uuid=i.articleuuid and
+			where a.uuid=i.ARTICLEUUID and
+			i.RETURNNTCBILLUUID=t.uuid and
 			a.code=
 			#{articleCode,jdbcType=VARCHAR})
 		</if>
@@ -332,6 +333,7 @@
 			and EXISTS (select 1 from db_proxy.sardine_article
 			a,db_proxy.sardine_returnntcbillitem i
 			where a.uuid=i.articleuuid and
+			i.RETURNNTCBILLUUID=t.uuid and
 			a.name=
 			#{articleName,jdbcType=VARCHAR})
 		</if>
@@ -342,6 +344,7 @@
 			and EXISTS (select 1 from db_proxy.sardine_supplier
 			s,db_proxy.sardine_returnntcbillitem i
 			where s.uuid=i.supplieruuid and
+			i.RETURNNTCBILLUUID=t.uuid and
 			s.name=
 			#{supplierName,jdbcType=VARCHAR})
 		</if>
@@ -349,6 +352,7 @@
 			and EXISTS (select 1 from db_proxy.sardine_supplier
 			s,db_proxy.sardine_returnntcbillitem i
 			where s.uuid=i.supplieruuid and
+			i.RETURNNTCBILLUUID=t.uuid and
 			s.code=
 			#{supplierCode,jdbcType=VARCHAR})
 		</if>
