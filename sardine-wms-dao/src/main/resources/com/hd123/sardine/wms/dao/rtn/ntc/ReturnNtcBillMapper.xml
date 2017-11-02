@@ -466,6 +466,7 @@
 		a,db_proxy.sardine_supplier s where
 		t.articleuuid=a.uuid and
 		t.supplieruuid=s.uuid and t.returnntcbilluuid=#{uuid,jdbcType=VARCHAR}
+		order by line
 	</select>
 
 	<delete id="removeItems" parameterType="java.lang.String">

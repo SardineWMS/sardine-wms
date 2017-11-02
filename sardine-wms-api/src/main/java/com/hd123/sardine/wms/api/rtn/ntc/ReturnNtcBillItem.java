@@ -35,7 +35,7 @@ public class ReturnNtcBillItem extends Entity {
   private BigDecimal qty = BigDecimal.ZERO;
   private String caseQtyStr;
   private BigDecimal realQty = BigDecimal.ZERO;
-  private String realCaseQtyStr;
+  private String realCaseQtyStr = "0";
   private String reason;
   private BigDecimal price = BigDecimal.ZERO;
   private BigDecimal amount = BigDecimal.ZERO;

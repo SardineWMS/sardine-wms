@@ -249,8 +249,6 @@ public class ReturnNtcBillServiceImpl extends BaseWMSService implements ReturnNt
       throw new IllegalArgumentException(
           MessageFormat.format("退仓通知单当前状态是{0}，不是初始或进行中的，不能完成", bill.getState().getCaption()));
 
-    bill.setTotalReturnedAmount(bill.getTotalAmount());
-    bill.setTotalReturnedCaseQtyStr(bill.getTotalCaseQtyStr());
     bill.setState(ReturnNtcBillState.finished);
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
 
@@ -267,8 +265,14 @@ public class ReturnNtcBillServiceImpl extends BaseWMSService implements ReturnNt
     dao.removeItems(uuid);
     dao.insertItems(items);
 
-    // TODO 审核退仓单，待退仓单服务代码
-
+    PageQueryDefinition definition = new PageQueryDefinition();
+    definition.setPageSize(0);
+    definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    definition.put(ReturnBillService.QUERY_RETURNNTCBILL_LIKE, bill.getBillNumber());
+    PageQueryResult<ReturnBill> pqr = rtnBillService.query(definition);
+    for (ReturnBill returnBill : pqr.getRecords()) {
+      rtnBillService.audit(returnBill.getUuid(), returnBill.getVersion());
+    }
     logger.injectContext(this, uuid, ReturnNtcBill.class.getName(),
         ApplicationContextUtil.getOperateContext());
     logger.log(EntityLogger.EVENT_MODIFY, "完成退仓通知单");
