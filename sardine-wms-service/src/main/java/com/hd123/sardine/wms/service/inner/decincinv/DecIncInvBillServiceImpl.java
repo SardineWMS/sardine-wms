@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -32,6 +33,8 @@ import com.hd123.sardine.wms.api.basicInfo.bin.Wrh;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerState;
+import com.hd123.sardine.wms.api.ia.user.User;
+import com.hd123.sardine.wms.api.ia.user.UserService;
 import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBill;
 import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillItem;
 import com.hd123.sardine.wms.api.inner.decincinv.DecIncInvBillService;
@@ -45,6 +48,7 @@ import com.hd123.sardine.wms.api.stock.StockShiftIn;
 import com.hd123.sardine.wms.api.stock.StockShiftRule;
 import com.hd123.sardine.wms.common.entity.OperateInfo;
 import com.hd123.sardine.wms.common.entity.SourceBill;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
@@ -72,6 +76,8 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
   private ContainerService containerService;
   @Autowired
   private StockService stockService;
+  @Autowired
+  private UserService userService;
   @Autowired
   private EntityLogger logger;
 
@@ -207,6 +213,11 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
     Wrh wrh = binService.getWrh(bill.getWrh().getUuid());
     if (wrh == null)
       throw new WMSException("仓位" + bill.getWrh().getCode() + "不存在");
+
+    User user = userService.getByCode(bill.getOperator().getCode());
+    if (Objects.isNull(user))
+      throw new WMSException("操作人" + bill.getOperator().getCode() + "不存在");
+    bill.setOperator(new UCN(user.getUuid(), user.getCode(), user.getName()));
 
     StringBuffer errorMessage = new StringBuffer();
     Map<String, Set<String>> map = new HashMap<>();
