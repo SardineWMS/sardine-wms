@@ -37,9 +37,9 @@ public class UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
   public User getByCode(String userCode) {
     if (StringUtil.isNullOrBlank(userCode))
       return null;
-    Map<String, Object> map = ApplicationContextUtil.mapWithParentCompanyUuid();
+    Map<String, Object> map = ApplicationContextUtil.map();
     map.put("code", userCode);
-    return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE), userCode);
+    return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE), map);
   }
 
   @Override
