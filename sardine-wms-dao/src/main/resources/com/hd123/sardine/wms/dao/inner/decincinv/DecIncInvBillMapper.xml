@@ -13,7 +13,7 @@
 		<result column="sourceBillType" property="sourceBillType"
 			jdbcType="VARCHAR" />
 		<result column="wrhuuid" property="wrh.uuid" jdbcType="VARCHAR" />
-		<result column="wrhcode" property="wrh.code" jdbcType="VARCHAR" /> 
+		<result column="wrhcode" property="wrh.code" jdbcType="VARCHAR" />
 		<result column="wrhname" property="wrh.name" jdbcType="VARCHAR" />
 		<result column="operatoruuid" property="operator.uuid"
 			jdbcType="VARCHAR" />
@@ -276,7 +276,7 @@
 		db_proxy.sardine_wrh w
 		where
 		t.wrhuuid=w.uuid
-		and 
+		and
 		t.uuid=i.billBillUuid
 		<if test="billNumber != null and billNumber != ''">
 			and t.billNumber like CONCAT(CONCAT('%',
@@ -306,7 +306,8 @@
 			'%')
 		</if>
 		<if test="articleCode != null and articleCode != ''">
-			and i.articleuuid in (select a.uuid from db_proxy.sardine_article a
+			and i.articleuuid in (select a.uuid from
+			db_proxy.sardine_article a
 			where a.code like CONCAT(CONCAT('%',
 			#{articleCode,jdbcType=VARCHAR}),
 			'%'))
@@ -441,7 +442,9 @@
 
 	<select id="queryItems" resultMap="DecIncInvBillItemMap"
 		parameterType="java.lang.String">
-		select t.*, a.code articleCode, a.name articleName,a.spec articleSpec,s.code suppliercode,s.name suppliername from
+		select t.*, a.code articleCode, a.name
+		articleName,a.spec articleSpec,s.code suppliercode,s.name suppliername
+		from
 		db_proxy.sardine_decIncInvBillItem t,
 		db_proxy.sardine_article a,
 		db_proxy.sardine_supplier s
@@ -451,6 +454,7 @@
 		t.supplierUuid=s.uuid
 		and t.billBillUuid =
 		#{decIncInvBillUuid,jdbcType=VARCHAR}
+		order by line asc
 	</select>
 
 	<delete id="removeItems" parameterType="java.util.Map">

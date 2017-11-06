@@ -130,7 +130,7 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
     for (DecIncInvBillItem item : bill.getItems()) {
       item.setUuid(UUIDGenerator.genUUID());
       item.setDecIncInvBillUuid(bill.getUuid());
-      item.setStockBatch(stockBatchUtils.genProductionBatch(item.getProductionDate()));
+      item.setStockBatch(stockBatchUtils.genStockBatch());
     }
     billDao.insert(bill);
     billDao.insertItems(bill.getItems());
@@ -152,7 +152,7 @@ public class DecIncInvBillServiceImpl extends BaseWMSService implements DecIncIn
     for (DecIncInvBillItem item : bill.getItems()) {
       item.setUuid(UUIDGenerator.genUUID());
       item.setDecIncInvBillUuid(bill.getUuid());
-      item.setStockBatch(stockBatchUtils.genProductionBatch(item.getProductionDate()));
+      item.setStockBatch(stockBatchUtils.genStockBatch());
     }
     billDao.update(bill);
     billDao.removeItems(bill.getUuid());
