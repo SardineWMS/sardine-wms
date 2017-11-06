@@ -38,6 +38,7 @@ public class AlcNtcBillItem extends Entity {
   private BigDecimal realQty = BigDecimal.ZERO;
   private String realCaseQtyStr;
   private BigDecimal price = BigDecimal.ZERO;
+  private BigDecimal amount = BigDecimal.ZERO;
 
   /** 配单UUID */
   public String getAlcNtcBillUuid() {
@@ -65,7 +66,7 @@ public class AlcNtcBillItem extends Entity {
   public void setArticle(UCN article) {
     this.article = article;
   }
-  
+
   public String getArticleSpec() {
     return articleSpec;
   }
@@ -161,6 +162,14 @@ public class AlcNtcBillItem extends Entity {
 
   public void setPrice(BigDecimal price) {
     this.price = price;
+  }
+
+  public BigDecimal getAmount() {
+    return amount;
+  }
+
+  public void setAmount(BigDecimal amount) {
+    this.amount = amount;
   }
 
   public void validate() {

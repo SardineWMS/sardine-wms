@@ -77,6 +77,7 @@
 			jdbcType="VARCHAR" />
 		<result column="price" property="price" jdbcType="DECIMAL" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="amoumt" property="amoumt" jdbcType="DECIMAL" />
 	</resultMap>
 
 	<select id="getByBillNumber" parameterType="java.util.Map"
@@ -139,6 +140,9 @@
 			<if test="price != null">
 				price,
 			</if>
+			<if test="amount != null">
+				amount,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uuid != null and uuid != ''">
@@ -188,6 +192,9 @@
 			</if>
 			<if test="price != null">
 				#{price,jdbcType=DECIMAL},
+			</if>
+			<if test="amount != null">
+				#{amount,jdbcType=DECIMAL},
 			</if>
 		</trim>
 	</insert>
