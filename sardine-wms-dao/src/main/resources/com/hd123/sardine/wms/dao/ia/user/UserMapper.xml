@@ -53,6 +53,8 @@
 		u.*
 		from sardine_user u
 		where u.code = #{code,jdbcType=VARCHAR}
+		and
+		u.companyUuid=#{companyUuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="login" parameterType="map" resultMap="BaseResultMap">

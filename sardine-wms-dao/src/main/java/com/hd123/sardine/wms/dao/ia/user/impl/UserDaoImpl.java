@@ -17,6 +17,7 @@ import com.hd123.sardine.wms.api.ia.user.User;
 import com.hd123.sardine.wms.common.dao.impl.BaseDaoImpl;
 import com.hd123.sardine.wms.common.entity.OperateContext;
 import com.hd123.sardine.wms.common.entity.OperateInfo;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.PersistenceUtils;
 import com.hd123.sardine.wms.dao.ia.user.UserDao;
 
@@ -26,54 +27,56 @@ import com.hd123.sardine.wms.dao.ia.user.UserDao;
  */
 public class UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
 
-    public static final String MAPPER_GETBYCODE = "getByCode";
-    public static final String MAPPER_LOGIN = "login";
-    public static final String MAPPER_UPDATEPASSWD = "updatePasswd";
-    public static final String MAPPER_SAVEUSERROLE = "saveUserRole";
-    public static final String MAPPER_REMOVEROLESBYUSER = "removeRolesByUser";
+  public static final String MAPPER_GETBYCODE = "getByCode";
+  public static final String MAPPER_LOGIN = "login";
+  public static final String MAPPER_UPDATEPASSWD = "updatePasswd";
+  public static final String MAPPER_SAVEUSERROLE = "saveUserRole";
+  public static final String MAPPER_REMOVEROLESBYUSER = "removeRolesByUser";
 
-    @Override
-    public User getByCode(String userCode) {
-        if (StringUtil.isNullOrBlank(userCode))
-            return null;
-        return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE), userCode);
-    }
+  @Override
+  public User getByCode(String userCode) {
+    if (StringUtil.isNullOrBlank(userCode))
+      return null;
+    Map<String, Object> map = ApplicationContextUtil.mapWithParentCompanyUuid();
+    map.put("code", userCode);
+    return getSqlSession().selectOne(generateStatement(MAPPER_GETBYCODE), userCode);
+  }
 
-    @Override
-    public User login(String userCode, String passwd) {
-        if (StringUtil.isNullOrBlank(userCode) || StringUtil.isNullOrBlank(passwd))
-            return null;
+  @Override
+  public User login(String userCode, String passwd) {
+    if (StringUtil.isNullOrBlank(userCode) || StringUtil.isNullOrBlank(passwd))
+      return null;
 
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("userCode", userCode);
-        map.put("passwd", passwd);
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("userCode", userCode);
+    map.put("passwd", passwd);
 
-        return getSqlSession().selectOne(generateStatement(MAPPER_LOGIN), map);
-    }
+    return getSqlSession().selectOne(generateStatement(MAPPER_LOGIN), map);
+  }
 
-    @Override
-    public int updatePasswd(String userUuid, String oldPasswd, String newPasswd,
-            OperateContext operCtx) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("userUuid", userUuid);
-        map.put("oldPasswd", oldPasswd);
-        map.put("newPasswd", newPasswd);
-        map.put("lastModifyInfo", OperateInfo.newInstance(operCtx));
-        int i = getSqlSession().update(generateStatement(MAPPER_UPDATEPASSWD), map);
-        PersistenceUtils.optimisticVerify(i);
-        return i;
-    }
+  @Override
+  public int updatePasswd(String userUuid, String oldPasswd, String newPasswd,
+      OperateContext operCtx) {
+    Map<String, Object> map = new HashMap<String, Object>();
+    map.put("userUuid", userUuid);
+    map.put("oldPasswd", oldPasswd);
+    map.put("newPasswd", newPasswd);
+    map.put("lastModifyInfo", OperateInfo.newInstance(operCtx));
+    int i = getSqlSession().update(generateStatement(MAPPER_UPDATEPASSWD), map);
+    PersistenceUtils.optimisticVerify(i);
+    return i;
+  }
 
-    @Override
-    public void saveUserRole(String userUuid, String roleUuid) {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("userUuid", userUuid);
-        map.put("roleUuid", roleUuid);
-        getSqlSession().insert(generateStatement(MAPPER_SAVEUSERROLE), map);
-    }
+  @Override
+  public void saveUserRole(String userUuid, String roleUuid) {
+    Map<String, String> map = new HashMap<String, String>();
+    map.put("userUuid", userUuid);
+    map.put("roleUuid", roleUuid);
+    getSqlSession().insert(generateStatement(MAPPER_SAVEUSERROLE), map);
+  }
 
-    @Override
-    public void removeRolesByUser(String userUuid) {
-        getSqlSession().delete(generateStatement(MAPPER_REMOVEROLESBYUSER), userUuid);
-    }
+  @Override
+  public void removeRolesByUser(String userUuid) {
+    getSqlSession().delete(generateStatement(MAPPER_REMOVEROLESBYUSER), userUuid);
+  }
 }
