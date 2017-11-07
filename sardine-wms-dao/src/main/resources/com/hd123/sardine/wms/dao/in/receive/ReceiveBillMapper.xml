@@ -320,10 +320,20 @@
 			and EXISTS(
 			select 1 from db_proxy.sardine_receivebillitem
 			i
-			where
+			where i.receiveBillUuid=t.uuid and 
 			i.articlecode
 			like
 			CONCAT(CONCAT('%',#{articleCode,jdbcType=VARCHAR}),'%')
+			)
+		</if>
+		<if test="containerBarcode != null and containerBarcode != ''">
+			and EXISTS(
+			select 1 from db_proxy.sardine_receivebillitem
+			i
+			where i.receiveBillUuid=t.uuid and 
+			i.containerBarcode
+			like
+			CONCAT(CONCAT('%',#{containerBarcode,jdbcType=VARCHAR}),'%')
 			)
 		</if>
 		<if test="receiverCode != null and receiverCode != ''">

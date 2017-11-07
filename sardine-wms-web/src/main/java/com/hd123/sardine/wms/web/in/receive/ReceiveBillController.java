@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hd123.rumba.commons.lang.StringUtil;
@@ -54,7 +53,8 @@ public class ReceiveBillController extends BaseController {
       @RequestParam(value = "orderBill", required = false) String orderBill,
       @RequestParam(value = "state", required = false) String state,
       @RequestParam(value = "articleCode", required = false) String articleCode,
-      @RequestParam(value = "receiverCode", required = false) String receiverCode) {
+      @RequestParam(value = "receiverCode", required = false) String receiverCode,
+      @RequestParam(value = "containerBarcode", required = false) String containerBarcode) {
     RespObject resp = new RespObject();
     try {
       PageQueryDefinition definition = new PageQueryDefinition();
@@ -72,6 +72,7 @@ public class ReceiveBillController extends BaseController {
       definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       definition.put(ReceiveBillService.QUERY_ARTICLE_CODE_FIELD, articleCode);
       definition.put(ReceiveBillService.QUERY_RECEIVER_CODE_FIELD, receiverCode);
+      definition.put(ReceiveBillService.QUERY_CONTAINERBARCODE_FIELD, containerBarcode);
       PageQueryResult<ReceiveBill> result = service.query(definition);
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

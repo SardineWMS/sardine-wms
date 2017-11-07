@@ -12,7 +12,6 @@ package com.hd123.sardine.wms.service.in.receive;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,10 +30,8 @@ import com.hd123.sardine.wms.api.in.order.OrderBillService;
 import com.hd123.sardine.wms.api.in.order.OrderBillState;
 import com.hd123.sardine.wms.api.in.receive.ReceiveBill;
 import com.hd123.sardine.wms.api.in.receive.ReceiveBillItem;
-import com.hd123.sardine.wms.api.in.receive.ReceiveBillState;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
-import com.hd123.sardine.wms.service.util.StockBatchUtils;
 
 /**
  * @author zhangsai
@@ -47,9 +44,6 @@ public class ReceiveVerifier {
 
   @Autowired
   private BinService binService;
-
-  @Autowired
-  private StockBatchUtils stockBatchUtils;
 
   @Autowired
   private ArticleService articleService;

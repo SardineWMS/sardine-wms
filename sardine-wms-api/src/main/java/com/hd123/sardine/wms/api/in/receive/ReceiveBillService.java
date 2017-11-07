@@ -33,6 +33,7 @@ public interface ReceiveBillService {
   public static final String QUERY_ORDERBILL_FIELD = "orderBill";
   public static final String QUERY_ARTICLE_CODE_FIELD = "articleCode";
   public static final String QUERY_RECEIVER_CODE_FIELD = "receiverCode";
+  public static final String QUERY_CONTAINERBARCODE_FIELD = "containerBarcode";
 
   /**
    * 保存收货单
