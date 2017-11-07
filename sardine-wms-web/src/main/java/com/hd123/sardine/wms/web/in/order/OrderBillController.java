@@ -40,6 +40,7 @@ import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
 import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
+import com.hd123.sardine.wms.common.utils.DateHelper;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.web.base.BaseController;
 
@@ -161,10 +162,11 @@ public class OrderBillController extends BaseController {
       @RequestParam(value = "token", required = true) String token,
       @RequestParam(value = "uuid", required = true) String uuid,
       @RequestParam(value = "version", required = true) long version,
-      @RequestBody Date bookedDate) {
+      @RequestParam(value = "bookedDate", required = true) String bookedDate) {
     RespObject resp = new RespObject();
+    Date date = DateHelper.strToDate(bookedDate);
     try {
-      orderBillService.preBookReg(uuid, version, bookedDate);
+      orderBillService.preBookReg(uuid, version, date);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
       return new ErrorRespObject("订单预约失败：" + e.getMessage());
