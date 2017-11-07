@@ -30,6 +30,8 @@ import com.hd123.sardine.wms.api.basicInfo.supplier.Supplier;
 import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierService;
 import com.hd123.sardine.wms.api.basicInfo.supplier.SupplierState;
 import com.hd123.sardine.wms.api.rtn.returnsupplier.ReturnSupplierBill;
+import com.hd123.sardine.wms.api.rtn.returnsupplier.ReturnSupplierBillService;
+import com.hd123.sardine.wms.api.rtn.returnsupplier.ReturnSupplierBillState;
 import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBill;
 import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBillItem;
 import com.hd123.sardine.wms.api.rtn.rtnsupplierntc.RtnSupplierNtcBillService;
@@ -73,6 +75,9 @@ public class RtnSupplierNtcBillServiceImpl extends BaseWMSService
 
   @Autowired
   private TaskService taskService;
+
+  @Autowired
+  private ReturnSupplierBillService returnSupplierBillService;
 
   @Autowired
   private EntityLogger logger;
@@ -236,7 +241,30 @@ public class RtnSupplierNtcBillServiceImpl extends BaseWMSService
           bill.getState().getCaption()));
 
     PersistenceUtils.checkVersion(version, bill, RtnSupplierNtcBill.CAPTION, uuid);
-    // TODO
+
+    bill.setState(RtnSupplierNtcBillState.Finished);
+    bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
+    dao.update(bill);
+
+    PageQueryDefinition definition = new PageQueryDefinition();
+    definition.setPageSize(0);
+    definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    definition.put(ReturnSupplierBillService.QUERY_RTNSUPPLIERNTCBILLNUMBER_LIKE,
+        bill.getBillNumber());
+    PageQueryResult<ReturnSupplierBill> pqr = returnSupplierBillService.query(definition);
+    List<ReturnSupplierBill> returnSupplierBills = pqr.getRecords();
+    if (CollectionUtils.isEmpty(returnSupplierBills) == false) {
+      for (ReturnSupplierBill returnSupplierBill : returnSupplierBills) {
+        if (ReturnSupplierBillState.InProgress.equals(returnSupplierBill.getState()) == false)
+          continue;
+        returnSupplierBillService.finish(returnSupplierBill.getUuid(),
+            returnSupplierBill.getVersion());
+      }
+    }
+
+    logger.injectContext(this, uuid, RtnSupplierNtcBill.CAPTION,
+        ApplicationContextUtil.getOperateContext());
+    logger.log(EntityLogger.EVENT_MODIFY, "完成退货通知单");
   }
 
   @Override

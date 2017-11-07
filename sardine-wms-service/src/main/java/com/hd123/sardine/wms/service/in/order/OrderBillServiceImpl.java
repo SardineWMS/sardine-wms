@@ -349,4 +349,15 @@ public class OrderBillServiceImpl extends BaseWMSService implements OrderBillSer
     }
     return null;
   }
+
+  @Override
+  public PageQueryResult<OrderBill> queryCanReceiveOrderBills(PageQueryDefinition definition) {
+    Assert.assertArgumentNotNull(definition, "definition");
+
+    List<OrderBill> list = orderBillDao.queryCanReceiveOrderBills(definition);
+    PageQueryResult<OrderBill> pqr = new PageQueryResult<>();
+    PageQueryUtil.assignPageInfo(pqr, definition);
+    pqr.setRecords(list);
+    return pqr;
+  }
 }

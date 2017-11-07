@@ -30,6 +30,7 @@ import com.hd123.sardine.wms.api.in.order.OrderBill;
 import com.hd123.sardine.wms.api.in.order.OrderBillItem;
 import com.hd123.sardine.wms.api.in.order.OrderBillService;
 import com.hd123.sardine.wms.api.in.order.OrderBillState;
+import com.hd123.sardine.wms.api.in.receive.ReceiveBillService;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
@@ -38,6 +39,7 @@ import com.hd123.sardine.wms.common.http.RespStatus;
 import com.hd123.sardine.wms.common.query.OrderDir;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 import com.hd123.sardine.wms.common.query.PageQueryResult;
+import com.hd123.sardine.wms.common.utils.ApplicationContextUtil;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
 import com.hd123.sardine.wms.web.base.BaseController;
 
@@ -280,6 +282,33 @@ public class OrderBillController extends BaseController {
       return new ErrorRespObject("刷新订单件数失败：" + e.getMessage());
     }
     return resp;
+  }
+
+  @RequestMapping(value = "/querycanreceiveorderbills", method = RequestMethod.GET)
+  public RespObject queryCanReceiveOrderBills(
+      @RequestParam(value = "token", required = true) String token,
+      @RequestParam(value = "orderBillNumber", required = false) String orderBillNumber,
+      @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+      @RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
+      @RequestParam(value = "sort", required = false) String sort, @RequestParam(value = "order",
+          required = false, defaultValue = "desc") String sortDirection) {
+    RespObject resp = new RespObject();
+    try {
+      PageQueryDefinition definition = new PageQueryDefinition();
+      definition.setPage(page);
+      definition.setPageSize(pageSize);
+      definition.setSortField(sort);
+      definition.setOrderDir(OrderDir.valueOf(sortDirection));
+      definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+      definition.put(ReceiveBillService.FIELD_ORDER_BILLNO, orderBillNumber);
+      PageQueryResult<OrderBill> pqr = orderBillService.queryCanReceiveOrderBills(definition);
+      resp.setObj(pqr);
+      resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+    } catch (Exception e) {
+      return new ErrorRespObject("查询可收货订单失败：", e.getMessage());
+    }
+    return resp;
+
   }
 
 }

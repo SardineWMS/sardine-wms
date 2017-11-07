@@ -43,4 +43,6 @@ public interface OrderBillDao {
   void removeItems(String orderBillUuid);
 
   List<OrderBillItem> queryItems(String orderBillUuid);
+
+  List<OrderBill> queryCanReceiveOrderBills(PageQueryDefinition definition);
 }

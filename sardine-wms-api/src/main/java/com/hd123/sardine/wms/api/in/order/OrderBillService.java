@@ -167,4 +167,13 @@ public interface OrderBillService {
    */
   void receive(String billNumber, List<OrderReceiveInfo> receiveInfos)
       throws IllegalArgumentException, VersionConflictException, WMSException;
+
+  /**
+   * 分页查询可收货订单
+   * 
+   * @param definition
+   *          查询条件，not null
+   * @return 查询结果集
+   */
+  PageQueryResult<OrderBill> queryCanReceiveOrderBills(PageQueryDefinition definition);
 }

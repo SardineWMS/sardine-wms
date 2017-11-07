@@ -42,6 +42,7 @@ public class OrderBillDaoImpl extends SqlSessionDaoSupport implements OrderBillD
   private static final String MAPPER_REMOVEITEMS = "removeItems";
   private static final String MAPPER_QUERYITEMS = "queryItems";
   private static final String MAPPER_QUERY = "query";
+  private static final String MAPPER_QUERY_CAN_RECEIVE_ORDERBILLS = "queryCanReceiveOrderBills";
 
   private String generateStatement(String mapperId) {
     return this.getClass().getName() + "." + mapperId;
@@ -142,5 +143,13 @@ public class OrderBillDaoImpl extends SqlSessionDaoSupport implements OrderBillD
     Map<String, Object> map = ApplicationContextUtil.map();
     map.put("orderBillUuid", orderBillUuid);
     return getSqlSession().selectList(generateStatement(MAPPER_QUERYITEMS), map);
+  }
+
+  @Override
+  public List<OrderBill> queryCanReceiveOrderBills(PageQueryDefinition definition) {
+    Assert.assertArgumentNotNull(definition, "definition");
+
+    return getSqlSession().selectList(generateStatement(MAPPER_QUERY_CAN_RECEIVE_ORDERBILLS),
+        definition);
   }
 }
