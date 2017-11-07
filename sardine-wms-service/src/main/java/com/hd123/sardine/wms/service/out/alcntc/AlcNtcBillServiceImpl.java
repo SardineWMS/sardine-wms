@@ -316,7 +316,7 @@ public class AlcNtcBillServiceImpl extends BaseWMSService implements AlcNtcBillS
       throw new WMSException("配单" + billNumber + "不是已使用状态，不能踢出波次");
 
     bill.setState(AlcNtcBillState.initial);
-    bill.setWaveBillNumber(null);
+    bill.setWaveBillNumber("");
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
 
     dao.update(bill);

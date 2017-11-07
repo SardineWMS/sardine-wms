@@ -417,7 +417,7 @@
 		a.uuid = ai.ALCNTCBILLUUID and a.CUSTOMERUUID = c.uuid and
 		a.waveBillNumber = #{waveBillNumber, jdbcType=VARCHAR} and
 		a.companyuuid =
-		#{companyUuid,jdbcType=VARCHAR}
+		#{companyUuid,jdbcType=VARCHAR} GROUP BY alcNtcBillUuid
 	</insert>
 
 	<update id="updateWaveAlcNtcItemPickOrder" parameterType="java.util.Map">
