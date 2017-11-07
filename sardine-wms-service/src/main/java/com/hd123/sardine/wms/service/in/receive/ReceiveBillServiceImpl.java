@@ -70,6 +70,7 @@ public class ReceiveBillServiceImpl extends BaseWMSService implements ReceiveBil
     for (ReceiveBillItem item : bill.getItems()) {
       item.setUuid(UUIDGenerator.genUUID());
       item.setReceiveBillUuid(bill.getUuid());
+      item.setStockBatch(stockBatchUtils.genStockBatch());
     }
     receiveBillDao.insert(bill);
     receiveBillDao.insertItems(bill.getItems());
