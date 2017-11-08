@@ -126,13 +126,13 @@ public class AlcNtcBillController extends BaseController {
       definition.put(AlcNtcBillService.QUERY_DELIVERYMODE, deliveryMode);
       definition.put(AlcNtcBillService.QUERY_ARTICLECODE_CONTAINS, articleCode);
       definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-      PageQueryResult<AlcNtcBill> result = service.query(definition);
       definition.put(AlcNtcBillService.QUERY_ALCDATELESSTHAN,
           StringUtil.isNullOrBlank(alcDateLessThan) ? null
               : StringUtil.toDate(alcDateLessThan, "yyyy-MM-dd"));
       definition.put(AlcNtcBillService.QUERY_ALCDATEMORETHAN,
           StringUtil.isNullOrBlank(alcDateMoreThan) ? null
               : StringUtil.toDate(alcDateMoreThan, "yyyy-MM-dd"));
+      PageQueryResult<AlcNtcBill> result = service.query(definition);
       resp.setObj(result);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
     } catch (Exception e) {
