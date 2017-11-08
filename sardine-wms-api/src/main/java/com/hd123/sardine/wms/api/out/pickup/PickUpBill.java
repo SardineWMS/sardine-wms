@@ -16,6 +16,7 @@ import java.util.List;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.hd123.rumba.commons.lang.Assert;
+import com.hd123.sardine.wms.api.out.alcntc.DeliverySystem;
 import com.hd123.sardine.wms.common.entity.OperateMode;
 import com.hd123.sardine.wms.common.entity.SourceBill;
 import com.hd123.sardine.wms.common.entity.StandardEntity;
@@ -29,186 +30,196 @@ import com.hd123.sardine.wms.common.validator.Validator;
  * 
  */
 public class PickUpBill extends StandardEntity implements Validator {
-  private static final long serialVersionUID = 7299422514258269815L;
+	private static final long serialVersionUID = 7299422514258269815L;
 
-  public static final String CAPTION = "拣货单";
-  private PickUpBillState state = PickUpBillState.inConfirm;
+	public static final String CAPTION = "拣货单";
+	private PickUpBillState state = PickUpBillState.inConfirm;
 
-  private String billNumber;
-  private UCN customer;
-  private String deliveryType;
+	private String billNumber;
+	private UCN customer;
+	private String deliveryType;
 
-  private OperateMode method;
-  private PickType type;
-  private UCN pickArea;
-  private SourceBill sourceBill;
-  private String pickOrder;
-  private BigDecimal volume;
-  private String companyUuid;
-  private String remark;
-  
-  private List<PickUpBillItem> items = new ArrayList<PickUpBillItem>();
-  
-  public String getRemark() {
-    return remark;
-  }
+	private OperateMode method;
+	private PickType type;
+	private UCN pickArea;
+	private SourceBill sourceBill;
+	private String pickOrder;
+	private BigDecimal volume;
+	private String companyUuid;
+	private String remark;
 
-  public void setRemark(String remark) {
-    this.remark = remark;
-  }
+	private DeliverySystem deliverySystem;
 
-  public String getCompanyUuid() {
-    return companyUuid;
-  }
+	private List<PickUpBillItem> items = new ArrayList<PickUpBillItem>();
 
-  public void setCompanyUuid(String companyUuid) {
-    this.companyUuid = companyUuid;
-  }
+	public DeliverySystem getDeliverySystem() {
+		return deliverySystem;
+	}
 
-  public String getBillNumber() {
-    return billNumber;
-  }
+	public void setDeliverySystem(DeliverySystem deliverySystem) {
+		this.deliverySystem = deliverySystem;
+	}
 
-  public void setBillNumber(String billNumber) {
-    this.billNumber = billNumber;
-  }
+	public String getRemark() {
+		return remark;
+	}
 
-  public BigDecimal getVolume() {
-    return volume;
-  }
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
 
-  public void setVolume(BigDecimal volume) {
-    this.volume = volume;
-  }
+	public String getCompanyUuid() {
+		return companyUuid;
+	}
 
-  @JsonIgnore
-  public boolean isFinishPickUp() {
-    for (PickUpBillItem item : items) {
-      if ((item.getState().equals(PickUpItemState.finished)
-          || item.getState().equals(PickUpItemState.stockOut)) == false)
-        return false;
-    }
-    return true;
-  }
+	public void setCompanyUuid(String companyUuid) {
+		this.companyUuid = companyUuid;
+	}
 
-  /** 状态 */
-  public PickUpBillState getState() {
-    return state;
-  }
+	public String getBillNumber() {
+		return billNumber;
+	}
 
-  public void setState(PickUpBillState state) {
-    Assert.assertArgumentNotNull(state, "state");
-    this.state = state;
-  }
+	public void setBillNumber(String billNumber) {
+		this.billNumber = billNumber;
+	}
 
-  /** 客户 */
-  public UCN getCustomer() {
-    return customer;
-  }
+	public BigDecimal getVolume() {
+		return volume;
+	}
 
-  public void setCustomer(UCN customer) {
-    this.customer = customer;
-  }
+	public void setVolume(BigDecimal volume) {
+		this.volume = volume;
+	}
 
-  /** 操作方式 */
-  public OperateMode getMethod() {
-    return method;
-  }
+	@JsonIgnore
+	public boolean isFinishPickUp() {
+		for (PickUpBillItem item : items) {
+			if ((item.getState().equals(PickUpItemState.finished)
+					|| item.getState().equals(PickUpItemState.stockOut)) == false)
+				return false;
+		}
+		return true;
+	}
 
-  public void setMethod(OperateMode method) {
-    Assert.assertArgumentNotNull(method, "method");
-    this.method = method;
-  }
+	/** 状态 */
+	public PickUpBillState getState() {
+		return state;
+	}
 
-  /** 拣货类型 */
-  public PickType getType() {
-    return type;
-  }
+	public void setState(PickUpBillState state) {
+		Assert.assertArgumentNotNull(state, "state");
+		this.state = state;
+	}
 
-  public void setType(PickType type) {
-    Assert.assertArgumentNotNull(type, "type");
-    this.type = type;
-  }
+	/** 客户 */
+	public UCN getCustomer() {
+		return customer;
+	}
 
-  /** 拣货分区 */
-  public UCN getPickArea() {
-    return pickArea;
-  }
+	public void setCustomer(UCN customer) {
+		this.customer = customer;
+	}
 
-  public void setPickArea(UCN pickArea) {
-    this.pickArea = pickArea;
-  }
+	/** 操作方式 */
+	public OperateMode getMethod() {
+		return method;
+	}
 
-  /** 波次单或者要货单 */
-  public SourceBill getSourceBill() {
-    return sourceBill;
-  }
+	public void setMethod(OperateMode method) {
+		Assert.assertArgumentNotNull(method, "method");
+		this.method = method;
+	}
 
-  public void setSourceBill(SourceBill sourceBill) {
-    this.sourceBill = sourceBill;
-  }
+	/** 拣货类型 */
+	public PickType getType() {
+		return type;
+	}
 
-  /** 拣货顺序 */
-  public String getPickOrder() {
-    return pickOrder;
-  }
+	public void setType(PickType type) {
+		Assert.assertArgumentNotNull(type, "type");
+		this.type = type;
+	}
 
-  public void setPickOrder(String pickOrder) {
-    Assert.assertArgumentNotNull(pickOrder, "pickOrder");
-    this.pickOrder = pickOrder;
-  }
+	/** 拣货分区 */
+	public UCN getPickArea() {
+		return pickArea;
+	}
 
-  @JsonIgnore
-  public String getWholePickContainerBarcode() {
-    return items.get(0).getSourceContainerBarcode();
-  }
+	public void setPickArea(UCN pickArea) {
+		this.pickArea = pickArea;
+	}
 
-  /** 拣货单明细 */
-  public List<PickUpBillItem> getItems() {
-    return items;
-  }
+	/** 波次单或者要货单 */
+	public SourceBill getSourceBill() {
+		return sourceBill;
+	}
 
-  public void setItems(List<PickUpBillItem> items) {
-    this.items = items;
-  }
+	public void setSourceBill(SourceBill sourceBill) {
+		this.sourceBill = sourceBill;
+	}
 
-  /** 送货类型 */
-  public String getDeliveryType() {
-    return deliveryType;
-  }
+	/** 拣货顺序 */
+	public String getPickOrder() {
+		return pickOrder;
+	}
 
-  public void setDeliveryType(String deliveryType) {
-    Assert.assertArgumentNotNull(deliveryType, "deliveryType");
-    this.deliveryType = deliveryType;
-  }
+	public void setPickOrder(String pickOrder) {
+		Assert.assertArgumentNotNull(pickOrder, "pickOrder");
+		this.pickOrder = pickOrder;
+	}
 
-  @Override
-  public void validate() {
-    Assert.assertArgumentNotNull(method, "method");
-    Assert.assertArgumentNotNull(state, "state");
-    Assert.assertArgumentNotNull(pickOrder, "pickOrder");
-    Assert.assertArgumentNotNull(sourceBill, "sourceBill");
-    Assert.assertArgumentNotNull(type, "type");
-    Assert.assertArgumentNotNull(customer, "customer");
-    Assert.assertArgumentNotNull(deliveryType, "deliveryType");
+	@JsonIgnore
+	public String getWholePickContainerBarcode() {
+		return items.get(0).getSourceContainerBarcode();
+	}
 
-    if (items.isEmpty())
-      throw new IllegalArgumentException("拣货单明细不能为空。");
+	/** 拣货单明细 */
+	public List<PickUpBillItem> getItems() {
+		return items;
+	}
 
-    for (PickUpBillItem item : items)
-      item.validate();
+	public void setItems(List<PickUpBillItem> items) {
+		this.items = items;
+	}
 
-    for (int i = 0; i < items.size(); i++) {
-      PickUpBillItem item = items.get(i);
-      for (int j = i + 1; j < items.size(); j++) {
-        PickUpBillItem jItem = items.get(j);
-        if (item.getArticle().getUuid().equals(jItem.getArticle().getUuid())
-            && item.getQpcStr().equals(jItem.getQpcStr())
-            && item.getSourceBinCode().equals(jItem.getSourceBinCode())
-            && item.getSourceContainerBarcode().equals(jItem.getSourceContainerBarcode())
-            && item.getAlcNtcBillItemUuid().equals(jItem.getAlcNtcBillItemUuid()))
-          throw new IllegalArgumentException("第" + i + "行与第" + j + "行重复。");
-      }
-    }
-  }
+	/** 送货类型 */
+	public String getDeliveryType() {
+		return deliveryType;
+	}
+
+	public void setDeliveryType(String deliveryType) {
+		Assert.assertArgumentNotNull(deliveryType, "deliveryType");
+		this.deliveryType = deliveryType;
+	}
+
+	@Override
+	public void validate() {
+		Assert.assertArgumentNotNull(method, "method");
+		Assert.assertArgumentNotNull(state, "state");
+		Assert.assertArgumentNotNull(pickOrder, "pickOrder");
+		Assert.assertArgumentNotNull(sourceBill, "sourceBill");
+		Assert.assertArgumentNotNull(type, "type");
+		Assert.assertArgumentNotNull(customer, "customer");
+		Assert.assertArgumentNotNull(deliveryType, "deliveryType");
+
+		if (items.isEmpty())
+			throw new IllegalArgumentException("拣货单明细不能为空。");
+
+		for (PickUpBillItem item : items)
+			item.validate();
+
+		for (int i = 0; i < items.size(); i++) {
+			PickUpBillItem item = items.get(i);
+			for (int j = i + 1; j < items.size(); j++) {
+				PickUpBillItem jItem = items.get(j);
+				if (item.getArticle().getUuid().equals(jItem.getArticle().getUuid())
+						&& item.getQpcStr().equals(jItem.getQpcStr())
+						&& item.getSourceBinCode().equals(jItem.getSourceBinCode())
+						&& item.getSourceContainerBarcode().equals(jItem.getSourceContainerBarcode())
+						&& item.getAlcNtcBillItemUuid().equals(jItem.getAlcNtcBillItemUuid()))
+					throw new IllegalArgumentException("第" + i + "行与第" + j + "行重复。");
+			}
+		}
+	}
 }
