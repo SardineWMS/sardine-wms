@@ -116,7 +116,7 @@ public class TaskController extends BaseController {
 			definition.put(TaskService.QUERY_FIELD_OWNER, owner);
 			definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
 			PageQueryResult<?> result = null;
-				result = taskService.query(definition);
+			result = taskService.query(definition);
 			resp.setObj(result);
 			resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
 		} catch (Exception e) {
@@ -124,9 +124,10 @@ public class TaskController extends BaseController {
 		}
 		return resp;
 	}
-	
+
 	@RequestMapping(value = "/queryPickUpTask", method = RequestMethod.POST)
-	public @ResponseBody RespObject queryPickUpTask(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
+	public @ResponseBody RespObject queryPickUpTask(
+			@RequestParam(value = "page", required = false, defaultValue = "1") int page,
 			@RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
 			@RequestParam(value = "sort", required = false) String sort,
 			@RequestParam(value = "order", required = false, defaultValue = "asc") String sortDirection,
@@ -147,7 +148,7 @@ public class TaskController extends BaseController {
 			@RequestParam(value = "billNumber", required = false) String billNumberLike) {
 		RespObject resp = new RespObject();
 		try {
-			//PageQueryDefinition definition = new PageQueryDefinition();
+			// PageQueryDefinition definition = new PageQueryDefinition();
 			PickUpBillFilter filter = new PickUpBillFilter();
 			filter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
 			filter.setPage(page);
@@ -168,27 +169,6 @@ public class TaskController extends BaseController {
 			filter.setStateEquals(stateEquals);
 			filter.setToContainerBarcodeLike(toContainerBarcodeLike);
 			filter.setWaveBillNumberLike(waveBillNumberLike);
-//			definition.setPage(page);
-//			definition.setPageSize(pageSize);
-//			definition.setSortField(sort);
-//			definition.setOrderDir(OrderDir.valueOf(sortDirection));
-//
-//			definition.put(PickUpBillService.FIELD_QUERY_ARTICLECODELIKE,articleCodeLike);
-//			definition.put(PickUpBillService.FIELD_QUERY_BILLNUMBERLIKE,billNumberLike);
-//			definition.put(PickUpBillService.FIELD_QUERY_CUSTOMERUUIDEQUALS,customerUuidEquals);
-//			definition.put(PickUpBillService.FIELD_QUERY_DELIVERYSYSTEMEQUALS,deliverySystemEquals);
-//			definition.put(PickUpBillService.FIELD_QUERY_DELIVERYTYPEEQUALS,deliveryTypeEquals);
-//			definition.put(PickUpBillService.FIELD_QUERY_FROMBINCODELIKE,fromBinCodeLike);
-//			definition.put(PickUpBillService.FIELD_QUERY_FROMCONTAINERBARCODELIKE,fromContainerBarcodeLike);
-//			definition.put(PickUpBillService.FIELD_QUERY_METHODEQUALS,methodEquals);
-//			definition.put(PickUpBillService.FIELD_QUERY_PICKAREAEQUALS,pickAreaEquals);
-//			definition.put(PickUpBillService.FIELD_QUERY_PICKERUUIDEQUALS,pickerUuidEquals);
-//			definition.put(PickUpBillService.FIELD_QUERY_PICKTYPEEQUALS,pickTypeEquals);
-//			definition.put(PickUpBillService.FIELD_QUERY_STATEEQUALS,stateEquals);
-//			definition.put(PickUpBillService.FIELD_QUERY_TOCONTAINERBARCODELIKE,toContainerBarcodeLike);
-//			definition.put(PickUpBillService.FIELD_QUERY_WAVEBILLNUMBERLIKE,waveBillNumberLike);		
-			//definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-			//PageQueryResult<?> result = pickUpBillService.query(definition);
 			PageQueryResult<?> result = pickUpBillService.query(filter);
 			resp.setObj(result);
 			resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
