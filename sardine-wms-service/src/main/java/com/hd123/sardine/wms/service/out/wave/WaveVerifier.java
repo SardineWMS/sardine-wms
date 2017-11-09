@@ -38,7 +38,8 @@ public class WaveVerifier {
     Assert.assertArgumentNotNull(waveBill, "waveBill");
 
     waveBill.validate();
-    SerialArch arch = serialArchService.get(waveBill.getSerialArch().getUuid());
+    SerialArch arch = serialArchService.get("3eeb552e059647d4ac62ed97650c55c5");// TODO
+                                                                                // 去掉线路体系的概念，暂时指定一个线路体系
     if (arch == null)
       throw new WMSException("波次对应的线路体系" + waveBill.getSerialArch().getCode() + "不存在！");
 

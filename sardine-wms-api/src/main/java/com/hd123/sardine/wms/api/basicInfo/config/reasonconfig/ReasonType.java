@@ -15,17 +15,19 @@ package com.hd123.sardine.wms.api.basicInfo.config.reasonconfig;
  */
 public enum ReasonType {
 
-    DECINC("损溢原因"),
+  DECINC("损溢原因"),
 
-    MOVE("移库原因");
+  MOVE("移库原因"),
+  /** 退仓原因 */
+  RTNNTC("退仓原因");
 
-    private String caption;
+  private String caption;
 
-    private ReasonType(String caption) {
-        this.caption = caption;
-    }
+  private ReasonType(String caption) {
+    this.caption = caption;
+  }
 
-    public String getCaption() {
-        return caption;
-    }
+  public String getCaption() {
+    return caption;
+  }
 }
