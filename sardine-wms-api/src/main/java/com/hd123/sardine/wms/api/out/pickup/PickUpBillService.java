@@ -33,6 +33,23 @@ public interface PickUpBillService {
     public static final String FIELD_ORDER_DELIVERYTARGETCODE = "deliveryTargetCode";
     public static final String FIELD_ORDER_WAVEBILLNUMBER = "waveBillNumber";
 
+    /** 查询字段     */
+    public static final String FIELD_QUERY_BILLNUMBERLIKE = "billNumberLike";
+    public static final String FIELD_QUERY_WAVEBILLNUMBERLIKE = "waveBillNumberLike";
+    public static final String FIELD_QUERY_STATEEQUALS = "stateEquals";
+    public static final String FIELD_QUERY_CUSTOMERUUIDEQUALS = "customerUuidEquals";
+    public static final String FIELD_QUERY_ARTICLECODELIKE = "articleCodeLike";
+    public static final String FIELD_QUERY_PICKTYPEEQUALS = "pickTypeEquals";
+    public static final String FIELD_QUERY_PICKERUUIDEQUALS = "pickerUuidEquals";
+    public static final String FIELD_QUERY_DELIVERYTYPEEQUALS = "deliveryTypeEquals";
+    public static final String FIELD_QUERY_METHODEQUALS = "methodEquals";
+    public static final String FIELD_QUERY_DELIVERYSYSTEMEQUALS = "deliverySystemEquals";
+    public static final String FIELD_QUERY_FROMCONTAINERBARCODELIKE = "fromContainerBarcodeLike";
+    public static final String FIELD_QUERY_TOCONTAINERBARCODELIKE = "toContainerBarcodeLike";
+    public static final String FIELD_QUERY_FROMBINCODELIKE = "fromBinCodeLike";
+    public static final String FIELD_QUERY_PICKAREAEQUALS = "pickAreaEquals";
+
+    
     /**
      * 新增拣货单
      * <p>
@@ -73,7 +90,7 @@ public interface PickUpBillService {
      *            查询条件，not null
      * @return 分页结果集
      */
-    PageQueryResult<PickUpBill> query(PageQueryDefinition definition);
+    PageQueryResult<PickUpBill> query(PickUpBillFilter filter);
 
     /**
      * 分页查询拣货单

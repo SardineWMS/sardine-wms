@@ -17,6 +17,7 @@ import java.util.Map;
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBillFilter;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillState;
 import com.hd123.sardine.wms.api.task.TaskView;
 import com.hd123.sardine.wms.common.dao.NameSpaceSupport;
@@ -115,9 +116,9 @@ public class PickUpBillDaoImpl extends NameSpaceSupport implements PickUpBillDao
     }
 
     @Override
-    public List<PickUpBill> queryByPage(PageQueryDefinition definition) {
-        Assert.assertArgumentNotNull(definition, "definition");
+    public List<PickUpBill> queryByPage(PickUpBillFilter filter) {
+        Assert.assertArgumentNotNull(filter, "filter");
 
-        return getSqlSession().selectList(generateStatement(QUERYBYPAGE), definition);
+        return getSqlSession().selectList(generateStatement(QUERYBYPAGE), filter);
     }
 }

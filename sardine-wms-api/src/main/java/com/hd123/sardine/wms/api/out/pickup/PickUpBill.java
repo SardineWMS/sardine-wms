@@ -52,11 +52,13 @@ public class PickUpBill extends StandardEntity implements Validator {
 
 	private List<PickUpBillItem> items = new ArrayList<PickUpBillItem>();
 
+	/** 配送体系 */
 	public DeliverySystem getDeliverySystem() {
 		return deliverySystem;
 	}
 
 	public void setDeliverySystem(DeliverySystem deliverySystem) {
+		Assert.assertArgumentNotNull(deliverySystem, "deliverySystem");
 		this.deliverySystem = deliverySystem;
 	}
 

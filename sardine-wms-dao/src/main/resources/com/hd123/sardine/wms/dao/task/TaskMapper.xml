@@ -94,6 +94,7 @@
 			jdbcType="VARCHAR" />
 		<result column="operator" property="operator" jdbcType="VARCHAR" />
 		<result column="operateTime" property="operateTime" jdbcType="TIMESTAMP" />
+		<result column="type" property="type" jdbcType="VARCHAR"/>
 	</resultMap>
 
 	<insert id="insert" parameterType="Task">
@@ -514,23 +515,47 @@
 	<select id="queryByList" parameterType="PageQueryDefinition"
 		resultMap="TaskViewMap">
 		select DISTINCT v.* from
-		db_proxy.sardine_task_view v,db_proxy.sardine_task t,
-		db_proxy.sardine_rplbill r
+		db_proxy.sardine_task_view
+		v,db_proxy.sardine_task t,
+		db_proxy.sardine_rplbill r,
+		db_proxy.sardine_pickupbill p
 		where 1=1
 		<if test="taskType != null  and taskType.name !='Rpl' ">
 			and v.uuid=t.uuid
-			and t.taskType=#{taskType,jdbcType=VARCHAR}
+			and
+			t.taskType=#{taskType,jdbcType=VARCHAR}
 		</if>
 		<if test="taskType != null  and taskType.name =='Rpl' ">
 			and v.uuid=r.uuid
 		</if>
-		<if test="states != null and states.size > 0">
-			and v.state in
-			<foreach collection="states" item="item" index="index" open="("
-				separator="," close=")">
-				#{item}
-			</foreach>
+		<if test="state != null and state != ''">
+			and v.state = #{state,jdbcType=VARCHAR}
 		</if>
+
+		<!-- <if test="states != null and states.size > 0"> and v.state in <foreach 
+			collection="states" item="item" index="index" open="(" separator="," close=")"> 
+			#{item} </foreach> </if> -->
+		<if test="fromContainerBarcode != null and fromContainerBarcode != 
+			''"> and v.fromContainerBarcode =
+			#{fromContainerBarcode,jdbcType=VARCHAR}
+		</if>
+		<if test="toContainerBarcode != null and toContainerBarcode != ''">
+			and v.toContainerBarcode = #{toContainerBarcode,jdbcType=VARCHAR}
+		</if>
+		<if test="type != null and type != ''">
+			and v.type = #{type,jdbcType=VARCHAR}
+		</if>
+		<if test="operator != null and operator != ''"> 
+		 and v.operator like CONCAT(CONCAT('%',#{operator,
+			jdbcType=VARCHAR}),'%') 
+		</if> 
+		<if test="owner != null and owner != ''"> 
+		 and v.owner like CONCAT(CONCAT('%',#{owner,
+			jdbcType=VARCHAR}),'%') 
+		</if> 
+		<if test="sourceBillNumber != null and sourceBillNumber != ''"> 
+		 and v.sourceBillNumber = #{sourceBill.billNumber,jdbcType=VARCHAR}
+		</if> 
 		<if test="articleCode != null and articleCode != ''">
 			and v.articleCode like CONCAT(CONCAT('%',
 			#{articleCode,jdbcType=VARCHAR}),

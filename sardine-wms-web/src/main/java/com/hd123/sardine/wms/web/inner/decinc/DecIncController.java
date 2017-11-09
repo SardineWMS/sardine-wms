@@ -182,6 +182,7 @@ public class DecIncController extends BaseController {
                 }
                 item.setAmount(item.getPrice().subtract(item.getQty()).abs());
             }
+            
             service.saveModify(decIncInvBill);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
         } catch (NotLoginInfoException e) {

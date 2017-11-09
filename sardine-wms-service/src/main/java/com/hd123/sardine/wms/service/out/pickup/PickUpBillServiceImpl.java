@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBillFilter;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillItem;
 import com.hd123.sardine.wms.api.out.pickup.PickUpBillService;
 import com.hd123.sardine.wms.api.task.TaskView;
@@ -203,17 +204,17 @@ public class PickUpBillServiceImpl extends BaseWMSService implements PickUpBillS
     }
 
     @Override
-    public PageQueryResult<PickUpBill> query(PageQueryDefinition definition) {
-        Assert.assertArgumentNotNull(definition, "definition");
+    public PageQueryResult<PickUpBill> query(PickUpBillFilter filter) {
+        Assert.assertArgumentNotNull(filter, "filter");
 
-        definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+        filter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
         PageQueryResult<PickUpBill> pgr = new PageQueryResult<PickUpBill>();
-        List<PickUpBill> list = pickUpBillDao.queryByPage(definition);
+        List<PickUpBill> list = pickUpBillDao.queryByPage(filter);
         if (CollectionUtils.isEmpty(list) == false) {
             for (PickUpBill bill : list)
                 bill.setItems(pickUpBillItemDao.queryByPickUpBill(bill.getUuid()));
         }
-        PageQueryUtil.assignPageInfo(pgr, definition);
+        PageQueryUtil.assignPageInfo(pgr, filter);
         pgr.setRecords(list);
         return pgr;
     }

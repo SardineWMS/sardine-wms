@@ -28,10 +28,33 @@ public interface TaskService {
     /** 查询条件 指令类型 */
     public static final String QUERY_FIELD_TASKTYPE = "taskType";
     /** 查询条件 指令状态 */
-    public static final String QUERY_FIELD_STATES = "states";
+    public static final String QUERY_FIELD_STATE = "state";
     /** 查询条件 商品代码 */
     public static final String QUERY_FIELD_ARTICLECODE = "articleCode";
-
+    /** 查询条件  来源容器 */
+    public static final String QUERY_FIELD_FROMCONTAINERBARCODE = "fromContainerBarcode";
+    /** 查询条件 目标容器*/
+    public static final String QUERY_FIELD_TOCONTAINERBARCODE = "toContainerBarcode";
+    /** 查询条件  操作人 */
+    public static final String QUERY_FIELD_OPERATOR = "operator";
+    /** 查询条件  操作方式 */
+    public static final String QUERY_FIELD_TYPE = "type";
+    /** 查询条件  来源单号 */
+    public static final String QUERY_FIELD_SOURCEBILL = "sourceBillNumber";
+    /** 查询条件  来源货位 */
+    public static final String QUERY_FIELD_FROMBINCODE = "fromBinCode";
+    /** 查询条件  客户 */
+    public static final String QUERY_FIELD_CUSTOMER = "customer";
+    /** 查询条件  配送方式 */
+    public static final String QUERY_FIELD_DELIVERYTYPE = "deliveryType";
+    /** 查询条件  拣货区域 */
+    public static final String QUERY_FIELD_PICKAREA = "pickArea";
+    /** 查询条件  拣货类型 */
+    public static final String QUERY_FIELD_PICKMETHOD = "pickMethod";
+    /** 查询条件  单号 */
+    public static final String QUERY_FIELD_BILLNUMBER = "billNumber";
+    /** 查询条件  供应商 */
+    public static final String QUERY_FIELD_OWNER= "owner";
     /**
      * 批量插入指令
      * <p>

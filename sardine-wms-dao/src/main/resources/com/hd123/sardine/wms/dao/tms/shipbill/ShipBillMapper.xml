@@ -73,6 +73,8 @@
 		<result column="articleCode" property="article.code" jdbcType="VARCHAR" />
 		<result column="articleName" property="article.name" jdbcType="VARCHAR" />
 		<result column="spec" property="spec" jdbcType="VARCHAR" />
+		<result column="deliveryType" property="deliveryType" jdbcType="VARCHAR" />
+		<result column="deliverySystem" property="deliverySystem" jdbcType="VARCHAR" />
 		<result column="customerUuid" property="customer.uuid"
 			jdbcType="VARCHAR" />
 		<result column="customerCode" property="customer.code"
@@ -696,12 +698,14 @@
 		parameterType="com.hd123.sardine.wms.api.tms.shipbill.ShipTaskFilter"
 		resultMap="ShipBillContainerStockMap">
 		select s.*, c.UUID customeruuid, c.code customercode, c.name
-		customername,
+		customername,i.line ,p.deliveryType,p.deliverySystem,
 		s.billuuid sourceBillUuid, s.billtype sourceBillType,
 		s.billnumber
 		sourceBillNumber from
-		db_proxy.sardine_stock s,
-		db_proxy.sardine_customer c, db_proxy.sardine_bin b where
+		db_proxy.sardine_stock
+		s,db_proxy.sardine_shipbillcustomeritem i,
+		db_proxy.sardine_customer c,db_proxy.sardine_shipbillcontainerstock p,
+		db_proxy.sardine_bin b where c.uuid = i.customeruuid and p.customeruuid = c.uuid and
 		s.OWNER =
 		c.uuid and s.BINCODE = b.code and
 		s.companyuuid = b.companyuuid and
@@ -725,6 +729,15 @@
 		<if test="supplierCodeLike != null and supplierCodeLike != ''">
 			and s.suppliercode like
 			CONCAT('%',#{supplierCodeLike},'%')
+		</if>
+		<if test="line != null and line != ''">
+			and i.line = #{line,jdbcType=VARCHAR}
+		</if>
+		<if test="deliveryType != null and deliveryType != ''">
+			and p.deliveryType = #{deliveryType,jdbcType=VARCHAR}
+		</if>
+		<if test="deliverySystem != null and deliverySystem != ''">
+			and p.deliverySystem = #{deliverySystem,jdbcType=VARCHAR}
 		</if>
 	</select>
 

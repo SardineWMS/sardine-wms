@@ -9,6 +9,7 @@
  */
 package com.hd123.sardine.wms.api.tms.shipbill;
 
+import com.hd123.sardine.wms.api.out.alcntc.DeliverySystem;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 
 /**
@@ -16,56 +17,85 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
  *
  */
 public class ShipTaskFilter extends PageQueryDefinition {
-  private static final long serialVersionUID = -2800718390578716618L;
+	private static final long serialVersionUID = -2800718390578716618L;
 
-  private String articleCodeLike;
-  private String binCodeLike;
-  private String containerBarcodeLike;
-  private String customerCodeLike;
-  private String supplierCodeLike;
+	private String articleCodeLike;
+	private String binCodeLike;
+	private String containerBarcodeLike;
+	private String customerCodeLike;
+	private String supplierCodeLike;
+	private String line;
+	private String deliveryType;
+	private String deliverySystem;
+	
+	public String getDeliverySystem() {
+		return deliverySystem;
+	}
 
-  public String getArticleCodeLike() {
-    return articleCodeLike;
-  }
+	public void setDeliverySystem(String deliverySystem) {
+		this.deliverySystem = deliverySystem;
+		put("deliverySystem", deliverySystem);
+	}
 
-  public void setArticleCodeLike(String articleCodeLike) {
-    this.articleCodeLike = articleCodeLike;
-    put("articleCodeLike", articleCodeLike);
-  }
+	public String getLine() {
+		return line;
+	}
 
-  public String getBinCodeLike() {
-    return binCodeLike;
-  }
+	public void setLine(String line) {
+		this.line = line;
+		put("line", line);
+	}
 
-  public void setBinCodeLike(String binCodeLike) {
-    this.binCodeLike = binCodeLike;
-    put("articleCodeLike", articleCodeLike);
-  }
+	public String getDeliveryType() {
+		return deliveryType;
+	}
 
-  public String getContainerBarcodeLike() {
-    return containerBarcodeLike;
-  }
+	public void setDeliveryType(String deliveryType) {
+		this.deliveryType = deliveryType;
+		put("deliveryType", deliveryType);
+	}
+	public String getArticleCodeLike() {
+		return articleCodeLike;
+	}
 
-  public void setContainerBarcodeLike(String containerBarcodeLike) {
-    this.containerBarcodeLike = containerBarcodeLike;
-    put("containerBarcodeLike", containerBarcodeLike);
-  }
+	public void setArticleCodeLike(String articleCodeLike) {
+		this.articleCodeLike = articleCodeLike;
+		put("articleCodeLike", articleCodeLike);
+	}
 
-  public String getCustomerCodeLike() {
-    return customerCodeLike;
-  }
+	public String getBinCodeLike() {
+		return binCodeLike;
+	}
 
-  public void setCustomerCodeLike(String customerCodeLike) {
-    this.customerCodeLike = customerCodeLike;
-    put("customerCodeLike", customerCodeLike);
-  }
+	public void setBinCodeLike(String binCodeLike) {
+		this.binCodeLike = binCodeLike;
+		put("binCodeLike", binCodeLike);
+	}
 
-  public String getSupplierCodeLike() {
-    return supplierCodeLike;
-  }
+	public String getContainerBarcodeLike() {
+		return containerBarcodeLike;
+	}
 
-  public void setSupplierCodeLike(String supplierCodeLike) {
-    this.supplierCodeLike = supplierCodeLike;
-    put("supplierCodeLike", supplierCodeLike);
-  }
+	public void setContainerBarcodeLike(String containerBarcodeLike) {
+		this.containerBarcodeLike = containerBarcodeLike;
+		put("containerBarcodeLike", containerBarcodeLike);
+	}
+
+	public String getCustomerCodeLike() {
+		return customerCodeLike;
+	}
+
+	public void setCustomerCodeLike(String customerCodeLike) {
+		this.customerCodeLike = customerCodeLike;
+		put("customerCodeLike", customerCodeLike);
+	}
+
+	public String getSupplierCodeLike() {
+		return supplierCodeLike;
+	}
+
+	public void setSupplierCodeLike(String supplierCodeLike) {
+		this.supplierCodeLike = supplierCodeLike;
+		put("supplierCodeLike", supplierCodeLike);
+	}
 }

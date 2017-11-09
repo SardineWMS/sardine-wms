@@ -18,90 +18,150 @@ import com.hd123.sardine.wms.common.query.PageQueryDefinition;
  * 
  */
 public class PickUpBillFilter extends PageQueryDefinition {
-  private static final long serialVersionUID = 7895700902465858571L;
+	private static final long serialVersionUID = 7895700902465858571L;
 
-  private String billNumberLike;
-  private String waveBillNumberLike;
-  private PickUpBillState stateEquals;
-  private String customerUuidEquals;
-  private String operaterMethodEquals;
-  private PickType pickTypeEquals;
-  private String pickerUuidEquals;
-  private String deliveryTypeEquals;
-  private String pickMethodEquals;
-  
-  public String getWaveBillNumberLike() {
-    return waveBillNumberLike;
-  }
+	private String billNumberLike;
+	private String waveBillNumberLike;
+	private String stateEquals;
+	private String customerUuidEquals;
+	private String articleCodeLike;
+	private String pickTypeEquals;
+	private String pickerUuidEquals;
+	private String deliveryTypeEquals;
+	private String methodEquals;
+	private String deliverySystemEquals;
+	private String fromContainerBarcodeLike;
+	private String toContainerBarcodeLike;
+	private String fromBinCodeLike;
+	private String pickAreaEquals;
 
-  public void setWaveBillNumberLike(String waveBillNumberLike) {
-    this.waveBillNumberLike = waveBillNumberLike;
-  }
+	public String getMethodEquals() {
+		return methodEquals;
+	}
 
-  public String getCustomerUuidEquals() {
-    return customerUuidEquals;
-  }
+	public void setMethodEquals(String methodEquals) {
+		this.methodEquals = methodEquals;
+		put("methodEquals", methodEquals);
+	}
 
-  public void setCustomerUuidEquals(String customerUuidEquals) {
-    this.customerUuidEquals = customerUuidEquals;
-  }
+	public String getDeliverySystemEquals() {
+		return deliverySystemEquals;
 
-  /** 单号类似于 */
-  public String getBillNumberLike() {
-    return billNumberLike;
-  }
+	}
 
-  public void setBillNumberLike(String billNumberLike) {
-    this.billNumberLike = billNumberLike;
-  }
-  
-  /** 状态等于 */
-  public PickUpBillState getStateEquals() {
-    return stateEquals;
-  }
+	public void setDeliverySystemEquals(String deliverySystemEquals) {
+		this.deliverySystemEquals = deliverySystemEquals;
+		put("deliverySystemEquals", deliverySystemEquals);
+	}
 
-  public void setStateEquals(PickUpBillState stateEquals) {
-    this.stateEquals = stateEquals;
-  }
+	public String getFromContainerBarcodeLike() {
+		return fromContainerBarcodeLike;
+	}
 
-  public String getOperaterMethodEquals() {
-    return operaterMethodEquals;
-  }
+	public void setFromContainerBarcodeLike(String fromContainerBarcodeLike) {
+		this.fromContainerBarcodeLike = fromContainerBarcodeLike;
+		put("fromContainerBarcodeLike", fromContainerBarcodeLike);
+	}
 
-  public void setOperaterMethodEquals(String operaterMethodEquals) {
-    this.operaterMethodEquals = operaterMethodEquals;
-  }
+	public String getToContainerBarcodeLike() {
+		return toContainerBarcodeLike;
+	}
 
-  /** 拣货类型 */
-  public PickType getPickTypeEquals() {
-    return pickTypeEquals;
-  }
+	public void setToContainerBarcodeLike(String toContainerBarcodeLike) {
+		this.toContainerBarcodeLike = toContainerBarcodeLike;
+		put("toContainerBarcodeLike", toContainerBarcodeLike);
+	}
 
-  public void setPickTypeEquals(PickType pickTypeEquals) {
-    this.pickTypeEquals = pickTypeEquals;
-  }
+	public String getFromBinCodeLike() {
+		return fromBinCodeLike;
+	}
 
-  public String getPickerUuidEquals() {
-    return pickerUuidEquals;
-  }
+	public void setFromBinCodeLike(String fromBinCodeLike) {
+		this.fromBinCodeLike = fromBinCodeLike;
+		put("fromBinCodeLike", fromBinCodeLike);
+	}
 
-  public void setPickerUuidEquals(String pickerUuidEquals) {
-    this.pickerUuidEquals = pickerUuidEquals;
-  }
+	public String getPickAreaEquals() {
+		return pickAreaEquals;
+	}
 
-  public String getDeliveryTypeEquals() {
-    return deliveryTypeEquals;
-  }
+	public void setPickAreaEquals(String pickAreaEquals) {
+		this.pickAreaEquals = pickAreaEquals;
+		put("pickAreaEquals", pickAreaEquals);
+	}
 
-  public void setDeliveryTypeEquals(String deliveryTypeEquals) {
-    this.deliveryTypeEquals = deliveryTypeEquals;
-  }
+	public String getWaveBillNumberLike() {
+		return waveBillNumberLike;
+	}
 
-  public String getPickMethodEquals() {
-    return pickMethodEquals;
-  }
+	public void setWaveBillNumberLike(String waveBillNumberLike) {
+		this.waveBillNumberLike = waveBillNumberLike;
+		put("waveBillNumberLike", waveBillNumberLike);
+	}
 
-  public void setPickMethodEquals(String pickMethodEquals) {
-    this.pickMethodEquals = pickMethodEquals;
-  }
+	public String getCustomerUuidEquals() {
+		return customerUuidEquals;
+	}
+
+	public void setCustomerUuidEquals(String customerUuidEquals) {
+		this.customerUuidEquals = customerUuidEquals;
+		put("customerUuidEquals", customerUuidEquals);
+	}
+
+	/** 单号类似于 */
+	public String getBillNumberLike() {
+		return billNumberLike;
+	}
+
+	public void setBillNumberLike(String billNumberLike) {
+		this.billNumberLike = billNumberLike;
+		put("billNumberLike", billNumberLike);
+	}
+
+	/** 状态等于 */
+	public String getStateEquals() {
+		return stateEquals;
+	}
+
+	public void setStateEquals(String stateEquals) {
+		this.stateEquals = stateEquals;
+		put("stateEquals", stateEquals);
+	}
+
+	public String getArticleCodeLike() {
+		return articleCodeLike;
+	}
+
+	public void setArticleCodeLike(String articleCodeLike) {
+		this.articleCodeLike = articleCodeLike;
+		put("articleCodeLike", articleCodeLike);
+	}
+
+	/** 拣货类型 */
+	public String getPickTypeEquals() {
+		return pickTypeEquals;
+	}
+
+	public void setPickTypeEquals(String pickTypeEquals) {
+		this.pickTypeEquals = pickTypeEquals;
+		put("pickTypeEquals", pickTypeEquals);
+	}
+
+	public String getPickerUuidEquals() {
+		return pickerUuidEquals;
+	}
+
+	public void setPickerUuidEquals(String pickerUuidEquals) {
+		this.pickerUuidEquals = pickerUuidEquals;
+		put("pickerUuidEquals", pickerUuidEquals);
+	}
+
+	public String getDeliveryTypeEquals() {
+		return deliveryTypeEquals;
+	}
+
+	public void setDeliveryTypeEquals(String deliveryTypeEquals) {
+		this.deliveryTypeEquals = deliveryTypeEquals;
+		put("deliveryTypeEquals", deliveryTypeEquals);
+	}
 }

@@ -32,6 +32,8 @@
 		<result column="customername" property="customer.name"
 			jdbcType="VARCHAR" />
 		<result column="deliveryType" property="deliveryType" jdbcType="VARCHAR" />
+		<result column="deliverySystem" property="deliverySystem"
+			jdbcType="VARCHAR" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
 		<result column="createdtime" property="createInfo.time"
 			jdbcType="TIMESTAMP" />
@@ -50,7 +52,7 @@
 		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
 			jdbcType="VARCHAR" />
 	</resultMap>
-	
+
 	<resultMap id="PickTaskViewMap" type="com.hd123.sardine.wms.api.task.TaskView">
 		<result column="uuid" property="uuid" jdbcType="VARCHAR" />
 		<result column="billNumber" property="billNumber" jdbcType="VARCHAR" />
@@ -64,18 +66,24 @@
 		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
 		<result column="munit" property="munit" jdbcType="VARCHAR" />
 		<result column="fromBinCode" property="fromBinCode" jdbcType="VARCHAR" />
-		<result column="fromContainerBarcode" property="fromContainerBarcode" jdbcType="VARCHAR" />
+		<result column="fromContainerBarcode" property="fromContainerBarcode"
+			jdbcType="VARCHAR" />
 		<result column="toBinCode" property="toBinCode" jdbcType="VARCHAR" />
-		<result column="toContainerBarcode" property="toContainerBarcode" jdbcType="VARCHAR" />
+		<result column="toContainerBarcode" property="toContainerBarcode"
+			jdbcType="VARCHAR" />
 		<result column="qty" property="qty" jdbcType="DECIMAL" />
 		<result column="caseQtyStr" property="caseQtyStr" jdbcType="VARCHAR" />
 		<result column="realQty" property="realQty" jdbcType="DECIMAL" />
-		<result column="realCaseQtyStr" property="realCaseQtyStr" jdbcType="VARCHAR" />
+		<result column="realCaseQtyStr" property="realCaseQtyStr"
+			jdbcType="VARCHAR" />
 		<result column="operator" property="operator" jdbcType="VARCHAR" />
 		<result column="operateTime" property="operateTime" jdbcType="TIMESTAMP" />
-		<result column="sourceBillUuid" property="sourceBill.billUuid" jdbcType="VARCHAR" />
-		<result column="sourceBillNumber" property="sourceBill.billNumber" jdbcType="VARCHAR" />
-		<result column="sourceBillType" property="sourceBill.billType" jdbcType="VARCHAR" />
+		<result column="sourceBillUuid" property="sourceBill.billUuid"
+			jdbcType="VARCHAR" />
+		<result column="sourceBillNumber" property="sourceBill.billNumber"
+			jdbcType="VARCHAR" />
+		<result column="sourceBillType" property="sourceBill.billType"
+			jdbcType="VARCHAR" />
 	</resultMap>
 
 	<insert id="saveNew" parameterType="com.hd123.sardine.wms.api.out.pickup.PickUpBill">
@@ -114,6 +122,9 @@
 			<if test="deliveryType != null">
 				deliveryType,
 			</if>
+			<if test="deliverySystem != null">
+				deliverySystem,
+			</if>
 			<if test="customer != null and customer.uuid != null">
 				customeruuid,
 			</if>
@@ -138,14 +149,14 @@
 			<if test="version != null">
 				VERSION,
 			</if>
-		createdTime,
-		createdId,
-		createdCode,
-		createdName,
-		lastModifyTime,
-		lastModifyId,
-		lastModifyCode,
-		lastModifyName,
+			createdTime,
+			createdId,
+			createdCode,
+			createdName,
+			lastModifyTime,
+			lastModifyId,
+			lastModifyCode,
+			lastModifyName,
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="uuid != null">
@@ -181,6 +192,9 @@
 			<if test="deliveryType != null">
 				#{deliveryType,jdbcType=VARCHAR},
 			</if>
+			<if test="deliverySystem != null">
+				#{deliverySystem,jdbcType=VARCHAR},
+			</if>
 			<if test="customer != null and customer.uuid != null">
 				#{customer.uuid,jdbcType=VARCHAR},
 			</if>
@@ -205,14 +219,14 @@
 			<if test="version != null">
 				#{version,jdbcType=LONGVARCHAR},
 			</if>
-		#{createInfo.time,jdbcType=TIMESTAMP},
-		#{createInfo.operator.id,jdbcType=VARCHAR},
-		#{createInfo.operator.code,jdbcType=VARCHAR},
-		#{createInfo.operator.fullName,jdbcType=VARCHAR},
-		#{lastModifyInfo.time,jdbcType=TIMESTAMP},
-		#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
-		#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
-		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+			#{createInfo.time,jdbcType=TIMESTAMP},
+			#{createInfo.operator.id,jdbcType=VARCHAR},
+			#{createInfo.operator.code,jdbcType=VARCHAR},
+			#{createInfo.operator.fullName,jdbcType=VARCHAR},
+			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+			#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+			#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
 		</trim>
 	</insert>
 
@@ -258,112 +272,167 @@
 
 	<select id="get" resultMap="PickUpBillMap" parameterType="java.lang.String">
 		select
-		t.*, c.code customerCode, c.name customerName from db_proxy.sardine_pickupbill t, 
+		t.*, c.code customerCode, c.name customerName from
+		db_proxy.sardine_pickupbill t,
 		db_proxy.sardine_customer c
-		where t.customeruuid = c.uuid and t.uuid = #{uuid,jdbcType=VARCHAR}
+		where
+		t.customeruuid = c.uuid and t.uuid = #{uuid,jdbcType=VARCHAR}
 	</select>
 
-    <select id="getByBillNumber" resultMap="PickUpBillMap" parameterType="java.util.Map">
+	<select id="getByBillNumber" resultMap="PickUpBillMap"
+		parameterType="java.util.Map">
 		select
-		t.*, c.code customerCode, c.name customerName from db_proxy.sardine_pickupbill t, 
+		t.*, c.code customerCode, c.name customerName from
+		db_proxy.sardine_pickupbill t,
 		db_proxy.sardine_customer c
-		where t.customeruuid = c.uuid and t.billNumber = #{billNumber,jdbcType=VARCHAR} 
-		and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+		where
+		t.customeruuid = c.uuid and t.billNumber =
+		#{billNumber,jdbcType=VARCHAR}
+		and t.companyUuid = #{companyUuid,
+		jdbcType=VARCHAR}
 	</select>
-	
-	<select id="queryByWaveUuid" resultMap="PickUpBillMap" parameterType="java.util.Map">
+
+	<select id="queryByWaveUuid" resultMap="PickUpBillMap"
+		parameterType="java.util.Map">
 		select
-		t.*, c.code customerCode, c.name customerName from db_proxy.sardine_pickupbill t, 
+		t.*, c.code customerCode, c.name customerName from
+		db_proxy.sardine_pickupbill t,
 		db_proxy.sardine_customer c
-		where t.customeruuid = c.uuid and t.sourceBillUuid = #{waveUuid,jdbcType=VARCHAR} 
+		where
+		t.customeruuid = c.uuid and t.sourceBillUuid =
+		#{waveUuid,jdbcType=VARCHAR}
 	</select>
-	
+
 	<update id="approveByWaveBillNumber" parameterType="java.util.Map">
-		update db_proxy.sardine_pickupbill 
-		set state = #{state, jdbcType=VARCHAR}, 
-		    LASTMODIFYTIME = #{date, jdbcType=DATE},
-		    LASTMODIFYID = #{user.uuid, jdbcType=VARCHAR},
-		    LASTMODIFYCODE = #{user.code, jdbcType=VARCHAR},
-		    LASTMODIFYNAME = #{user.name, jdbcType=VARCHAR}
-		where sourceBilltype = '波次单' and 
-		      sourceBillnumber = #{waveBillNumber, jdbcType=VARCHAR} and 
-		      companyUuid = #{companyUuid, jdbcType=VARCHAR}
+		update
+		db_proxy.sardine_pickupbill
+		set state = #{state, jdbcType=VARCHAR},
+		LASTMODIFYTIME = #{date, jdbcType=DATE},
+		LASTMODIFYID = #{user.uuid,
+		jdbcType=VARCHAR},
+		LASTMODIFYCODE = #{user.code, jdbcType=VARCHAR},
+		LASTMODIFYNAME = #{user.name, jdbcType=VARCHAR}
+		where sourceBilltype =
+		'波次单' and
+		sourceBillnumber = #{waveBillNumber, jdbcType=VARCHAR} and
+		companyUuid = #{companyUuid, jdbcType=VARCHAR}
 	</update>
 
 	<select id="queryByPage" resultMap="PickUpBillMap"
 		parameterType="com.hd123.sardine.wms.api.out.pickup.PickUpBillFilter">
 		select t.*
-		from db_proxy.sardine_pickupbill t, 
-		     db_proxy.sardine_customer c
-		where t.customeruuid = c.uuid 
-		  and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+		from db_proxy.sardine_pickupbill t,
+		db_proxy.sardine_customer c,db_proxy.sardine_pickupbillitem i
+		where t.customeruuid = c.uuid and t.uuid = i.pickupbilluuid 
+		and
+		t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
 		<if test="billNumberLike != null and billNumberLike != ''">
 			and t.billNumber like CONCAT(CONCAT('%',
 			#{billNumberLike}), '%')
 		</if>
 		<if test="waveBillNumberLike != null and waveBillNumberLike != ''">
 			and t.sourcebillnumber like CONCAT(CONCAT('%',
-			#{waveBillNumberLike}), '%') 
+			#{waveBillNumberLike}), '%')
 			and t.sourcebilltype = '波次单'
 		</if>
-		<if test="pickTypeEquals != null">
+		<if test="pickTypeEquals != null and pickTypeEquals!= ''">
 			and t.type = #{pickTypeEquals}
 		</if>
 		<if test="customerUuidEquals != null and customerUuidEquals != ''">
-			and t.customeruuid = #{customerUuidEquals}
+			and t.customercode = #{customerUuidEquals}
 		</if>
 		<if test="pickerUuidEquals != null and pickerUuidEquals != ''">
-			and t.pickeruuid = #{pickerUuidEquals}
+			and i.pickercode = #{pickerUuidEquals}
 		</if>
 		<if test="deliveryTypeEquals != null and deliveryTypeEquals != ''">
 			and t.deliverytype = #{deliveryTypeEquals}
 		</if>
-		<if test="pickMethodEquals != null and pickMethodEquals != ''">
-			and t.method = #{pickMethodEquals}
+		<if test="methodEquals != null and methodEquals != ''">
+			and t.method = #{methodEquals}
+		</if>
+		<if test="deliverySystemEquals != null and deliverySystemEquals != ''">
+			and t.deliverySystem = #{deliverySystemEquals}
+		</if>
+		<if test="articleCodeLike != null and articleCodeLike != ''">
+			and i.articleCode like CONCAT(CONCAT('%',
+			#{articleCodeLike}), '%')
+		</if>
+		<if
+			test="fromContainerBarcodeLike != null and fromContainerBarcodeLike!= ''">
+			and i.sourceContainerBarcode like CONCAT(CONCAT('%',
+			#{fromContainerBarcodeLike}), '%')
+		</if>
+		<if test="toContainerBarcodeLike != null and toContainerBarcodeLike != ''">
+			and i.toContainerBarcode like CONCAT(CONCAT('%',
+			#{toContainerBarcodeLike}), '%')
+		</if>
+		<if test="fromBinCodeLike != null and fromBinCodeLike != ''">
+			and i.sourceBinCode like CONCAT(CONCAT('%',
+			#{fromBinCodeLike}), '%')
+		</if>
+		<if test="pickAreaEquals != null and pickAreaEquals!= ''">
+		and t.pickAreaCode = #{pickAreaEquals}
+		</if>
+		<if test="stateEquals != null and stateEquals != ''">
+		and t.state = #{stateEquals}
 		</if>
 	</select>
 
 	<delete id="remove" parameterType="java.util.Map">
-		delete from db_proxy.sardine_pickupbill
-		where uuid = #{uuid,jdbcType=VARCHAR} 
-		 and version = #{version,jdbcType=LONGVARCHAR}
+		delete from
+		db_proxy.sardine_pickupbill
+		where uuid = #{uuid,jdbcType=VARCHAR}
+		and
+		version = #{version,jdbcType=LONGVARCHAR}
 	</delete>
-	
-	<select id="queryPickTaskView" parameterType="java.util.Map" resultMap="PickTaskViewMap">
-	   select i.uuid, 
-        p.billnumber, 
-        p.companyuuid,
-        case when i.state = 'initial' then '待拣货'
-             when i.state = 'inProgress' then '拣货中'
-             when i.state = 'finished' then '拣货完成'
-             when i.state = 'exception' then '拣货异常'
-             when i.state = 'skip' then '拣货跳过'
-             when i.state = 'stockOut' then '拣货缺货'
-        end as 'state',
-        concat('[', p.customercode, ']', p.customername) as 'owner',
-        i.articleuuid, 
-        i.ARTICLECODE,
-        i.ARTICLENAME,
-        i.ARTICLESPEC,
-        i.QPCSTR,
-        i.munit,
-        i.sourcebincode as 'fromBinCode',
-        i.sourceContainerBarcode as 'fromContainerBarcode',
-        '-' as 'toBinCode', 
-        '-' as 'toContainerBarcode', 
-        i.qty, 
-        i.CASEQTYSTR,
-        i.realqty,
-        i.REALCASEQTYSTR,
-        case when i.PICKTIME then concat('[', i.PICKERCODE, ']', i.PICKERNAME)
-             else null 
-        end as 'operator', 
-        i.PICKTIME as 'operateTime',
-        p.SOURCEBILLUUID,
-        p.SOURCEBILLNUMBER,
-        p.SOURCEBILLTYPE from db_proxy.sardine_pickupbill p, db_proxy.sardine_pickupbillitem i where p.uuid = i.pickupbilluuid 
-                                                                              and p.sourceBillNumber = #{waveBillNumber, jdbcType=VARCHAR}
-                                                                              and p.sourcebilltype = '波次单'
-                                                                              and p.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+
+	<select id="queryPickTaskView" parameterType="java.util.Map"
+		resultMap="PickTaskViewMap">
+		select i.uuid,
+		p.billnumber,
+		p.companyuuid,
+		case when i.state =
+		'initial' then '待拣货'
+		when i.state = 'inProgress' then '拣货中'
+		when i.state
+		= 'finished' then '拣货完成'
+		when i.state = 'exception' then '拣货异常'
+		when
+		i.state = 'skip' then '拣货跳过'
+		when i.state = 'stockOut' then '拣货缺货'
+		end
+		as 'state',
+		concat('[', p.customercode, ']', p.customername) as
+		'owner',
+		i.articleuuid,
+		i.ARTICLECODE,
+		i.ARTICLENAME,
+		i.ARTICLESPEC,
+		i.QPCSTR,
+		i.munit,
+		i.sourcebincode as 'fromBinCode',
+		i.sourceContainerBarcode as 'fromContainerBarcode',
+		'-' as 'toBinCode',
+		'-' as 'toContainerBarcode',
+		i.qty,
+		i.CASEQTYSTR,
+		i.realqty,
+		i.REALCASEQTYSTR,
+		case when i.PICKTIME then concat('[', i.PICKERCODE,
+		']', i.PICKERNAME)
+		else null
+		end as 'operator',
+		i.PICKTIME as
+		'operateTime',
+		p.SOURCEBILLUUID,
+		p.SOURCEBILLNUMBER,
+		p.SOURCEBILLTYPE
+		from db_proxy.sardine_pickupbill p, db_proxy.sardine_pickupbillitem i
+		where p.uuid = i.pickupbilluuid
+		and p.sourceBillNumber =
+		#{waveBillNumber, jdbcType=VARCHAR}
+		and p.sourcebilltype = '波次单'
+		and
+		p.companyUuid = #{companyUuid, jdbcType=VARCHAR}
 	</select>
 </mapper>

@@ -12,6 +12,7 @@ package com.hd123.sardine.wms.api.task;
 import java.math.BigDecimal;
 import java.sql.Date;
 
+import com.hd123.sardine.wms.common.entity.OperateMode;
 import com.hd123.sardine.wms.common.entity.SourceBill;
 import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.entity.VersionedEntity;
@@ -46,8 +47,17 @@ public class TaskView extends VersionedEntity {
   private String operator;
   private Date operateTime;
   private SourceBill sourceBill;
+  private OperateMode type;
 
-  public String getBillNumber() {
+  public OperateMode getType() {
+	return type;
+}
+
+public void setType(OperateMode type) {
+	this.type = type;
+}
+
+public String getBillNumber() {
     return billNumber;
   }
 

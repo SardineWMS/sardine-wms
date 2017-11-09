@@ -12,6 +12,7 @@ package com.hd123.sardine.wms.dao.out.pickup;
 import java.util.List;
 
 import com.hd123.sardine.wms.api.out.pickup.PickUpBill;
+import com.hd123.sardine.wms.api.out.pickup.PickUpBillFilter;
 import com.hd123.sardine.wms.api.task.TaskView;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
 
@@ -31,7 +32,7 @@ public interface PickUpBillDao {
 
     PickUpBill getByBillNumber(String billNumber);
 
-    List<PickUpBill> queryByPage(PageQueryDefinition definition);
+    List<PickUpBill> queryByPage(PickUpBillFilter filter);
 
     List<TaskView> queryPickTaskView(String waveBillNumber);
 

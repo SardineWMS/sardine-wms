@@ -106,6 +106,37 @@ public class BinController extends BaseController {
 		}
 		return resp;
 	}
+	
+	@RequestMapping(value = "/queryByPage", method = RequestMethod.GET)
+	public @ResponseBody RespObject queryByPage(@RequestParam(value = "token", required = true) String token,
+			@RequestParam(value = "page", required = false, defaultValue = "1") int page,
+			@RequestParam(value = "pageSize", required = false, defaultValue = "20") int pageSize,
+			@RequestParam(value = "sort", required = false) String sort,
+			@RequestParam(value = "code", required = false) String code,
+			@RequestParam(value = "state", required = false) String state,
+			@RequestParam(value = "usage", required = false) String usage,
+			@RequestParam(value = "order", required = false, defaultValue = "asc") String sortDirection) {
+		RespObject resp = new RespObject();
+		try {
+			PageQueryDefinition definition = new PageQueryDefinition();
+			definition.setPage(page);
+			definition.setPageSize(pageSize);
+			definition.setSortField(sort);
+			definition.setOrderDir(OrderDir.valueOf(sortDirection));
+			definition.put(BinService.QUERY_CODE_FIELD, code);
+			definition.put(BinService.QUERY_STATE_FIELD,
+					StringUtil.isNullOrBlank(state) ? null : BinState.valueOf(state));
+			definition.put(BinService.QUERY_USAGE_FIELD,
+					StringUtil.isNullOrBlank(usage) ? null : BinUsage.valueOf(usage));
+
+			PageQueryResult<Bin> result = binService.queryBin(definition);
+			resp.setObj(result);
+			resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
+		} catch (Exception e) {
+			return new ErrorRespObject("分页查询失败：" + e.getMessage());
+		}
+		return resp;
+	}
 
 	@RequestMapping(value = "/queryWrhs", method = RequestMethod.GET)
 	public @ResponseBody RespObject queryWrhs(@RequestParam(value = "token", required = true) String token) {
