@@ -108,6 +108,8 @@ public class AcceptanceBillController extends BaseController {
             @RequestParam(value = "customercode", required = false) String customercode,
             @RequestParam(value = "wrhcode", required = false) String wrhcode,
             @RequestParam(value = "deliverySystem", required = false) String deliverySystem,
+            @RequestParam(value = "binCode", required = false) String binCode,
+            @RequestParam(value = "containerBarcode", required = false) String containerBarcode,
             @RequestParam(value = "deliveryType", required = false) String deliveryType) {
         RespObject resp = new RespObject();
         try {
@@ -120,11 +122,12 @@ public class AcceptanceBillController extends BaseController {
             if (StringUtil.isNullOrBlank(state) == false && "all".equals(state) == false)
                 definition.put(AcceptanceBillService.QUERY_STATE_EQUALS,
                         AcceptanceBillState.valueOf(state));
-            definition.put(AcceptanceBillService.QUERY_CUSTOMERCODE_EQUALS, customercode);
+            definition.put(AcceptanceBillService.QUERY_CUSTOMERCODE_LIKE, customercode);
             definition.put(AcceptanceBillService.QUERY_WRHCODE_EQUALS, wrhcode);
             definition.put(AcceptanceBillService.QUERY_DELIVERYSYSTEM_EQUALS, deliverySystem);
             definition.put(AcceptanceBillService.QUERY_DELIVERYTYPE_EQUALS, deliveryType);
-
+            definition.put(AcceptanceBillService.QUERY_BINCODE_LIKE, binCode);
+            definition.put(AcceptanceBillService.QUERY_CONTAINERBARCODE_LIKE, containerBarcode);
             PageQueryResult<AcceptanceBill> result = service.query(definition);
             resp.setObj(result);
             resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);

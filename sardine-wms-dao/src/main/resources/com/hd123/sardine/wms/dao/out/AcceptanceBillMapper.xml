@@ -12,7 +12,8 @@
 			jdbcType="VARCHAR" />
 		<result column="customeruuid" property="customer.uuid"
 			jdbcType="VARCHAR" />
-		<result column="customercode" property="customer.code" jdbcType="VARCHAR" />
+		<result column="customercode" property="customer.code"
+			jdbcType="VARCHAR" />
 		<result column="customername" property="customer.name"
 			jdbcType="VARCHAR" />
 		<result column="wrhuuid" property="wrh.uuid" jdbcType="VARCHAR" />
@@ -24,9 +25,12 @@
 		<result column="deliverySystem" property="deliverySystem"
 			jdbcType="VARCHAR" />
 		<result column="deliveryType" property="deliveryType" jdbcType="VARCHAR" />
-		<result column="totalCaseQtyStr" property="totalCaseQtyStr" jdbcType="VARCHAR" />
-		<result column="totalAlcCaseQtyStr" property="totalAlcCaseQtyStr" jdbcType="VARCHAR" />
-		<result column="totalAlcAmount" property="totalAlcAmount" jdbcType="DECIMAL" />
+		<result column="totalCaseQtyStr" property="totalCaseQtyStr"
+			jdbcType="VARCHAR" />
+		<result column="totalAlcCaseQtyStr" property="totalAlcCaseQtyStr"
+			jdbcType="VARCHAR" />
+		<result column="totalAlcAmount" property="totalAlcAmount"
+			jdbcType="DECIMAL" />
 		<result column="totalAmount" property="totalAmount" jdbcType="DECIMAL" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
 		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
@@ -57,9 +61,12 @@
 		<result column="articleuuid" property="article.uuid" jdbcType="VARCHAR" />
 		<result column="articlecode" property="article.code" jdbcType="VARCHAR" />
 		<result column="articlename" property="article.name" jdbcType="VARCHAR" />
-		<result column="supplieruuid" property="supplier.uuid" jdbcType="VARCHAR" />
-		<result column="suppliercode" property="supplier.code" jdbcType="VARCHAR" />
-		<result column="suppliername" property="supplier.name" jdbcType="VARCHAR" />
+		<result column="supplieruuid" property="supplier.uuid"
+			jdbcType="VARCHAR" />
+		<result column="suppliercode" property="supplier.code"
+			jdbcType="VARCHAR" />
+		<result column="suppliername" property="supplier.name"
+			jdbcType="VARCHAR" />
 		<result column="qpcStr" property="qpcStr" jdbcType="VARCHAR" />
 		<result column="munit" property="munit" jdbcType="VARCHAR" />
 		<result column="binCode" property="binCode" jdbcType="VARCHAR" />
@@ -203,61 +210,86 @@
 	</insert>
 
 	<update id="update" parameterType="AcceptanceBill">
-	update
+		update
 		db_proxy.sardine_acceptanceBill
-	set sourceBillNumber = #{sourceBillNumber, jdbcType=VARCHAR},
-		sourceBillType = #{sourceBillType, jdbcType=VARCHAR},
-		customeruuid = #{customer.uuid, jdbcType=VARCHAR},
-		wrhuuid = #{wrh.uuid, jdbcType=VARCHAR},
-		acceptanceReason = #{acceptanceReason, jdbcType=VARCHAR},
-		deliverySystem = #{deliverySystem, jdbcType=VARCHAR},
-		deliveryType = #{deliveryType, jdbcType=VARCHAR},
-		totalCaseQtyStr = #{totalCaseQtyStr, jdbcType=VARCHAR},
-		totalAlcCaseQtyStr = #{totalAlcCaseQtyStr, jdbcType=VARCHAR},
+		set sourceBillNumber =
+		#{sourceBillNumber, jdbcType=VARCHAR},
+		sourceBillType =
+		#{sourceBillType, jdbcType=VARCHAR},
+		customeruuid =
+		#{customer.uuid,
+		jdbcType=VARCHAR},
+		wrhuuid = #{wrh.uuid,
+		jdbcType=VARCHAR},
+		acceptanceReason = #{acceptanceReason,
+		jdbcType=VARCHAR},
+		deliverySystem = #{deliverySystem,
+		jdbcType=VARCHAR},
+		deliveryType =
+		#{deliveryType, jdbcType=VARCHAR},
+		totalCaseQtyStr = #{totalCaseQtyStr,
+		jdbcType=VARCHAR},
+		totalAlcCaseQtyStr = #{totalAlcCaseQtyStr,
+		jdbcType=VARCHAR},
 		totalAmount = #{totalAmount, jdbcType=DECIMAL},
-		totalAlcAmount = #{totalAlcAmount, jdbcType=DECIMAL},
-		state = #{state, jdbcType=VARCHAR},
+		totalAlcAmount =
+		#{totalAlcAmount, jdbcType=DECIMAL},
+		state = #{state,
+		jdbcType=VARCHAR},
 		deliveryType = #{deliveryType, jdbcType=VARCHAR},
 		remark = #{remark, jdbcType=VARCHAR},
-		LASTMODIFYTIME = #{lastModifyInfo.time,jdbcType=TIMESTAMP},
-		LASTMODIFYID = #{lastModifyInfo.operator.id,jdbcType=VARCHAR},
-		LASTMODIFYCODE = #{lastModifyInfo.operator.code,jdbcType=VARCHAR},
-		LASTMODIFYNAME = #{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
-		version = #{version, jdbcType=LONGVARCHAR} + 1
-		where uuid = #{uuid,jdbcType=VARCHAR}
-		  and version = #{version, jdbcType=LONGVARCHAR}
+		LASTMODIFYTIME =
+		#{lastModifyInfo.time,jdbcType=TIMESTAMP},
+		LASTMODIFYID =
+		#{lastModifyInfo.operator.id,jdbcType=VARCHAR},
+		LASTMODIFYCODE =
+		#{lastModifyInfo.operator.code,jdbcType=VARCHAR},
+		LASTMODIFYNAME =
+		#{lastModifyInfo.operator.fullName,jdbcType=VARCHAR},
+		version =
+		#{version, jdbcType=LONGVARCHAR} + 1
+		where uuid =
+		#{uuid,jdbcType=VARCHAR}
+		and version = #{version, jdbcType=LONGVARCHAR}
 	</update>
 
 	<select id="get" parameterType="java.lang.String" resultMap="BaseResultMap">
 		select
-		t.*, w.code wrhcode, w.name wrhname, c.code customerCode, c.name customerName
-		from 
-		db_proxy.sardine_acceptanceBill t,
-		db_proxy.sardine_wrh w,
-		db_proxy.sardine_customer c
-		where t.wrhuuid = w.uuid 
-		and t.customeruuid = c.uuid
-		and t.uuid = #{uuid, jdbcType=VARCHAR}
-	</select>
-
-	<select id="getByBillNumber" parameterType="java.util.Map"
-		resultMap="BaseResultMap">
-		select t.*, w.code wrhcode, w.name wrhname, c.code customerCode, c.name customerName
+		t.*, w.code wrhcode, w.name wrhname, c.code customerCode, c.name
+		customerName
 		from
 		db_proxy.sardine_acceptanceBill t,
 		db_proxy.sardine_wrh w,
 		db_proxy.sardine_customer c
-		where t.wrhuuid = w.uuid 
-		  and t.customeruuid = c.uuid
-		  and t.billnumber = #{billNumber, jdbcType=VARCHAR}
-		  and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
+		where t.wrhuuid =
+		w.uuid
+		and t.customeruuid = c.uuid
+		and t.uuid = #{uuid,
+		jdbcType=VARCHAR}
+	</select>
+
+	<select id="getByBillNumber" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select t.*, w.code wrhcode, w.name wrhname, c.code
+		customerCode, c.name customerName
+		from
+		db_proxy.sardine_acceptanceBill
+		t,
+		db_proxy.sardine_wrh w,
+		db_proxy.sardine_customer c
+		where t.wrhuuid =
+		w.uuid
+		and t.customeruuid = c.uuid
+		and t.billnumber = #{billNumber,
+		jdbcType=VARCHAR}
+		and t.companyUuid = #{companyUuid, jdbcType=VARCHAR}
 	</select>
 
 	<delete id="remove" parameterType="java.util.Map">
 		delete from
 		db_proxy.sardine_acceptanceBill
 		where uuid = #{uuid, jdbcType=VARCHAR}
-		  and version = #{version, jdbcType=LONGVARCHAR}
+		and version = #{version, jdbcType=LONGVARCHAR}
 	</delete>
 
 	<insert id="insertItems" parameterType="AcceptanceBillItem">
@@ -285,7 +317,8 @@
 		)
 		values(
 		#{uuid, jdbcType=VARCHAR},
-		#{line, jdbcType=INTEGER},
+		#{line,
+		jdbcType=INTEGER},
 		#{acceptanceBillUuid, jdbcType=VARCHAR},
 		#{article.uuid, jdbcType=VARCHAR},
 		#{supplier.uuid, jdbcType=VARCHAR},
@@ -297,11 +330,14 @@
 		#{munit, jdbcType=VARCHAR},
 		#{qty,jdbcType=DECIMAL},
 		#{caseQtyStr, jdbcType=VARCHAR},
-	    #{planQty, jdbcType=DECIMAL},
+		#{planQty,
+		jdbcType=DECIMAL},
 		#{planCaseQtyStr, jdbcType=VARCHAR},
-		#{realQty, jdbcType=DECIMAL},
+		#{realQty,
+		jdbcType=DECIMAL},
 		#{realCaseQtyStr, jdbcType=VARCHAR},
-		#{price, jdbcType=DECIMAL},
+		#{price,
+		jdbcType=DECIMAL},
 		#{amount,jdbcType=DECIMAL}
 		)
 	</insert>
@@ -312,53 +348,70 @@
 		where acceptanceBillUuid =
 		#{acceptanceBillUuid,jdbcType=VARCHAR}
 	</delete>
-	
+
 	<update id="updateItem" parameterType="AcceptanceBillItem">
-	  update db_proxy.sardine_acceptanceBillItem 
-	  set planQty = #{planQty, jdbcType=DECIMAL},
-	      planCaseQtyStr = #{planCaseQtyStr, jdbcType=VARCHAR},
-	      realQty = #{realQty, jdbcType=DECIMAL},
-	      realCaseQtyStr = #{realCaseQtyStr, jdbcType=VARCHAR}
-	  where uuid = #{uuid, jdbcType=VARCHAR}
+		update
+		db_proxy.sardine_acceptanceBillItem
+		set planQty = #{planQty,
+		jdbcType=DECIMAL},
+		planCaseQtyStr = #{planCaseQtyStr,
+		jdbcType=VARCHAR},
+		realQty = #{realQty, jdbcType=DECIMAL},
+		realCaseQtyStr = #{realCaseQtyStr, jdbcType=VARCHAR}
+		where uuid =
+		#{uuid, jdbcType=VARCHAR}
 	</update>
-	
-	<select id="getByItemUuid" parameterType="java.lang.String" resultMap="BaseResultMap">
+
+	<select id="getByItemUuid" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
 		select
 		t.*
-		from 
+		from
 		db_proxy.sardine_acceptanceBill t
-		where t.uuid = (select ti.acceptanceBillUuid from db_proxy.sardine_acceptanceBillItem ti 
+		where t.uuid =
+		(select ti.acceptanceBillUuid from
+		db_proxy.sardine_acceptanceBillItem
+		ti
 		where ti.uuid = #{itemUuid, jdbcType=VARCHAR})
 	</select>
 
-	<select id="queryItems" parameterType="java.lang.String" resultMap="AcceptanceBillItemMap">
-		select t.*, a.code articlecode, a.name articlename,s.code suppliercode,s.name suppliername,a.spec articleSpec
+	<select id="queryItems" parameterType="java.lang.String"
+		resultMap="AcceptanceBillItemMap">
+		select t.*, a.code articlecode, a.name articlename,s.code
+		suppliercode,s.name suppliername,a.spec articleSpec
 		from
 		db_proxy.sardine_acceptanceBillItem t,
 		db_proxy.sardine_article a,
 		db_proxy.sardine_supplier s
 		where
 		t.articleuuid = a.uuid
-		and t.supplieruuid=s.uuid
+		and
+		t.supplieruuid=s.uuid
 		and t.acceptanceBillUuid =
 		#{acceptanceBillUuid,jdbcType=VARCHAR}
 	</select>
 
 	<select id="query" parameterType="PageQueryDefinition"
 		resultMap="BaseResultMap">
-		select t.*, w.code wrhcode, w.name wrhname, c.code customercode, c.name customername 
+		select t.*, w.code wrhcode, w.name wrhname, c.code customercode,
+		c.name customername
 		from
 		db_proxy.sardine_acceptanceBill t,
 		db_proxy.sardine_wrh w,
-		db_proxy.sardine_customer c
+		db_proxy.sardine_customer c,
+		db_proxy.sardine_acceptanceBillItem i
 		where t.wrhuuid = w.uuid
-		  and t.customeruuid = c.uuid
-		  and t.companyuuid = #{companyUuid, jdbcType=VARCHAR}
+		and
+		t.uuid = i.acceptanceBilluuid
+		and t.customeruuid = c.uuid
+		and
+		t.companyuuid = #{companyUuid, jdbcType=VARCHAR}
 		<if test="customerCode != null and customerCode != ''">
-			and t.customerCode = #{customerCode, jdbcType=VARCHAR}
+			and c.code LIKE
+			CONCAT(CONCAT('%',#{customerCode,jdbcType=VARCHAR}),'%')
 		</if>
 		<if test="wrhCode != null and wrhCode != ''">
-			and t.wrhCode = #{wrhCode, jdbcType=VARCHAR}
+			and w.code = #{wrhCode, jdbcType=VARCHAR}
 		</if>
 		<if test="state != null">
 			and t.state = #{state, jdbcType=VARCHAR}
@@ -372,5 +425,17 @@
 		<if test="billNumber != null and billNumber != ''">
 			and t.billNumber = #{billNumber, jdbcType=VARCHAR}
 		</if>
+		<if test="binCode != null and binCode != ''">
+			and i.bincode LIKE
+			CONCAT(CONCAT('%',#{binCode,jdbcType=VARCHAR}),'%')
+		</if>
+		<if test="containerBarcode != null and containerBarcode != ''">
+			and i.containerBarcode LIKE
+			CONCAT(CONCAT('%',#{containerBarcode,jdbcType=VARCHAR}),'%')
+		</if>
+		<if test="sort != null and sort =='billNumber'">
+			order by t.billnumber ${orderDir}
+		</if>
+					
 	</select>
 </mapper>

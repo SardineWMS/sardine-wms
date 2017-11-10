@@ -25,10 +25,11 @@ public interface AcceptanceBillService {
   public static final String QUERY_BILLNUMBER_LIKE = "billNumber";
   public static final String QUERY_WRHCODE_EQUALS = "wrhCode";
   public static final String QUERY_STATE_EQUALS = "state";
-  public static final String QUERY_CUSTOMERCODE_EQUALS = "customerCode";
+  public static final String QUERY_CUSTOMERCODE_LIKE = "customerCode";
   public static final String QUERY_DELIVERYSYSTEM_EQUALS = "deliverySystem";
   public static final String QUERY_DELIVERYTYPE_EQUALS = "deliveryType";
-
+  public static final String QUERY_BINCODE_LIKE = "binCode";
+  public static final String QUERY_CONTAINERBARCODE_LIKE = "containerBarcode";
   /** 排序字段 */
   public static final String ORDER_CODE_BILLNUMBER = "billNumber";
   public static final String ORDER_CODE_STATE = "state";
