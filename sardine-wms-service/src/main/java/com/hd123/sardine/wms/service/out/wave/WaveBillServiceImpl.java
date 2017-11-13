@@ -102,7 +102,7 @@ public class WaveBillServiceImpl extends BaseWMSService implements WaveBillServi
     Assert.assertArgumentNotNull(bill, "bill");
     waveVerifier.verifyWaveBill(bill);
 
-    WaveBill waveBill = dao.get(bill.getUuid());
+    WaveBill waveBill = get(bill.getUuid());
     if (Objects.isNull(waveBill))
       throw new IllegalArgumentException("要修改的波次单" + waveBill.getUuid() + "不存在");
     PersistenceUtils.checkVersion(bill.getVersion(), waveBill, WaveBill.CAPTION, bill.getUuid());
