@@ -108,6 +108,7 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
     for (ReturnBillItem item : bill.getItems()) {
       item.setUuid(UUIDGenerator.genUUID());
       item.setReturnBillUuid(bill.getUuid());
+      item.setAmount(item.getPrice().multiply(item.getQty()));
     }
     dao.insertItems(bill.getItems());
     logger.injectContext(this, bill.getUuid(), ReturnBill.class.getName(),
@@ -291,6 +292,7 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
     for (ReturnBillItem item : bill.getItems()) {
       item.setUuid(UUIDGenerator.genUUID());
       item.setReturnBillUuid(bill.getUuid());
+      item.setAmount(item.getPrice().multiply(item.getQty()));
     }
     dao.update(bill);
     dao.removeItems(bill.getUuid());
