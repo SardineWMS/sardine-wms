@@ -34,6 +34,7 @@ import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.rtn.customerreturn.ReturnBill;
 import com.hd123.sardine.wms.api.rtn.customerreturn.ReturnBillItem;
 import com.hd123.sardine.wms.api.rtn.customerreturn.ReturnBillService;
+import com.hd123.sardine.wms.api.rtn.customerreturn.ReturnBillState;
 import com.hd123.sardine.wms.api.rtn.customerreturn.ReturnType;
 import com.hd123.sardine.wms.api.rtn.ntc.ReturnNtcBill;
 import com.hd123.sardine.wms.api.rtn.ntc.ReturnNtcBillItem;
@@ -256,24 +257,19 @@ public class ReturnNtcBillServiceImpl extends BaseWMSService implements ReturnNt
     if (Objects.isNull(items) || items.isEmpty())
       throw new IllegalArgumentException("退仓通知单明细不存在");
 
-    for (ReturnNtcBillItem item : items) {
-      item.setRealCaseQtyStr(item.getCaseQtyStr());
-      item.setRealQty(item.getQty());
-    }
-
     dao.update(bill);
     dao.removeItems(uuid);
     dao.insertItems(items);
 
-    // PageQueryDefinition definition = new PageQueryDefinition();
-    // definition.setPageSize(0);
-    // definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
-    // definition.put(ReturnBillService.QUERY_RETURNNTCBILL_LIKE,
-    // bill.getBillNumber());
-    // PageQueryResult<ReturnBill> pqr = rtnBillService.query(definition);
-    // for (ReturnBill returnBill : pqr.getRecords()) {
-    // rtnBillService.audit(returnBill.getUuid(), returnBill.getVersion());
-    // }
+    PageQueryDefinition definition = new PageQueryDefinition();
+    definition.setPageSize(0);
+    definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+    definition.put(ReturnBillService.QUERY_RETURNNTCBILL_LIKE, bill.getBillNumber());
+    definition.put(ReturnBillService.QUERY_STATE_EQUALS, ReturnBillState.inProgress);
+    PageQueryResult<ReturnBill> pqr = rtnBillService.query(definition);
+    for (ReturnBill returnBill : pqr.getRecords()) {
+      rtnBillService.audit(returnBill.getUuid(), returnBill.getVersion());
+    }
     logger.injectContext(this, uuid, ReturnNtcBill.class.getName(),
         ApplicationContextUtil.getOperateContext());
     logger.log(EntityLogger.EVENT_MODIFY, "完成退仓通知单");

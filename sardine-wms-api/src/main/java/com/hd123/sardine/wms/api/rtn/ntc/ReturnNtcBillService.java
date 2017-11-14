@@ -131,7 +131,8 @@ public interface ReturnNtcBillService {
     /**
      * 完成退仓通知单，初始和进行中的才可完成
      * <p>
-     * 初始状态的退仓通知单可以通过手工单据直接完成
+     * <li>初始状态的退仓通知单可以通过手工单据直接完成
+     * <li>完成进行中的退仓单
      * 
      * 
      * @param uuid

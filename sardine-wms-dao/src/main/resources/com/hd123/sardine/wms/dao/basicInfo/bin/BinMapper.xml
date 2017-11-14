@@ -194,6 +194,7 @@
 		<if test="usage != null">
 			and t.binusage=#{usage,jdbcType=VARCHAR}
 		</if>
+		and t.companyUuid=#{companyUuid,jdbcType=VARCHAR}
 	</select>
 
 	<update id="changeState" parameterType="java.util.Map">

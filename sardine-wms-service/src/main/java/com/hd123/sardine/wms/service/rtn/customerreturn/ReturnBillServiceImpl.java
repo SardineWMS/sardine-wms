@@ -122,10 +122,11 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
     ReturnNtcBill returnNtcBill = rtnNtcBillService.getByBillNumber(bill.getReturnNtcBillNumber());
     if (Objects.isNull(returnNtcBill))
       throw new WMSException(MessageFormat.format("退仓通知单“{0}”不存在。", bill.getReturnNtcBillNumber()));
-    if ((ReturnNtcBillState.initial.equals(returnNtcBill.getState())
-        || ReturnNtcBillState.inProgress.equals(returnNtcBill.getState())) == false)
-      throw new WMSException(MessageFormat.format("退仓通知单状态是{0}，不是初始或进行中的，不能操作",
-          returnNtcBill.getState().getCaption()));
+    // if ((ReturnNtcBillState.initial.equals(returnNtcBill.getState())
+    // || ReturnNtcBillState.inProgress.equals(returnNtcBill.getState())) ==
+    // false)
+    // throw new WMSException(MessageFormat.format("退仓通知单状态是{0}，不是初始或进行中的，不能操作",
+    // returnNtcBill.getState().getCaption()));
     User user = userService.getByCode(bill.getReturnor().getCode());
     if (Objects.isNull(user))
       throw new WMSException("代码为" + bill.getReturnor().getCode() + "的用户不存在");
@@ -163,34 +164,40 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
       return;
 
     for (int i = 0; i < items.size(); i++) {
-      ReturnBillItem item = items.get(i);
-      if (Container.VIRTUALITY_CONTAINER.equals(item.getContainerBarcode()))
+      if (Container.VIRTUALITY_CONTAINER.equals(items.get(i).getContainerBarcode()))
         continue;
-      Container container = containerService.getByBarcode(item.getContainerBarcode());
+      Container container = containerService.getByBarcode(items.get(i).getContainerBarcode());
       if (Objects.isNull(container)) {
-        errorMsg.append(MessageFormat.format("第{0}行中，容器{1}不存在", i, item.getContainerBarcode()));
+        errorMsg.append(
+            MessageFormat.format("第{0}行中，容器{1}不存在", i + 1, items.get(i).getContainerBarcode()));
         continue;
       }
       if (ContainerState.STACONTAINERIDLE.equals(container.getState()) == false) {
-        errorMsg.append(
-            MessageFormat.format("第{0}行，容器状态是{1}，不是空闲状态", i, container.getState().getCaption()));
-        continue;
+        Bin bin = binService.getBinByCode(container.getPosition());
+        if (ReturnType.goodReturn.equals(items.get(i).getReturnType())
+            && BinUsage.ReceiveStorageBin.equals(bin.getUsage())) {
+          errorMsg.append(
+              MessageFormat.format("第{0}行，退仓类型是好退，当前容器{1}不在收货暂存位上", i + 1, container.getBarcode()));
+          continue;
+        }
+        if (ReturnType.returnToSupplier.equals(items.get(i).getReturnType())
+            && BinUsage.RtnReceiveTempBin.equals(bin.getUsage())) {
+          errorMsg.append(MessageFormat.format("第{0}行，退仓类型是退供应商，当前容器{1}不在退仓收货暂存位上", i + 1,
+              container.getBarcode()));
+          continue;
+        }
+        if (ReturnType.returnToSupplier.equals(items.get(i).getReturnType())) {
+          // TODO 退供应商类型的如果容器不是空闲状态，需要校验容器库存是否是该供应商
+        }
       }
+    }
+
+    for (int i = 0; i < items.size(); i++) {
+      ReturnBillItem item = items.get(i);
+      if (Container.VIRTUALITY_CONTAINER.equals(item.getContainerBarcode()))
+        continue;
       for (int j = i + 1; j < items.size(); j++) {
         ReturnBillItem jItem = items.get(j);
-        if (Container.VIRTUALITY_CONTAINER.equals(jItem.getContainerBarcode()))
-          continue;
-        Container jContainer = containerService.getByBarcode(jItem.getContainerBarcode());
-        if (Objects.isNull(jContainer)) {
-          errorMsg
-              .append(MessageFormat.format("第{0}行中，容器{1}不存在", j + 1, item.getContainerBarcode()));
-          continue;
-        }
-        if (ContainerState.STACONTAINERIDLE.equals(container.getState()) == false) {
-          errorMsg.append(MessageFormat.format("第{0}行，容器状态是{1}，不是空闲状态", i + 1,
-              container.getState().getCaption()));
-          continue;
-        }
         if (Objects.equals(item.getContainerBarcode(), jItem.getContainerBarcode())) {
           if (item.getReturnType().equals(jItem.getReturnType())
               && ReturnType.returnToSupplier.equals(item.getReturnType())) {
@@ -234,10 +241,10 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
     assert bill != null;
     assert returnNtcBill != null;
     assert bill.getWrh() != null;
-    Bin bin = binService.getBinByWrhAndUsage(bill.getWrh().getUuid(), BinUsage.RtnReceiveTempBin);
-    if (Objects.isNull(bin))
-      throw new WMSException(
-          MessageFormat.format("当前仓位{0}下没有退仓收货暂存位，无法进行退仓 ", bill.getWrh().getCode()));
+    // Bin bin = binService.getBinByWrhAndUsage(null,
+    // BinUsage.RtnReceiveTempBin);
+    // if (Objects.isNull(bin))
+    // throw new WMSException("当前仓库没有退仓收货暂存位，无法进行退仓 ");
     StringBuffer errorMsg = new StringBuffer();
     for (ReturnBillItem item : bill.getItems()) {
       ReturnNtcBillItem ntcBillItem = rtnNtcBillService.getItem(item.getReturnNtcBillItemUuid());
@@ -271,9 +278,10 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
     if (Objects.isNull(existBill))
       throw new WMSException(MessageFormat.format("要编辑的退仓单{0}不存在，", bill.getUuid()));
     PersistenceUtils.checkVersion(bill.getVersion(), existBill, ReturnBill.CAPTION, bill.getUuid());
-    if (ReturnBillState.initial.equals(existBill.getState()) == false)
-      throw new WMSException(
-          MessageFormat.format("当前退仓单的状态是{0}，不是初始状态，不能修改", bill.getState().getCaption()));
+    // if (ReturnBillState.initial.equals(existBill.getState()) == false)
+    // throw new WMSException(
+    // MessageFormat.format("当前退仓单的状态是{0}，不是初始状态，不能修改",
+    // bill.getState().getCaption()));
 
     verifyAndRefreshBill(bill);
 
@@ -356,9 +364,6 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
       return;
     PersistenceUtils.checkVersion(version, bill, ReturnBill.CAPTION, uuid);
 
-    if (ReturnBillState.initial.equals(bill.getState()) == false)
-      throw new WMSException(
-          MessageFormat.format("当前退仓单的状态是{0}，不是初始状态，不能审核", bill.getState().getCaption()));
     StringBuffer errorMsg = new StringBuffer();
     errorMsg.append(verifyContainer(bill));
     verifyItemQty(errorMsg, bill);
@@ -367,12 +372,10 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
     shiftIn(bill);
     manageContainer(bill);
     returnWrh(bill);
-
+    buildTaskWithContainer(bill);
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     bill.setState(ReturnBillState.finished);
     dao.update(bill);
-
-    buildTaskWithContainer(bill);
 
     logger.injectContext(this, uuid, ReturnBill.class.getName(),
         ApplicationContextUtil.getOperateContext());
