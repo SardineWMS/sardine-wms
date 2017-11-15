@@ -103,6 +103,7 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
     bill.setState(ReturnBillState.initial);
     bill.setUuid(UUIDGenerator.genUUID());
     bill.setType(bill.getType() == null ? bill.getType() : OperateMode.ManualBill);
+    bill.setType(OperateMode.ManualBill);
     dao.insert(bill);
 
     for (ReturnBillItem item : bill.getItems()) {

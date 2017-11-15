@@ -25,7 +25,7 @@
 			jdbcType="INTEGER" />
 		<result column="customerCount" property="customerCount"
 			jdbcType="INTEGER" />
-		<result column="createdtime " property="createInfo.time"
+		<result column="createdtime" property="createInfo.time"
 			jdbcType="TIMESTAMP" />
 		<result column="createdID" property="createInfo.operator.id"
 			jdbcType="VARCHAR" />

@@ -8,7 +8,7 @@
 		<result column="code" property="code" jdbcType="VARCHAR" />
 		<result column="name" property="name" jdbcType="VARCHAR" />
 		<result column="companyUuid" property="companyUuid" jdbcType="VARCHAR" />
-		<result column="createdtime " property="createInfo.time"
+		<result column="createdtime" property="createInfo.time"
 			jdbcType="TIMESTAMP" />
 		<result column="createdID" property="createInfo.operator.id"
 			jdbcType="VARCHAR" />

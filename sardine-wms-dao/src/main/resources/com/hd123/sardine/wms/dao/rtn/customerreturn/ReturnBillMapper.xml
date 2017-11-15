@@ -30,7 +30,7 @@
 		<result column="totalAmount" property="totalAmount" jdbcType="DECIMAL" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
 		<result column="version" property="version" jdbcType="LONGVARCHAR" />
-		<result column="createdtime " property="createInfo.time"
+		<result column="createdtime" property="createInfo.time"
 			jdbcType="TIMESTAMP" />
 		<result column="createdID" property="createInfo.operator.id"
 			jdbcType="VARCHAR" />
@@ -45,6 +45,8 @@
 		<result column="lastModifycode" property="lastModifyInfo.operator.code"
 			jdbcType="VARCHAR" />
 		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
+			jdbcType="VARCHAR" />
+		<result column="type" property="type"
 			jdbcType="VARCHAR" />
 	</resultMap>
 
@@ -131,6 +133,9 @@
 			<if test="remark != null">
 				remark,
 			</if>
+			<if test="type != null">
+				type,
+			</if>
 			version,
 			CREATEDTIME,
 			CREATEDID,
@@ -186,6 +191,9 @@
 			</if>
 			<if test="remark != null">
 				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=VARCHAR},
 			</if>
 			#{version,jdbcType=LONGVARCHAR},
 			#{createInfo.time,jdbcType=TIMESTAMP},

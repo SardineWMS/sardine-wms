@@ -33,7 +33,7 @@
 		<result column="returnSupplierDate" property="returnSupplierDate"
 			jdbcType="TIMESTAMP" />
 		<result column="remark" property="remark" jdbcType="VARCHAR" />
-		<result column="createdtime " property="createInfo.time"
+		<result column="createdtime" property="createInfo.time"
 			jdbcType="TIMESTAMP" />
 		<result column="createdID" property="createInfo.operator.id"
 			jdbcType="VARCHAR" />
