@@ -28,6 +28,7 @@ import com.hd123.sardine.wms.api.stock.Stock;
 import com.hd123.sardine.wms.api.stock.StockComponent;
 import com.hd123.sardine.wms.api.stock.StockFilter;
 import com.hd123.sardine.wms.api.stock.StockService;
+import com.hd123.sardine.wms.api.stock.StockState;
 import com.hd123.sardine.wms.common.exception.NotLoginInfoException;
 import com.hd123.sardine.wms.common.http.ErrorRespObject;
 import com.hd123.sardine.wms.common.http.RespObject;
@@ -147,7 +148,8 @@ public class UtilController extends BaseController {
       @RequestParam(value = "containerBarcode", required = false) String containerBarcode,
       @RequestParam(value = "articleUuid", required = false) String articleUuid,
       @RequestParam(value = "qpcStr", required = false) String qpcStr,
-      @RequestParam(value = "articleCode", required = false) String articleCode) {
+      @RequestParam(value = "articleCode", required = false) String articleCode,
+      @RequestParam(value = "state", required = false) String state) {
     RespObject resp = new RespObject();
     try {
       StockFilter filter = new StockFilter();
@@ -158,6 +160,7 @@ public class UtilController extends BaseController {
       filter.setPageSize(0);
       filter.setArticleCode(articleCode);
       filter.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
+      filter.setState(StringUtil.isNullOrBlank(state) ? null : StockState.valueOf(state));
       List<Stock> stocks = stockService.query(filter);
       List<StockComponent> components = new ArrayList<>();
       for (Stock stock : stocks) {

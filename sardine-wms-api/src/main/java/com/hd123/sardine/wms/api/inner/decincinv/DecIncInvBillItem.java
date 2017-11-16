@@ -15,7 +15,6 @@ import java.util.Date;
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.sardine.wms.common.entity.Entity;
 import com.hd123.sardine.wms.common.entity.UCN;
-import com.hd123.sardine.wms.common.utils.QpcHelper;
 
 /**
  * 损益单明细实体
@@ -95,7 +94,7 @@ public class DecIncInvBillItem extends Entity {
   }
 
   public void setQty(BigDecimal qty) {
-    setCaseQtyStr(QpcHelper.qtyToCaseQtyStr(qty, qpcStr));
+    // setCaseQtyStr(QpcHelper.qtyToCaseQtyStr(qty, qpcStr));
     this.qty = qty;
   }
 
