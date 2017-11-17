@@ -10,16 +10,22 @@
 package com.hd123.sardine.wms.service.out.acceptance;
 
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hd123.rumba.commons.lang.Assert;
 import com.hd123.rumba.commons.lang.StringUtil;
+import com.hd123.sardine.wms.api.basicInfo.customer.Customer;
+import com.hd123.sardine.wms.api.basicInfo.customer.CustomerService;
 import com.hd123.sardine.wms.api.out.acceptance.AcceptanceBill;
 import com.hd123.sardine.wms.api.out.acceptance.AcceptanceBillItem;
 import com.hd123.sardine.wms.api.out.acceptance.AcceptanceBillService;
 import com.hd123.sardine.wms.api.out.acceptance.AcceptanceBillState;
+import com.hd123.sardine.wms.api.out.alcntc.AlcNtcBill;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.VersionConflictException;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.query.PageQueryDefinition;
@@ -51,6 +57,9 @@ public class AcceptanceBillServiceImpl extends BaseWMSService implements Accepta
   @Autowired
   private AcceptanceHandler acceptanceHandler;
 
+  @Autowired
+  private CustomerService customerService;
+  
   @Override
   public AcceptanceBill get(String uuid) {
     if (StringUtil.isNullOrBlank(uuid))
@@ -87,6 +96,7 @@ public class AcceptanceBillServiceImpl extends BaseWMSService implements Accepta
   @Override
   public String insert(AcceptanceBill acceptanceBill)
       throws IllegalArgumentException, WMSException {
+	  verifyCustomer(acceptanceBill);
     acceptanceVerifier.verifyAcceptanceBill(acceptanceBill);
 
     acceptanceBill.setUuid(UUIDGenerator.genUUID());
@@ -116,6 +126,7 @@ public class AcceptanceBillServiceImpl extends BaseWMSService implements Accepta
     Assert.assertArgumentNotNull(acceptanceBill, "acceptanceBill");
     Assert.assertArgumentNotNull(acceptanceBill.getUuid(), "acceptanceBill.uuid");
     Assert.assertArgumentNotNull(acceptanceBill.getBillNumber(), "acceptanceBill.billnumber");
+    verifyCustomer(acceptanceBill);
     acceptanceVerifier.verifyAcceptanceBill(acceptanceBill);
 
     AcceptanceBill oldBill = billDao.get(acceptanceBill.getUuid());
@@ -303,4 +314,15 @@ public class AcceptanceBillServiceImpl extends BaseWMSService implements Accepta
         ApplicationContextUtil.getOperateContext());
     logger.log("拣货", "明细：" + itemUuid + "，数量：" + qty);
   }
+  
+  private void verifyCustomer(AcceptanceBill acceptanceBill) throws WMSException {
+	    assert acceptanceBill != null;
+	    assert acceptanceBill.getItems() != null && acceptanceBill.getItems().isEmpty();
+
+	    Customer customer = customerService.getByCode(acceptanceBill.getCustomer().getCode());
+	    if (Objects.isNull(customer))
+	      throw new WMSException(
+	          MessageFormat.format("不存在代码是{0}的客户！", acceptanceBill.getCustomer().getCode()));
+	    acceptanceBill.setCustomer(new UCN(customer.getUuid(), customer.getCode(), customer.getName()));
+	  }
 }
