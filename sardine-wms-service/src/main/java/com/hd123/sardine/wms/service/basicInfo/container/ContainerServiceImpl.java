@@ -136,8 +136,10 @@ public class ContainerServiceImpl extends BaseWMSService implements ContainerSer
     ContainerState oldState = container.getState();
     if (stockService.hasContainerStock(container.getBarcode()))
       container.setState(ContainerState.STACONTAINERUSEING);
-    else
+    else {
       container.setState(ContainerState.STACONTAINERIDLE);
+      container.setPosition(Container.UNKNOWN_POSITION);
+    }
     container.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
     dao.update(container);
 
