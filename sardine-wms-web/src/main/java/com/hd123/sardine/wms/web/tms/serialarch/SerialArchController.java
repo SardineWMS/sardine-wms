@@ -151,7 +151,7 @@ public class SerialArchController extends BaseController {
       definition.put("code", code);
       definition.put("name", name);
       definition.put("state", state);
-
+      definition.setCompanyUuid(ApplicationContextUtil.getCompanyUuid());
       PageQueryResult<Customer> pqr = service.queryCustomerWithoutLine(definition);
       resp.setObj(pqr);
       resp.setStatus(RespStatus.HTTP_STATUS_SUCCESS);
