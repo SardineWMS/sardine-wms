@@ -286,7 +286,7 @@ public class ReturnNtcBillServiceImpl extends BaseWMSService implements ReturnNt
     if (errorMsg.length() > 0)
       throw new WMSException(errorMsg.toString());
 
-    String realTotalCaseQrtStr = BigDecimal.ZERO.toString();
+    String realTotalCaseQrtStr = "0";
     BigDecimal returnedAmount = bill.getTotalReturnedAmount();
     for (ReturnNtcBillItem item : bill.getItems()) {
       if (returnInfo.containsKey(item.getUuid())) {
