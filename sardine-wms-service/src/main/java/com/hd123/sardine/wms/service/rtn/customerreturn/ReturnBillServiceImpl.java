@@ -26,6 +26,7 @@ import com.hd123.sardine.wms.api.basicInfo.article.Article;
 import com.hd123.sardine.wms.api.basicInfo.article.ArticleService;
 import com.hd123.sardine.wms.api.basicInfo.bin.Bin;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinService;
+import com.hd123.sardine.wms.api.basicInfo.bin.BinState;
 import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
@@ -368,12 +369,12 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
     PersistenceUtils.checkVersion(version, bill, ReturnBill.CAPTION, uuid);
 
     StringBuffer errorMsg = new StringBuffer();
-    errorMsg.append(verifyContainer(bill));
+    errorMsg.append(verifyContainerAndBin(bill));
     verifyItemQty(errorMsg, bill);
     if (errorMsg.length() > 0)
       throw new WMSException(errorMsg.toString());
     shiftIn(bill);
-    manageContainer(bill);
+    manageContainerAndBin(bill);
     returnWrh(bill);
     buildTaskWithContainer(bill);
     bill.setLastModifyInfo(ApplicationContextUtil.getOperateInfo());
@@ -457,7 +458,7 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
     return errorMsg;
   }
 
-  private void manageContainer(ReturnBill bill) throws WMSException {
+  private void manageContainerAndBin(ReturnBill bill) throws WMSException {
     assert bill != null;
     assert bill.getItems() != null;
 
@@ -465,6 +466,9 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
       Container container = containerService.getByBarcode(item.getContainerBarcode());
       containerService.change(container.getUuid(), container.getVersion(),
           ContainerState.STACONTAINERUSEING, item.getBinCode());
+      Bin bin = binService.getBinByCode(item.getBinCode());
+      if (BinState.free.equals(bin.getState()))
+        binService.changeState(bin.getUuid(), bin.getVersion(), BinState.using);
     }
 
   }
@@ -504,7 +508,7 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
         shiftIns);
   }
 
-  private StringBuffer verifyContainer(ReturnBill bill) {
+  private StringBuffer verifyContainerAndBin(ReturnBill bill) {
     assert bill != null;
     assert bill.getItems() != null;
     StringBuffer errorMsg = new StringBuffer();
@@ -522,6 +526,23 @@ public class ReturnBillServiceImpl extends BaseWMSService implements ReturnBillS
       if (ContainerState.STACONTAINERIDLE.equals(container.getState()) == false) {
         errorMsg.append(MessageFormat.format("第{0}行中，容器状态是{1}，不是空闲", item.getLine(),
             container.getState().getCaption()));
+        continue;
+      }
+      Bin bin = binService.getBinByCode(item.getBinCode());
+      if (Objects.isNull(bin)) {
+        errorMsg.append(MessageFormat.format("第{0}行中的货位{1}不存在", item.getLine(), item.getBinCode()));
+        continue;
+      }
+      if (ReturnType.goodReturn.equals(item.getReturnType())
+          && BinUsage.ReceiveStorageBin.equals(bin.getUsage()) == false) {
+        errorMsg.append(MessageFormat.format("第{0}行中，退仓类型是好退，货位{1}用途不是收货暂存位", item.getLine(),
+            item.getBinCode()));
+        continue;
+      }
+      if (ReturnType.returnToSupplier.equals(item.getReturnType())
+          && BinUsage.RtnReceiveTempBin.equals(bin.getUsage()) == false) {
+        errorMsg.append(MessageFormat.format("第{0}行中，退仓类型是退供应商，货位{1}用途不是退仓收货暂存位", item.getLine(),
+            item.getBinCode()));
         continue;
       }
     }
