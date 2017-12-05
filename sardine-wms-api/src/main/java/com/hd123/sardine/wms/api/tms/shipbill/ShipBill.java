@@ -46,6 +46,7 @@ public class ShipBill extends StandardEntity implements Validator {
   private DeliverySystem deliverySystem = DeliverySystem.tradition;
   private List<ShipBillContainerStock> containerStocks = new ArrayList<>();
   private List<ShipBillCustomerItem> customerItems = new ArrayList<>();
+  private String remark;
 
   /** 单号 */
   public String getBillNumber() {
@@ -211,6 +212,14 @@ public class ShipBill extends StandardEntity implements Validator {
   public void setDeliverySystem(DeliverySystem deliverySystem) {
     Assert.assertArgumentNotNull(deliverySystem, "deliverySystem");
     this.deliverySystem = deliverySystem;
+  }
+
+  public String getRemark() {
+    return remark;
+  }
+
+  public void setRemark(String remark) {
+    this.remark = remark;
   }
 
   public void clearTotalInfo() {

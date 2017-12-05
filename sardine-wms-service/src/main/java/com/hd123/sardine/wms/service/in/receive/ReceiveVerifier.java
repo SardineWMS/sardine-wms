@@ -9,9 +9,11 @@
  */
 package com.hd123.sardine.wms.service.in.receive;
 
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,12 +26,15 @@ import com.hd123.sardine.wms.api.basicInfo.bin.BinUsage;
 import com.hd123.sardine.wms.api.basicInfo.container.Container;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerService;
 import com.hd123.sardine.wms.api.basicInfo.container.ContainerState;
+import com.hd123.sardine.wms.api.ia.user.User;
+import com.hd123.sardine.wms.api.ia.user.UserService;
 import com.hd123.sardine.wms.api.in.order.OrderBill;
 import com.hd123.sardine.wms.api.in.order.OrderBillItem;
 import com.hd123.sardine.wms.api.in.order.OrderBillService;
 import com.hd123.sardine.wms.api.in.order.OrderBillState;
 import com.hd123.sardine.wms.api.in.receive.ReceiveBill;
 import com.hd123.sardine.wms.api.in.receive.ReceiveBillItem;
+import com.hd123.sardine.wms.common.entity.UCN;
 import com.hd123.sardine.wms.common.exception.WMSException;
 import com.hd123.sardine.wms.common.utils.QpcHelper;
 
@@ -50,6 +55,9 @@ public class ReceiveVerifier {
 
   @Autowired
   private ContainerService containerService;
+
+  @Autowired
+  private UserService userService;
 
   /**
    * 收货时校验收货单对应的订单相关内容，并根据订单内容刷新收货单
@@ -186,5 +194,15 @@ public class ReceiveVerifier {
         return orderItem;
     }
     return null;
+  }
+
+  public void verifyReceiver(ReceiveBill bill) throws WMSException {
+    assert bill != null;
+    assert bill.getReceiver().getCode() != null;
+
+    User user = userService.getByCode(bill.getReceiver().getCode());
+    if (Objects.isNull(user))
+      throw new WMSException(MessageFormat.format("用户{0}不存在", bill.getReceiver().getCode()));
+    bill.setReceiver(new UCN(user.getUuid(), user.getCode(), user.getName()));
   }
 }

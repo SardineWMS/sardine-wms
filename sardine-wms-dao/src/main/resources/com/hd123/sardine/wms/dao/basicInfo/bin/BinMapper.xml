@@ -122,16 +122,16 @@
 			and u.code like CONCAT(CONCAT('%', #{code}),
 			'%')
 		</if>
-		<if test="companyUuid != null">
+		<if test="companyUuid != null and companyUuid != ''">
 			and u.companyUuid = #{companyUuid,jdbcType=VARCHAR}
 		</if>
 		<if test="state != null">
 			and u.state = #{state,jdbcType=VARCHAR}
 		</if>
-		<if test="wrhUuid != null">
+		<if test="wrhUuid != null and wrhUuid != ''">
 			and u.wrhuuid = #{wrhUuid,jdbcType=VARCHAR}
 		</if>
-		<if test="zoneUuid != null">
+		<if test="zoneUuid != null and zoneUuid != ''">
 			and u.shelfUuid in (
 			select s.uuid from
 			db_proxy.sardine_shelf s,db_proxy.sardine_path
@@ -141,7 +141,7 @@
 			#{zoneUuid,jdbcType=VARCHAR}
 			)
 		</if>
-		<if test="pathUuid != null">
+		<if test="pathUuid != null and pathUuid != ''">
 			and u.shelfUuid in (
 			select s.uuid from
 			db_proxy.sardine_shelf s,db_proxy.sardine_path p where
@@ -149,7 +149,7 @@
 			p.uuid and p.uuid = #{pathUuid,jdbcType=VARCHAR}
 			)
 		</if>
-		<if test="shelfUuid != null">
+		<if test="shelfUuid != null and shelfUuid != ''">
 			and u.shelfUuid = #{shelfUuid,jdbcType=VARCHAR}
 		</if>
 		<if test="states != null">
@@ -161,7 +161,7 @@
 		<if test="usages != null">
 			and u.binusage in ${usages}
 		</if>
-		<if test="binTypeUuid != null">
+		<if test="binTypeUuid != null and binTypeUuid != ''">
 			and u.binTypeUuid = #{binTypeUuid, jdbcType=VARCHAR}
 		</if>
 		<if test="binTypes != null">

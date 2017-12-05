@@ -41,6 +41,7 @@
 			jdbcType="VARCHAR" />
 		<result column="lastModifyname" property="lastModifyInfo.operator.fullName"
 			jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
 	</resultMap>
 
 	<resultMap
@@ -74,7 +75,8 @@
 		<result column="articleName" property="article.name" jdbcType="VARCHAR" />
 		<result column="spec" property="spec" jdbcType="VARCHAR" />
 		<result column="deliveryType" property="deliveryType" jdbcType="VARCHAR" />
-		<result column="deliverySystem" property="deliverySystem" jdbcType="VARCHAR" />
+		<result column="deliverySystem" property="deliverySystem"
+			jdbcType="VARCHAR" />
 		<result column="customerUuid" property="customer.uuid"
 			jdbcType="VARCHAR" />
 		<result column="customerCode" property="customer.code"
@@ -169,6 +171,9 @@
 			<if test="customerCount != null">
 				customerCount,
 			</if>
+			<if test="remark != null and remark != ''">
+				remark,
+			</if>
 			version,
 			CREATEDTIME,
 			CREATEDID,
@@ -237,6 +242,9 @@
 			<if test="customerCount != null">
 				#{customerCount,jdbcType=INTEGER},
 			</if>
+			<if test="remark != null and remark != ''">
+				#{remark,jdbcType=DECIMAL},
+			</if>
 			#{version,jdbcType=LONGVARCHAR},
 			#{createInfo.time,jdbcType=TIMESTAMP},
 			#{createInfo.operator.id,jdbcType=VARCHAR},
@@ -272,6 +280,9 @@
 			</if>
 			<if test="customerCount != null">
 				customerCount = #{customerCount,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark = #{remark,jdbcType=VARCHAR},
 			</if>
 			LASTMODIFYTIME =
 			#{lastModifyInfo.time,jdbcType=TIMESTAMP},
@@ -699,13 +710,16 @@
 		resultMap="ShipBillContainerStockMap">
 		select s.*, c.UUID customeruuid, c.code customercode, c.name
 		customername,i.line ,p.deliveryType,p.deliverySystem,
-		s.billuuid sourceBillUuid, s.billtype sourceBillType,
+		s.billuuid
+		sourceBillUuid, s.billtype sourceBillType,
 		s.billnumber
 		sourceBillNumber from
 		db_proxy.sardine_stock
 		s,db_proxy.sardine_shipbillcustomeritem i,
-		db_proxy.sardine_customer c,db_proxy.sardine_shipbillcontainerstock p,
-		db_proxy.sardine_bin b where c.uuid = i.customeruuid and p.customeruuid = c.uuid and
+		db_proxy.sardine_customer
+		c,db_proxy.sardine_shipbillcontainerstock p,
+		db_proxy.sardine_bin b
+		where c.uuid = i.customeruuid and p.customeruuid = c.uuid and
 		s.OWNER =
 		c.uuid and s.BINCODE = b.code and
 		s.companyuuid = b.companyuuid and

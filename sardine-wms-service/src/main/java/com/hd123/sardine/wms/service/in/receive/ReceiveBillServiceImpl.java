@@ -58,6 +58,7 @@ public class ReceiveBillServiceImpl extends BaseWMSService implements ReceiveBil
     receiveVerifier.verifyOrderBillAndRefresh(bill);
     receiveVerifier.verifyReceiveProductDate(bill);
     receiveVerifier.verifyBinAndContainer(bill);
+    receiveVerifier.verifyReceiver(bill);
 
     bill.setUuid(UUIDGenerator.genUUID());
     bill.setBillNumber(
@@ -91,6 +92,7 @@ public class ReceiveBillServiceImpl extends BaseWMSService implements ReceiveBil
     receiveVerifier.verifyOrderBillAndRefresh(bill);
     receiveVerifier.verifyReceiveProductDate(bill);
     receiveVerifier.verifyBinAndContainer(bill);
+    receiveVerifier.verifyReceiver(bill);
 
     ReceiveBill oldBill = receiveBillDao.get(bill.getUuid());
     if (oldBill == null)

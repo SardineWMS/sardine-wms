@@ -13,20 +13,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.hd123.sardine.wms.common.entity.IsEntity;
 
 /**
  * @author yangwenzhu
  *
  */
-public class CollectionUtil {
-    public static List<String> toUuids(Collection<? extends IsEntity> entities) {
-        List<String> result = new ArrayList<String>();
-        if (entities == null || entities.isEmpty())
-            return result;
-        for (IsEntity entity : entities) {
-            result.add(entity.getUuid());
-        }
-        return result;
+public class CollectionUtil extends CollectionUtils {
+  public static List<String> toUuids(Collection<? extends IsEntity> entities) {
+    List<String> result = new ArrayList<String>();
+    if (entities == null || entities.isEmpty())
+      return result;
+    for (IsEntity entity : entities) {
+      result.add(entity.getUuid());
     }
+    return result;
+  }
 }
